@@ -1,16 +1,14 @@
 export type Props = {
   videoEl: HTMLVideoElement
   /**默认使用400 */
-  renderWidth: number
+  renderWidth?: number
 }
 
-type MustKey = 'videoEl'
-
 export default class MiniPlayer {
-  props: Props
+  props: Required<Props>
   videoStream: MediaStream
 
-  constructor(props: Partial<Omit<Props, MustKey>> & Pick<Props, MustKey>) {
+  constructor(props: Props) {
     const { renderWidth = 400, ...otherProps } = props
     this.props = { ...otherProps, renderWidth }
 
