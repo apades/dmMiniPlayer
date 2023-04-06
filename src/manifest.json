@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "bilibili弹幕画中画",
+  "description": "可以带弹幕的bilibili画中画，狠狠的摸！",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "https://www.bilibili.com/*"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": ["lib/*"],
+    "matches": ["<all_urls>"]
+  }]
+}

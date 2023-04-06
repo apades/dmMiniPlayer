@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@root/*": [
+        "src/*"
+      ]
+    },
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "lib": [
+      "es6",
+      "es7",
+      "dom",
+      "es2019",
+      "es2020"
+    ],
+    "target": "es5",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "noImplicitAny": false
+}
