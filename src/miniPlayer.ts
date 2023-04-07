@@ -1,13 +1,26 @@
+import DanmakuController from './danmaku'
+import Events from './danmaku/events'
+
 export type Props = {
   videoEl: HTMLVideoElement
   /**默认使用400 */
   renderWidth?: number
   renderHeight?: number
+
+  danmu?: Partial<{
+    opacity: number
+    height: number
+  }>
 }
 
 export default class MiniPlayer {
   props: Required<Props>
+  videoEl: HTMLVideoElement
   videoStream: MediaStream
+
+  // 弹幕器
+  danmaku: DanmakuController
+  events = new Events()
 
   canvas = document.createElement('canvas')
   ctx = this.canvas.getContext('2d')
@@ -16,14 +29,55 @@ export default class MiniPlayer {
   recorderVideoEl = document.createElement('video')
 
   constructor(props: Props) {
-    const {
+    let {
       renderWidth = 400,
       renderHeight = (renderWidth / 16) * 9,
+      danmu = {},
       ...otherProps
     } = props
-    this.props = { ...otherProps, renderWidth, renderHeight }
 
-    this.props.videoEl.requestPictureInPicture
+    danmu = { opacity: 1, height: 28, ...danmu }
+    this.props = { ...otherProps, renderWidth, renderHeight, danmu }
+    this.videoEl = props.videoEl
+
+    this.danmaku = new DanmakuController({
+      player: this,
+      // container: this.template.danmaku,
+      container: { width: renderWidth, height: renderHeight },
+      opacity: this.props.danmu.opacity,
+      callback: () => {
+        // setTimeout(() => {
+        //   this.template.danmakuLoading.style.display = 'none'
+
+        //   // autoplay
+        //   if (this.options.autoplay) {
+        //     this.play()
+        //   }
+        // }, 0)
+        console.log('callback')
+      },
+      error: (msg: string) => {
+        console.error(msg)
+        // this.notice(msg)
+      },
+      // apiBackend: this.options.apiBackend,
+      // borderColor: this.options.theme,
+      borderColor: 'transparent',
+      height: this.props.danmu.height,
+      time: () => this.props.videoEl.currentTime,
+      unlimited: false,
+      // api: {
+      //   id: this.options.danmaku.id,
+      //   address: this.options.danmaku.api,
+      //   token: this.options.danmaku.token,
+      //   maximum: this.options.danmaku.maximum,
+      //   addition: this.options.danmaku.addition,
+      //   user: this.options.danmaku.user,
+      //   speedRate: this.options.danmaku.speedRate,
+      // },
+      events: this.events,
+      tran: (msg: string) => msg,
+    })
   }
 
   getVideoStream() {
@@ -34,7 +88,7 @@ export default class MiniPlayer {
 
   startRenderAsCanvas() {
     try {
-      this.canvasUpdate()
+      this.animationFrameSignal = requestAnimationFrame(this.canvasUpdate)
       return true
     } catch (error) {
       return false

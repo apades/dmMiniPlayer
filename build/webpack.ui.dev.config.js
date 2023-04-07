@@ -1,7 +1,7 @@
 module.exports = {
   main: {
-    entry: '../src/pages/test-api/index.ts',
-    html: '../src/pages/test-api/index.html',
-    port: 8081,
+    entry: '../src/pages/dev/index.tsx',
+    html: '../src/pages/dev/index.html',
+    port: 8082,
   },
 }

@@ -10,22 +10,24 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "lib": [
-      "es6",
-      "es7",
-      "dom",
-      "es2019",
-      "es2020"
+      "DOM",
+      "ESNext",
+      "DOM.Iterable"
     ],
-    "target": "es5",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "jsx": "react-jsx",
     "allowJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "include": [
     "./src/**/*"
   ],
-  "noImplicitAny": false
+  "exclude": [
+    "node_modules"
+  ]
 }

@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-// const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
@@ -122,6 +122,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+    new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: devConfig.html,
       filename: 'index.html',
@@ -129,7 +130,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: '../src/assets/**/*', to: '' },
-        { from: '../src/lib/**/*', to: '' },
+        // { from: '../src/lib/**/*', to: '' },
       ],
     }),
     new DefinePlugin({

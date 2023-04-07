@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "webpack --watch --config ./build/webpack.dev.js",
     "http-server": "cd ./dist && http-server.cmd --cors -p 9001 -c-1",
-    "ui": "sh -c 'cross-env page=${0} yarn ui_o'"
+    "ui": "sh -c 'cross-env page=${0} yarn ui_o'",
+    "ui_o": "webpack serve --config ./build/webpack.ui.dev.js"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
