@@ -71,7 +71,7 @@ class DanmakuController {
 
     // this.dans = this.options.dans
 
-    requestAnimationFrame(this.update)
+    requestAnimationFrame(this.update.bind(this))
   }
 
   // 绘制弹幕文本
@@ -121,7 +121,7 @@ class DanmakuController {
       // 绘制画布
       this.draw()
     }
-    requestAnimationFrame(this.update)
+    requestAnimationFrame(this.update.bind(this))
   }
 }
 

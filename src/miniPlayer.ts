@@ -35,6 +35,14 @@ export default class MiniPlayer {
       danmu = {},
       ...otherProps
     } = props
+    // TODO 实际比例
+    // let {
+    //   renderWidth = 400,
+    //   renderHeight = (renderWidth / props.videoEl.videoWidth) *
+    //     props.videoEl.videoHeight,
+    //   danmu = {},
+    //   ...otherProps
+    // } = props
 
     danmu = { opacity: 1, height: 28, ...danmu }
     this.props = { ...otherProps, renderWidth, renderHeight, danmu }
@@ -88,7 +96,9 @@ export default class MiniPlayer {
 
   startRenderAsCanvas() {
     try {
-      this.animationFrameSignal = requestAnimationFrame(this.canvasUpdate)
+      this.animationFrameSignal = requestAnimationFrame(
+        this.canvasUpdate.bind(this)
+      )
       return true
     } catch (error) {
       return false
@@ -106,7 +116,9 @@ export default class MiniPlayer {
     this.ctx.drawImage(videoEl, 0, 0, width, height)
     this.renderDanmu(videoEl.currentTime)
 
-    this.animationFrameSignal = requestAnimationFrame(this.canvasUpdate)
+    this.animationFrameSignal = requestAnimationFrame(
+      this.canvasUpdate.bind(this)
+    )
   }
 
   // TODO 渲染弹幕
