@@ -133,6 +133,16 @@ type BarrageProps = {
   range: [number, number]
   opacity: number
 }
+
+let defaults: BarrageProps = {
+  opacity: 100,
+  fontSize: '24px',
+  speed: 2,
+  range: [0, 1],
+  color: 'white',
+  value: '',
+}
+
 class Barrage {
   player: MiniPlayer
   obj: BarrageProps
@@ -157,7 +167,7 @@ class Barrage {
     // 一些变量参数
     this.text = obj.value
     this.time = obj.time
-    this.obj = obj
+    this.obj = Object.assign(obj, defaults)
     // data中的可以覆盖全局的设置
   }
 
