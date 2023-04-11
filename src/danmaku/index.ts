@@ -1,4 +1,6 @@
 import MiniPlayer from '@root/miniPlayer'
+import { getTextWidth } from '@root/utils'
+import { omit } from 'lodash'
 import Events from './events'
 import utils from './utils'
 
@@ -19,7 +21,7 @@ export type DanmakuProps = {
   tran: (msg: string) => string
 
   /**预载弹幕 */
-  dans?: (Partial<BarrageProps> & { time: number })[]
+  dans?: (Partial<BarrageProps> & { value: string; time: number })[]
 }
 
 export type BaseDanType = {
@@ -58,7 +60,7 @@ class DanmakuController {
   showing = true
   paused = true
 
-  dans: (Partial<BarrageProps> & { time: number })[] = []
+  dans: (Partial<BarrageProps> & { value: string; time: number })[] = []
   protected barrages: Barrage[] = []
   renderDans: RenderDanType[] = []
 
@@ -97,8 +99,8 @@ class DanmakuController {
           barrage.init()
           barrage.initd = true
         }
-        barrage.x -= barrage.moveX
-        if (barrage.moveX == 0) {
+        barrage.x -= barrage.speed
+        if (barrage.speed == 0) {
           // 不动的弹幕
           barrage.actualX -= top.speed
         } else {
@@ -128,27 +130,18 @@ class DanmakuController {
 }
 
 type BarrageProps = {
-  speed: number
+  fontSize?: number
+  color?: string
+  range?: [number, number]
+  opacity?: number
+  speed?: number
   value: string
-  fontSize: string
-  color: string
-  range: [number, number]
-  opacity: number
-}
-
-let defaults: BarrageProps = {
-  opacity: 100,
-  fontSize: '24px',
-  speed: 2,
-  range: [0, 1],
-  color: 'white',
-  value: '',
 }
 
 export class Barrage {
   player: MiniPlayer
-  obj: BarrageProps
-  fontSize: string
+  props: BarrageProps
+  fontSize: number
 
   x = 0
   y = 0
@@ -159,67 +152,51 @@ export class Barrage {
   timeLeft = 5000
 
   actualX = 0
-  moveX = 0
+  speed = 0
   opacity = 1
   range = [0, 0]
   disabled = false
   initd = false
 
   constructor(
-    obj: Partial<BarrageProps> & { time: number; player: MiniPlayer }
+    props: Partial<BarrageProps> & {
+      value: string
+      time: number
+      player: MiniPlayer
+    }
   ) {
     // 一些变量参数
-    this.text = obj.value
-    this.time = obj.time
-    this.obj = Object.assign(obj, defaults)
-    this.player = obj.player
+    this.text = props.value
+    this.time = props.time
+    this.props = props
+    this.player = props.player
     // data中的可以覆盖全局的设置
   }
 
   init() {
-    let { obj } = this
+    let { props } = this
     // 1. 速度
-    var speed = top.speed
-    if (obj.hasOwnProperty('speed')) {
-      speed = obj.speed
-    }
+    var speed = props.speed || 0
     if (speed !== 0) {
       // 随着字数不同，速度会有微调
-      speed = speed + obj.value.length / 100
+      speed = speed + props.value.length / 100
     }
     // 2. 字号大小
-    var fontSize = obj.fontSize || top.fontSize
+    var fontSize = props.fontSize || 12
 
     // 3. 文字颜色
-    var color = obj.color || top.color
-    // 转换成rgb颜色
-    color = (function () {
-      var div = document.createElement('div')
-      div.style.backgroundColor = color
-      document.body.appendChild(div)
-      var c = window.getComputedStyle(div).backgroundColor
-      document.body.removeChild(div)
-      return c
-    })()
+    var color = props.color || 'white'
 
     // 4. range范围
-    var range = obj.range || top.range
+    var range = props.range || [0, 1]
     // 5. 透明度
-    var opacity = obj.opacity || top.opacity
-    opacity = opacity / 100
+    var opacity = props.opacity || 1
 
-    // 计算出内容长度
-    var span = document.createElement('span')
-    span.style.position = 'absolute'
-    span.style.whiteSpace = 'nowrap'
-    span.style.font = 'bold ' + fontSize + 'px "microsoft yahei", sans-serif'
-    span.innerText = obj.value
-    span.textContent = obj.value
-    document.body.appendChild(span)
     // 求得文字内容宽度
-    this.width = span.clientWidth
-    // 移除dom元素
-    document.body.removeChild(span)
+    this.width = getTextWidth(props.value, {
+      fontSize: fontSize + 'px',
+      fontFamily: '"microsoft yahei", sans-serif',
+    })
 
     let canvas = this.player.canvas
     // 初始水平位置和垂直位置
@@ -231,13 +208,14 @@ export class Barrage {
     this.y =
       range[0] * canvas.height +
       (range[1] - range[0]) * canvas.height * Math.random()
+
     if (this.y < fontSize) {
       this.y = fontSize
     } else if (this.y > canvas.height - fontSize) {
       this.y = canvas.height - fontSize
     }
 
-    this.moveX = speed
+    this.speed = speed
     this.opacity = opacity
     this.color = color
     this.range = range

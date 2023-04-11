@@ -102,6 +102,7 @@ export default class MiniPlayer {
     })
 
     this.bindVideoElEvents()
+    this.updateCanvasSize()
   }
 
   bindVideoElEvents() {
@@ -109,6 +110,17 @@ export default class MiniPlayer {
 
     videoEl.addEventListener('pause', () => (this.isPause = true))
     videoEl.addEventListener('play', () => (this.isPause = false))
+    videoEl.addEventListener('loadedmetadata', () => {
+      this.props.renderHeight =
+        (this.props.renderWidth / videoEl.videoWidth) * videoEl.videoHeight
+
+      this.updateCanvasSize()
+    })
+  }
+
+  updateCanvasSize() {
+    this.canvas.width = this.props.renderWidth
+    this.canvas.height = this.props.renderHeight
   }
 
   getVideoStream() {
