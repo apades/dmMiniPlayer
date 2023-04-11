@@ -4,18 +4,18 @@ import MiniPlayer from '@root/miniPlayer'
 
 const App = () => {
   useEffect(() => {
-    // let dataBarrage = [
-    //   {
-    //     value: 'speed设为0为非滚动',
-    //     time: 1, // 单位秒
-    //     speed: 0,
-    //   },
-    //   {
-    //     value: 'time控制弹幕时间，单位秒',
-    //     color: 'blue',
-    //     time: 2,
-    //   },
-    // ]
+    let dataBarrage = [
+      {
+        value: 'speed设为0为非滚动',
+        time: 1, // 单位秒
+        speed: 0,
+      },
+      {
+        value: 'time控制弹幕时间，单位秒',
+        color: 'blue',
+        time: 2,
+      },
+    ]
 
     var eleCanvas = document.getElementById('canvasBarrage')
     var eleVideo = document.getElementById('videoBarrage') as HTMLVideoElement
@@ -24,6 +24,7 @@ const App = () => {
     window.vp = vp
 
     document.body.appendChild(vp.canvas)
+    vp.startRenderAsCanvas()
 
     // var demoBarrage = new CanvasBarrage(eleCanvas, eleVideo, {
     //   data: dataBarrage,

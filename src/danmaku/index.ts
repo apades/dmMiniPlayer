@@ -19,7 +19,7 @@ export type DanmakuProps = {
   tran: (msg: string) => string
 
   /**预载弹幕 */
-  dans?: DanType[]
+  dans?: (Partial<BarrageProps> & { time: number })[]
 }
 
 export type BaseDanType = {
@@ -58,7 +58,8 @@ class DanmakuController {
   showing = true
   paused = true
 
-  dans: Barrage[] = []
+  dans: (Partial<BarrageProps> & { time: number })[] = []
+  protected barrages: Barrage[] = []
   renderDans: RenderDanType[] = []
 
   constructor(options: DanmakuProps) {
@@ -69,23 +70,24 @@ class DanmakuController {
     this.events = this.options.events
     this.unlimited = this.options.unlimited
 
-    // this.dans = this.options.dans
+    this.dans = this.options.dans
+    this.barrages = this.options.dans.map(
+      (d) => new Barrage({ ...d, player: this.player })
+    )
 
-    requestAnimationFrame(this.update.bind(this))
+    // requestAnimationFrame(this.update.bind(this))
   }
 
   // 绘制弹幕文本
   draw() {
     // 清除画布
-    this.player.ctx.clearRect(
-      0,
-      0,
-      this.player.canvas.width,
-      this.player.canvas.height
-    )
-    for (var index in this.dans) {
-      var barrage = this.dans[index]
-
+    // this.player.ctx.clearRect(
+    //   0,
+    //   0,
+    //   this.player.canvas.width,
+    //   this.player.canvas.height
+    // )
+    for (let barrage of this.barrages) {
       if (
         barrage &&
         !barrage.disabled &&
@@ -143,7 +145,7 @@ let defaults: BarrageProps = {
   value: '',
 }
 
-class Barrage {
+export class Barrage {
   player: MiniPlayer
   obj: BarrageProps
   fontSize: string
@@ -163,11 +165,14 @@ class Barrage {
   disabled = false
   initd = false
 
-  constructor(obj: any) {
+  constructor(
+    obj: Partial<BarrageProps> & { time: number; player: MiniPlayer }
+  ) {
     // 一些变量参数
     this.text = obj.value
     this.time = obj.time
     this.obj = Object.assign(obj, defaults)
+    this.player = obj.player
     // data中的可以覆盖全局的设置
   }
 

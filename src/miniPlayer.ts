@@ -1,4 +1,4 @@
-import DanmakuController from './danmaku'
+import DanmakuController, { Barrage } from './danmaku'
 import Events from './danmaku/events'
 
 export type Props = {
@@ -27,6 +27,8 @@ export default class MiniPlayer {
   animationFrameSignal: number
 
   recorderVideoEl = document.createElement('video')
+
+  isPause = true
 
   constructor(props: Props) {
     let {
@@ -85,7 +87,28 @@ export default class MiniPlayer {
       // },
       events: this.events,
       tran: (msg: string) => msg,
+      dans: [
+        {
+          value: 'speed设为0为非滚动',
+          time: 1, // 单位秒
+          speed: 0,
+        },
+        {
+          value: 'time控制弹幕时间，单位秒',
+          color: 'blue',
+          time: 2,
+        },
+      ],
     })
+
+    this.bindVideoElEvents()
+  }
+
+  bindVideoElEvents() {
+    let videoEl = this.videoEl
+
+    videoEl.addEventListener('pause', () => (this.isPause = true))
+    videoEl.addEventListener('play', () => (this.isPause = false))
   }
 
   getVideoStream() {
@@ -113,8 +136,11 @@ export default class MiniPlayer {
     const videoEl = this.props.videoEl,
       width = this.props.renderWidth,
       height = this.props.renderHeight
-    this.ctx.drawImage(videoEl, 0, 0, width, height)
-    this.renderDanmu(videoEl.currentTime)
+
+    if (!this.isPause) {
+      this.ctx.drawImage(videoEl, 0, 0, width, height)
+      this.renderDanmu(videoEl.currentTime)
+    }
 
     this.animationFrameSignal = requestAnimationFrame(
       this.canvasUpdate.bind(this)
@@ -122,5 +148,7 @@ export default class MiniPlayer {
   }
 
   // TODO 渲染弹幕
-  renderDanmu(time: number) {}
+  renderDanmu(time: number) {
+    this.danmaku.draw()
+  }
 }
