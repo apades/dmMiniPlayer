@@ -62,6 +62,12 @@ const App = () => {
     document.body.appendChild(vp.canvas)
     vp.startRenderAsCanvas()
 
+    // vp.startCanvasPIPPlay()
+
+    // vp.playerVideoEl.width = 400
+    // vp.playerVideoEl.height = 240
+    // document.body.appendChild(vp.playerVideoEl)
+
     // var demoBarrage = new CanvasBarrage(eleCanvas, eleVideo, {
     //   data: dataBarrage,
     // })

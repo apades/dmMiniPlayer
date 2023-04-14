@@ -17,7 +17,6 @@ export type Props = {
 export default class MiniPlayer {
   props: Required<Props>
   videoEl: HTMLVideoElement
-  videoStream: MediaStream
 
   // 弹幕器
   danmaku: DanmakuController
@@ -25,9 +24,13 @@ export default class MiniPlayer {
 
   canvas = document.createElement('canvas')
   ctx = this.canvas.getContext('2d')
+
   animationFrameSignal: number
 
-  recorderVideoEl = document.createElement('video')
+  /**canvas的captureStream */
+  canvasVideoStream: MediaStream
+  /**canvas的captureStream放在这里播放 */
+  playerVideoEl = document.createElement('video')
 
   isPause = true
 
@@ -70,10 +73,10 @@ export default class MiniPlayer {
     this.canvas.height = this.props.renderHeight
   }
 
-  getVideoStream() {
-    if (!this.videoStream)
-      this.videoStream = (this.props.videoEl as any).captureStream()
-    return this.videoStream
+  getCanvasVideoStream() {
+    if (!this.canvasVideoStream)
+      this.canvasVideoStream = this.canvas.captureStream()
+    return this.canvasVideoStream
   }
 
   startRenderAsCanvas() {
@@ -108,5 +111,16 @@ export default class MiniPlayer {
 
   renderDanmu() {
     this.danmaku.draw()
+  }
+
+  startCanvasPIPPlay() {
+    if (!this.playerVideoEl.srcObject) {
+      this.playerVideoEl.srcObject = this.getCanvasVideoStream()
+
+      this.playerVideoEl.addEventListener('loadedmetadata', () => {
+        this.playerVideoEl.play()
+        this.playerVideoEl.requestPictureInPicture()
+      })
+    }
   }
 }
