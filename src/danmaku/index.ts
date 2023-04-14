@@ -54,13 +54,13 @@ class DanmakuController {
       (d) => new Barrage({ config: d, player: this.player })
     )
 
-    // 重置initd
-    this.player.videoEl.addEventListener('seeked', () => {
-      this.barrages.forEach((b) => {
-        b.initd = false
-        b.disabled = false
-      })
-    })
+    // // 重置initd
+    // this.player.videoEl.addEventListener('seeked', () => {
+    //   this.barrages.forEach((b) => {
+    //     b.initd = false
+    //     b.disabled = false
+    //   })
+    // })
   }
 
   /**
