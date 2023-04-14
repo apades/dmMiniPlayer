@@ -1,34 +1,24 @@
 import MiniPlayer from '@root/miniPlayer'
+import configStore from '@root/store/config'
 import { getTextWidth } from '@root/utils'
 import { clamp, omit } from 'lodash'
-import Events from './events'
-import utils from './utils'
 
 export type DanmakuProps = {
   player: MiniPlayer
   /**预载弹幕 */
   dans?: DanType[]
+
+  ws?: (onNewDan: (dan: DanType) => void) => void
 }
 
 type DanMoveType = 'top' | 'right' | 'bottom'
 
-export type BaseDanType = {
+export type DanType = {
   text: string
+  time: number
   color: string
   type: DanMoveType
 }
-export type DanType = {
-  time: number
-} & BaseDanType
-
-export type RenderDanType = {
-  tunnel: number
-  x: number
-  y: number
-  timeLeft: number
-} & BaseDanType
-
-type OriginDanType = { text: string; color: string; type: string; time: number }
 
 class DanmakuController {
   options: DanmakuProps
@@ -39,28 +29,26 @@ class DanmakuController {
     top: {},
     bottom: {},
   }
-  dan: OriginDanType[] = []
 
   dans: DanType[] = []
   protected barrages: Barrage[] = []
-  renderDans: RenderDanType[] = []
 
   constructor(options: DanmakuProps) {
     this.options = options
     this.player = this.options.player
 
-    this.dans = this.options.dans
-    this.barrages = this.options.dans.map(
+    this.dans = this.options.dans || []
+    this.barrages = this.dans.map(
       (d) => new Barrage({ config: d, player: this.player })
     )
 
-    // // 重置initd
-    // this.player.videoEl.addEventListener('seeked', () => {
-    //   this.barrages.forEach((b) => {
-    //     b.initd = false
-    //     b.disabled = false
-    //   })
-    // })
+    if (options.ws) {
+      const onNewDan = (dan: DanType) => {
+        this.barrages.push(new Barrage({ config: dan, player: this.player }))
+      }
+
+      options.ws(onNewDan)
+    }
   }
 
   /**
@@ -157,7 +145,7 @@ export class Barrage {
     //   speed = speed + props.text.length / 100
     // }
     // 2. 字号大小
-    var fontSize = this.player.props.danmu.fontSize ?? 12
+    var fontSize = configStore.fontSize ?? 12
 
     // 3. 文字颜色
     var color = props.color || 'white'
@@ -165,7 +153,7 @@ export class Barrage {
     // 4. range范围
     // var range = props.range || [0, 1]
     // 5. 透明度
-    var opacity = this.player.props.danmu.opacity || 1
+    var opacity = configStore.opacity || 1
 
     // 求得文字内容宽度
     this.width = getTextWidth(props.text, {
@@ -212,8 +200,8 @@ export class Barrage {
     }
 
     let context = this.player.ctx,
-      opacity = this.player.props.danmu.opacity,
-      fontSize = this.player.props.danmu.fontSize
+      opacity = configStore.opacity,
+      fontSize = configStore.fontSize
 
     context.shadowColor = 'rgba(0,0,0,' + opacity + ')'
     context.shadowBlur = 2

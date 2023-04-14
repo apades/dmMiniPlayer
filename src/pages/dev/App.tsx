@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import CanvasBarrage from '@root/danmaku/canvas'
 import MiniPlayer from '@root/miniPlayer'
 
 const App = () => {

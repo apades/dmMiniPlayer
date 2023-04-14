@@ -1,27 +1,20 @@
-import DanmakuController, { DanType } from './danmaku'
-import Events from './danmaku/events'
+import DanmakuController, { DanmakuProps } from './danmaku'
+import configStore from './store/config'
 
 export type Props = {
   videoEl: HTMLVideoElement
-  /**默认使用400 */
-  renderWidth?: number
-  renderHeight?: number
-
-  danmu?: Partial<{
-    opacity: number
-    fontSize: number
-    dans: DanType[]
-  }>
+  danmu?: Omit<DanmakuProps, 'player'>
 }
 
 export default class MiniPlayer {
   props: Required<Props>
+  //
   videoEl: HTMLVideoElement
 
   // 弹幕器
   danmaku: DanmakuController
-  events = new Events()
 
+  // canvas相关
   canvas = document.createElement('canvas')
   ctx = this.canvas.getContext('2d')
 
@@ -38,20 +31,14 @@ export default class MiniPlayer {
   onLeavePictureInPicture: () => void = () => 1
 
   constructor(props: Props) {
-    let {
-      renderWidth = 400,
-      renderHeight = (renderWidth / 16) * 9,
-      danmu = {},
-      ...otherProps
-    } = props
+    let { danmu = {}, ...otherProps } = props
 
-    danmu = { opacity: 1, fontSize: 28, dans: [], ...danmu }
-    this.props = { ...otherProps, renderWidth, renderHeight, danmu }
+    this.props = { ...otherProps, danmu }
     this.videoEl = props.videoEl
 
     this.danmaku = new DanmakuController({
       player: this,
-      dans: danmu.dans,
+      ...danmu,
     })
 
     this.bindVideoElEvents()
@@ -64,16 +51,16 @@ export default class MiniPlayer {
     videoEl.addEventListener('pause', () => (this.isPause = true))
     videoEl.addEventListener('play', () => (this.isPause = false))
     videoEl.addEventListener('loadedmetadata', () => {
-      this.props.renderHeight =
-        (this.props.renderWidth / videoEl.videoWidth) * videoEl.videoHeight
+      configStore.renderHeight =
+        (configStore.renderWidth / videoEl.videoWidth) * videoEl.videoHeight
 
       this.updateCanvasSize()
     })
   }
 
   updateCanvasSize() {
-    this.canvas.width = this.props.renderWidth
-    this.canvas.height = this.props.renderHeight
+    this.canvas.width = configStore.renderWidth
+    this.canvas.height = configStore.renderHeight
   }
 
   getCanvasVideoStream() {
@@ -99,8 +86,8 @@ export default class MiniPlayer {
 
   canvasUpdate() {
     const videoEl = this.props.videoEl,
-      width = this.props.renderWidth,
-      height = this.props.renderHeight
+      width = configStore.renderWidth,
+      height = configStore.renderHeight
 
     if (!this.isPause) {
       this.ctx.drawImage(videoEl, 0, 0, width, height)
