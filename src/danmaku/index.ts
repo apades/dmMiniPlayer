@@ -75,6 +75,9 @@ class DanmakuController {
       let isInTimeRange =
         videoCTime >= barrage.startTime && videoCTime <= barrage.endTime + 1
 
+      // if (!barrage.initd) {
+      //   barrage.init()
+      // }
       if (!barrage.disabled && isInTimeRange) {
         // 根据新位置绘制圆圈圈
         barrage.draw(this.player.videoEl.currentTime)
@@ -91,7 +94,7 @@ class DanmakuController {
     let find = this.tunnelsMap[type].findIndex((v) => v)
     if (find != -1) return find
 
-    this.tunnelsMap[type].push(true)
+    this.tunnelsMap[type].push(false)
     return this.tunnelsMap[type].length - 1
   }
   pushTunnel(type: DanMoveType) {
@@ -120,7 +123,7 @@ export class Barrage {
 
   startTime = 0
   /**
-   * TODO 需要计算出endTime
+   * TODO 现在是简单的startTime + 5，可能需要支持计算长度的endTime
    */
   endTime = 0
 
@@ -128,8 +131,6 @@ export class Barrage {
   color = 'white'
   timeLeft = 5000
 
-  actualX = 0
-  speed = 0
   opacity = 1
   disabled = false
   initd = false
@@ -140,22 +141,23 @@ export class Barrage {
     let { config } = props
     // 一些变量参数
     this.text = config.text
+
     this.startTime = config.time
+    this.endTime = this.startTime + 5
+
     this.player = props.player
     this.props = config
   }
 
   init() {
     let { props } = this
-    // 1. 速度
-    var speed = props.type == 'right' ? 2 : 0
 
-    if (speed !== 0) {
-      // 随着字数不同，速度会有微调
-      speed = speed + props.text.length / 100
-    }
+    // if (speed !== 0) {
+    //   // 随着字数不同，速度会有微调
+    //   speed = speed + props.text.length / 100
+    // }
     // 2. 字号大小
-    var fontSize = this.player.props.danmu.fontSize || 12
+    var fontSize = this.player.props.danmu.fontSize ?? 12
 
     // 3. 文字颜色
     var color = props.color || 'white'
@@ -179,31 +181,35 @@ export class Barrage {
       this.x = (this.x - this.width) / 2
     }
 
-    this.speed = speed
     this.opacity = opacity
     this.color = color
     // this.range = range
     this.fontSize = fontSize
     this.initd = true
+
     this.tunnel = this.player.danmaku.getTunnel(this.props.type)
+    this.y = (this.tunnel + 1) * this.fontSize
   }
 
   // 根据此时x位置绘制文本
   draw(time: number) {
-    if (time < this.startTime || this.disabled) return
-    if (!this.initd) this.init()
+    if (time < this.startTime || this.disabled || time > this.endTime) return
+    if (!this.initd) {
+      console.log('init')
+      this.init()
+    }
     let percent = clamp(
       1 - (time - this.startTime) / (this.endTime - this.startTime),
       0,
       1
     )
-    if (percent == 0 && time < this.endTime) {
-      this.disabled = true
-      this.player.danmaku.popTunnel(this.props.type, this.tunnel)
-      return
-    }
 
-    this.x = this.player.canvas.width * percent + (1 - percent) * this.width
+    this.x = this.player.canvas.width * percent - (1 - percent) * this.width
+
+    // 如果弹幕全部进入canvas，释放占位tunnel
+    if (this.x <= this.player.canvas.width - this.width) {
+      this.player.danmaku.popTunnel(this.props.type, this.tunnel)
+    }
 
     let context = this.player.ctx,
       opacity = this.player.props.danmu.opacity,

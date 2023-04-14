@@ -20,7 +20,43 @@ const App = () => {
     var eleCanvas = document.getElementById('canvasBarrage')
     var eleVideo = document.getElementById('videoBarrage') as HTMLVideoElement
 
-    let vp = new MiniPlayer({ videoEl: eleVideo })
+    let vp = new MiniPlayer({
+      videoEl: eleVideo,
+      danmu: {
+        dans: [
+          {
+            text: '这是弹幕A----------------',
+            time: 1,
+            color: 'white',
+            type: 'right',
+          },
+          {
+            text: '这是弹幕B',
+            time: 1.2,
+            color: 'blue',
+            type: 'right',
+          },
+          {
+            text: '这是弹幕C',
+            time: 1.4,
+            color: '#6cf',
+            type: 'right',
+          },
+          {
+            text: '这是弹幕D',
+            time: 2.5,
+            color: '#777',
+            type: 'right',
+          },
+          // {
+          //   text: 'time控制弹幕时间，单位秒',
+          //   color: 'blue',
+          //   time: 2,
+          //   type: 'right',
+          // },
+        ],
+      },
+    })
     window.vp = vp
 
     document.body.appendChild(vp.canvas)

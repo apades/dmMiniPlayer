@@ -1,4 +1,4 @@
-import DanmakuController, { Barrage } from './danmaku'
+import DanmakuController, { DanType } from './danmaku'
 import Events from './danmaku/events'
 
 export type Props = {
@@ -10,6 +10,7 @@ export type Props = {
   danmu?: Partial<{
     opacity: number
     fontSize: number
+    dans: DanType[]
   }>
 }
 
@@ -38,26 +39,13 @@ export default class MiniPlayer {
       ...otherProps
     } = props
 
-    danmu = { opacity: 1, fontSize: 28, ...danmu }
+    danmu = { opacity: 1, fontSize: 28, dans: [], ...danmu }
     this.props = { ...otherProps, renderWidth, renderHeight, danmu }
     this.videoEl = props.videoEl
 
     this.danmaku = new DanmakuController({
       player: this,
-      dans: [
-        {
-          text: 'speed设为0为非滚动',
-          time: 1, // 单位秒
-          color: 'white',
-          type: 'right',
-        },
-        {
-          text: 'time控制弹幕时间，单位秒',
-          color: 'blue',
-          time: 2,
-          type: 'right',
-        },
-      ],
+      dans: danmu.dans,
     })
 
     this.bindVideoElEvents()
