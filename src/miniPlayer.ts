@@ -34,6 +34,9 @@ export default class MiniPlayer {
 
   isPause = true
 
+  /**在离开画中画时触发 */
+  onLeavePictureInPicture: () => void = () => 1
+
   constructor(props: Props) {
     let {
       renderWidth = 400,
@@ -120,6 +123,9 @@ export default class MiniPlayer {
       this.playerVideoEl.addEventListener('loadedmetadata', () => {
         this.playerVideoEl.play()
         this.playerVideoEl.requestPictureInPicture()
+        this.playerVideoEl.addEventListener('leavepictureinpicture', () => {
+          this.onLeavePictureInPicture()
+        })
       })
     }
   }
