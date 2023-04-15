@@ -99,7 +99,6 @@ class DanmakuController {
 export class Barrage {
   player: MiniPlayer
   props: DanType
-  fontSize: number
 
   /**渲染的x,y */
   x = 0
@@ -118,7 +117,6 @@ export class Barrage {
   color = 'white'
   timeLeft = 5000
 
-  opacity = 1
   disabled = false
   initd = false
 
@@ -141,8 +139,6 @@ export class Barrage {
     let { props } = this
 
     let fontSize = configStore.fontSize ?? 12
-    let color = props.color || 'white'
-    let opacity = configStore.opacity || 1
 
     // 求得文字内容宽度
     this.width = getTextWidth(props.text, {
@@ -159,14 +155,11 @@ export class Barrage {
       this.x = (this.x - this.width) / 2
     }
 
-    this.opacity = opacity
-    this.color = color
-    // this.range = range
-    this.fontSize = fontSize
     this.initd = true
 
     this.tunnel = this.player.danmaku.getTunnel(this.props.type)
-    this.y = (this.tunnel + 1) * this.fontSize
+    this.y = (this.tunnel + 1) * fontSize
+    this.color = props.color || 'white'
   }
 
   // 根据此时x位置绘制文本
@@ -216,7 +209,6 @@ export class Barrage {
     context.shadowBlur = 2
     context.font = fontSize + 'px "microsoft yahei", sans-serif'
     context.fillStyle = this.color
-    // 填色
     context.fillText(this.text, this.x, this.y)
 
     return true
