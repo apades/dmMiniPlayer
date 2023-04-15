@@ -30,4 +30,5 @@ class ConfigStore implements ConfigProps {
 }
 
 const configStore = new ConfigStore()
+window.configStore = configStore
 export default configStore

@@ -24,12 +24,6 @@ class DanmakuController {
   options: DanmakuProps
   player: DanmakuProps['player']
 
-  danTunnel = {
-    right: {},
-    top: {},
-    bottom: {},
-  }
-
   dans: DanType[] = []
   protected barrages: Barrage[] = []
 
@@ -78,10 +72,12 @@ class DanmakuController {
     right: [],
     top: [],
   }
-  // FIXME 现在出现了很多个弹幕后面的tunnel就都是0了，一开始少的时候还是正常的
   getTunnel(type: DanMoveType) {
     let find = this.tunnelsMap[type].findIndex((v) => v)
-    if (find != -1) return find
+    if (find != -1) {
+      this.tunnelsMap[type][find] = false
+      return find
+    }
 
     this.tunnelsMap[type].push(false)
     return this.tunnelsMap[type].length - 1
@@ -112,6 +108,7 @@ export class Barrage {
 
   startTime = 0
   /**
+   * FIXME 因为用的简单endTime会导致很多弹幕下会有多个弹幕重叠问题
    * TODO 现在是简单的startTime + 5，可能需要支持计算长度的endTime
    */
   endTime = 0
@@ -125,6 +122,7 @@ export class Barrage {
   initd = false
 
   tunnel = 0
+  tunnelOuted = false
 
   constructor(props: { player: MiniPlayer; config: DanType }) {
     let { config } = props
@@ -184,7 +182,7 @@ export class Barrage {
   draw(time: number) {
     if (time < this.startTime || this.disabled || time > this.endTime) return
     if (!this.initd) {
-      console.log('init')
+      // console.log('init')
       this.init()
     }
     let percent = clamp(
@@ -195,9 +193,10 @@ export class Barrage {
 
     this.x = this.player.canvas.width * percent - (1 - percent) * this.width
 
-    // FIXME 可能就是这里导致后续的弹幕tunnel一直是0
     // 如果弹幕全部进入canvas，释放占位tunnel
-    if (this.x <= this.player.canvas.width - this.width) {
+    if (this.x <= this.player.canvas.width - this.width && !this.tunnelOuted) {
+      this.tunnelOuted = true
+      // console.log('tunnelOuted')
       this.player.danmaku.popTunnel(this.props.type, this.tunnel)
     }
 
