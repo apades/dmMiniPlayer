@@ -12,3 +12,6 @@ lerna-debug.log*
 
 dist
 .vscode/*
+
+src/assets/temp.ass
+src/assets/temp.mp4

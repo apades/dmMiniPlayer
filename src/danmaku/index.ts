@@ -11,7 +11,7 @@ export type DanmakuProps = {
   ws?: (onNewDan: (dan: DanType) => void) => void
 }
 
-type DanMoveType = 'top' | 'right' | 'bottom'
+export type DanMoveType = 'top' | 'right' | 'bottom'
 
 export type DanType = {
   text: string
@@ -78,6 +78,7 @@ class DanmakuController {
     right: [],
     top: [],
   }
+  // FIXME 现在出现了很多个弹幕后面的tunnel就都是0了，一开始少的时候还是正常的
   getTunnel(type: DanMoveType) {
     let find = this.tunnelsMap[type].findIndex((v) => v)
     if (find != -1) return find
@@ -194,6 +195,7 @@ export class Barrage {
 
     this.x = this.player.canvas.width * percent - (1 - percent) * this.width
 
+    // FIXME 可能就是这里导致后续的弹幕tunnel一直是0
     // 如果弹幕全部进入canvas，释放占位tunnel
     if (this.x <= this.player.canvas.width - this.width) {
       this.player.danmaku.popTunnel(this.props.type, this.tunnel)

@@ -1,6 +1,10 @@
 import { useEffect } from 'react'
 import MiniPlayer from '@root/miniPlayer'
+import AssParser from '@root/utils/AssParser'
+import ass from './testass'
+window.AssParser = AssParser
 
+// 测试视频 https://www.bilibili.com/video/BV1yL411f7hA/?spm_id_from=333.851.b_7265636f6d6d656e64.5&vd_source=8e6ad3d5f5612b1d591931b1eff4dea7
 const App = () => {
   useEffect(() => {
     let dataBarrage = [
@@ -18,11 +22,13 @@ const App = () => {
 
     var eleCanvas = document.getElementById('canvasBarrage')
     var eleVideo = document.getElementById('videoBarrage') as HTMLVideoElement
+    let assParser = new AssParser(ass)
 
     let vp = new MiniPlayer({
       videoEl: eleVideo,
       danmu: {
-        dans: [
+        dans:
+          assParser.dans /* [
           {
             text: '这是弹幕A----------------',
             time: 1,
@@ -53,7 +59,7 @@ const App = () => {
           //   time: 2,
           //   type: 'right',
           // },
-        ],
+        ] */,
       },
     })
     window.vp = vp
@@ -78,7 +84,7 @@ const App = () => {
         id="videoBarrage"
         width="640"
         height="384"
-        src="/assets/video.mp4"
+        src="/assets/temp.mp4"
         controls
       ></video>
     </div>
