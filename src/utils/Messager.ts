@@ -75,7 +75,7 @@ export function createMessager<
   }
 }
 
-type ProtocolWithReturn<TData, TReturn> = {
+export type ProtocolWithReturn<TData, TReturn> = {
   BtVgCTPYZu: TData
   RrhVseLgZW: TReturn
 }
