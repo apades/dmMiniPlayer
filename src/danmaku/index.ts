@@ -8,6 +8,7 @@ export type DanmakuProps = {
   /**预载弹幕 */
   dans?: DanType[]
 
+  // TODO 实时弹幕类型
   ws?: (onNewDan: (dan: DanType) => void) => void
 }
 
@@ -45,10 +46,6 @@ class DanmakuController {
     }
   }
 
-  /**
-   * 控制Y值
-   * 这里绘制Barrage的y值需要在这里控制，tunnel采用boolean[]表示占位和y位，根据width + x计算是否还在tunnel占位，如果都在占位，就push一个新的tunnel值
-   */
   // 绘制弹幕文本
   draw() {
     let videoCTime = this.player.videoEl.currentTime
@@ -72,6 +69,10 @@ class DanmakuController {
     right: [],
     top: [],
   }
+  /**
+   * 控制Y值
+   * 这里绘制Barrage的y值需要在这里控制，tunnel采用boolean[]表示占位和y位，根据width + x计算是否还在tunnel占位，如果都在占位，就push一个新的tunnel值
+   */
   getTunnel(type: DanMoveType) {
     let find = this.tunnelsMap[type].findIndex((v) => v)
     if (find != -1) {
@@ -139,20 +140,9 @@ export class Barrage {
   init() {
     let { props } = this
 
-    // if (speed !== 0) {
-    //   // 随着字数不同，速度会有微调
-    //   speed = speed + props.text.length / 100
-    // }
-    // 2. 字号大小
-    var fontSize = configStore.fontSize ?? 12
-
-    // 3. 文字颜色
-    var color = props.color || 'white'
-
-    // 4. range范围
-    // var range = props.range || [0, 1]
-    // 5. 透明度
-    var opacity = configStore.opacity || 1
+    let fontSize = configStore.fontSize ?? 12
+    let color = props.color || 'white'
+    let opacity = configStore.opacity || 1
 
     // 求得文字内容宽度
     this.width = getTextWidth(props.text, {
@@ -162,6 +152,7 @@ export class Barrage {
 
     let canvas = this.player.canvas
 
+    // TODO 这里可以observe config的width，然后改top type弹幕的位置，不然resize pip窗口会出现top弹幕错位
     // 初始水平位置和垂直位置
     this.x = canvas.width
     if (props.type != 'right') {

@@ -1,5 +1,7 @@
+import { throttle } from 'lodash'
 import DanmakuController, { DanmakuProps } from './danmaku'
 import configStore from './store/config'
+import { observe } from 'mobx'
 
 export type Props = {
   videoEl: HTMLVideoElement
@@ -45,6 +47,7 @@ export default class MiniPlayer {
     this.updateCanvasSize()
   }
 
+  // TODO 全局按键用来暂停播放，隐藏pip窗口
   bindVideoElEvents() {
     let videoEl = this.videoEl
 
@@ -56,6 +59,17 @@ export default class MiniPlayer {
 
       this.updateCanvasSize()
     })
+
+    // observe(configStore, 'renderWidth', () => {
+    //   console.log('update width')
+    //   this.updateCanvasSize()
+    //   this.canvasUpdate(true)
+    // })
+    // observe(configStore, 'renderHeight', () => {
+    //   console.log('update height')
+    //   this.updateCanvasSize()
+    //   this.canvasUpdate(true)
+    // })
   }
 
   updateCanvasSize() {
@@ -69,6 +83,7 @@ export default class MiniPlayer {
     return this.canvasVideoStream
   }
 
+  // TODO 在video play时使用，减少性能消耗
   startRenderAsCanvas() {
     try {
       this.animationFrameSignal = requestAnimationFrame(
@@ -80,8 +95,10 @@ export default class MiniPlayer {
     }
   }
 
+  // TODO 在video loading,pause时使用，减少性能消耗
   stopRenderAsCanvas() {
     cancelAnimationFrame(this.animationFrameSignal)
+    this.animationFrameSignal = null
   }
 
   canvasUpdate() {
