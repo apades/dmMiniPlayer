@@ -114,6 +114,8 @@ export default class MiniPlayer {
           this.onLeavePictureInPicture()
         })
       })
+    } else {
+      this.playerVideoEl.requestPictureInPicture()
     }
   }
 }
