@@ -191,15 +191,32 @@ export class Barrage {
       1
     )
 
-    this.x = this.player.canvas.width * percent - (1 - percent) * this.width
+    switch (this.props.type) {
+      case 'right': {
+        this.x = configStore.renderWidth * percent - (1 - percent) * this.width
 
-    // 如果弹幕全部进入canvas，释放占位tunnel
-    if (this.x <= this.player.canvas.width - this.width && !this.tunnelOuted) {
-      this.tunnelOuted = true
-      // console.log('tunnelOuted')
-      this.player.danmaku.popTunnel(this.props.type, this.tunnel)
+        // 如果弹幕全部进入canvas，释放占位tunnel
+        if (
+          this.x <= configStore.renderWidth - this.width &&
+          !this.tunnelOuted
+        ) {
+          this.tunnelOuted = true
+          // console.log('tunnelOuted')
+          this.player.danmaku.popTunnel(this.props.type, this.tunnel)
+        }
+        break
+      }
+      case 'top': {
+        if (this.endTime - 1 < time && !this.tunnelOuted) {
+          this.tunnelOuted = true
+          // console.log('tunnelOuted')
+          this.player.danmaku.popTunnel(this.props.type, this.tunnel)
+        }
+        break
+      }
     }
 
+    // TODO 弹幕有点看不清
     let context = this.player.ctx,
       opacity = configStore.opacity,
       fontSize = configStore.fontSize
