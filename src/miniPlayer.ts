@@ -109,7 +109,18 @@ export default class MiniPlayer {
 
       this.playerVideoEl.addEventListener('loadedmetadata', () => {
         this.playerVideoEl.play()
-        this.playerVideoEl.requestPictureInPicture()
+        this.playerVideoEl.requestPictureInPicture().then((pipWindow) => {
+          let onResize = () => {
+            if (configStore.autoResizeInPIP) {
+              configStore.setRatioWidth(this.videoEl, {
+                renderWidth: pipWindow.width,
+              })
+              this.updateCanvasSize()
+            }
+          }
+          onResize()
+          pipWindow.onresize = throttle(onResize, 500)
+        })
         this.playerVideoEl.addEventListener('leavepictureinpicture', () => {
           this.onLeavePictureInPicture()
         })

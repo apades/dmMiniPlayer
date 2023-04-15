@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 
 type ConfigProps = {
   /**默认400 */
@@ -15,17 +15,60 @@ type ConfigProps = {
    * TODO
    */
   frames: string | number
+
+  /**自动比例，默认开启 */
+  autoRatio: boolean
+  /**画中画大小调整也让渲染的画布自动调整大小，默认开启，可能有些电脑会有性能问题可以关闭 */
+  autoResizeInPIP: boolean
 }
 
 class ConfigStore implements ConfigProps {
-  renderWidth = 400
+  renderWidth = 500
   renderHeight: number = (400 / 16) * 9
   opacity = 1
   fontSize = 16
   frames = 'auto'
+  autoRatio = true
+  autoResizeInPIP = true
 
   constructor() {
     makeAutoObservable(this)
+  }
+
+  setRatioWidth(
+    videoEl: HTMLVideoElement,
+    option: { renderHeight: number }
+  ): void
+  setRatioWidth(
+    videoEl: HTMLVideoElement,
+    option: { renderWidth: number }
+  ): void
+  setRatioWidth(
+    videoEl: HTMLVideoElement,
+    option: { renderHeight: number; renderWidth: number }
+  ) {
+    runInAction(() => {
+      if (option.renderHeight && option.renderWidth) {
+        this.renderHeight = option.renderHeight
+        this.renderWidth = option.renderWidth
+        return
+      }
+
+      if (option.renderWidth) {
+        if (this.autoRatio)
+          this.renderHeight =
+            (option.renderWidth / videoEl.videoWidth) * videoEl.videoHeight
+
+        this.renderWidth = option.renderWidth
+      }
+      if (option.renderHeight) {
+        if (this.autoRatio)
+          this.renderWidth =
+            (option.renderHeight / videoEl.videoHeight) * videoEl.videoWidth
+
+        this.renderHeight = option.renderHeight
+      }
+    })
   }
 }
 
