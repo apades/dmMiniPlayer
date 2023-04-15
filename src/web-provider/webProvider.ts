@@ -18,13 +18,3 @@ export default abstract class WebProvider {
     await this._startPIPPlay()
   }
 }
-
-const providerList = [BilibiliVideoProvider]
-export function getWebProvider(): WebProvider {
-  let provider = providerList.find((provider) => {
-    if (provider.regExp.test(location.href)) return provider
-  })
-
-  if (provider) return new provider()
-  return null
-}

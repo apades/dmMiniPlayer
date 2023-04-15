@@ -54,3 +54,26 @@ export let waitLoopCallback: WaitLoop = (cb, option = 5000) => {
     }
   })
 }
+
+const selfSorter = (it: any) => it
+/** 升序排序 */
+export const ascendingSort = <T>(itemProp: (obj: T) => number = selfSorter) => (
+  a: T,
+  b: T
+) => itemProp(a) - itemProp(b)
+
+export let dq: typeof document.querySelectorAll = (selector: string) => {
+  return document.querySelectorAll(selector)
+}
+export let dq1: {
+  <K extends keyof HTMLElementTagNameMap>(selectors: K):
+    | HTMLElementTagNameMap[K]
+    | null
+  <K extends keyof SVGElementTagNameMap>(selectors: K):
+    | SVGElementTagNameMap[K]
+    | null
+  <E extends Element = HTMLDivElement>(selectors: string): E | null
+} = (selector: string) => {
+  let dom = document.querySelector(selector)
+  return dom
+}

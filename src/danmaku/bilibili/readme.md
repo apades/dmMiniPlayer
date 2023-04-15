@@ -1,0 +1,1 @@
+改代码采用[bilibili-evaolved的弹幕下载组件](https://github.com/the1812/Bilibili-Evolved/tree/900b6c1f6137d0a52c34afc5b63ea1a99efe5c29/registry/lib/components/video/danmaku)

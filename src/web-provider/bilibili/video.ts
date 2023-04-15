@@ -3,11 +3,15 @@ import WebProvider from '../webProvider'
 import { sendMessage } from '@root/inject/contentSender'
 import MiniPlayer from '@root/miniPlayer'
 import { DanType } from '@root/danmaku'
+import { getBlobByType } from '@root/danmaku/bilibili/download/utils'
 
 export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
   static regExp = /https:\/\/www.bilibili.com\/video\/.*/
 
+  constructor() {
+    super()
+  }
   async bindToPIPEvent() {
     let pipBtn: HTMLElement
     const isPlayInitd = await waitLoopCallback(() => {
@@ -31,14 +35,18 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
   async _startPIPPlay() {
     if (!this.miniPlayer) {
+      let videoEl = document.querySelector('video')
       this.miniPlayer = new MiniPlayer({
-        videoEl: document.querySelector('video'),
+        videoEl,
         danmu: {
           dans: await this.getDans(),
         },
       })
       this.miniPlayer.startRenderAsCanvas()
-      this.miniPlayer.onLeavePictureInPicture = this.miniPlayer.stopRenderAsCanvas
+      this.miniPlayer.onLeavePictureInPicture = () => {
+        this.miniPlayer.stopRenderAsCanvas()
+        videoEl.pause()
+      }
     } else {
       this.miniPlayer.startRenderAsCanvas()
     }
@@ -46,7 +54,15 @@ export default class BilibiliVideoProvider extends WebProvider {
     this.miniPlayer.startCanvasPIPPlay()
   }
   // TODO
-  async downloadDanmuFile(): Promise<string> {
+  async downloadDanmuFile(bid: string): Promise<string> {
+    let { aid, cid } = (
+      await fetch(
+        `https://api.bilibili.com/x/web-interface/view?bvid=${bid}`
+      ).then((res) => res.json())
+    ).data
+
+    let blob = await getBlobByType('ass', { aid, cid })
+    console.log('blob', blob)
     return ''
   }
 
@@ -57,7 +73,7 @@ export default class BilibiliVideoProvider extends WebProvider {
 
   // TODO
   async getDans(): Promise<DanType[]> {
-    let danmuContent = await this.downloadDanmuFile()
+    let danmuContent = await this.downloadDanmuFile('')
     let dans = this.transDanmuContentToDans(danmuContent)
 
     return dans

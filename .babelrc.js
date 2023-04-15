@@ -12,6 +12,7 @@ module.exports = {
     "lodash",
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-syntax-import-assertions",
     '@babel/transform-runtime',
     [
       "import",

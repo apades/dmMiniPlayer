@@ -20,7 +20,7 @@ module.exports = merge(webpackCommon, {
     new CopyPlugin({
       patterns: [
         // { from: '../src/assets/**/*', to: '' },
-        // { from: '../src/lib/**/*', to: '' },
+        { from: '../src/lib/**/*', to: '' },
         {
           from: `../src/manifest.json`,
           to: `manifest.json`,
