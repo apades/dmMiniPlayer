@@ -2,6 +2,7 @@ import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
 import { getTextWidth } from '@root/utils'
 import { clamp, omit } from 'lodash-es'
+import { observe } from 'mobx'
 
 export type DanmakuProps = {
   player: MiniPlayer
@@ -26,7 +27,7 @@ class DanmakuController {
   player: DanmakuProps['player']
 
   dans: DanType[] = []
-  protected barrages: Barrage[] = []
+  barrages: Barrage[] = []
 
   constructor(options: DanmakuProps) {
     this.options = options
@@ -150,15 +151,25 @@ export class Barrage {
 
     // TODO 这里可以observe config的width，然后改top type弹幕的位置，不然resize pip窗口会出现top弹幕错位
     // 初始水平位置和垂直位置
-    this.x = canvas.width
+
     if (props.type != 'right') {
-      this.x = (this.x - this.width) / 2
+      this.x = (canvas.width - this.width) / 2
+      observe(configStore, 'renderWidth', () => {
+        this.x = (canvas.width - this.width) / 2
+      })
+    } else {
+      this.x = canvas.width
     }
 
     this.initd = true
 
     this.tunnel = this.player.danmaku.getTunnel(this.props.type)
-    this.y = (this.tunnel + 1) * fontSize
+
+    this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
+    observe(configStore, 'gap', () => {
+      this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
+    })
+
     this.color = props.color || 'white'
   }
 
@@ -200,14 +211,13 @@ export class Barrage {
       }
     }
 
-    // TODO 弹幕有点看不清
     let context = this.player.ctx,
       opacity = configStore.opacity,
       fontSize = configStore.fontSize
 
     context.shadowColor = 'rgba(0,0,0,' + opacity + ')'
     context.shadowBlur = 2
-    context.font = fontSize + 'px "microsoft yahei", sans-serif'
+    context.font = `${configStore.fontWeight} ${fontSize}px ${configStore.fontFamily}`
     context.fillStyle = this.color
     context.fillText(this.text, this.x, this.y)
 

@@ -53,6 +53,7 @@
     "webpackbar": "^5.0.2"
   },
   "dependencies": {
+    "@apad/env-tools": "^1.0.5",
     "ass-parser": "^0.2.0",
     "color": "^4.2.3",
     "lodash-es": "^4.17.21",

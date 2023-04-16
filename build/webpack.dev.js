@@ -7,6 +7,7 @@ const { DefinePlugin } = webpack
 const files = require('./files')
 const { merge } = require('webpack-merge')
 const webpackCommon = require('./webpack.common')
+const { getDefinesObject } = require('@apad/env-tools/lib/bundler')
 
 module.exports = merge(webpackCommon, {
   mode: 'development',
@@ -34,6 +35,7 @@ module.exports = merge(webpackCommon, {
     }),
     new DefinePlugin({
       'process.env.uiDev': `false`,
+      ...getDefinesObject('dev'),
     }),
   ],
   output: {

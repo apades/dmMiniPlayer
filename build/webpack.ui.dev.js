@@ -7,6 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
 const { DefinePlugin } = webpack
 const allConfig = require('./webpack.ui.dev.config')
+const { getDefinesObject } = require('@apad/env-tools/lib/bundler')
 
 let pr = (..._path) => path.resolve(__dirname, ..._path)
 
@@ -134,8 +135,8 @@ module.exports = {
       ],
     }),
     new DefinePlugin({
-      'process.env.buildVer': `"v3"`,
       'process.env.uiDev': `true`,
+      ...getDefinesObject('dev'),
     }),
   ],
   output: {
