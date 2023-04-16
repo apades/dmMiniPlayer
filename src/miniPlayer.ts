@@ -51,6 +51,7 @@ export default class MiniPlayer {
   bindVideoElEvents() {
     let videoEl = this.videoEl
 
+    this.isPause = videoEl.paused
     videoEl.addEventListener('pause', () => (this.isPause = true))
     videoEl.addEventListener('play', () => (this.isPause = false))
     videoEl.addEventListener('loadedmetadata', () => {

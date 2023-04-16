@@ -19,7 +19,7 @@ export default class BilibiliVideoProvider extends WebProvider {
     const isPlayInitd = await waitLoopCallback(() => {
       pipBtn = dq1('.bpx-player-ctrl-pip') as HTMLElement
       return !!pipBtn
-    }, 2000)
+    }, 10000)
 
     console.log('pipBtn', pipBtn)
     if (!pipBtn) throw new Error('没有找到bilibili的画中画按钮')
@@ -36,7 +36,7 @@ export default class BilibiliVideoProvider extends WebProvider {
       this.startPIPPlay()
     })
   }
-  // FIXME 第一次按下PIP按钮没反应，需要暂停再播放视频才出现PIP窗口，后续就按一下就出现PIP窗口
+  // TODO 现在是打开需要一段时间loading弹幕，需要替换icon loading或者什么表示下
   async _startPIPPlay() {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
