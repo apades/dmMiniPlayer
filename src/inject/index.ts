@@ -1,4 +1,5 @@
 import { onMessage_inject } from './injectListener'
+import './eventHacker'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)
