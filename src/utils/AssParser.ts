@@ -1,5 +1,7 @@
 import { DanMoveType, DanType } from '@root/danmaku'
 import assParser from 'ass-parser'
+import Color from 'color'
+import { splitArray } from '.'
 
 type Dialogue = {
   start: number
@@ -90,8 +92,12 @@ export default class AssParser {
       if (config.includes('pos')) {
         danMoveType = 'top'
       } else if (config.includes('c&H')) {
-        color = config.replace('c&H', '#')
-        color = color.replace('&', '')
+        let _color = config.replace('c&H', '')
+        _color = _color.replace('&', '')
+        _color = _color.padEnd(6, '0')
+        let [b, g, r] = splitArray([..._color], 2)
+
+        color = Color(`#${r.join('')}${g.join('')}${b.join('')}`).hex()
       } else if (config.includes('move')) {
         danMoveType = 'right'
       }
@@ -102,34 +108,5 @@ export default class AssParser {
       color,
       text: inputText.replace(`{${configBlock}}`, ''),
     }
-    // let i = 0,
-    //   str = '',
-    //   isEnterBlock = false,
-    //   isColorMode = false
-    // while (i < inputText.length) {
-    //   let t = inputText[i]
-    //   if (t == '{') {
-    //     isEnterBlock = true
-    //   }
-    //   if (t == '}') {
-    //     isEnterBlock = false
-    //     if()
-    //   }
-    //   if (str == '\\move') {
-    //     danMoveType = 'right'
-    //     continue
-    //   }
-    //   if (str == '\\pos') {
-    //     danMoveType = 'top'
-    //     continue
-    //   }
-    //   if (str == '\\c') {
-    //     str = ''
-    //     isColorMode = true
-    //     continue
-    //   }
-    //   str += t
-    //   i++
-    // }
   }
 }
