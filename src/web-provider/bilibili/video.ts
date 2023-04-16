@@ -2,9 +2,10 @@ import { dq1, onWindowLoad, waitLoopCallback } from '@root/utils'
 import WebProvider from '../webProvider'
 import { sendMessage } from '@root/inject/contentSender'
 import MiniPlayer from '@root/miniPlayer'
-import { DanType } from '@root/danmaku'
+import { Barrage, DanType } from '@root/danmaku'
 import { getTextByType } from '@root/danmaku/bilibili/download/utils'
 import AssParser from '@root/utils/AssParser'
+import configStore from '@root/store/config'
 
 export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
@@ -12,6 +13,10 @@ export default class BilibiliVideoProvider extends WebProvider {
 
   constructor() {
     super()
+
+    // b站的字体
+    configStore.fontFamily =
+      'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
   }
   async bindToPIPEvent() {
     // await onWindowLoad()
@@ -42,9 +47,16 @@ export default class BilibiliVideoProvider extends WebProvider {
       let videoEl = document.querySelector('video')
       this.miniPlayer = new MiniPlayer({
         videoEl,
-        danmu: {
-          dans: await this.getDans(),
-        },
+        // danmu: {
+        //   dans: await this.getDans(),
+        // },
+      })
+
+      this.getDans().then((dans) => {
+        this.miniPlayer.danmaku.dans = dans
+        this.miniPlayer.danmaku.barrages = dans.map(
+          (dan) => new Barrage({ config: dan, player: this.miniPlayer })
+        )
       })
       this.miniPlayer.startRenderAsCanvas()
       this.miniPlayer.onLeavePictureInPicture = () => {
