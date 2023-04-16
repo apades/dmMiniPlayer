@@ -1,4 +1,4 @@
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import DanmakuController, { DanmakuProps } from './danmaku'
 import configStore from './store/config'
 import { observe } from 'mobx'

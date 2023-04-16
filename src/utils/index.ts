@@ -1,5 +1,6 @@
-import { isNumber, isNull } from 'lodash'
+import { isNumber, isNull } from 'lodash-es'
 import { CSSProperties } from 'react'
+import AsyncLock from './AsyncLock'
 
 let el: HTMLSpanElement = null
 export function getTextWidth(text: string, style: CSSProperties): number {
@@ -77,3 +78,7 @@ export let dq1: {
   let dom = document.querySelector(selector)
   return dom
 }
+
+const windowLoadAsync = new AsyncLock()
+export const onWindowLoad = windowLoadAsync.waiting
+window.addEventListener('load', () => windowLoadAsync.ok)

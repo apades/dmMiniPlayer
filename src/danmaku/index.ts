@@ -1,7 +1,7 @@
 import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
 import { getTextWidth } from '@root/utils'
-import { clamp, omit } from 'lodash'
+import { clamp, omit } from 'lodash-es'
 
 export type DanmakuProps = {
   player: MiniPlayer

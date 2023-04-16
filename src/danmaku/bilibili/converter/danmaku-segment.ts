@@ -1,6 +1,6 @@
 import { sendMessage } from '@root/inject/contentSender'
 import { loadLib } from '@root/utils/loadLib'
-import lodash from 'lodash'
+import lodash from 'lodash-es'
 // import { protobufLibrary } from '../runtime-library'
 
 export const proto = {

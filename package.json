@@ -19,6 +19,7 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@types/chrome": "^0.0.231",
     "@types/lodash": "^4.14.172",
+    "@types/lodash-es": "^4.17.7",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "autoprefixer": "^10.4.13",
@@ -52,7 +53,7 @@
   },
   "dependencies": {
     "ass-parser": "^0.2.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "mobx": "^6.9.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

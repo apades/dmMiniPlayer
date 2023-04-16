@@ -6,7 +6,7 @@ import {
 } from '../converter/danmaku-converter'
 import { DanmakuType } from '../converter/danmaku-type'
 import { XmlDanmaku } from '../converter/xml-danmaku'
-import lodash from 'lodash'
+import lodash from 'lodash-es'
 import { ascendingSort, dq1 } from '@root/utils'
 import {
   decodeDanmakuSegment,
