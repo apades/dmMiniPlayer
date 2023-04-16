@@ -1,7 +1,14 @@
 import { onMessage_inject } from './injectListener'
 
 onMessage_inject('run-code', async (data) => {
-  let fn = new Function(data.code)
+  // console.log('runFn', data)
+  let fn = new Function(`return (${data.function})(...arguments)`)
 
-  return await fn()
+  let rs = await fn(...(data.args ?? []))
+  return rs
+})
+
+onMessage_inject('msg-test', (data) => {
+  console.log('top window msg-test log', data)
+  return data
 })

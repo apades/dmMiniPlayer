@@ -4,5 +4,6 @@ import { ProtocolWithReturn } from '@root/utils/Messager'
 export type TProtocolMap = {
   /**去除某一个dom的所有事件 */
   'event-hacker:disable': { qs: string; event: string }
-  'run-code': ProtocolWithReturn<{ code: string }, any>
+  'run-code': ProtocolWithReturn<{ function: string; args?: any[] }, any>
+  'msg-test': ProtocolWithReturn<any, any>
 }

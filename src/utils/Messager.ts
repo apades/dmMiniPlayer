@@ -17,11 +17,13 @@ export function createMessager<
     type: TType,
     cb: (
       data: GetDataType<TProtocolMap[TType]>
-    ) => GetReturnType<TProtocolMap[TType]>
+    ) => GetReturnType<TProtocolMap[TType]>,
+    noCallback = false
   ) {
     const reCb = async (e: any) => {
       let res = await cb(e.detail)
 
+      if (noCallback) return
       const event = new CustomEvent(props.sendType, {
         detail: { type, data: res },
       })
@@ -44,14 +46,15 @@ export function createMessager<
   }
 
   function onMessageOnce<TType extends keyof TProtocolMap>(
-    type: TType
+    type: TType,
+    noCallback = false
   ): Promise<GetReturnType<TProtocolMap[TType]>> {
     return new Promise((res, rej) => {
       const cb = (data: any) => {
         res(data)
         offMessage(type, cb as any)
       }
-      onMessage(type, cb as any)
+      onMessage(type, cb as any, noCallback)
 
       // TODO ? 要不要搞限时message然后reject
     })
@@ -64,7 +67,7 @@ export function createMessager<
     const event = new CustomEvent(props.sendType, { detail: { type, data } })
     window.dispatchEvent(event)
 
-    return onMessageOnce(type)
+    return onMessageOnce(type, true)
   }
 
   return {

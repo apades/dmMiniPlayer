@@ -13,6 +13,17 @@
         "https://www.bilibili.com/*"
       ],
       "run_at": "document_end"
+    },
+    {
+      "world": "MAIN",
+      "all_frames": true,
+      "js": [
+        "inject.js"
+      ],
+      "matches": [
+        "https://www.bilibili.com/*"
+      ],
+      "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [{

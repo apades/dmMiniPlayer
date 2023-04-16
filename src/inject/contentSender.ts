@@ -11,3 +11,6 @@ export const {
   listenType: 'inject-response',
   sendType: 'inject-request',
 })
+
+window.sendMessage = sendMessage
+window.onMessage = onMessage

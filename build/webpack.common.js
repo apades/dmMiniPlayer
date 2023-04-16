@@ -10,6 +10,7 @@ let config = {
   entry: {
     ...files.entry,
     content: pr('../src/content.ts'),
+    inject: pr('../src/inject/index.ts'),
     // background: pr('../src/background.ts'),
   },
   module: {
