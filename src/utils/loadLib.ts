@@ -1,14 +1,22 @@
-let libLoadedMap: Record<any, boolean> = {}
+import AsyncLock from './AsyncLock'
+
+let libLoadedMap: Record<any, AsyncLock> = {}
 
 export async function loadLib(lib: string): Promise<void> {
-  if (libLoadedMap[lib]) return
+  if (libLoadedMap[lib]) {
+    await libLoadedMap[lib].waiting()
+    return
+  }
 
   return new Promise((res) => {
+    let lock = new AsyncLock()
+    libLoadedMap[lib] = lock
     let scriptEl = document.createElement('script')
     scriptEl.src = chrome.runtime.getURL(`lib/${lib}`)
-    scriptEl.addEventListener('load', () => res())
+    scriptEl.addEventListener('load', () => {
+      lock.ok()
+      res()
+    })
     document.body.appendChild(scriptEl)
-
-    libLoadedMap[lib] = true
   })
 }
