@@ -1,9 +1,10 @@
-import { waitLoopCallback } from '@root/utils'
+import { dq1, onWindowLoad, waitLoopCallback } from '@root/utils'
 import WebProvider from '../webProvider'
 import { sendMessage } from '@root/inject/contentSender'
 import MiniPlayer from '@root/miniPlayer'
 import { DanType } from '@root/danmaku'
-import { getBlobByType } from '@root/danmaku/bilibili/download/utils'
+import { getTextByType } from '@root/danmaku/bilibili/download/utils'
+import AssParser from '@root/utils/AssParser'
 
 export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
@@ -13,14 +14,15 @@ export default class BilibiliVideoProvider extends WebProvider {
     super()
   }
   async bindToPIPEvent() {
+    // await onWindowLoad()
     let pipBtn: HTMLElement
     const isPlayInitd = await waitLoopCallback(() => {
-      pipBtn = document.getElementsByName(
-        'bpx-player-ctrl-pip'
-      )[0] as HTMLElement
+      pipBtn = dq1('.bpx-player-ctrl-pip') as HTMLElement
       return !!pipBtn
     }, 2000)
 
+    console.log('pipBtn', pipBtn)
+    if (!pipBtn) throw new Error('没有找到bilibili的画中画按钮')
     // 禁用掉原本的功能
     sendMessage('event-hacker:disable', {
       qs: '.bpx-player-ctrl-pip',
@@ -29,10 +31,12 @@ export default class BilibiliVideoProvider extends WebProvider {
     pipBtn.addEventListener('click', (e) => {
       e.stopPropagation()
       e.preventDefault()
+      console.log('click pipBtn')
 
-      this._startPIPPlay()
+      this.startPIPPlay()
     })
   }
+  // FIXME 第一次按下PIP按钮没反应，需要暂停再播放视频才出现PIP窗口，后续就按一下就出现PIP窗口
   async _startPIPPlay() {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
@@ -53,28 +57,26 @@ export default class BilibiliVideoProvider extends WebProvider {
 
     this.miniPlayer.startCanvasPIPPlay()
   }
-  // TODO
-  async downloadDanmuFile(bid: string): Promise<string> {
+  async getDamuAssContent(bid: string): Promise<string> {
     let { aid, cid } = (
       await fetch(
         `https://api.bilibili.com/x/web-interface/view?bvid=${bid}`
       ).then((res) => res.json())
     ).data
 
-    let blob = await getBlobByType('ass', { aid, cid })
-    console.log('blob', blob)
-    return ''
+    return await getTextByType('ass', { aid, cid })
   }
 
-  // TODO
-  transDanmuContentToDans(danmuContent: string): DanType[] {
-    return []
+  transAssContentToDans(assContent: string): DanType[] {
+    let parser = new AssParser(assContent)
+    return parser.dans
   }
 
-  // TODO
   async getDans(): Promise<DanType[]> {
-    let danmuContent = await this.downloadDanmuFile('')
-    let dans = this.transDanmuContentToDans(danmuContent)
+    let bv = location.pathname.match(/bv(.*?)(\/|\?)/i)?.[1]
+    console.log('视频bv', bv)
+    let danmuContent = await this.getDamuAssContent(bv)
+    let dans = this.transAssContentToDans(danmuContent)
 
     return dans
   }

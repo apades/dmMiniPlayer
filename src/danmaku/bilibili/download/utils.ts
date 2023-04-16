@@ -277,7 +277,7 @@ ${danmaku.xmlDanmakus.map((x) => `  ${new XmlDanmaku(x).text()}`).join('\n')}
   return xmlText
 }
 
-export const getBlobByType = async (
+export const getTextByType = async (
   type: DanmakuDownloadType,
   input: {
     aid: string
@@ -288,20 +288,14 @@ export const getBlobByType = async (
   const danmaku = await new JsonDanmaku(aid, cid).fetchInfo()
   switch (type) {
     case 'xml': {
-      return new Blob([convertToXmlFromJson(danmaku)], {
-        type: 'text/xml',
-      })
+      return convertToXmlFromJson(danmaku)
     }
     default:
     case 'json': {
-      return new Blob([JSON.stringify(danmaku.jsonDanmakus, undefined, 2)], {
-        type: 'text/json',
-      })
+      return JSON.stringify(danmaku.jsonDanmakus, undefined, 2)
     }
     case 'ass': {
-      return new Blob([await convertToAssFromJson(danmaku)], {
-        type: 'text/ass',
-      })
+      return await convertToAssFromJson(danmaku)
     }
   }
 }

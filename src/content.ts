@@ -1,9 +1,8 @@
 import { getWebProvider } from './web-provider'
 
-console.log('asd')
+console.log('run content')
 
-let scriptEl = document.createElement('script')
-scriptEl.src = chrome.runtime.getURL('lib/protobuf.js')
-document.body.appendChild(scriptEl)
+let provider = getWebProvider()
 
 window.getWebProvider = getWebProvider
+window.provider = provider

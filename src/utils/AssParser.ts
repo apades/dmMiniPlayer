@@ -91,6 +91,7 @@ export default class AssParser {
         danMoveType = 'top'
       } else if (config.includes('c&H')) {
         color = config.replace('c&H', '#')
+        color = color.replace('&', '')
       } else if (config.includes('move')) {
         danMoveType = 'right'
       }
