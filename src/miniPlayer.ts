@@ -104,6 +104,8 @@ export default class MiniPlayer {
     this.animationFrameSignal = null
   }
 
+  private withoutLimitLastUpdateTime = Date.now()
+  withoutLimitAnimaFPS = 0
   canvasUpdate() {
     if (this.checkFPSLimit()) {
       const videoEl = this.props.videoEl,
@@ -120,6 +122,13 @@ export default class MiniPlayer {
     if (configStore.performanceInfo) {
       this.renderPerformanceInfo()
     }
+
+    let now = Date.now()
+    let offset = now - this.withoutLimitLastUpdateTime
+    this.performanceInfoLimit(() => {
+      this.withoutLimitAnimaFPS = ~~(1000 / offset)
+    })
+    this.withoutLimitLastUpdateTime = now
 
     this.inUpdateFrame = false
     this.animationFrameSignal = requestAnimationFrame(
@@ -225,6 +234,11 @@ export default class MiniPlayer {
     let ctx = this.ctx
     ctx.fillStyle = '#fff'
     ctx.font = `600 ${fontSize}px ${configStore.fontFamily}`
+    ctx.fillText(
+      `withoutLimitAnimaFPS:${this.withoutLimitAnimaFPS}`,
+      padding,
+      getY()
+    )
     ctx.fillText(`animaVideoFPS:${this.animaVideoFPS}`, padding, getY())
     ctx.fillText(`animaFPS:${this.animaFPS}`, padding, getY())
   }
