@@ -107,7 +107,7 @@ export default class MiniPlayer {
   private withoutLimitLastUpdateTime = Date.now()
   withoutLimitAnimaFPS = 0
   canvasUpdate() {
-    if (this.checkFPSLimit()) {
+    if (configStore.videoRenderFPS != 0 ? this.checkFPSLimit() : true) {
       const videoEl = this.props.videoEl,
         width = configStore.renderWidth,
         height = configStore.renderHeight
