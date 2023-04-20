@@ -3,7 +3,7 @@ import WebProvider from '../webProvider'
 import { onMessage, sendMessage } from '@root/inject/contentSender'
 import MiniPlayer from '@root/miniPlayer'
 import { Barrage, DanType } from '@root/danmaku'
-import { getTextByType } from '@root/danmaku/bilibili/download/utils'
+import { getTextByType } from '@root/danmaku/bilibili/barrageDownload/download/utils'
 import AssParser from '@root/utils/AssParser'
 import configStore from '@root/store/config'
 
