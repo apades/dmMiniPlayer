@@ -190,6 +190,7 @@ export class Barrage {
         }
         break
       }
+      case 'bottom':
       case 'top': {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
           this.tunnelOuted = true

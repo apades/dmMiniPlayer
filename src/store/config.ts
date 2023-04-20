@@ -1,6 +1,10 @@
+import AsyncLock from '@root/utils/AsyncLock'
+import { isNumber } from 'lodash-es'
 import { makeAutoObservable, runInAction } from 'mobx'
+import Browser from 'webextension-polyfill'
 // import { getEnv } from '@apad/env-tools/lib/web'
 
+const LOCAL_CONFIG = 'LOCAL_CONFIG'
 type ConfigProps = {
   /**默认400 */
   renderWidth: number
@@ -40,6 +44,11 @@ type ConfigProps = {
   performanceInfo: boolean
   /**性能面板每触发request多少次更新一次，默认100 */
   performanceUpdateFrame: number
+
+  /**最大渲染行数，默认无限 */
+  maxTunnel: number | '1/2' | '1/4' | 'none'
+
+  fontFileList: { src: string }[]
 }
 
 class ConfigStore implements ConfigProps {
@@ -61,8 +70,18 @@ class ConfigStore implements ConfigProps {
 
   performanceInfo = process.env.PLASMO_PUBLIC_IS_DEV == 'true'
   performanceUpdateFrame = 30
+  maxTunnel = 'none' as ConfigProps['maxTunnel']
+  fontFileList = [] as ConfigProps['fontFileList']
 
+  localConfig = {} as ConfigProps
+  lock = new AsyncLock()
   constructor() {
+    Browser.storage.local.get(LOCAL_CONFIG).then((data) => {
+      Object.assign(this, data)
+      this.localConfig = data as ConfigProps
+      this.lock.ok()
+    })
+
     makeAutoObservable(this)
   }
 
@@ -100,6 +119,16 @@ class ConfigStore implements ConfigProps {
         this.renderHeight = option.renderHeight
       }
     })
+  }
+
+  setConfig(config: Partial<ConfigProps>) {
+    return Browser.storage.local.set({ [LOCAL_CONFIG]: config })
+  }
+
+  /**临时改变设置 */
+  async setConfigTemp(config: Partial<ConfigProps>) {
+    await this.lock.waiting()
+    Object.assign(this, config, this.localConfig)
   }
 }
 

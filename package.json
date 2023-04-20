@@ -16,6 +16,7 @@
     "@types/node": "18.15.11",
     "@types/react": "18.0.32",
     "@types/react-dom": "18.0.11",
+    "@types/webextension-polyfill": "^0.10.0",
     "cross-env": "^7.0.3",
     "prettier": "2.8.7",
     "protobufjs": "^7.2.3",
@@ -31,7 +32,8 @@
     "plasmo": "0.68.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "webextension-polyfill": "^0.10.0"
   },
   "manifest": {
     "name": "bilibili弹幕画中画",
