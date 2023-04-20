@@ -2,6 +2,7 @@
  * 将所有的dom事件方法重写达到禁用所有event效果
  */
 
+console.log('💀 event hacker running')
 import { onMessage_inject } from './injectListener'
 
 let originalAdd = HTMLElement.prototype.addEventListener
