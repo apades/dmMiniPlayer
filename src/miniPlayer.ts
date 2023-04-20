@@ -8,8 +8,6 @@ export type Props = {
   danmu?: Omit<DanmakuProps, 'player'>
 }
 
-// TODO 需要个限制FPS的，现在桌面不设置FPS上限会导致animaFPS能3000+，超级消耗性能
-
 export default class MiniPlayer {
   props: Required<Props>
   //
@@ -53,7 +51,6 @@ export default class MiniPlayer {
   bindVideoElEvents() {
     let videoEl = this.videoEl
 
-    this.isPause = videoEl.paused
     videoEl.addEventListener('pause', () => (this.isPause = true))
     videoEl.addEventListener('play', () => (this.isPause = false))
     videoEl.addEventListener('loadedmetadata', () => {
@@ -104,33 +101,17 @@ export default class MiniPlayer {
     this.animationFrameSignal = null
   }
 
-  private withoutLimitLastUpdateTime = Date.now()
-  withoutLimitAnimaFPS = 0
   canvasUpdate() {
-    if (configStore.videoRenderFPS != 0 ? this.checkFPSLimit() : true) {
-      const videoEl = this.props.videoEl,
-        width = configStore.renderWidth,
-        height = configStore.renderHeight
+    const videoEl = this.props.videoEl,
+      width = configStore.renderWidth,
+      height = configStore.renderHeight
 
-      if (!this.isPause) {
-        this.ctx.drawImage(videoEl, 0, 0, width, height)
-        this.detectFPS()
-        this.renderDanmu()
-      }
+    if (!this.isPause) {
+      this.ctx.drawImage(videoEl, 0, 0, width, height)
+      this.detectFPS()
+      this.renderDanmu()
     }
 
-    if (configStore.performanceInfo) {
-      this.renderPerformanceInfo()
-    }
-
-    let now = Date.now()
-    let offset = now - this.withoutLimitLastUpdateTime
-    this.performanceInfoLimit(() => {
-      this.withoutLimitAnimaFPS = ~~(1000 / offset)
-    })
-    this.withoutLimitLastUpdateTime = now
-
-    this.inUpdateFrame = false
     this.animationFrameSignal = requestAnimationFrame(
       this.canvasUpdate.bind(this)
     )
@@ -167,79 +148,19 @@ export default class MiniPlayer {
     }
   }
 
-  // FIXME 限制的FPS跟实际显示FPS对不上
-  private lastUpdateTime = Date.now()
-  /**设置FPS限制canvasUpdate的requestAnimationFrame下的draw update触发间隔 */
-  animaFPS = 0
-  checkFPSLimit() {
-    let now = Date.now()
-    let offset = now - this.lastUpdateTime
-    if (offset > configStore.videoRenderFPS) {
-      this.performanceInfoLimit(() => {
-        this.animaFPS = ~~(1000 / offset)
-      })
-
-      this.lastUpdateTime =
-        now - (offset % configStore.videoRenderFPS) /* now */
-      return true
-    }
-    return false
-  }
-
-  // TODO 检测视频FPS
+  // TODO 检测FPS
   // TODO video seek时lastTime = 0
   private lastTime = 0
   private lastVideo = ''
-  /**video的渲染间隔时间计算出的FPS */
-  animaVideoFPS = 0
-
+  animaFPS = 0
   detectFPS() {
     let nowTime = this.videoEl.currentTime
 
-    this.performanceInfoLimit(() => {
-      if (this.lastTime) this.animaVideoFPS = ~~(1 / (nowTime - this.lastTime))
-    })
+    if (this.lastTime) this.animaFPS = 1 / (nowTime - this.lastTime)
 
-    // const quality = 0.1
-    // this.canvas.toDataURL('image/png', quality)
+    const quality = 0.1
+    this.canvas.toDataURL('image/png', quality)
 
     this.lastTime = nowTime
-  }
-
-  updateFrame = 0
-  inUpdateFrame = false
-  performanceInfoLimit(cb: () => void) {
-    if (
-      this.updateFrame++ >= configStore.performanceUpdateFrame &&
-      !this.inUpdateFrame
-    ) {
-      this.inUpdateFrame = true
-    }
-
-    if (this.inUpdateFrame) {
-      cb()
-      this.updateFrame = 0
-    }
-  }
-
-  renderPerformanceInfo() {
-    const padding = 4,
-      fontSize = 14
-    let renderStartY = configStore.renderHeight + fontSize
-
-    let getY = () => {
-      renderStartY = renderStartY - padding - fontSize
-      return renderStartY
-    }
-    let ctx = this.ctx
-    ctx.fillStyle = '#fff'
-    ctx.font = `600 ${fontSize}px ${configStore.fontFamily}`
-    ctx.fillText(
-      `withoutLimitAnimaFPS:${this.withoutLimitAnimaFPS}`,
-      padding,
-      getY()
-    )
-    ctx.fillText(`animaVideoFPS:${this.animaVideoFPS}`, padding, getY())
-    ctx.fillText(`animaFPS:${this.animaFPS}`, padding, getY())
   }
 }
