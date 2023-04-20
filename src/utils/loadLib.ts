@@ -12,7 +12,7 @@ export async function loadLib(lib: string): Promise<void> {
     let lock = new AsyncLock()
     libLoadedMap[lib] = lock
     let scriptEl = document.createElement('script')
-    scriptEl.src = chrome.runtime.getURL(`lib/${lib}`)
+    scriptEl.src = chrome.runtime.getURL(`assets/lib/${lib}`)
     scriptEl.addEventListener('load', () => {
       lock.ok()
       res()

@@ -22,9 +22,10 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   },
   "include": [
+    ".plasmo/index.d.ts",
     "./src/**/*"
   ],
   "exclude": [

@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { getEnv } from '@apad/env-tools/lib/web'
+// import { getEnv } from '@apad/env-tools/lib/web'
 
 type ConfigProps = {
   /**默认400 */
@@ -59,7 +59,7 @@ class ConfigStore implements ConfigProps {
 
   gap = 4
 
-  performanceInfo = getEnv().isDev
+  performanceInfo = process.env.PLASMO_PUBLIC_IS_DEV == 'true'
   performanceUpdateFrame = 30
 
   constructor() {

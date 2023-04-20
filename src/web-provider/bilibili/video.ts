@@ -1,6 +1,6 @@
 import { dq1, onWindowLoad, waitLoopCallback } from '@root/utils'
 import WebProvider from '../webProvider'
-import { sendMessage } from '@root/inject/contentSender'
+import { onMessage, sendMessage } from '@root/inject/contentSender'
 import MiniPlayer from '@root/miniPlayer'
 import { Barrage, DanType } from '@root/danmaku'
 import { getTextByType } from '@root/danmaku/bilibili/download/utils'
@@ -14,6 +14,16 @@ export default class BilibiliVideoProvider extends WebProvider {
   constructor() {
     super()
 
+    // sendMessage('fetch-hacker:add', /x\/v2\/dm\/web\/seg\.so\?/)
+    // TODO 修改messager结构，现在onMessage都需要返回肯定不行
+    // onMessage(
+    //   'fetch-hacker:onTrigger',
+    //   (data) => {
+    //     console.log('trigger', data)
+    //     return null
+    //   },
+    //   true
+    // )
     // b站的字体
     configStore.fontFamily =
       'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
