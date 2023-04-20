@@ -3,7 +3,10 @@ import WebProvider from '../webProvider'
 import { onMessage, sendMessage } from '@root/inject/contentSender'
 import MiniPlayer from '@root/miniPlayer'
 import { Barrage, DanType } from '@root/danmaku'
-import { getTextByType } from '@root/danmaku/bilibili/barrageDownload/download/utils'
+import {
+  DanmakuDownloadType,
+  getTextByType,
+} from '@root/danmaku/bilibili/barrageDownload/download/utils'
 import AssParser from '@root/utils/AssParser'
 import configStore from '@root/store/config'
 
@@ -79,14 +82,33 @@ export default class BilibiliVideoProvider extends WebProvider {
 
     this.miniPlayer.startCanvasPIPPlay()
   }
-  async getDamuAssContent(bid: string): Promise<string> {
+  // TODO type改成json，不要转ass又转json
+  /**
+ * 结构
+ * [{
+        "id": 1295126132340998400,
+        "progress": 191199,
+        "mode": 1,
+        "fontsize": 25,
+        "color": 16707842,
+        "midHash": "66d47db0",
+        "content": "ps2才是真正的主机之王。也是老任的第一次吃瘪",
+        "ctime": 1681482266,
+        "weight": 11,
+        "idStr": "1295126132340998400"
+    }]
+ */
+  async getDamuAssContent(
+    bid: string,
+    type: DanmakuDownloadType = 'ass'
+  ): Promise<string> {
     let { aid, cid } = (
       await fetch(
         `https://api.bilibili.com/x/web-interface/view?bvid=${bid}`
       ).then((res) => res.json())
     ).data
 
-    return await getTextByType('ass', { aid, cid })
+    return await getTextByType(type, { aid, cid })
   }
 
   transAssContentToDans(assContent: string): DanType[] {
