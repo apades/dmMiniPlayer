@@ -91,6 +91,7 @@ export default class BilibiliLiveProvider extends WebProvider {
     this.miniPlayer.startCanvasPIPPlay()
   }
 
+  // web模式没法知道颜色
   startObserveHtmlDanmaku() {
     this.observer = new MutationObserver((list) => {
       let nodes = list?.[0].addedNodes
@@ -104,11 +105,9 @@ export default class BilibiliLiveProvider extends WebProvider {
           new Barrage({
             player: this.miniPlayer,
             config: {
-              // TODO
               color: '#fff',
               text: node.dataset.danmaku,
               time: this.miniPlayer.videoEl.currentTime,
-              // TODO
               type: 'right',
             },
           })

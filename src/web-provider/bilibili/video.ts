@@ -54,7 +54,6 @@ export default class BilibiliVideoProvider extends WebProvider {
       this.startPIPPlay()
     })
   }
-  // TODO 现在是打开需要一段时间loading弹幕，需要替换icon loading或者什么表示下
   async _startPIPPlay() {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
