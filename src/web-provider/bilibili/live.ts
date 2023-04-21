@@ -1,4 +1,4 @@
-import { dq1 } from '@root/utils'
+import { dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
 import { sendMessage } from '@root/inject/contentSender'
 import { Barrage } from '@root/danmaku'
@@ -14,6 +14,7 @@ export default class BilibiliLiveProvider extends WebProvider {
   }
 
   async bindToPIPEvent(): Promise<void> {
+    await onWindowLoad()
     // function getPIPButtonInParent(el: HTMLElement, TTL = 5): HTMLElement {
     //   if (TTL-- || el == null) return null
     //   if (el.classList.contains('icon')) return el

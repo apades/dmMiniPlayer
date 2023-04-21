@@ -80,7 +80,10 @@ export let dq1: {
 }
 
 const windowLoadAsync = new AsyncLock()
-export const onWindowLoad = windowLoadAsync.waiting
+export const onWindowLoad = () => {
+  if (document.readyState === 'complete') return
+  return windowLoadAsync.waiting
+}
 window.addEventListener('load', () => windowLoadAsync.ok)
 
 export function splitArray<T>(arr: T[], count: number): T[][] {

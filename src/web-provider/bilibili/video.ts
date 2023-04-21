@@ -32,7 +32,7 @@ export default class BilibiliVideoProvider extends WebProvider {
       'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
   }
   async bindToPIPEvent() {
-    // await onWindowLoad()
+    await onWindowLoad()
     let pipBtn: HTMLElement
     const isPlayInitd = await waitLoopCallback(() => {
       pipBtn = dq1('.bpx-player-ctrl-pip') as HTMLElement
