@@ -10,27 +10,30 @@
     "package": "plasmo package"
   },
   "devDependencies": {
-    "@types/node": "18.15.11",
-    "@types/react": "18.0.32",
-    "@types/react-dom": "18.0.11",
-    "prettier": "2.8.7",
-    "typescript": "5.0.3",
     "@types/chrome": "^0.0.231",
     "@types/color": "^3.0.3",
     "@types/lodash-es": "^4.17.7",
+    "@types/node": "18.15.11",
+    "@types/react": "18.0.32",
+    "@types/react-dom": "18.0.11",
+    "@types/webextension-polyfill": "^0.10.0",
     "cross-env": "^7.0.3",
-    "protobufjs": "^7.2.3"
+    "prettier": "2.8.7",
+    "protobufjs": "^7.2.3",
+    "typescript": "5.0.3"
   },
   "dependencies": {
-    "plasmo": "0.68.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "@apad/env-tools": "^1.0.5",
     "ass-parser": "^0.2.0",
+    "bilibili-live-ws": "^6.2.1",
     "color": "^4.2.3",
     "lodash-es": "^4.17.21",
     "mobx": "^6.9.0",
-    "react-router-dom": "^5.2.0"
+    "plasmo": "0.68.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-router-dom": "^5.2.0",
+    "webextension-polyfill": "^0.10.0"
   },
   "manifest": {
     "name": "bilibili弹幕画中画",
@@ -39,9 +42,15 @@
     "host_permissions": [
       "https://*/*"
     ],
-    "web_accessible_resources":[{
-      "resources": ["assets/**/*"],
-      "matches": ["<all_urls>"]
-    }]
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "assets/**/*"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
+    ]
   }
 }

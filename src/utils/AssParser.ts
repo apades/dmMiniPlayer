@@ -90,6 +90,7 @@ export default class AssParser {
 
     configBlocks.forEach((config) => {
       if (config.includes('pos')) {
+        // TODO 还有个bottom，懒得弄了
         danMoveType = 'top'
       } else if (config.includes('c&H')) {
         let _color = config.replace('c&H', '')

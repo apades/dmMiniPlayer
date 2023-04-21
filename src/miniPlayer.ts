@@ -8,8 +8,6 @@ export type Props = {
   danmu?: Omit<DanmakuProps, 'player'>
 }
 
-// TODO 需要个限制FPS的，现在桌面不设置FPS上限会导致animaFPS能3000+，超级消耗性能
-
 export default class MiniPlayer {
   props: Required<Props>
   //
@@ -86,7 +84,7 @@ export default class MiniPlayer {
     return this.canvasVideoStream
   }
 
-  // TODO 在video play时使用，减少性能消耗
+  // 在video play时使用，减少性能消耗
   startRenderAsCanvas() {
     try {
       this.animationFrameSignal = requestAnimationFrame(
@@ -98,7 +96,7 @@ export default class MiniPlayer {
     }
   }
 
-  // TODO 在video loading,pause时使用，减少性能消耗
+  // 在video loading,pause时使用，减少性能消耗
   stopRenderAsCanvas() {
     cancelAnimationFrame(this.animationFrameSignal)
     this.animationFrameSignal = null

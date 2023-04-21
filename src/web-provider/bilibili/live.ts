@@ -3,14 +3,23 @@ import WebProvider from '../webProvider'
 import { sendMessage } from '@root/inject/contentSender'
 import { Barrage } from '@root/danmaku'
 import MiniPlayer from '@root/miniPlayer'
+import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
+import configStore from '@root/store/config'
 
+window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
   regExp = /https:\/\/live.bilibili.com\/.*/
   static regExp = /https:\/\/live.bilibili.com\/.*/
 
   observer: MutationObserver
+  barrageClient: BilibiliLiveBarrageClient
+
   constructor() {
     super()
+
+    // b站的字体
+    configStore.fontFamily =
+      'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
   }
 
   async bindToPIPEvent(): Promise<void> {
@@ -71,16 +80,19 @@ export default class BilibiliLiveProvider extends WebProvider {
       this.miniPlayer.startRenderAsCanvas()
       this.miniPlayer.onLeavePictureInPicture = () => {
         this.miniPlayer.stopRenderAsCanvas()
-        this.stopObserveHtmlDanmaku()
+        // this.stopObserveHtmlDanmaku()
+        this.stopObserveWs()
       }
     } else {
       this.miniPlayer.startRenderAsCanvas()
     }
 
-    this.startObserveHtmlDanmaku()
+    // this.startObserveHtmlDanmaku()
+    this.startObserverWs()
     this.miniPlayer.startCanvasPIPPlay()
   }
 
+  // web模式没法知道颜色
   startObserveHtmlDanmaku() {
     this.observer = new MutationObserver((list) => {
       let nodes = list?.[0].addedNodes
@@ -94,11 +106,9 @@ export default class BilibiliLiveProvider extends WebProvider {
           new Barrage({
             player: this.miniPlayer,
             config: {
-              // TODO
               color: '#fff',
               text: node.dataset.danmaku,
               time: this.miniPlayer.videoEl.currentTime,
-              // TODO
               type: 'right',
             },
           })
@@ -112,5 +122,33 @@ export default class BilibiliLiveProvider extends WebProvider {
 
   stopObserveHtmlDanmaku() {
     this.observer.disconnect()
+  }
+
+  private fn: (data: { color: string; text: string }) => void = () => 1
+  startObserverWs() {
+    if (!this.barrageClient)
+      this.barrageClient = new BilibiliLiveBarrageClient(
+        +location.pathname.split('/').pop()
+      )
+
+    this.fn = (data: { color: string; text: string }) => {
+      this.miniPlayer.danmaku.barrages.push(
+        new Barrage({
+          player: this.miniPlayer,
+          config: {
+            // TODO
+            color: data.color,
+            text: data.text,
+            time: this.miniPlayer.videoEl.currentTime,
+            // TODO
+            type: 'right',
+          },
+        })
+      )
+    }
+    this.barrageClient.addEventListener('danmu', this.fn)
+  }
+  stopObserveWs() {
+    this.barrageClient.removeListener('danmu', this.fn)
   }
 }

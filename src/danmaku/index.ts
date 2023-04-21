@@ -8,9 +8,6 @@ export type DanmakuProps = {
   player: MiniPlayer
   /**预载弹幕 */
   dans?: DanType[]
-
-  // TODO 实时弹幕类型
-  ws?: (onNewDan: (dan: DanType) => void) => void
 }
 
 export type DanMoveType = 'top' | 'right' | 'bottom'
@@ -37,14 +34,6 @@ class DanmakuController {
     this.barrages = this.dans.map(
       (d) => new Barrage({ config: d, player: this.player })
     )
-
-    if (options.ws) {
-      const onNewDan = (dan: DanType) => {
-        this.barrages.push(new Barrage({ config: dan, player: this.player }))
-      }
-
-      options.ws(onNewDan)
-    }
   }
 
   // 绘制弹幕文本
@@ -201,6 +190,7 @@ export class Barrage {
         }
         break
       }
+      case 'bottom':
       case 'top': {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
           this.tunnelOuted = true
