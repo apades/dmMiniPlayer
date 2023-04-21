@@ -76,11 +76,11 @@ class ConfigStore implements ConfigProps {
   localConfig = {} as ConfigProps
   lock = new AsyncLock()
   constructor() {
-    Browser.storage.local.get(LOCAL_CONFIG).then((data) => {
-      Object.assign(this, data)
-      this.localConfig = data as ConfigProps
-      this.lock.ok()
-    })
+    // Browser.storage.local.get(LOCAL_CONFIG).then((data = {}) => {
+    //   Object.assign(this, data)
+    //   this.localConfig = data as ConfigProps
+    //   this.lock.ok()
+    // })
 
     makeAutoObservable(this)
   }

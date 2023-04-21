@@ -13,5 +13,14 @@ export type TProtocolMap = {
   >
 
   'run-code': ProtocolWithReturn<{ function: string; args?: any[] }, any>
+  'inject-api:run': ProtocolWithReturn<
+    { origin: string; keys: string[]; onTriggerEvent: string },
+    any
+  >
+  'inject-api:onTrigger': ProtocolWithReturn<
+    null | { event: string; args: any[] },
+    { event: string; args: any[] }
+  >
+
   'msg-test': ProtocolWithReturn<any, any>
 }

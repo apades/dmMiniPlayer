@@ -1,6 +1,7 @@
-import { onMessage_inject } from './injectListener'
+import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './fetchHacker'
+import { injectFunction } from '@root/utils/injectFunction'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)
@@ -13,4 +14,13 @@ onMessage_inject('run-code', async (data) => {
 onMessage_inject('msg-test', (data) => {
   console.log('top window msg-test log', data)
   return data
+})
+
+onMessage_inject('inject-api:run', (data) => {
+  injectFunction(window[data.origin] as any, data.keys, (...args) => {
+    sendMessage_inject('inject-api:onTrigger', {
+      args,
+      event: data.onTriggerEvent,
+    })
+  })
 })
