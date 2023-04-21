@@ -14,8 +14,25 @@ export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
   static regExp = /https:\/\/www.bilibili.com\/video\/.*/
 
+  hasInitDans = false
   constructor() {
     super()
+
+    // TODO history切换url还有点问题，暂时停用
+    /* sendMessage('inject-api:run', {
+      origin: 'history',
+      keys: ['pushState', 'forward', 'replaceState'],
+      onTriggerEvent: 'history',
+    })
+    onMessage('inject-api:onTrigger', (data) => {
+      if (data.event != 'history') return null
+      this.bindToPIPEvent()
+      this.hasInitDans = false
+    })
+    window.addEventListener('popstate', () => {
+      this.bindToPIPEvent()
+      this.hasInitDans = false
+    }) */
 
     // sendMessage('fetch-hacker:add', /x\/v2\/dm\/web\/seg\.so\?/)
     // TODO 修改messager结构，现在onMessage都需要返回肯定不行
@@ -64,12 +81,6 @@ export default class BilibiliVideoProvider extends WebProvider {
         // },
       })
 
-      this.getDans().then((dans) => {
-        this.miniPlayer.danmaku.dans = dans
-        this.miniPlayer.danmaku.barrages = dans.map(
-          (dan) => new Barrage({ config: dan, player: this.miniPlayer })
-        )
-      })
       this.miniPlayer.startRenderAsCanvas()
       this.miniPlayer.onLeavePictureInPicture = () => {
         this.miniPlayer.stopRenderAsCanvas()
@@ -79,7 +90,19 @@ export default class BilibiliVideoProvider extends WebProvider {
       this.miniPlayer.startRenderAsCanvas()
     }
 
+    this.initDans()
     this.miniPlayer.startCanvasPIPPlay()
+  }
+
+  initDans() {
+    if (this.hasInitDans) return
+    this.hasInitDans = true
+    this.getDans().then((dans) => {
+      this.miniPlayer.danmaku.dans = dans
+      this.miniPlayer.danmaku.barrages = dans.map(
+        (dan) => new Barrage({ config: dan, player: this.miniPlayer })
+      )
+    })
   }
   // TODO type改成json，不要转ass又转json
   /**
@@ -97,7 +120,7 @@ export default class BilibiliVideoProvider extends WebProvider {
         "idStr": "1295126132340998400"
     }]
  */
-  async getDamuAssContent(
+  async getDamuContent(
     bid: string,
     type: DanmakuDownloadType = 'ass'
   ): Promise<string> {
@@ -118,7 +141,7 @@ export default class BilibiliVideoProvider extends WebProvider {
   async getDans(): Promise<DanType[]> {
     let bv = location.pathname.match(/bv(.*?)(\/|\?)/i)?.[1]
     console.log('视频bv', bv)
-    let danmuContent = await this.getDamuAssContent(bv)
+    let danmuContent = await this.getDamuContent(bv)
     let dans = this.transAssContentToDans(danmuContent)
 
     return dans
