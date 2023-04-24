@@ -36,11 +36,11 @@
     "webextension-polyfill": "^0.10.0"
   },
   "manifest": {
-    "name": "bilibili弹幕画中画",
-    "description": "可以带弹幕的bilibili画中画，狠狠的摸！",
-    "version": "1.0",
+    "name": "弹幕画中画播放器",
+    "description": "可以带弹幕的画中画播放器，狠狠的摸！",
+    "version": "0.1",
     "host_permissions": [
-      "https://*/*"
+      "*://*.bilibili.com/*"
     ],
     "web_accessible_resources": [
       {
