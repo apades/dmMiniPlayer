@@ -12,6 +12,7 @@ import {
   decodeDanmakuSegment,
   decodeDanmakuView,
 } from '../converter/danmaku-segment'
+import DanmakuFilter from '../converter/danmaku-filter'
 
 export class JsonDanmaku {
   // static SegmentSize = 6 * 60
@@ -88,7 +89,7 @@ export class JsonDanmaku {
     return this
   }
 }
-export type DanmakuDownloadType = 'json' | 'xml' | 'ass'
+export type DanmakuDownloadType = 'json' | 'xml' | 'ass' | 'originJson'
 export const getUserDanmakuConfig = async () => {
   const title = 'test'
   const defaultConfig: Omit<DanmakuConverterConfig, 'title'> = {
@@ -116,6 +117,7 @@ export const getUserDanmakuConfig = async () => {
     // await loadDanmakuSettingsPanel()
     const playerSettingsJson = localStorage.getItem('bilibili_player_settings')
 
+    console.log('playerSettingsJson', playerSettingsJson)
     if (playerSettingsJson) {
       const playerSettings = JSON.parse(playerSettingsJson)
       const getConfig = <T>(prop: string, defaultValue?: T): T =>
@@ -264,6 +266,11 @@ export const convertToAssFromJson = async (danmaku: JsonDanmaku) => {
   )
   return assDocument.generateAss()
 }
+export const convertToJsonFromOriginJson = async (danmaku: JsonDanmaku) => {
+  const converter = new DanmakuFilter(await getUserDanmakuConfig())
+  return JSON.stringify(converter.filterJsonDanamku(danmaku.jsonDanmakus))
+}
+
 export const convertToXmlFromJson = (danmaku: JsonDanmaku) => {
   const xmlText = `
 <?xml version="1.0" encoding="UTF-8"?><i><chatserver>chat.bilibili.com</chatserver><chatid>${
@@ -292,6 +299,10 @@ export const getTextByType = async (
     }
     default:
     case 'json': {
+      return convertToJsonFromOriginJson(danmaku)
+    }
+    /**这里是返回完全没处理过的全部json弹幕 */
+    case 'originJson': {
       return JSON.stringify(danmaku.jsonDanmakus, undefined, 2)
     }
     case 'ass': {

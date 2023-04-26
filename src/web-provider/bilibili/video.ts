@@ -5,10 +5,13 @@ import MiniPlayer from '@root/miniPlayer'
 import { Barrage, DanType } from '@root/danmaku'
 import {
   DanmakuDownloadType,
+  JsonDanmaku,
   getTextByType,
 } from '@root/danmaku/bilibili/barrageDownload/download/utils'
 import AssParser from '@root/utils/AssParser'
 import configStore from '@root/store/config'
+import { DanmakuStack } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-stack'
+import { DanmakuType } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-type'
 
 export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
@@ -104,22 +107,6 @@ export default class BilibiliVideoProvider extends WebProvider {
       )
     })
   }
-  // TODO type改成json，不要转ass又转json
-  /**
- * 结构
- * [{
-        "id": 1295126132340998400,
-        "progress": 191199,
-        "mode": 1,
-        "fontsize": 25,
-        "color": 16707842,
-        "midHash": "66d47db0",
-        "content": "ps2才是真正的主机之王。也是老任的第一次吃瘪",
-        "ctime": 1681482266,
-        "weight": 11,
-        "idStr": "1295126132340998400"
-    }]
- */
   async getDamuContent(
     bid: string,
     type: DanmakuDownloadType = 'ass'
@@ -138,11 +125,44 @@ export default class BilibiliVideoProvider extends WebProvider {
     return parser.dans
   }
 
+  /**
+ * 结构
+ * ```[{
+        "id": 1295126132340998400,
+        "progress": 191199,
+        "mode": 1,
+        "fontsize": 25,
+        "color": 16707842,
+        "midHash": "66d47db0",
+        "content": "ps2才是真正的主机之王。也是老任的第一次吃瘪",
+        "ctime": 1681482266,
+        "weight": 11,
+        "idStr": "1295126132340998400"
+    }]```
+ */
+  transJsonContentToDans(jsonContent: string): DanType[] {
+    let jsonArr = JSON.parse(jsonContent) as JsonDanmaku['jsonDanmakus']
+    return jsonArr.map((d) => {
+      let type = DanmakuStack.danmakuType[d.mode as DanmakuType]
+
+      return {
+        color: '#' + d.color.toString(16),
+        text: d.content,
+        time: d.progress ? d.progress / 1000 : 0,
+        type: type == 'top' ? 'top' : 'right',
+      } as DanType
+    })
+  }
+
   async getDans(): Promise<DanType[]> {
     let bv = location.pathname.match(/bv(.*?)(\/|\?)/i)?.[1]
     console.log('视频bv', bv)
+    // TODO 先不要开启json模式，ass模式有过滤最大弹幕不知道怎么实现的
     let danmuContent = await this.getDamuContent(bv)
     let dans = this.transAssContentToDans(danmuContent)
+    // let danmuContent = await this.getDamuContent(bv, 'json')
+    // let dans = this.transJsonContentToDans(danmuContent)
+    console.log('dans', dans)
 
     return dans
   }
