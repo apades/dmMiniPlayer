@@ -52,26 +52,30 @@ export default class BilibiliVideoProvider extends WebProvider {
       'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
   }
   async bindToPIPEvent() {
-    await onWindowLoad()
-    let pipBtn: HTMLElement
-    const isPlayInitd = await waitLoopCallback(() => {
-      pipBtn = dq1('.bpx-player-ctrl-pip') as HTMLElement
-      return !!pipBtn
-    }, 10000)
-
-    console.log('pipBtn', pipBtn)
-    if (!pipBtn) throw new Error('没有找到bilibili的画中画按钮')
-    // 禁用掉原本的功能
     sendMessage('event-hacker:disable', {
       qs: '.bpx-player-ctrl-pip',
       event: 'click',
     })
-    pipBtn.addEventListener('click', (e) => {
-      e.stopPropagation()
-      e.preventDefault()
-      console.log('click pipBtn')
 
-      this.startPIPPlay()
+    sendMessage('event-hacker:listenEventAdd', {
+      qs: '.bpx-player-ctrl-pip',
+      event: 'click',
+    })
+
+    onMessage('event-hacker:onEventAdd', async ({ qs, event }) => {
+      if (!(qs == '.bpx-player-ctrl-pip' && event == 'click')) return
+      await sendMessage('event-hacker:enable', {
+        qs: '.bpx-player-ctrl-pip',
+        event: 'click',
+      })
+      let pipBtn = dq1('.bpx-player-ctrl-pip') as HTMLElement
+      pipBtn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        console.log('click pipBtn')
+
+        this.startPIPPlay()
+      })
     })
   }
   async _startPIPPlay() {

@@ -5,6 +5,10 @@ import { ProtocolWithReturn } from '@root/utils/Messager'
 export type TProtocolMap = {
   /**去除某一个dom的所有事件 */
   'event-hacker:disable': { qs: string; event: string }
+  'event-hacker:listenEventAdd': { qs: string; event: string }
+  'event-hacker:onEventAdd': { qs: string; event: string }
+  'event-hacker:enable': { qs: string; event: string }
+
   'fetch-hacker:add': RegExp
   'fetch-hacker:remove': RegExp
   'fetch-hacker:onTrigger': ProtocolWithReturn<
