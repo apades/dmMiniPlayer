@@ -17,45 +17,30 @@ export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
   static regExp = /https:\/\/www.bilibili.com\/video\/.*/
 
-  hasInitDans = false
   constructor() {
     super()
 
     // TODO history切换url还有点问题，暂时停用
-    /* sendMessage('inject-api:run', {
+    sendMessage('inject-api:run', {
       origin: 'history',
       keys: ['pushState', 'forward', 'replaceState'],
       onTriggerEvent: 'history',
     })
     onMessage('inject-api:onTrigger', (data) => {
       if (data.event != 'history') return null
+      console.log('切换了路由 history')
       this.bindToPIPEvent()
-      this.hasInitDans = false
+      if (this.miniPlayer) this.initDans()
     })
     window.addEventListener('popstate', () => {
+      console.log('切换了路由 popstate')
       this.bindToPIPEvent()
-      this.hasInitDans = false
-    }) */
+      if (this.miniPlayer) this.initDans()
+    })
 
-    // sendMessage('fetch-hacker:add', /x\/v2\/dm\/web\/seg\.so\?/)
-    // TODO 修改messager结构，现在onMessage都需要返回肯定不行
-    // onMessage(
-    //   'fetch-hacker:onTrigger',
-    //   (data) => {
-    //     console.log('trigger', data)
-    //     return null
-    //   },
-    //   true
-    // )
     // b站的字体
     configStore.fontFamily =
       'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
-  }
-  async bindToPIPEvent() {
-    sendMessage('event-hacker:disable', {
-      qs: '.bpx-player-ctrl-pip',
-      event: 'click',
-    })
 
     sendMessage('event-hacker:listenEventAdd', {
       qs: '.bpx-player-ctrl-pip',
@@ -78,14 +63,17 @@ export default class BilibiliVideoProvider extends WebProvider {
       })
     })
   }
+  async bindToPIPEvent() {
+    sendMessage('event-hacker:disable', {
+      qs: '.bpx-player-ctrl-pip',
+      event: 'click',
+    })
+  }
   async _startPIPPlay() {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
       this.miniPlayer = new MiniPlayer({
         videoEl,
-        // danmu: {
-        //   dans: await this.getDans(),
-        // },
       })
 
       this.miniPlayer.startRenderAsCanvas()
@@ -102,14 +90,7 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
 
   initDans() {
-    if (this.hasInitDans) return
-    this.hasInitDans = true
-    this.getDans().then((dans) => {
-      this.miniPlayer.danmaku.dans = dans
-      this.miniPlayer.danmaku.barrages = dans.map(
-        (dan) => new Barrage({ config: dan, player: this.miniPlayer })
-      )
-    })
+    this.getDans().then((dans) => this.miniPlayer.danmaku.initDans(dans))
   }
   async getDamuContent(
     bid: string,
@@ -129,21 +110,6 @@ export default class BilibiliVideoProvider extends WebProvider {
     return parser.dans
   }
 
-  /**
- * 结构
- * ```[{
-        "id": 1295126132340998400,
-        "progress": 191199,
-        "mode": 1,
-        "fontsize": 25,
-        "color": 16707842,
-        "midHash": "66d47db0",
-        "content": "ps2才是真正的主机之王。也是老任的第一次吃瘪",
-        "ctime": 1681482266,
-        "weight": 11,
-        "idStr": "1295126132340998400"
-    }]```
- */
   transJsonContentToDans(jsonContent: string): DanType[] {
     let jsonArr = JSON.parse(jsonContent) as JsonDanmaku['jsonDanmakus']
     return jsonArr.map((d) => {

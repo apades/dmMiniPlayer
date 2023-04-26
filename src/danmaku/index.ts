@@ -59,6 +59,14 @@ class DanmakuController {
     }
   }
 
+  initDans(dans: DanType[]) {
+    this.tunnelsMap = { bottom: [], right: [], top: [] }
+    this.dans = dans
+    this.barrages = dans.map(
+      (dan) => new Barrage({ config: dan, player: this.player })
+    )
+  }
+
   // 绘制弹幕文本
   draw() {
     let videoCTime = this.player.videoEl.currentTime
