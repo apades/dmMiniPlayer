@@ -1,88 +1,131 @@
 import AsyncLock from '@root/utils/AsyncLock'
+import { extStorage } from '@root/utils/storage'
 import { isNumber } from 'lodash-es'
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, makeObservable, runInAction } from 'mobx'
 import Browser from 'webextension-polyfill'
 // import { getEnv } from '@apad/env-tools/lib/web'
 
-const LOCAL_CONFIG = 'LOCAL_CONFIG'
-type ConfigProps = {
-  /**默认400 */
-  renderWidth: number
-  /**默认使用renderWidth 400，然后以视频实际比例计算出该height */
-  renderHeight: number
-  /**弹幕透明度，默认1 */
-  opacity: number
-  /**弹幕字体大小，默认16 */
-  fontSize: number
-  /**字体宽度，默认600 */
-  fontWeight: number
-  /**字体，默认 "microsoft yahei", sans-serif */
-  fontFamily: string
-
-  /**自动比例，默认开启 */
-  autoRatio: boolean
-  /**画中画大小调整也让渲染的画布自动调整大小，默认开启，可能有些电脑会有性能问题可以关闭 */
-  autoResizeInPIP: boolean
-
-  /**
-   * 默认auto自动检测视频帧数
-   *
-   * TODO
-   */
-  videoRenderFPS: number | string
-  /**
-   * 默认auto，requestAnimationFrame一触发也跟着触发
-   *
-   * TODO
-   */
-  danmuRenderFPS: number | string
-
-  /**上下弹幕之间的间距，默认为4 */
-  gap: number
-
-  /**性能面板 */
-  performanceInfo: boolean
-  /**性能面板每触发request多少次更新一次，默认100 */
-  performanceUpdateFrame: number
-
-  /**最大渲染行数，默认无限 */
-  maxTunnel: number | '1/2' | '1/4' | 'full'
-
-  fontFileList: { src: string }[]
+export type ConfigField<T> = {
+  defaultValue?: T
+  desc?: string
+  label?: string
+  deprecated?: boolean
 }
 
-class ConfigStore implements ConfigProps {
-  renderWidth = 500
-  renderHeight: number = (400 / 16) * 9
-  opacity = 1
+function config<T>(config: ConfigField<T>) {
+  return config
+}
+export const baseConfigMap = {
+  // 渲染画布设置
+  renderWidth: config({
+    defaultValue: 400,
+    // deprecated: true,
+    desc: '渲染的宽度，默认400，但默认有自动根据pip窗口调整，不用去管这个设置',
+    label: 'canvas画布宽度',
+  }),
+  renderHeight: config<number>({
+    // deprecated: true,
+    defaultValue: (400 / 16) * 9,
+    desc:
+      '默认使用renderWidth 400，然后以视频实际比例计算出该height，但默认有自动根据pip窗口调整，不用去管这个设置',
+    label: 'canvas画布高度',
+  }),
+  autoResizeInPIP: config({
+    defaultValue: true,
+    desc: '默认开启，可能有些电脑会有性能问题可以关闭',
+    label: '画中画调整时自动调整画布大小',
+  }),
+  autoRatio: config({
+    defaultValue: true,
+    desc: '自动根据视频比例调整画布比例，默认开启',
+    label: '根据视频比例自动调整画布比例',
+  }),
+  renderFPS: config({
+    defaultValue: 60,
+    desc: '限制渲染帧数，默认60，设置0就是无上限',
+    label: 'canvas渲染的帧数',
+  }),
 
-  fontSize = 16
-  fontFamily = '"microsoft yahei", sans-serif'
-  fontWeight = 600
+  // 弹幕设置
+  opacity: config({
+    defaultValue: 1,
+    desc: '默认1，范围0 ~ 1',
+    label: '弹幕透明度',
+  }),
+  fontSize: config({
+    defaultValue: 16,
+    desc: '默认16',
+    label: '弹幕字体大小',
+  }),
+  fontWeight: config({
+    defaultValue: 600,
+    desc: '默认600',
+    label: '弹幕字体宽度',
+  }),
+  fontFamily: config({
+    defaultValue: '"microsoft yahei", sans-serif',
+    desc: '默认 "microsoft yahei", sans-serif',
+    label: '弹幕字体',
+  }),
+  gap: config({
+    defaultValue: 4,
+    desc: '默认为4',
+    label: '上下弹幕之间的间距',
+  }),
+  maxTunnel: config({
+    defaultValue: '1/2' as number | '1/2' | '1/4' | 'full',
+    desc: '默认1/2半屏',
+    label: '弹幕最大渲染行数',
+  }),
 
-  autoRatio = true
-  autoResizeInPIP = true
+  // debug
+  performanceInfo: config({
+    defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',
+    label: '性能面版',
+  }),
+  performanceUpdateFrame: config({
+    defaultValue: 30,
+    desc: '性能面板每触发request多少次更新一次，默认30',
+    label: '性能面版更新频率',
+  }),
+}
 
-  videoRenderFPS = 1000 / 60
-  danmuRenderFPS = 1000 / 60
+const LOCAL_CONFIG = 'LOCAL_CONFIG'
 
-  gap = 4
+export type BaseConfig = {
+  [k in keyof typeof baseConfigMap]: typeof baseConfigMap[k]['defaultValue']
+}
 
-  performanceInfo = process.env.PLASMO_PUBLIC_IS_DEV == 'true'
-  performanceUpdateFrame = 30
-  maxTunnel = '1/2' as ConfigProps['maxTunnel']
-  fontFileList = [] as ConfigProps['fontFileList']
+class ConfigStore implements BaseConfig {
+  renderWidth: BaseConfig['renderWidth']
+  renderHeight: BaseConfig['renderHeight']
+  autoResizeInPIP: BaseConfig['autoResizeInPIP']
+  autoRatio: BaseConfig['autoRatio']
+  renderFPS: BaseConfig['renderFPS']
 
-  localConfig = {} as ConfigProps
+  opacity: BaseConfig['opacity']
+  fontSize: BaseConfig['fontSize']
+  fontWeight: BaseConfig['fontWeight']
+  fontFamily: BaseConfig['fontFamily']
+  gap: BaseConfig['gap']
+  maxTunnel: BaseConfig['maxTunnel']
+
+  performanceInfo: BaseConfig['performanceInfo']
+  performanceUpdateFrame: BaseConfig['performanceUpdateFrame']
+
+  localConfig = {} as Partial<BaseConfig>
   lock = new AsyncLock()
   constructor() {
-    // Browser.storage.local.get(LOCAL_CONFIG).then((data = {}) => {
-    //   Object.assign(this, data)
-    //   this.localConfig = data as ConfigProps
-    //   this.lock.ok()
-    // })
-
+    Object.entries(baseConfigMap).forEach(([key, val]) => {
+      ;(this as any)[key] = val.defaultValue
+    })
     makeAutoObservable(this)
+
+    extStorage.get<Partial<BaseConfig>>(LOCAL_CONFIG).then((data = {}) => {
+      Object.assign(this, data)
+      this.localConfig = data
+      this.lock.ok()
+    })
   }
 
   setRatioWidth(
@@ -121,12 +164,12 @@ class ConfigStore implements ConfigProps {
     })
   }
 
-  setConfig(config: Partial<ConfigProps>) {
-    return Browser.storage.local.set({ [LOCAL_CONFIG]: config })
+  setConfig(config: Partial<BaseConfig>) {
+    return extStorage.set(LOCAL_CONFIG, config)
   }
 
   /**临时改变设置 */
-  async setConfigTemp(config: Partial<ConfigProps>) {
+  async setConfigTemp(config: Partial<BaseConfig>) {
     await this.lock.waiting()
     Object.assign(this, config, this.localConfig)
   }

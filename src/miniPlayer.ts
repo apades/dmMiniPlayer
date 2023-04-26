@@ -105,7 +105,7 @@ export default class MiniPlayer {
   private withoutLimitLastUpdateTime = Date.now()
   withoutLimitAnimaFPS = 0
   canvasUpdate() {
-    if (configStore.videoRenderFPS != 0 ? this.checkFPSLimit() : true) {
+    if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
       const videoEl = this.props.videoEl,
         width = configStore.renderWidth,
         height = configStore.renderHeight
@@ -172,13 +172,12 @@ export default class MiniPlayer {
   checkFPSLimit() {
     let now = Date.now()
     let offset = now - this.lastUpdateTime
-    if (offset > configStore.videoRenderFPS) {
+    if (offset > configStore.renderFPS) {
       this.performanceInfoLimit(() => {
         this.animaFPS = ~~(1000 / offset)
       })
 
-      this.lastUpdateTime =
-        now - (offset % configStore.videoRenderFPS) /* now */
+      this.lastUpdateTime = now - (offset % configStore.renderFPS) /* now */
       return true
     }
     return false
