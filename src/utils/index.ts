@@ -93,3 +93,11 @@ export function splitArray<T>(arr: T[], count: number): T[][] {
   }
   return result
 }
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function isPromiseFunction(fn: Function): boolean {
+  return (
+    (fn as any).__proto__.constructor ==
+    'function AsyncFunction() { [native code] }'
+  )
+}
