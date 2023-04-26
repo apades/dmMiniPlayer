@@ -25,6 +25,7 @@ class DanmakuController {
 
   dans: DanType[] = []
   barrages: Barrage[] = []
+  maxTunnel = 100
 
   constructor(options: DanmakuProps) {
     this.options = options
@@ -34,6 +35,28 @@ class DanmakuController {
     this.barrages = this.dans.map(
       (d) => new Barrage({ config: d, player: this.player })
     )
+
+    this.maxTunnel = this.calcMaxTunnel()
+
+    observe(configStore, 'renderHeight', () => {
+      this.maxTunnel = this.calcMaxTunnel()
+    })
+  }
+
+  calcMaxTunnel() {
+    let { maxTunnel, renderHeight, gap, fontSize } = configStore
+
+    // (fontSize + gap) * x = renderHeight
+    switch (maxTunnel) {
+      case '1/2':
+        return renderHeight / 2 / (fontSize + gap)
+      case '1/4':
+        return renderHeight / 4 / (fontSize + gap)
+      case 'full':
+        return 100
+      default:
+        return maxTunnel
+    }
   }
 
   // 绘制弹幕文本
@@ -71,7 +94,9 @@ class DanmakuController {
     }
 
     this.tunnelsMap[type].push(false)
-    return this.tunnelsMap[type].length - 1
+
+    let tunnel = this.tunnelsMap[type].length - 1
+    return tunnel > this.maxTunnel ? -1 : tunnel
   }
   pushTunnel(type: DanMoveType) {
     let find = this.tunnelsMap[type].findIndex((v) => v)

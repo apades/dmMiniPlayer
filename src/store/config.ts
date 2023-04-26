@@ -46,7 +46,7 @@ type ConfigProps = {
   performanceUpdateFrame: number
 
   /**最大渲染行数，默认无限 */
-  maxTunnel: number | '1/2' | '1/4' | 'none'
+  maxTunnel: number | '1/2' | '1/4' | 'full'
 
   fontFileList: { src: string }[]
 }
@@ -70,7 +70,7 @@ class ConfigStore implements ConfigProps {
 
   performanceInfo = process.env.PLASMO_PUBLIC_IS_DEV == 'true'
   performanceUpdateFrame = 30
-  maxTunnel = 'none' as ConfigProps['maxTunnel']
+  maxTunnel = '1/2' as ConfigProps['maxTunnel']
   fontFileList = [] as ConfigProps['fontFileList']
 
   localConfig = {} as ConfigProps
