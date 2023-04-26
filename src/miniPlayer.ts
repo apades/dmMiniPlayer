@@ -172,7 +172,7 @@ export default class MiniPlayer {
   checkFPSLimit() {
     let now = Date.now()
     let offset = now - this.lastUpdateTime
-    if (offset > configStore.renderFPS) {
+    if (offset > 1000 / configStore.renderFPS) {
       this.performanceInfoLimit(() => {
         this.animaFPS = ~~(1000 / offset)
       })
