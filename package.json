@@ -41,7 +41,7 @@
   "manifest": {
     "name": "弹幕画中画播放器",
     "description": "可以带弹幕的画中画播放器，狠狠的摸！",
-    "version": "0.1",
+    "version": "0.2",
     "host_permissions": [
       "*://*.bilibili.com/*"
     ],
