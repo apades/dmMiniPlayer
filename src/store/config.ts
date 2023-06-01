@@ -9,6 +9,7 @@ export type ConfigField<T> = {
   defaultValue?: T
   desc?: string
   label?: string
+  /**不要显示在前面 */
   deprecated?: boolean
 }
 
@@ -19,12 +20,12 @@ export const baseConfigMap = {
   // 渲染画布设置
   renderWidth: config({
     defaultValue: 400,
-    // deprecated: true,
+    deprecated: true,
     desc: '渲染的宽度，默认400，但默认有自动根据pip窗口调整，不用去管这个设置',
     label: 'canvas画布宽度',
   }),
   renderHeight: config<number>({
-    // deprecated: true,
+    deprecated: true,
     defaultValue: (400 / 16) * 9,
     desc:
       '默认使用renderWidth 400，然后以视频实际比例计算出该height，但默认有自动根据pip窗口调整，不用去管这个设置',
