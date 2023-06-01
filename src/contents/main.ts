@@ -2,7 +2,11 @@ import { PlasmoCSConfig } from 'plasmo'
 import { getWebProvider } from '../web-provider'
 
 export const config: PlasmoCSConfig = {
-  matches: ['https://www.bilibili.com/*', 'https://live.bilibili.com/*'],
+  matches: [
+    'https://www.bilibili.com/*',
+    'https://live.bilibili.com/*',
+    'https://www.douyu.com/*',
+  ],
   run_at: 'document_end',
   all_frames: true,
 }
