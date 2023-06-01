@@ -9,6 +9,8 @@ import {
   Flex,
   Input,
   Switch,
+  Toast,
+  useToast,
 } from '@chakra-ui/react'
 import configStore, {
   BaseConfig,
@@ -19,11 +21,11 @@ import { isBoolean } from 'lodash-es'
 import WebProvider from './web-provider/webProvider'
 import OptionProvider from './web-provider/option'
 import { DanType } from './danmaku'
+import { useOnce } from './hook'
+import { observer } from 'mobx-react'
 
 window.extStorage = extStorage
 window.configStore = configStore
-
-let configEntries = Object.entries(baseConfigMap)
 
 // TODO ？自定义弹幕
 const dans: DanType[] = [
@@ -53,84 +55,85 @@ const dans: DanType[] = [
   },
 ]
 
+type ConfigEntries = [string, ConfigField<any>][]
 // TODO options page
-const Page_options: FC = (props) => {
+const Page_options: FC = observer((props) => {
   let [newConfig, setNewConfig] = useState<Partial<BaseConfig>>({})
   let [videoSrc, setVideoSrc] = useState('')
   let providerRef = useRef<WebProvider>()
   let containerRef = useRef<HTMLDivElement>()
+  let [isAdvShow, setAdvShow] = useState(false)
+  const toast = useToast()
 
+  useOnce(() => {
+    document.title = '设置'
+    toast({
+      status: 'warning',
+      title: '实时效果面板未完成，可能出现需要刷新下才看到正确效果的情况',
+    })
+  })
   useEffect(() => {
     if (!videoSrc) return
 
     let provider = new OptionProvider(dans)
     providerRef.current = provider
     containerRef.current.appendChild(provider.miniPlayer.canvas)
-    // window.provider = provider
+    window.provider = provider
   }, [videoSrc])
+
+  let configEntries = Object.entries(baseConfigMap)
+
+  const baseConfigEntries: ConfigEntries = [],
+    advConfigEntries: ConfigEntries = []
+
+  configEntries.forEach(([key, _val]) => {
+    const val = { ..._val, defaultValue: (configStore as any)[key] }
+    if (val.deprecated) advConfigEntries.push([key, val])
+    else baseConfigEntries.push([key, val])
+  })
+
+  const handleSaveConfig = () => {
+    configStore
+      .setConfig(newConfig)
+      .then(() => {
+        toast({
+          title: '保存成功',
+          status: 'success',
+        })
+      })
+      .catch((err) => {
+        console.error(err)
+        toast({
+          title: '保存失败，请查看控制台报错',
+          colorScheme: 'red',
+          status: 'error',
+        })
+      })
+  }
 
   return (
     <ChakraProvider>
       <Box fontSize={'14px'} position={'relative'}>
         <Flex>
           <Box flex={1}>
-            {configEntries.map(([key, val]: [string, ConfigField<any>], i) => (
-              <Box
-                padding={'6px 8px'}
-                backgroundColor={i % 2 == 0 ? 'blackAlpha.50' : 'white'}
-                className="row"
-                key={i}
-              >
-                <Flex gap={'12px'}>
-                  <Center
-                    textAlign={'center'}
-                    width={140}
-                    whiteSpace={'pre-wrap'}
-                  >
-                    {val.label ?? key}:
-                  </Center>
-                  <Box flex={1}>
-                    <Flex gap={'12px'}>
-                      <Center flex={1}>
-                        <ConfigRowAction
-                          config={val}
-                          onChange={(v) => {
-                            setNewConfig((c) => ({ ...c, [key]: v }))
-                          }}
-                          newVal={(newConfig as any)[key]}
-                        />
-                      </Center>
-                      <Center>
-                        <Button
-                          isDisabled={!(newConfig as any)[key]}
-                          colorScheme="red"
-                          size={'sm'}
-                          onClick={() => {
-                            delete (newConfig as any)[key]
-                            setNewConfig((c) => ({ ...c }))
-                          }}
-                        >
-                          重置
-                        </Button>
-                      </Center>
-                    </Flex>
-                    {val.desc && (
-                      <Box
-                        mt={'4px'}
-                        flex={1}
-                        fontSize={'12px'}
-                        color={'blue.500'}
-                      >
-                        {val.desc}
-                      </Box>
-                    )}
-                  </Box>
-                </Flex>
-              </Box>
-            ))}
+            <ConfigEntriesBox
+              config={baseConfigEntries}
+              newConfig={newConfig}
+              setNewConfig={setNewConfig}
+            />
+            <Button colorScheme="teal" onClick={() => setAdvShow(true)}>
+              显示非必要设置
+            </Button>
+            <Box overflow="hidden" maxHeight={isAdvShow ? 'initial' : '0'}>
+              <ConfigEntriesBox
+                config={advConfigEntries}
+                newConfig={newConfig}
+                setNewConfig={setNewConfig}
+              />
+            </Box>
           </Box>
           <Box width={480} p="24px">
-            <h2>效果展示</h2>
+            <h2>传入一个视频进行效果展示</h2>
             <Input
               m={'12px 0'}
               type="file"
@@ -173,11 +176,69 @@ const Page_options: FC = (props) => {
           boxShadow={'0px -3px 4px rgba(55, 60, 68, 0.2)'}
         >
           <Center ml={'auto'}>
-            <Button colorScheme="teal">保存</Button>
+            <Button colorScheme="teal" onClick={handleSaveConfig}>
+              保存
+            </Button>
           </Center>
         </Flex>
       </Box>
     </ChakraProvider>
+  )
+})
+
+const ConfigEntriesBox: FC<{
+  config: ConfigEntries
+  newConfig: Partial<BaseConfig>
+  setNewConfig: React.Dispatch<React.SetStateAction<Partial<BaseConfig>>>
+}> = (props) => {
+  return (
+    <Box>
+      {props.config.map(([key, val]: [string, ConfigField<any>], i) => (
+        <Box
+          padding={'6px 8px'}
+          backgroundColor={i % 2 == 0 ? 'blackAlpha.50' : 'white'}
+          className="row"
+          key={i}
+        >
+          <Flex gap={'12px'}>
+            <Center textAlign={'center'} width={140} whiteSpace={'pre-wrap'}>
+              {val.label ?? key}:
+            </Center>
+            <Box flex={1}>
+              <Flex gap={'12px'}>
+                <Center flex={1}>
+                  <ConfigRowAction
+                    config={val}
+                    onChange={(v) => {
+                      props.setNewConfig((c) => ({ ...c, [key]: v }))
+                    }}
+                    newVal={(props.newConfig as any)[key]}
+                  />
+                </Center>
+                <Center>
+                  <Button
+                    isDisabled={!(props.newConfig as any)[key]}
+                    colorScheme="red"
+                    size={'sm'}
+                    onClick={() => {
+                      delete (props.newConfig as any)[key]
+                      props.setNewConfig((c) => ({ ...c }))
+                    }}
+                  >
+                    重置
+                  </Button>
+                </Center>
+              </Flex>
+              {val.desc && (
+                <Box mt={'4px'} flex={1} fontSize={'12px'} color={'blue.500'}>
+                  {val.desc}
+                </Box>
+              )}
+            </Box>
+          </Flex>
+        </Box>
+      ))}
+    </Box>
   )
 }
 

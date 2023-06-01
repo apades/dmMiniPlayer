@@ -32,11 +32,13 @@ export const baseConfigMap = {
     label: 'canvas画布高度',
   }),
   autoResizeInPIP: config({
+    deprecated: true,
     defaultValue: true,
     desc: '默认开启，可能有些电脑会有性能问题可以关闭',
     label: '画中画调整时自动调整画布大小',
   }),
   autoRatio: config({
+    deprecated: true,
     defaultValue: true,
     desc: '自动根据视频比例调整画布比例，默认开启',
     label: '根据视频比例自动调整画布比例',
@@ -64,8 +66,10 @@ export const baseConfigMap = {
     label: '弹幕字体宽度',
   }),
   fontFamily: config({
+    deprecated: true,
     defaultValue: '"microsoft yahei", sans-serif',
-    desc: '默认 "microsoft yahei", sans-serif',
+    desc:
+      '原本默认 "microsoft yahei", sans-serif，但现在都用了网站的默认字体，后续再开放修改',
     label: '弹幕字体',
   }),
   gap: config({
@@ -75,7 +79,7 @@ export const baseConfigMap = {
   }),
   maxTunnel: config({
     defaultValue: '1/2' as number | '1/2' | '1/4' | 'full',
-    desc: '默认1/2半屏',
+    desc: '默认1/2半屏，还支持 1/2 | 1/4 | full，剩下的只能填数字',
     label: '弹幕最大渲染行数',
   }),
 
@@ -93,6 +97,7 @@ export const baseConfigMap = {
 
 const LOCAL_CONFIG = 'LOCAL_CONFIG'
 
+window.extStorage = extStorage
 export type BaseConfig = {
   [k in keyof typeof baseConfigMap]: typeof baseConfigMap[k]['defaultValue']
 }
@@ -122,9 +127,15 @@ class ConfigStore implements BaseConfig {
     })
     makeAutoObservable(this)
 
-    extStorage.get<Partial<BaseConfig>>(LOCAL_CONFIG).then((data = {}) => {
-      Object.assign(this, data)
-      this.localConfig = data
+    extStorage.get<Partial<BaseConfig>>(LOCAL_CONFIG).then((config = {}) => {
+      console.log('config data', config)
+      runInAction(() => {
+        Object.entries(config).forEach(([key, val]) => {
+          ;(this as any)[key] = val
+        })
+      })
+      // Object.assign(this, config)
+      this.localConfig = config
       this.lock.ok()
     })
   }
@@ -165,8 +176,17 @@ class ConfigStore implements BaseConfig {
     })
   }
 
-  setConfig(config: Partial<BaseConfig>) {
-    return extStorage.set(LOCAL_CONFIG, config)
+  setConfig(newConfig: Partial<BaseConfig>) {
+    runInAction(() => {
+      Object.entries(newConfig).forEach(([key, val]) => {
+        ;(this as any)[key] = val
+      })
+    })
+    return extStorage
+      .get<Partial<BaseConfig>>(LOCAL_CONFIG)
+      .then((baseConfig = {}) => {
+        return extStorage.set(LOCAL_CONFIG, { ...baseConfig, ...newConfig })
+      })
   }
 
   /**临时改变设置 */
