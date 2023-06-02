@@ -2,7 +2,7 @@
   "name": "share-gpt",
   "version": "1.0.0",
   "license": "MIT",
-  "author": "apad",
+  "author": "apades",
   "packageManager": "pnpm@7.29.1",
   "scripts": {
     "dev": "plasmo dev",
