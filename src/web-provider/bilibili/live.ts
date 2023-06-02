@@ -1,16 +1,12 @@
+import { Barrage } from '@root/danmaku'
+import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
+import MiniPlayer from '@root/miniPlayer'
+import configStore from '@root/store/config'
 import { dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
-import { sendMessage } from '@root/inject/contentSender'
-import { Barrage } from '@root/danmaku'
-import MiniPlayer from '@root/miniPlayer'
-import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
-import configStore from '@root/store/config'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
-  regExp = /https:\/\/live.bilibili.com\/.*/
-  static regExp = /https:\/\/live.bilibili.com\/.*/
-
   observer: MutationObserver
   barrageClient: BilibiliLiveBarrageClient
 

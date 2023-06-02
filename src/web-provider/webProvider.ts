@@ -1,10 +1,7 @@
 import MiniPlayer from '@root/miniPlayer'
-import BilibiliVideoProvider from './bilibili/video'
 
 export default abstract class WebProvider {
   miniPlayer: MiniPlayer
-  /**用来匹配网站的，这里放abstract只是为了提醒这个regExp必须有而且要加上static */
-  abstract regExp: RegExp
   constructor() {
     this.bindToPIPEvent()
   }

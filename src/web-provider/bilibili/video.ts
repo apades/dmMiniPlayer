@@ -1,22 +1,19 @@
-import { dq1, onWindowLoad, waitLoopCallback } from '@root/utils'
-import WebProvider from '../webProvider'
-import { onMessage, sendMessage } from '@root/inject/contentSender'
-import MiniPlayer from '@root/miniPlayer'
-import { Barrage, DanType } from '@root/danmaku'
+import { DanType } from '@root/danmaku'
+import { DanmakuStack } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-stack'
+import { DanmakuType } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-type'
 import {
   DanmakuDownloadType,
   JsonDanmaku,
   getTextByType,
 } from '@root/danmaku/bilibili/barrageDownload/download/utils'
-import AssParser from '@root/utils/AssParser'
+import { onMessage, sendMessage } from '@root/inject/contentSender'
+import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
-import { DanmakuStack } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-stack'
-import { DanmakuType } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-type'
+import { dq1 } from '@root/utils'
+import AssParser from '@root/utils/AssParser'
+import WebProvider from '../webProvider'
 
 export default class BilibiliVideoProvider extends WebProvider {
-  regExp = /https:\/\/www.bilibili.com\/video\/.*/
-  static regExp = /https:\/\/www.bilibili.com\/video\/.*/
-
   videoEl: HTMLVideoElement
   constructor() {
     super()

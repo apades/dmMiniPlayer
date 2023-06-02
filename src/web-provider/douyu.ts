@@ -1,16 +1,12 @@
-import { dq1, onWindowLoad } from '@root/utils'
-import WebProvider from './webProvider'
-import { sendMessage } from '@root/inject/contentSender'
 import { Barrage } from '@root/danmaku'
+import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
 import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
-import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
+import { dq1, onWindowLoad } from '@root/utils'
+import WebProvider from './webProvider'
 
 window.DouyuLiveBarrageClient = DouyuLiveBarrageClient
 export default class DouyuLiveProvider extends WebProvider {
-  regExp = /https:\/\/www\.douyu\.com\/.*/
-  static regExp = /https:\/\/www\.douyu\.com\/.*/
-
   observer: MutationObserver
   barrageClient: DouyuLiveBarrageClient
 

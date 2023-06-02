@@ -1,11 +1,8 @@
+import { DanType } from '@root/danmaku'
 import MiniPlayer from '@root/miniPlayer'
 import WebProvider from './webProvider'
-import { DanType } from '@root/danmaku'
 
 export default class OptionProvider extends WebProvider {
-  regExp = /https:\/\/www.bilibili.com\/video\/.*/
-  static regExp = /https:\/\/www.bilibili.com\/video\/.*/
-
   constructor(public dans: DanType[] = []) {
     super()
 

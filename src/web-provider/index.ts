@@ -1,20 +1,30 @@
-import BilibiliVideoProvider from './bilibili/video'
-import WebProvider from './webProvider'
 import BilibiliLiveProvider from './bilibili/live'
+import BilibiliVideoProvider from './bilibili/video'
 import DouyuLiveProvider from './douyu'
+import WebProvider from './webProvider'
 
 const providerList = [
-  BilibiliVideoProvider,
-  BilibiliLiveProvider,
-  DouyuLiveProvider,
+  {
+    reg: /https:\/\/www.bilibili.com\/video\/.*/,
+    provider: BilibiliVideoProvider,
+  },
+  {
+    reg: /https:\/\/live.bilibili.com\/.*/,
+    provider: BilibiliLiveProvider,
+  },
+  {
+    reg: /https:\/\/www\.douyu\.com\/.*/,
+    provider: DouyuLiveProvider,
+  },
 ]
+
 console.log('providerList', providerList)
-export function getWebProvider(): WebProvider {
-  let provider = providerList.find((provider) => {
-    if (provider.regExp.test(location.href)) return provider
+export function getWebProvider<T extends WebProvider>(): T {
+  let provider = providerList.find(({ provider, reg }) => {
+    if (reg.test(location.href)) return provider
   })
 
-  if (provider) return new provider()
+  if (provider) return new provider.provider() as any
   // return new BilibiliVideoProvider()
   return null
 }
