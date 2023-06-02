@@ -11,6 +11,7 @@ export type ConfigField<T> = {
   label?: string
   /**不要显示在前面 */
   deprecated?: boolean
+  group?: string
 }
 
 function config<T>(config: ConfigField<T>) {
@@ -47,6 +48,22 @@ export const baseConfigMap = {
     defaultValue: 60,
     desc: '限制渲染帧数，默认60，设置0就是无上限',
     label: 'canvas渲染的帧数',
+  }),
+  videoProgress_show: config({
+    defaultValue: true,
+    desc: '非直播视频底下增加进度条显示',
+    label: '显示进度条',
+    group: '视频进度条',
+  }),
+  videoProgress_color: config({
+    defaultValue: '#00AEEC',
+    label: '进度条颜色',
+    group: '视频进度条',
+  }),
+  videoProgress_height: config({
+    defaultValue: 2,
+    label: '进度条高度',
+    group: '视频进度条',
   }),
 
   // 弹幕设置
@@ -118,6 +135,9 @@ class ConfigStore implements BaseConfig {
 
   performanceInfo: BaseConfig['performanceInfo']
   performanceUpdateFrame: BaseConfig['performanceUpdateFrame']
+  videoProgress_show: BaseConfig['videoProgress_show']
+  videoProgress_color: BaseConfig['videoProgress_color']
+  videoProgress_height: BaseConfig['videoProgress_height']
 
   localConfig = {} as Partial<BaseConfig>
   lock = new AsyncLock()

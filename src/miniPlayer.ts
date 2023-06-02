@@ -132,6 +132,8 @@ export default class MiniPlayer {
     this.animationFrameSignal = requestAnimationFrame(
       this.canvasUpdate.bind(this)
     )
+
+    this.renderVideoProgress()
   }
 
   renderDanmu() {
@@ -238,5 +240,22 @@ export default class MiniPlayer {
     )
     ctx.fillText(`animaVideoFPS:${this.animaVideoFPS}`, padding, getY())
     ctx.fillText(`animaFPS:${this.animaFPS}`, padding, getY())
+  }
+
+  renderVideoProgress() {
+    if (
+      !(
+        configStore.videoProgress_show &&
+        this.videoEl.duration &&
+        this.videoEl.duration != Infinity
+      )
+    )
+      return
+    let ctx = this.ctx
+    let video = this.videoEl
+    const height = configStore.videoProgress_height,
+      width = (video.currentTime / video.duration) * configStore.renderWidth
+    ctx.fillStyle = configStore.videoProgress_color
+    ctx.fillRect(0, configStore.renderHeight - height, width, height)
   }
 }
