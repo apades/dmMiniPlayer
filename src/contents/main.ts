@@ -1,5 +1,7 @@
 import { PlasmoCSConfig } from 'plasmo'
 import { getWebProvider } from '../web-provider'
+import { listen } from '@plasmohq/messaging/message'
+// import {} from '@plasmohq/messaging/port'
 
 export const config: PlasmoCSConfig = {
   matches: [
@@ -14,6 +16,15 @@ export const config: PlasmoCSConfig = {
 console.log('run content')
 
 let provider = getWebProvider()
+
+listen((req, res) => {
+  switch (req.name) {
+    case 'player-startPIPPlay': {
+      provider.startPIPPlay()
+      break
+    }
+  }
+})
 
 window.getWebProvider = getWebProvider
 window.provider = provider

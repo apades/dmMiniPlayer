@@ -1873,6 +1873,13 @@
   resolved "https://registry.npmmirror.com/@plasmohq/init/-/init-0.6.3.tgz"
   integrity sha512-TdeisHX+Z0Rfez4251eCX0czcqnWO1OfurQhSQDijcmcjVU7r+IXh0svg7s+UVpCiHTagQ/JY+bnweuqnGPFHQ==
 
+"@plasmohq/messaging@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.npmjs.org/@plasmohq/messaging/-/messaging-0.3.3.tgz"
+  integrity sha512-QXwOgrGTVCv5QyfmLZXqJwzcS+YcfWyjvH/ronJbBftroToGuIpzAkgEqWZki9h+y90sHRvTcGYWEKx0hheNtQ==
+  dependencies:
+    nanoid "4.0.2"
+
 "@plasmohq/parcel-bundler@0.4.9":
   version "0.4.9"
   resolved "https://registry.npmmirror.com/@plasmohq/parcel-bundler/-/parcel-bundler-0.4.9.tgz"
@@ -4732,6 +4739,11 @@ nanoid@^3.3.6:
   version "3.3.6"
   resolved "https://registry.npmmirror.com/nanoid/-/nanoid-3.3.6.tgz"
   integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
+
+nanoid@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.npmjs.org/nanoid/-/nanoid-4.0.2.tgz"
+  integrity sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==
 
 napi-build-utils@^1.0.1:
   version "1.0.2"

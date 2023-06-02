@@ -25,6 +25,7 @@
   "dependencies": {
     "@apad/env-tools": "^1.0.5",
     "@chakra-ui/react": "^2.6.0",
+    "@plasmohq/messaging": "^0.3.3",
     "@plasmohq/storage": "^1.5.0",
     "ass-parser": "^0.2.0",
     "bilibili-live-ws": "^6.2.1",

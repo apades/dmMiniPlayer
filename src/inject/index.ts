@@ -2,6 +2,7 @@ import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './fetchHacker'
 import { injectFunction } from '@root/utils/injectFunction'
+import { get } from 'lodash-es'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)
@@ -17,7 +18,7 @@ onMessage_inject('msg-test', (data) => {
 })
 
 onMessage_inject('inject-api:run', (data) => {
-  injectFunction(window[data.origin] as any, data.keys, (...args) => {
+  injectFunction(get(window, data.origin) as any, data.keys, (...args) => {
     sendMessage_inject('inject-api:onTrigger', {
       args,
       event: data.onTriggerEvent,

@@ -17,6 +17,7 @@ export default class BilibiliVideoProvider extends WebProvider {
   regExp = /https:\/\/www.bilibili.com\/video\/.*/
   static regExp = /https:\/\/www.bilibili.com\/video\/.*/
 
+  videoEl: HTMLVideoElement
   constructor() {
     super()
 
@@ -69,19 +70,36 @@ export default class BilibiliVideoProvider extends WebProvider {
       event: 'click',
     })
   }
+  bindPIPActions() {
+    console.log('bindPIPActions')
+    // 这个pip的action按钮在频繁关闭开启中（多数1次）会全部消失，即使是默认b站自己注册的setActionHandler到后面也只剩播放暂停，可能是浏览器问题
+    navigator.mediaSession.setActionHandler('pause', (e) => {
+      this.videoEl.pause()
+      this.miniPlayer.playerVideoEl.pause()
+      // navigator.mediaSession.playbackState = 'paused'
+    })
+    navigator.mediaSession.setActionHandler('play', () => {
+      this.videoEl.play()
+      this.miniPlayer.playerVideoEl.play()
+      // navigator.mediaSession.playbackState = 'playing'
+    })
+  }
   async _startPIPPlay() {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
+      this.videoEl = videoEl
       this.miniPlayer = new MiniPlayer({
         videoEl,
       })
 
+      this.bindPIPActions()
       this.miniPlayer.startRenderAsCanvas()
       this.miniPlayer.onLeavePictureInPicture = () => {
         this.miniPlayer.stopRenderAsCanvas()
         videoEl.pause()
       }
     } else {
+      this.miniPlayer.playerVideoEl.play()
       this.miniPlayer.startRenderAsCanvas()
     }
 
