@@ -101,3 +101,7 @@ export function isPromiseFunction(fn: Function): boolean {
     'function AsyncFunction() { [native code] }'
   )
 }
+
+export async function wait(time = 0) {
+  return new Promise<void>((res) => setTimeout(res, time))
+}
