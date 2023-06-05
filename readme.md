@@ -5,7 +5,7 @@
 目前已支持:
 - [x] bilibili 视频 + 直播
 - [x] 斗鱼直播
-- [ ] CC直播
+- [x] CC直播
 
 ## 主要实现方法
 获取目标视频的HTMLElement，然后在requestAnimationFrame下用canvas的`drawImage`画每一帧画面 + 弹幕，然后从`canvas.captureStream()`拿到videoStream在附加到一个新的video HTMLElement上作为画中画播放器，最后该video HTMLElement使用`requestPictureInPicture()`方法，实现画中画弹幕播放
