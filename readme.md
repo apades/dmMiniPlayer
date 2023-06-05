@@ -27,3 +27,9 @@
 [项目地址](https://github.com/qianjiachun/douyu-monitor)
 
 [抄的ws连接](https://github.com/qianjiachun/douyu-monitor/tree/main/remix/app/utils)
+
+### cc直播ws real-url
+
+[项目地址](https://github.com/wbt5/real-url)
+
+[改的py版ws连接](https://github.com/wbt5/real-url/blob/master/danmu/danmaku/cc.py)

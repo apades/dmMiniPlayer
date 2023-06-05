@@ -1,7 +1,9 @@
 import { v1 as uuid } from 'uuid'
 import struct from './struct.mjs'
 import { isArray, isNumber, isObject, isString } from 'lodash-es'
-import { wait } from '@root/utils'
+import { oncePromise, wait } from '@root/utils'
+import { CCMsgDecode } from './CCMsgDecode'
+import pako from 'pako'
 
 export function bytes(b: number[] | string): ArrayBuffer {
   if (isArray(b)) {
@@ -35,34 +37,36 @@ function combineArrayBuffer(...arrays: ArrayBuffer[]) {
   return res.buffer
 }
 
-// function getFromArrayBuffer(buffer: ArrayBuffer, start = 0, end = 0) {
-//   const index = end - start
-//   const
-//   while (index--) {}
-// }
-
 export default class CCWs {
   ws: WebSocket
   constructor(public cid: string | number) {
     this.init_ws()
   }
 
-  async init_ws() {
+  init_ws = oncePromise(async () => {
     const { url, reg_datas } = await this.get_ws_info()
     this.ws = new WebSocket(url)
-    this.ws.addEventListener('message', (e) => {
-      console.log(e.data)
-    })
+    this.ws.binaryType = 'arraybuffer'
+    // this.ws.addEventListener('message', (e) => {
+    //   // console.log(e.data)
+    //   this.decode_msg(e.data)
+    // })
     await new Promise((res) => this.ws.addEventListener('open', res))
 
     for (let buffer of Object.values(reg_datas)) {
       this.ws.send(buffer)
     }
 
-    await wait(1000)
-    console.log('send')
-    this.ws.send(reg_datas.beat_data)
-  }
+    const beatTimer = setInterval(() => {
+      this.ws.send(reg_datas.beat_data)
+    }, 1000)
+    this.ws.addEventListener('close', () => {
+      clearInterval(beatTimer)
+    })
+
+    return this.ws
+  })
+  getWs = this.init_ws
 
   async get_ws_info() {
     const res = await fetch(
@@ -147,7 +151,7 @@ export default class CCWs {
   // ---- cc ws连接信息
 
   encode_dict(data: Record<string, any>) {
-    let n = data.length
+    let n = Object.keys(data).length
     let r = (n < 16 && 128 + n) || (n >= 16 && n <= 65535 && 222) || 223
     let t = bytes([r])
     Object.entries(data).forEach(([k, v]) => {
@@ -265,5 +269,71 @@ export default class CCWs {
     }
   }
 
-  // decode_msg(e: ArrayBuffer) {}
+  decode_msg(
+    e: ArrayBuffer
+  ): { content: string; name: string; color: string }[] {
+    const [n, r, p] = struct('<HHI').unpack(e.slice(0, 8))
+    const i = `tcp-${n}-${r}`
+    const studio: Record<string, string> = {
+      'tcp-512-32784': 'origin',
+      'tcp-515-32785': 'chat',
+      'tcp-535-32769': 'gamechat',
+    }
+
+    let o
+    const msg_type = studio[i]
+    if (msg_type) {
+      let uInt8 = new Uint8Array(e)
+      if (p) {
+        const [s] = struct('<I').unpack(e.slice(8, 12))
+        const a = e.slice(12)
+        if (a.byteLength == s) {
+          o = a
+          uInt8 = uInt8.slice(12)
+        }
+      } else {
+        o = e.slice(8)
+        uInt8 = uInt8.slice(8)
+      }
+
+      if (uInt8[0] == 120) {
+        console.log('type 120')
+        uInt8 = pako.inflate(uInt8)
+      }
+
+      const ccMsgDecode = new CCMsgDecode(e, uInt8)
+      const msg = ccMsgDecode.de_init(uInt8)
+
+      // console.log(msg_type, i, msg)
+
+      let ms: any
+      if (msg_type == 'origin') ms = msg['data']['msg_list']
+      else ms = msg['msg']
+
+      switch (msg_type) {
+        case 'origin': {
+          let data = msg['data']['msg_list']
+          data.forEach((data: any) => {
+            let name = data['name']
+            // console.log(`${name} 来到直播间`, data)
+          })
+          return null
+        }
+        case 'chat': {
+          let data = msg['msg']
+          return data.map((data: any) => {
+            let name = data[197],
+              content = data[4]
+            // data[35] 可能是颜色，注意下
+            console.log(`${name}:${content}`, `color? ${data[35]}`, data)
+            return { name, content, color: data[35] ? `#${data[35]}` : '#fff' }
+          })
+        }
+        // 这什么鬼玩意没触发过，不管了
+        case 'gamechat': {
+        }
+      }
+      // }
+    }
+  }
 }

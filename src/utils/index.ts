@@ -1,4 +1,4 @@
-import { isNumber, isNull } from 'lodash-es'
+import { isNumber, isNull, isEqual } from 'lodash-es'
 import { CSSProperties } from 'react'
 import AsyncLock from './AsyncLock'
 
@@ -104,4 +104,23 @@ export function isPromiseFunction(fn: Function): boolean {
 
 export async function wait(time = 0) {
   return new Promise<void>((res) => setTimeout(res, time))
+}
+
+type noop = (this: any, ...args: any[]) => any
+/**包住async函数，让它只会运行一次，之后再调用函数返回的还是第一次运行结果，不会再调用函数 */
+export function oncePromise<T extends noop>(fn: T): T {
+  let promise: Promise<any>
+  let lastArgs: any
+
+  return ((...args: any[]) => {
+    if (!promise || !isEqual(args, lastArgs)) {
+      promise = new Promise((res, rej) => {
+        fn(...args)
+          .then(res)
+          .catch(rej)
+      })
+    }
+    lastArgs = args
+    return promise
+  }) as T
 }
