@@ -15,8 +15,9 @@ export default class CCLiveProvider extends WebProvider {
 
     // TODO cc的弹幕字体
     // // 斗鱼的字体
-    // configStore.fontFamily =
-    //   'Segoe UI Emoji,SimHei,Microsoft JhengHei,Arial,Helvetica,sans-serif'
+    configStore.fontFamily =
+      'PingFang SC,-apple-system,Microsoft YaHei,宋体,Arial,Verdana'
+    configStore.fontWeight = 700
   }
 
   async bindToPIPEvent(): Promise<void> {}

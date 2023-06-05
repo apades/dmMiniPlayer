@@ -325,13 +325,26 @@ export default class CCWs {
             let name = data[197],
               content = data[4]
             // data[35] 可能是颜色，注意下
-            console.log(`${name}:${content}`, `color? ${data[35]}`, data)
-            return { name, content, color: data[35] ? `#${data[35]}` : '#fff' }
+            let color = data[35] ? `#${data[35]}` : '#fff'
+            if (data[99]) {
+              try {
+                color = JSON.parse(data[99]).barrage_info.color
+              } catch (error) {
+                // no color
+              }
+            }
+            if (color[0] != '#') color = '#' + color
+            console.log(
+              `${name}:${content}`,
+              `color? ${data[35]} ${color}`,
+              data
+            )
+            return { name, content, color }
           })
         }
         // 这什么鬼玩意没触发过，不管了
-        case 'gamechat': {
-        }
+        // case 'gamechat': {
+        // }
       }
       // }
     }
