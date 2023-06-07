@@ -146,25 +146,29 @@ export default class MiniPlayer {
 
       this.playerVideoEl.addEventListener('loadedmetadata', () => {
         this.playerVideoEl.play()
-        this.playerVideoEl.requestPictureInPicture().then((pipWindow) => {
-          let onResize = () => {
-            if (configStore.autoResizeInPIP) {
-              configStore.setRatioWidth(this.videoEl, {
-                renderWidth: pipWindow.width,
-              })
-              this.updateCanvasSize()
-            }
-          }
-          onResize()
-          pipWindow.onresize = throttle(onResize, 500)
-        })
+        this.startPlayerElPIPPlay()
         this.playerVideoEl.addEventListener('leavepictureinpicture', () => {
           this.onLeavePictureInPicture()
         })
       })
     } else {
-      this.playerVideoEl.requestPictureInPicture()
+      this.startPlayerElPIPPlay()
     }
+  }
+
+  startPlayerElPIPPlay() {
+    this.playerVideoEl.requestPictureInPicture().then((pipWindow) => {
+      let onResize = () => {
+        if (configStore.autoResizeInPIP) {
+          configStore.setRatioWidth(this.videoEl, {
+            renderWidth: pipWindow.width,
+          })
+          this.updateCanvasSize()
+        }
+      }
+      onResize()
+      pipWindow.onresize = throttle(onResize, 500)
+    })
   }
 
   // FIXME 限制的FPS跟实际显示FPS对不上
