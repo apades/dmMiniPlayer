@@ -1,6 +1,7 @@
 import { PlasmoCSConfig } from 'plasmo'
 import { getWebProvider } from '../web-provider'
 import { listen } from '@plasmohq/messaging/message'
+import AsyncLock from '@root/utils/AsyncLock'
 // import {} from '@plasmohq/messaging/port'
 
 export const config: PlasmoCSConfig = {
@@ -19,11 +20,29 @@ console.log('run content')
 
 let provider = getWebProvider()
 
-listen((req, res) => {
+let hasClickPage = false
+let clickLock = new AsyncLock()
+document.body.addEventListener('click', () => {
+  hasClickPage = true
+  clickLock.ok()
+})
+listen(async (req, res) => {
   switch (req.name) {
     case 'player-startPIPPlay': {
+      if (!hasClickPage) res.send({ state: 'error', type: 'click-page' })
+      console.log('hasClickPage', hasClickPage)
+      await clickLock.waiting()
       provider.startPIPPlay()
-      break
+      res.send({ state: 'ok' })
+
+      function handleBlur() {
+        console.log('blur')
+        hasClickPage = false
+        clickLock.reWaiting()
+        window.removeEventListener('blur', handleBlur)
+      }
+      window.addEventListener('blur', handleBlur)
+      return
     }
   }
 })
