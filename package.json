@@ -52,6 +52,9 @@
       "*://*.bilibili.com/*",
       "*://api.cc.163.com/*"
     ],
+    "permissions":[
+      "contextMenus"
+    ],
     "web_accessible_resources": [
       {
         "resources": [

@@ -1,4 +1,5 @@
 import AsyncLock from '@root/utils/AsyncLock'
+import _env from '@root/utils/env'
 import { extStorage } from '@root/utils/storage'
 import { isNumber } from 'lodash-es'
 import { makeAutoObservable, makeObservable, runInAction } from 'mobx'
@@ -102,7 +103,7 @@ export const baseConfigMap = {
 
   // debug
   performanceInfo: config({
-    defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',
+    defaultValue: _env.isDev,
     label: '性能面版',
   }),
   performanceUpdateFrame: config({
