@@ -2,7 +2,7 @@ import { Barrage } from '@root/danmaku'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
 import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
-import { dq1, onWindowLoad } from '@root/utils'
+import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
@@ -69,6 +69,17 @@ export default class BilibiliLiveProvider extends WebProvider {
   protected _startPIPPlay(): void | Promise<void> {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
+      if (!videoEl) {
+        let iframeEls = dq('iframe')
+        iframeEls.find((i) => {
+          let tar = i?.contentWindow?.document.querySelector('video')
+          tar && (videoEl = tar)
+          return tar
+        })
+      }
+      // 实在找不到
+      if (!videoEl)
+        throw new Error('找不到video el，建议在github提供issue和地址，非常感谢')
       this.miniPlayer = new MiniPlayer({
         videoEl,
       })

@@ -63,8 +63,8 @@ export const ascendingSort = <T>(itemProp: (obj: T) => number = selfSorter) => (
   b: T
 ) => itemProp(a) - itemProp(b)
 
-export let dq: typeof document.querySelectorAll = (selector: string) => {
-  return document.querySelectorAll(selector)
+export function dq<K extends keyof HTMLElementTagNameMap>(selector: K) {
+  return Array.from(document.querySelectorAll(selector))
 }
 export let dq1: {
   <K extends keyof HTMLElementTagNameMap>(selectors: K):
