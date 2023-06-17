@@ -2,6 +2,12 @@ import { throttle } from 'lodash-es'
 import DanmakuController, { DanmakuProps } from './danmaku'
 import configStore from './store/config'
 import { observe } from 'mobx'
+import {
+  addCusData,
+  sendPerformanceData,
+  timeEnd,
+  timeStart,
+} from './utils/performance'
 
 export type Props = {
   videoEl: HTMLVideoElement
@@ -105,17 +111,21 @@ export default class MiniPlayer {
   private withoutLimitLastUpdateTime = Date.now()
   withoutLimitAnimaFPS = 0
   canvasUpdate() {
-    if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
-      const videoEl = this.props.videoEl,
-        width = configStore.renderWidth,
-        height = configStore.renderHeight
+    const videoEl = this.props.videoEl,
+      width = configStore.renderWidth,
+      height = configStore.renderHeight
 
-      if (!this.isPause) {
-        this.ctx.drawImage(videoEl, 0, 0, width, height)
-        this.detectFPS()
-        this.renderDanmu()
-      }
-    }
+    const canUpdateImage =
+      (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) &&
+      !this.isPause
+
+    timeStart('drawImage')
+    if (canUpdateImage) this.ctx.drawImage(videoEl, 0, 0, width, height)
+    timeEnd('drawImage', { isUpdate: canUpdateImage })
+    if (canUpdateImage) this.detectFPS()
+    timeStart('绘制弹幕')
+    if (canUpdateImage) this.renderDanmu()
+    timeEnd('绘制弹幕', { isUpdate: canUpdateImage })
 
     if (configStore.performanceInfo) {
       this.renderPerformanceInfo()
@@ -123,17 +133,22 @@ export default class MiniPlayer {
 
     let now = Date.now()
     let offset = now - this.withoutLimitLastUpdateTime
+    // this.withoutLimitAnimaFPS = ~~(1000 / offset)
+    addCusData('无限制FPS', ~~(1000 / offset))
     this.performanceInfoLimit(() => {
       this.withoutLimitAnimaFPS = ~~(1000 / offset)
     })
     this.withoutLimitLastUpdateTime = now
 
+    timeStart('绘制进度条')
+    this.renderVideoProgress()
+    timeEnd('绘制进度条')
+    sendPerformanceData()
+
     this.inUpdateFrame = false
     this.animationFrameSignal = requestAnimationFrame(
       this.canvasUpdate.bind(this)
     )
-
-    this.renderVideoProgress()
   }
 
   renderDanmu() {
@@ -178,14 +193,17 @@ export default class MiniPlayer {
   checkFPSLimit() {
     let now = Date.now()
     let offset = now - this.lastUpdateTime
+    timeStart('限制的FPS')
     if (offset > 1000 / configStore.renderFPS) {
       this.performanceInfoLimit(() => {
         this.animaFPS = ~~(1000 / offset)
       })
 
       this.lastUpdateTime = now - (offset % configStore.renderFPS) /* now */
+      timeEnd('限制的FPS')
       return true
     }
+    timeEnd('限制的FPS', { isUpdate: false })
     return false
   }
 
