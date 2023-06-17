@@ -2,8 +2,12 @@ import { PlasmoCSConfig } from 'plasmo'
 import { getWebProvider } from '../web-provider'
 import { listen } from '@plasmohq/messaging/message'
 import AsyncLock from '@root/utils/AsyncLock'
+import Browser from 'webextension-polyfill'
+import { sendToBackground } from '@plasmohq/messaging'
+import { getPort } from '@plasmohq/messaging/port'
 // import {} from '@plasmohq/messaging/port'
 
+Browser.runtime.connect
 export const config: PlasmoCSConfig = {
   matches: [
     'https://www.bilibili.com/*',
@@ -49,3 +53,19 @@ listen(async (req, res) => {
 
 window.getWebProvider = getWebProvider
 window.provider = provider
+
+async function openPerformanceWindow() {
+  sendToBackground({ name: 'open-performance-window' })
+  let port = await getPort('cs-performance')
+  port.postMessage({
+    name: 'performance',
+    body: `connect from ${location.href}`,
+  })
+  port.onDisconnect.addListener(() => {
+    console.log('onDisconnect')
+  })
+  // port.onMessage.addListener((msg) => console.log('msg', msg))
+  console.log('port', port)
+}
+
+window.openPerformanceWindow = openPerformanceWindow
