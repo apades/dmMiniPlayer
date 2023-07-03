@@ -2,6 +2,7 @@ import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
 import CCLiveProvider from './cc'
 import DouyuLiveProvider from './douyu'
+import GeneralProvider from './general'
 import WebProvider from './webProvider'
 
 const providerList = [
@@ -20,6 +21,10 @@ const providerList = [
   {
     reg: /https:\/\/cc\.163\.com\/.*/,
     provider: CCLiveProvider,
+  },
+  {
+    reg: /.*/,
+    provider: GeneralProvider,
   },
 ]
 
