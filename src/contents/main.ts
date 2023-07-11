@@ -5,15 +5,15 @@ import AsyncLock from '@root/utils/AsyncLock'
 // import {} from '@plasmohq/messaging/port'
 
 export const config: PlasmoCSConfig = {
-  // matches: ['<all_urls>'],
-  matches: [
-    'https://www.bilibili.com/*',
-    'https://live.bilibili.com/*',
-    'https://www.douyu.com/*',
-    'https://cc.163.com/*',
-    'http://192.168.111.1:8081/*',
-    'https://www.youtube.com/*',
-  ],
+  matches: ['<all_urls>'],
+  // matches: [
+  //   'https://www.bilibili.com/*',
+  //   'https://live.bilibili.com/*',
+  //   'https://www.douyu.com/*',
+  //   'https://cc.163.com/*',
+  //   'http://192.168.111.1:8081/*',
+  //   'https://www.youtube.com/*',
+  // ],
   run_at: 'document_end',
   // TODO CC有多个iframe，不知道对别的有没有影响
   // all_frames: true,
