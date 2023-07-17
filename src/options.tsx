@@ -198,6 +198,7 @@ const ConfigEntriesBox: FC<{
           padding={'6px 8px'}
           backgroundColor={i % 2 == 0 ? 'blackAlpha.50' : 'white'}
           className="row"
+          role="group"
           key={i}
         >
           <Flex gap={'12px'}>
@@ -215,7 +216,11 @@ const ConfigEntriesBox: FC<{
                     newVal={(props.newConfig as any)[key]}
                   />
                 </Center>
-                <Center>
+                <Center
+                  opacity={0}
+                  transition={'ease-in-out'}
+                  _groupHover={{ opacity: 1 }}
+                >
                   <Button
                     isDisabled={!(props.newConfig as any)[key]}
                     colorScheme="red"
