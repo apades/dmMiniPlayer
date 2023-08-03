@@ -47,7 +47,7 @@
   "manifest": {
     "name": "弹幕画中画播放器",
     "description": "带弹幕的画中画播放器，目前已支持B站和斗鱼，CC直播，狠狠的摸！",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "host_permissions": [
       "*://*.bilibili.com/*",
       "*://api.cc.163.com/*"
