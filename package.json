@@ -61,6 +61,39 @@
           "<all_urls>"
         ]
       }
-    ]
+    ],
+    "commands": {
+      "back": {
+        "suggested_key": {
+          "windows": "Alt+Shift+Comma",
+          "mac": "Command+Shift+Left"
+        },
+        "description": "后退"
+      },
+      "forward": {
+        "suggested_key": {
+          "windows": "Alt+Shift+Period",
+          "mac": "Command+Shift+Right"
+        },
+        "description": "快进"
+      },
+      "pause/play": {
+        "suggested_key": {
+          "windows": "Alt+Shift+M",
+          "mac": "Command+Shift+Space"
+        },
+        "description": "暂停/播放"
+      },
+      "hide": {
+        "suggested_key": {
+          "windows": "Ctrl+Shift+H",
+          "mac": "Command+Shift+H"
+        },
+        "description": "隐藏画中画"
+      },
+      "playbackRate": {
+        "description": "开启/关闭倍速，默认3倍速，修改请到设置页"
+      }
+    }
   }
 }

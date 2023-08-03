@@ -100,6 +100,19 @@ export const baseConfigMap = {
     label: '弹幕最大渲染行数',
   }),
 
+  // TODO
+  // showInfoInBackOrForward: config({
+  //   defaultValue: true,
+  //   desc: '直播下无效',
+  //   label: '快进/后退时显示视频信息',
+  //   deprecated: true,
+  // }),
+  playbackRate: config({
+    defaultValue: 3,
+    desc: '直播下无效',
+    label: '快捷键的倍速播放速率',
+  }),
+
   // debug
   performanceInfo: config({
     defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',
@@ -138,6 +151,8 @@ class ConfigStore implements BaseConfig {
   videoProgress_show: BaseConfig['videoProgress_show']
   videoProgress_color: BaseConfig['videoProgress_color']
   videoProgress_height: BaseConfig['videoProgress_height']
+  // showInfoInBackOrForward: BaseConfig['showInfoInBackOrForward']
+  playbackRate: BaseConfig['playbackRate']
 
   localConfig = {} as Partial<BaseConfig>
   lock = new AsyncLock()
