@@ -7,6 +7,15 @@ export const proto = {
   },
 }
 
+const getRoomid = async (short: number) => {
+  const {
+    data: { room_id },
+  } = await fetch(
+    `https://api.live.bilibili.com/room/v1/Room/mobileRoomInit?id=${short}`
+  ).then((w) => w.json())
+  return room_id
+}
+
 type LiveEvent = {
   danmu: { color: string; text: string }
 }
@@ -14,7 +23,13 @@ export default class BilibiliLiveBarrageClient extends EventEmitter {
   ws: LiveWS
   constructor(public id: number) {
     super()
-    this.ws = new LiveWS(this.id)
+    this.init(id)
+  }
+
+  async init(id: number) {
+    const realRoomId = await getRoomid(id)
+    console.log('realRoomId', realRoomId)
+    this.ws = new LiveWS(realRoomId)
     this.ws.on('open', () => console.log('Connection is established'))
     // Connection is established
     this.ws.on('live', () => {
