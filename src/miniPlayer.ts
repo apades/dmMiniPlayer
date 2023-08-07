@@ -52,8 +52,14 @@ export default class MiniPlayer {
     let videoEl = this.videoEl
 
     this.isPause = videoEl.paused
-    videoEl.addEventListener('pause', () => (this.isPause = true))
-    videoEl.addEventListener('play', () => (this.isPause = false))
+    videoEl.addEventListener('pause', () => {
+      this.isPause = true
+      this.playerVideoEl.pause()
+    })
+    videoEl.addEventListener('play', () => {
+      this.isPause = false
+      this.playerVideoEl.play()
+    })
     videoEl.addEventListener('loadedmetadata', () => {
       configStore.renderHeight =
         (configStore.renderWidth / videoEl.videoWidth) * videoEl.videoHeight
