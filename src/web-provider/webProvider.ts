@@ -3,6 +3,7 @@ import { sendToBackground } from '@plasmohq/messaging'
 import { listen } from '@plasmohq/messaging/message'
 import configStore from '@root/store/config'
 import AsyncLock from '@root/utils/AsyncLock'
+import { wait } from '@root/utils'
 
 let hasClickPage = false,
   isWaiting = false
@@ -27,6 +28,7 @@ export default abstract class WebProvider {
   protected abstract _startPIPPlay(): void | Promise<void>
 
   async startPIPPlay(options?: StartPIPPlayOptions) {
+    await wait(50)
     if (!hasClickPage) {
       options?.onNeedUserClick?.()
       const coverEl = document.createElement('div')
