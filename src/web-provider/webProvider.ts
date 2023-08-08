@@ -28,31 +28,6 @@ export default abstract class WebProvider {
   protected abstract _startPIPPlay(): void | Promise<void>
 
   async startPIPPlay(options?: StartPIPPlayOptions) {
-    await wait(50)
-    if (!hasClickPage) {
-      options?.onNeedUserClick?.()
-      const coverEl = document.createElement('div')
-      ;(coverEl as any).style =
-        'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
-      document.body.appendChild(coverEl)
-      coverEl.addEventListener('click', () =>
-        document.body.removeChild(coverEl)
-      )
-    }
-    if (isWaiting) return
-    isWaiting = true
-    await clickLock.waiting()
-    isWaiting = false
-
-    function handleBlur() {
-      console.log('blur')
-      hasClickPage = false
-      clickLock.reWaiting()
-      window.removeEventListener('blur', handleBlur)
-    }
-    window.addEventListener('blur', handleBlur)
-
-    sendToBackground({ name: 'PIP-active' })
     await this._startPIPPlay()
   }
 
