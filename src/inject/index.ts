@@ -1,6 +1,7 @@
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './fetchHacker'
+import './attachShadow'
 import { injectFunction } from '@root/utils/injectFunction'
 import { get } from 'lodash-es'
 

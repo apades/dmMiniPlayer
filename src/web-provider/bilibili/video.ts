@@ -12,9 +12,13 @@ import configStore from '@root/store/config'
 import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 import WebProvider from '../webProvider'
+import H265MiniPlayer from './h265MiniPlayer'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
+  isH265Mode = false
+  canvas: HTMLCanvasElement
+
   constructor() {
     super()
 
@@ -84,10 +88,21 @@ export default class BilibiliVideoProvider extends WebProvider {
   async _startPIPPlay() {
     if (!this.miniPlayer) {
       let videoEl = document.querySelector('video')
+      if (!videoEl) {
+        videoEl = document.querySelector('bwp-video')
+
+        if (videoEl) {
+          this.isH265Mode = true
+          this.canvas = videoEl.shadowRoot.querySelector('canvas')
+        }
+      }
+
+      if (!videoEl) throw new Error('没找到video元素')
+
       this.videoEl = videoEl
-      this.miniPlayer = new MiniPlayer({
-        videoEl,
-      })
+      this.miniPlayer = this.isH265Mode
+        ? new H265MiniPlayer({ videoEl }, this.canvas)
+        : new MiniPlayer({ videoEl })
 
       this.bindPIPActions()
       this.miniPlayer.startRenderAsCanvas()

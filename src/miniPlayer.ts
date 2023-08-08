@@ -112,12 +112,8 @@ export default class MiniPlayer {
   withoutLimitAnimaFPS = 0
   canvasUpdate() {
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
-      const videoEl = this.props.videoEl,
-        width = configStore.renderWidth,
-        height = configStore.renderHeight
-
       if (!this.isPause) {
-        this.ctx.drawImage(videoEl, 0, 0, width, height)
+        this.drawImage()
         this.detectFPS()
         this.renderDanmu()
       }
@@ -140,6 +136,13 @@ export default class MiniPlayer {
     )
 
     this.renderVideoProgress()
+  }
+
+  drawImage() {
+    const videoEl = this.props.videoEl,
+      width = configStore.renderWidth,
+      height = configStore.renderHeight
+    this.ctx.drawImage(videoEl, 0, 0, width, height)
   }
 
   renderDanmu() {
