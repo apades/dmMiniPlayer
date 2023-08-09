@@ -109,13 +109,25 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
   async getDamuContent(
     bid: string,
+    pid = 1,
     type: DanmakuDownloadType = 'ass'
   ): Promise<string> {
-    let { aid, cid } = (
+    let res = (
       await fetch(
         `https://api.bilibili.com/x/web-interface/view?bvid=${bid}`
       ).then((res) => res.json())
     ).data
+    let { aid, cid, pages } = res
+
+    if (pid != 1) {
+      try {
+        cid = pages[pid - 1].cid
+      } catch (error) {
+        console.error('出现了pid/pages不存在的问题', res, pid)
+      }
+    }
+
+    console.log('视频cid', cid)
 
     return await getTextByType(type, { aid, cid })
   }
@@ -140,10 +152,14 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
 
   async getDans(): Promise<DanType[]> {
-    let bv = location.pathname.match(/bv(.*?)(\/|\?)/i)?.[1]
-    console.log('视频bv', bv)
+    let bv = location.pathname
+        .split('/')
+        .find((p) => /b/i.test(p[0]) && /v/i.test(p[1]))
+        .replace(/bv/i, ''),
+      pid = +new URLSearchParams(location.search).get('p') || 1
+    console.log('视频bv+ pid', bv, pid)
     // TODO 先不要开启json模式，ass模式有过滤最大弹幕不知道怎么实现的
-    let danmuContent = await this.getDamuContent(bv)
+    let danmuContent = await this.getDamuContent(bv, pid)
     let dans = this.transAssContentToDans(danmuContent)
     // let danmuContent = await this.getDamuContent(bv, 'json')
     // let dans = this.transJsonContentToDans(danmuContent)
