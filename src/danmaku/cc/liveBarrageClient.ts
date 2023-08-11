@@ -1,10 +1,7 @@
-import { EventEmitter } from 'events'
 import CCWs from './websocket'
+import { DanmakuLiveEventEmitter } from '../struct'
 
-type LiveEvent = {
-  danmu: { color: string; text: string }
-}
-export default class CCLiveBarrageClient extends EventEmitter {
+export default class CCLiveBarrageClient extends DanmakuLiveEventEmitter {
   ws: CCWs
   constructor(public id: number) {
     super()
@@ -13,7 +10,7 @@ export default class CCLiveBarrageClient extends EventEmitter {
     this.ws.getWs().then((ws) => {
       console.log('getWs', ws)
       ws.addEventListener('message', (e) => {
-        const list = this.ws.decode_msg(e.data)
+        const list = this.ws.decode_msg(e.data as ArrayBuffer)
 
         if (!list) return
         list.forEach(({ color, content }) => {
@@ -21,18 +18,5 @@ export default class CCLiveBarrageClient extends EventEmitter {
         })
       })
     })
-  }
-
-  addEventListener<TType extends keyof LiveEvent>(
-    e: TType,
-    cb: (data: LiveEvent[TType]) => void
-  ) {
-    return super.addListener(e as string, cb)
-  }
-  emit<TType extends keyof LiveEvent>(
-    eventName: TType,
-    args: LiveEvent[TType]
-  ): boolean {
-    return super.emit(eventName, args)
   }
 }

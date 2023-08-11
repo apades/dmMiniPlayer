@@ -1,13 +1,9 @@
-import EventEmitter from 'events'
 import { Ex_WebSocket_UnLogin } from './websokect'
 import { getStrMiddle, getTransColor } from './utils'
 import { STT } from './STT'
+import { DanmakuLiveEventEmitter } from '../struct'
 
-type LiveEvent = {
-  danmu: { color: string; text: string }
-}
-
-export default class DouyuLiveBarrageClient extends EventEmitter {
+export default class DouyuLiveBarrageClient extends DanmakuLiveEventEmitter {
   ws: Ex_WebSocket_UnLogin
   stt = new STT()
   constructor(public id: string | number) {
@@ -59,18 +55,5 @@ export default class DouyuLiveBarrageClient extends EventEmitter {
         color: getTransColor(obj.color),
       })
     }
-  }
-
-  addEventListener<TType extends keyof LiveEvent>(
-    e: TType,
-    cb: (data: LiveEvent[TType]) => void
-  ) {
-    return super.addListener(e as string, cb)
-  }
-  emit<TType extends keyof LiveEvent>(
-    eventName: TType,
-    args: LiveEvent[TType]
-  ): boolean {
-    return super.emit(eventName, args)
   }
 }

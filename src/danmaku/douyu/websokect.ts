@@ -1,4 +1,7 @@
 import { getRandom } from './utils'
+import _WebSocket from 'ws'
+
+const isWeb = !!globalThis?.window
 /*
    DouyuEx WebSocket UnLogin
     By: 小淳
@@ -10,30 +13,31 @@ class Ex_WebSocket_UnLogin {
   // 调用方法：
   // 连接：let a = new Ex_WebSocket_UnLogin("房间号", 消息回调函数);
   // 关闭连接: a.WebSocket_Close(); a = null; 记得null掉变量再重新连接
-  // 消息回调函数建议用箭头函数，示例：(msg) => {// TODO}
+  // 消息回调函数建议用箭头函数，示例：(msg) => {}
   constructor(
     rid: string | number,
     msgHandler: (msg: string) => void,
     closeHandler: () => void
   ) {
-    if ('WebSocket' in window) {
-      this.ws = new WebSocket(
-        'wss://danmuproxy.douyu.com:850' + String(getRandom(2, 5))
-      ) // 负载均衡 8502~8504都可以用
-      this.ws.onopen = () => {
-        this.ws.send(WebSocket_Packet('type@=loginreq/roomid@=' + rid))
-        this.ws.send(
-          WebSocket_Packet('type@=joingroup/rid@=' + rid + '/gid@=-9999/')
-        )
-        // this.ws.send(WebSocket_Packet("type@=sub/mt@=asr_caption/"));
-        this.timer = setInterval(() => {
-          this.ws.send(WebSocket_Packet('type@=mrkl/'))
-        }, 40000)
-      }
-      this.ws.onerror = () => {
-        closeHandler()
-      }
-      this.ws.onmessage = (e) => {
+    const WS = isWeb ? WebSocket : _WebSocket
+    this.ws = new WS(
+      'wss://danmuproxy.douyu.com:850' + String(getRandom(2, 5))
+    ) as WebSocket // 负载均衡 8502~8504都可以用
+    this.ws.onopen = () => {
+      this.ws.send(WebSocket_Packet('type@=loginreq/roomid@=' + rid))
+      this.ws.send(
+        WebSocket_Packet('type@=joingroup/rid@=' + rid + '/gid@=-9999/')
+      )
+      // this.ws.send(WebSocket_Packet("type@=sub/mt@=asr_caption/"));
+      this.timer = setInterval(() => {
+        this.ws.send(WebSocket_Packet('type@=mrkl/'))
+      }, 40000)
+    }
+    this.ws.onerror = () => {
+      closeHandler()
+    }
+    this.ws.onmessage = (e) => {
+      if (isWeb) {
         let reader = new FileReader()
         reader.onload = () => {
           let arr = String(reader.result).split('\0') // 分包
@@ -46,10 +50,18 @@ class Ex_WebSocket_UnLogin {
           }
         }
         reader.readAsText(e.data)
+      } else {
+        let arr = String(e.data.toString()).split('\0')
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].length > 12) {
+            // 过滤第一条和心跳包
+            msgHandler(arr[i])
+          }
+        }
       }
-      this.ws.onclose = () => {
-        closeHandler()
-      }
+    }
+    this.ws.onclose = () => {
+      closeHandler()
     }
   }
   close() {

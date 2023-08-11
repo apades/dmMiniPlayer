@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "test:danmaku": "sh -c \"tsup \"./src/test/danmaku/${0}.ts\" -d ./dist --format esm && node \"./dist/${0}.mjs\" ${1}\""
   },
   "devDependencies": {
     "@types/chrome": "^0.0.231",
@@ -19,9 +20,11 @@
     "@types/react-dom": "18.0.11",
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
+    "@types/ws": "^8.5.5",
     "cross-env": "^7.0.3",
     "prettier": "2.8.7",
     "protobufjs": "^7.2.3",
+    "ts-node": "^10.9.1",
     "typescript": "5.0.3"
   },
   "dependencies": {
@@ -42,7 +45,8 @@
     "react-dom": "18.2.0",
     "react-router-dom": "^5.2.0",
     "uuid": "^9.0.0",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.10.0",
+    "ws": "^8.13.0"
   },
   "manifest": {
     "name": "弹幕画中画播放器",

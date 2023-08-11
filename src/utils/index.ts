@@ -23,9 +23,10 @@ export function getTextWidth(text: string, style: CSSProperties): number {
 }
 
 type WaitLoop = {
-  (cb: () => boolean /* | Promise<boolean> */, limitTime?: number): Promise<
-    boolean
-  >
+  (
+    cb: () => boolean /* | Promise<boolean> */,
+    limitTime?: number
+  ): Promise<boolean>
   // TODO
   (
     cb: () => boolean /* | Promise<boolean> */,
@@ -58,10 +59,10 @@ export let waitLoopCallback: WaitLoop = (cb, option = 5000) => {
 
 const selfSorter = (it: any) => it
 /** 升序排序 */
-export const ascendingSort = <T>(itemProp: (obj: T) => number = selfSorter) => (
-  a: T,
-  b: T
-) => itemProp(a) - itemProp(b)
+export const ascendingSort =
+  <T>(itemProp: (obj: T) => number = selfSorter) =>
+  (a: T, b: T) =>
+    itemProp(a) - itemProp(b)
 
 export function dq<K extends keyof HTMLElementTagNameMap>(selector: K) {
   return Array.from(document.querySelectorAll(selector))
@@ -79,12 +80,10 @@ export let dq1: {
   return dom
 }
 
-const windowLoadAsync = new AsyncLock()
 export const onWindowLoad = () => {
   if (document.readyState === 'complete') return
-  return windowLoadAsync.waiting
+  return new Promise((res) => window.addEventListener('load', res))
 }
-window.addEventListener('load', () => windowLoadAsync.ok)
 
 export function splitArray<T>(arr: T[], count: number): T[][] {
   var result = []

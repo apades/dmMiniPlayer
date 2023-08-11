@@ -4,6 +4,7 @@ import { isArray, isNumber, isObject, isString } from 'lodash-es'
 import { oncePromise, wait } from '@root/utils'
 import { CCMsgDecode } from './CCMsgDecode'
 import pako from 'pako'
+import WebSocket from 'ws'
 
 export function bytes(b: number[] | string): ArrayBuffer {
   if (isArray(b)) {
@@ -102,8 +103,7 @@ export default class CCWs {
       '25': 'Linux',
       '29': '163_cc',
       '30': '',
-      '31':
-        'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Mobile Safari/537.36',
+      '31': 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Mobile Safari/537.36',
     }
     let device_token = uuid() + '@web.cc.163.com'
     let macAdd = device_token
