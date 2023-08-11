@@ -104,7 +104,7 @@ export default class DouyuLiveProvider extends WebProvider {
   startObserverWs() {
     if (!this.barrageClient)
       this.barrageClient = new DouyuLiveBarrageClient(
-        +location.pathname.split('/').pop()
+        new URLSearchParams(location.search).get('rid')
       )
 
     this.fn = (data: { color: string; text: string }) => {
