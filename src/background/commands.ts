@@ -22,6 +22,7 @@ browser.commands.onCommand.addListener(async (command, tab) => {
 
 let activeTabId: number, activeTabIndex: number
 listen((req, res) => {
+  console.log('active', req)
   if (req.name != 'PIP-active') return
   activeTabId = req.sender.tab.id
   activeTabIndex = req.sender.tab.index

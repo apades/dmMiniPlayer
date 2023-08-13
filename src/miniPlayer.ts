@@ -60,6 +60,17 @@ export default class MiniPlayer {
       this.isPause = false
       this.playerVideoEl.play()
     })
+    videoEl.addEventListener('seeked', () => {
+      this.danmaku.tunnelsMap = {
+        bottom: [],
+        right: [],
+        top: [],
+      }
+      this.danmaku.barrages.forEach((b) => {
+        b.initd = false
+        b.tunnelOuted = false
+      })
+    })
     videoEl.addEventListener('loadedmetadata', () => {
       configStore.renderHeight =
         (configStore.renderWidth / videoEl.videoWidth) * videoEl.videoHeight

@@ -29,6 +29,7 @@ export default abstract class WebProvider {
 
   async startPIPPlay(options?: StartPIPPlayOptions) {
     await this._startPIPPlay()
+    sendToBackground({ name: 'PIP-active' })
   }
 
   bindCommandsEvent() {
