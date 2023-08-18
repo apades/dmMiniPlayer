@@ -49,9 +49,9 @@ class DanmakuController {
     // (fontSize + gap) * x = renderHeight
     switch (maxTunnel) {
       case '1/2':
-        return renderHeight / 2 / (fontSize + gap)
+        return renderHeight / 2 / (+fontSize + +gap)
       case '1/4':
-        return renderHeight / 4 / (fontSize + gap)
+        return renderHeight / 4 / (+fontSize + +gap)
       case 'full':
         return 100
       default:
