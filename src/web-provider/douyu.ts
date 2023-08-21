@@ -101,11 +101,15 @@ export default class DouyuLiveProvider extends WebProvider {
   }
 
   private fn: (data: { color: string; text: string }) => void = () => 1
+
+  getRoomId() {
+    let locationId = location.pathname.split('/').pop()
+    if (+locationId + '' == locationId) return locationId
+    return new URLSearchParams(location.search).get('rid')
+  }
   startObserverWs() {
     if (!this.barrageClient)
-      this.barrageClient = new DouyuLiveBarrageClient(
-        new URLSearchParams(location.search).get('rid')
-      )
+      this.barrageClient = new DouyuLiveBarrageClient(this.getRoomId())
 
     this.fn = (data: { color: string; text: string }) => {
       this.miniPlayer.danmaku.barrages.push(
