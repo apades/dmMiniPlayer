@@ -1,6 +1,6 @@
 /**这里面的只能给inject文件夹里的代码用 */
 import { createMessager } from '@root/utils/Messager'
-import { TProtocolMap } from './injectMessagerType'
+import type { TProtocolMap } from './injectMessagerType'
 
 export const {
   offMessage: offMessage_inject,

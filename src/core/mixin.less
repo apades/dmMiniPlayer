@@ -1,0 +1,256 @@
+.wh(@w,@h:@w) {
+  width: @w;
+  height: @h;
+}
+.mwh(@w,@h:@w) {
+  max-width: @w;
+  max-height: @h;
+}
+.dm(@rules) {
+  @media screen /* and (min-width: 996px) */ and (max-width: 1600px) {
+    @rules()
+  }
+}
+.dm2(@rules) {
+  @media screen /* and (min-width: 996px) */ and (max-width: 1140px) {
+    @rules()
+  }
+}
+
+.text-ellipsis(@width) {
+  max-width: @width;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.s-dot() {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.center() {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+}
+
+.mobile(@rules){
+  @media screen and (max-width: 768px){
+    @rules()
+  }
+}
+.rtl(@rules){
+  html[dir='rtl'] & {
+    @rules()
+ }
+}
+
+.hide-scrollbar() {
+  &::-webkit-scrollbar  {
+    display: none;
+  }
+}
+.custom-scrollbar(){
+  &::-webkit-scrollbar{
+    .wh(10px);
+  }
+  &::-webkit-scrollbar-corner{
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb{
+    background: rgba(0, 0, 0, 0.12);
+    background-clip: content-box;
+    border: 2px solid transparent;
+    border-radius: 16px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.24);
+    }
+  }
+
+  &::-webkit-scrollbar-track{
+    display: none;
+  }
+}
+
+
+.rotate180(){
+  transform: rotate(180deg);
+}
+.f-center(){
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.f-i-center(){
+  display: flex;
+  align-items: center;
+}
+.ab-center(){
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+//网格布局
+.grid-box(@width){
+  display: grid;
+  grid-template-columns: repeat(auto-fill, @width);
+  justify-content: space-around;
+}
+
+.line-clamp(@line){
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: @line; //设置多行的行数
+  -webkit-box-orient: vertical;
+}
+.en(@rules){
+  body[lang='en']{
+    @rules()
+  }
+}
+
+.d(@rules){
+  @media screen and (min-width: 992px){
+    @rules()
+  }
+}
+
+.m(@rules){
+  @media screen and (max-width: 991px){
+    @rules()
+  }
+}
+
+.button-hover(@color,@border:true,@light:5%){
+  &:not(:disabled){
+    background-color: @color;
+    transition: all .3s;
+    &:hover,&:focus{
+      background-color: lighten(@color, @light);
+    }
+  }
+  & when (@border = true) {
+    border: 1px solid @color; 
+    &:not(:disabled):hover{
+      border: 1px solid lighten(@color, @light); 
+    }
+  }
+}
+
+.button-hover-darken(@color,@border:true,@dark:5%){
+  &:not(:disabled){
+    background-color: @color;
+    transition: all .3s;
+    &:hover{
+      background-color: darken(@color, @dark);
+    }
+    &:active,&:focus{
+      background-color: darken(@color, @dark + 2%);
+    }
+  }
+  & when (@border = true) {
+    border: 1px solid @color; 
+    &:not(:disabled):hover{
+      border: 1px solid darken(@color, @dark); 
+    }
+  }
+}
+
+.text-hover(@color,@light:5%){
+  &:not(:disabled){
+    color: @color;
+    transition: all .3s;
+    &:hover{
+      color: lighten(@color, @light);
+    }
+  }
+}
+.text-hover-darken(@color,@dark:5%){
+  &:not(:disabled){
+    color: @color;
+    transition: all .3s;
+    &:hover{
+      color: darken(@color, @dark);
+    }
+  }
+}
+
+// .cus-button-hover(@color,@dark:5%){
+
+// }
+
+.min-font(@size,@lh,@cWidth:1440){
+  font-size: min(calc(@size / @cWidth * 100vw), calc(@size * 1px));
+  line-height: calc(@lh / @size);
+}
+
+.font(@size,@lh){
+  font-size: @size * 1px;
+  line-height: calc(@lh / @size);
+}
+
+.min(@key,@val){
+  @{key}: min(calc(@val / 1440 * 100vw), calc(@val * 1px));
+}
+
+.video(@width,@height){
+  position: relative;
+  padding-bottom: calc(@height / @width * 100%);
+  video{
+    .wh(100%);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+
+.circle(@width){
+  .wh(@width);
+
+  border-radius: 50%;
+}
+
+.border05(@color,@borderra:4px,@before:true){
+  position: relative;
+  & when (@before = true) { 
+    &::before{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      border: 1px solid @color;
+      border-radius: @borderra * 2;
+      transform: scale(0.5);
+      transform-origin: 0 0;
+      content: " ";
+      pointer-events: none;
+    }
+  }
+  
+  & when (@before = false) { 
+    &::after{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      border: 1px solid @color;
+      border-radius: @borderra * 2;
+      transform: scale(0.5);
+      transform-origin: 0 0;
+      content: " ";
+      pointer-events: none;
+    }
+  }
+}

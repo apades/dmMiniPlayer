@@ -1,4 +1,4 @@
-import { BasicDanmakuData, Danmaku } from './danmaku-data'
+import { type BasicDanmakuData, Danmaku } from './danmaku-data'
 import { escapeContent } from './xml-utils'
 
 export interface XmlDanmakuData extends BasicDanmakuData {
@@ -53,16 +53,8 @@ export class XmlDanmaku extends Danmaku {
   }
   static parse(element: Element) {
     const pData = element.getAttribute('p')
-    const [
-      time,
-      type,
-      fontSize,
-      color,
-      timeStamp,
-      pool,
-      userHash,
-      rowId,
-    ] = pData.split(',')
+    const [time, type, fontSize, color, timeStamp, pool, userHash, rowId] =
+      pData.split(',')
     const content = element.innerHTML
     return new XmlDanmaku({
       content,
@@ -82,8 +74,10 @@ export class XmlDanmakuDocument {
   danmakus: XmlDanmaku[]
   constructor(xml: string) {
     this.xml = xml
-    const document = new DOMParser().parseFromString(xml, 'application/xml')
-      .documentElement
+    const document = new DOMParser().parseFromString(
+      xml,
+      'application/xml'
+    ).documentElement
     this.danmakus = [...document.querySelectorAll('d[p]')].map((it) =>
       XmlDanmaku.parse(it)
     )

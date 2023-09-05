@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { type FC, useState } from 'react'
 import { useOnce } from './hook'
 import { sendToContentScript } from '@plasmohq/messaging'
 import Browser from 'webextension-polyfill'

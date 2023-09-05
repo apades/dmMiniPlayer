@@ -1,9 +1,9 @@
 import {
-  Duration,
-  BlockTypes,
+  type Duration,
+  type BlockTypes,
   AssDanmaku,
   AssDanmakuDocument,
-  Resolution,
+  type Resolution,
 } from './ass-danmaku'
 import { Danmaku } from './danmaku-data'
 import { XmlDanmakuDocument, XmlDanmaku } from './xml-danmaku'

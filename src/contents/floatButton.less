@@ -1,0 +1,41 @@
+@bgColor:#262626;
+
+.rc-float-btn{
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  overflow: hidden;
+  color: #F5F5F5;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 1;
+  transition: all .2s;
+  
+  img{
+    height: 16px;
+  }
+  &.hidden{
+    opacity: 0;
+  }
+  &>div{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 8px;
+    background: @bgColor;
+    &:hover{
+      background-color: lighten(@bgColor,10%);
+    }
+  }
+}
+  
+.f-i-center{
+  display: flex;
+  align-items: center;
+}

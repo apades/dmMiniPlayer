@@ -1,24 +1,49 @@
-import { DanType } from '@root/danmaku'
+import type MiniPlayer from '@root/core/miniPlayer'
+import type { DanType } from '@root/danmaku'
 import { DanmakuStack } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-stack'
 import { DanmakuType } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-type'
 import {
-  DanmakuDownloadType,
   JsonDanmaku,
   getTextByType,
+  type DanmakuDownloadType,
 } from '@root/danmaku/bilibili/barrageDownload/download/utils'
 import { onMessage, sendMessage } from '@root/inject/contentSender'
-import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
 import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
+import type { OrPromise } from '@root/utils/typeUtils'
 import WebProvider from '../webProvider'
+import { windowsOnceCall } from '@root/utils/decorator'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
   constructor() {
     super()
 
-    // TODO history切换url还有点问题，暂时停用
+    // b站的字体
+    configStore.fontFamily =
+      'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
+
+    this.bindPIPActions()
+    this.injectHistoryChange()
+  }
+  @windowsOnceCall('bili_PIPActions')
+  bindPIPActions() {
+    console.log('bindPIPActions')
+    // 这个pip的action按钮在频繁关闭开启中（多数1次）会全部消失，即使是默认b站自己注册的setActionHandler到后面也只剩播放暂停，可能是浏览器问题
+    navigator.mediaSession.setActionHandler('pause', (e) => {
+      this.videoEl.pause()
+      this.miniPlayer.canvasPlayerVideoEl.pause()
+      // navigator.mediaSession.playbackState = 'paused'
+    })
+    navigator.mediaSession.setActionHandler('play', () => {
+      this.videoEl.play()
+      this.miniPlayer.canvasPlayerVideoEl.play()
+      // navigator.mediaSession.playbackState = 'playing'
+    })
+  }
+  @windowsOnceCall('bili_history')
+  injectHistoryChange() {
     sendMessage('inject-api:run', {
       origin: 'history',
       keys: ['pushState', 'forward', 'replaceState'],
@@ -27,85 +52,39 @@ export default class BilibiliVideoProvider extends WebProvider {
     onMessage('inject-api:onTrigger', (data) => {
       if (data.event != 'history') return null
       console.log('切换了路由 history')
-      this.bindToPIPEvent()
       if (this.miniPlayer) this.initDans()
     })
     window.addEventListener('popstate', () => {
       console.log('切换了路由 popstate')
-      this.bindToPIPEvent()
       if (this.miniPlayer) this.initDans()
     })
-
-    // b站的字体
-    configStore.fontFamily =
-      'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
-
-    sendMessage('event-hacker:listenEventAdd', {
-      qs: '.bpx-player-ctrl-pip',
-      event: 'click',
-    })
-
-    onMessage('event-hacker:onEventAdd', async ({ qs, event }) => {
-      if (!(qs == '.bpx-player-ctrl-pip' && event == 'click')) return
-      await sendMessage('event-hacker:enable', {
-        qs: '.bpx-player-ctrl-pip',
-        event: 'click',
-      })
-      let pipBtn = dq1('.bpx-player-ctrl-pip') as HTMLElement
-      pipBtn.addEventListener('click', (e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        console.log('click pipBtn')
-
-        this.startPIPPlay()
-      })
-    })
   }
-  async bindToPIPEvent() {
-    sendMessage('event-hacker:disable', {
-      qs: '.bpx-player-ctrl-pip',
-      event: 'click',
-    })
+
+  protected getVideoEl(): OrPromise<HTMLVideoElement> {
+    return document.querySelector('video')
   }
-  bindPIPActions() {
-    console.log('bindPIPActions')
-    // 这个pip的action按钮在频繁关闭开启中（多数1次）会全部消失，即使是默认b站自己注册的setActionHandler到后面也只剩播放暂停，可能是浏览器问题
-    navigator.mediaSession.setActionHandler('pause', (e) => {
+
+  protected async initMiniPlayer(
+    options?: Partial<{ videoEl: HTMLVideoElement }>
+  ): Promise<MiniPlayer> {
+    const miniPlayer = await super.initMiniPlayer(options)
+    this.videoEl = this.miniPlayer.webPlayerVideoEl
+
+    this.miniPlayer.on('PIPClose', () => {
       this.videoEl.pause()
-      this.miniPlayer.playerVideoEl.pause()
-      // navigator.mediaSession.playbackState = 'paused'
     })
-    navigator.mediaSession.setActionHandler('play', () => {
-      this.videoEl.play()
-      this.miniPlayer.playerVideoEl.play()
-      // navigator.mediaSession.playbackState = 'playing'
-    })
-  }
-  async _startPIPPlay() {
-    if (!this.miniPlayer) {
-      let videoEl = document.querySelector('video')
-      this.videoEl = videoEl
-      this.miniPlayer = new MiniPlayer({
-        videoEl,
-      })
-
-      this.bindPIPActions()
-      this.miniPlayer.startRenderAsCanvas()
-      this.miniPlayer.onLeavePictureInPicture = () => {
-        this.miniPlayer.stopRenderAsCanvas()
-        videoEl.pause()
-      }
-    } else {
-      this.miniPlayer.playerVideoEl.play()
-      this.miniPlayer.startRenderAsCanvas()
-    }
-
     this.initDans()
-    this.miniPlayer.startCanvasPIPPlay()
+    miniPlayer.initBarrageSender({
+      webTextInput: dq1('.bpx-player-dm-input'),
+      webSendButton: dq1('.bpx-player-dm-btn-send'),
+    })
+    return miniPlayer
   }
 
   initDans() {
-    this.getDans().then((dans) => this.miniPlayer.danmaku.initDans(dans))
+    this.getDans().then((dans) =>
+      this.miniPlayer.danmakuController.initDans(dans)
+    )
   }
   async getDamuContent(
     bid: string,
@@ -163,7 +142,7 @@ export default class BilibiliVideoProvider extends WebProvider {
     let dans = this.transAssContentToDans(danmuContent)
     // let danmuContent = await this.getDamuContent(bv, 'json')
     // let dans = this.transJsonContentToDans(danmuContent)
-    console.log('dans', dans)
+    // console.log('dans', dans)
 
     return dans
   }

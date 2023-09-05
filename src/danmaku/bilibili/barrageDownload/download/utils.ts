@@ -1,7 +1,7 @@
 // import { loadDanmakuSettingsPanel } from '@/core/utils/lazy-panel'
 // import { getFriendlyTitle } from '@/core/utils/title'
 import {
-  DanmakuConverterConfig,
+  type DanmakuConverterConfig,
   DanmakuConverter,
 } from '../converter/danmaku-converter'
 import { DanmakuType } from '../converter/danmaku-type'
@@ -67,7 +67,7 @@ export class JsonDanmaku {
         `获取弹幕分页数失败: ${JSON.stringify(lodash.omit(view, 'flag'))}`
       )
     }
-    console.log('segment count =', total)
+    // console.log('segment count =', total)
     const segments = await Promise.all(
       new Array(total).fill(0).map(async (_, index) => {
         const blob = await fetchBlob(
@@ -78,7 +78,7 @@ export class JsonDanmaku {
         if (!blob) {
           throw new Error(`弹幕片段${index + 1}下载失败`)
         }
-        console.log(`received blob for segment ${index + 1}`, blob)
+        // console.log(`received blob for segment ${index + 1}`, blob)
         const result = await decodeDanmakuSegment(blob)
         return result.elems ?? []
       })
@@ -117,7 +117,7 @@ export const getUserDanmakuConfig = async () => {
     // await loadDanmakuSettingsPanel()
     const playerSettingsJson = localStorage.getItem('bilibili_player_settings')
 
-    console.log('playerSettingsJson', playerSettingsJson)
+    // console.log('playerSettingsJson', playerSettingsJson)
     if (playerSettingsJson) {
       const playerSettings = JSON.parse(playerSettingsJson)
       const getConfig = <T>(prop: string, defaultValue?: T): T =>
@@ -233,9 +233,11 @@ export const getUserDanmakuConfig = async () => {
     }
 
     // 字体直接从 HTML 里取了, localStorage 里是 font-family 解析更麻烦些
-    config.font = (dq1(
-      ':is(.bilibili-player-video-danmaku-setting-right-font, .bpx-player-dm-setting-right-font-content-fontfamily) .bui-select-result'
-    ) as HTMLElement).innerText
+    config.font = (
+      dq1(
+        ':is(.bilibili-player-video-danmaku-setting-right-font, .bpx-player-dm-setting-right-font-content-fontfamily) .bui-select-result'
+      ) as HTMLElement
+    ).innerText
   } catch (error) {
     // The default config
     // logError(error)
@@ -251,7 +253,7 @@ export const getUserDanmakuConfig = async () => {
       ;(config as any)[key] = (defaultConfig as any)[value]
     }
   }
-  console.log(config)
+  // console.log(config)
   return config
 }
 export const convertToAss = async (xml: string) => {

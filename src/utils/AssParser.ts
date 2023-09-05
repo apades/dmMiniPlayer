@@ -1,4 +1,4 @@
-import { DanMoveType, DanType } from '@root/danmaku'
+import type { DanMoveType, DanType } from '@root/danmaku'
 import assParser from 'ass-parser'
 import Color from 'color'
 import { splitArray } from '.'
@@ -73,9 +73,11 @@ export default class AssParser {
     }
   }
 
-  resolveText(
-    inputText: string
-  ): { color: string; text: string; danMoveType: DanMoveType } {
+  resolveText(inputText: string): {
+    color: string
+    text: string
+    danMoveType: DanMoveType
+  } {
     let danMoveType: DanMoveType = 'right',
       color = '',
       text = ''

@@ -1,9 +1,9 @@
 import { Barrage } from '@root/danmaku'
 import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
-import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
-import { dq1, onWindowLoad } from '@root/utils'
+import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
+import { getMiniPlayer } from '@root/core'
 
 window.DouyuLiveBarrageClient = DouyuLiveBarrageClient
 export default class DouyuLiveProvider extends WebProvider {
@@ -18,54 +18,53 @@ export default class DouyuLiveProvider extends WebProvider {
       'Segoe UI Emoji,SimHei,Microsoft JhengHei,Arial,Helvetica,sans-serif'
   }
 
-  async bindToPIPEvent(): Promise<void> {
-    await onWindowLoad()
-    // function getPIPButtonInParent(el: HTMLElement, TTL = 5): HTMLElement {
-    //   if (TTL-- || el == null) return null
-    //   if (el.classList.contains('icon')) return el
-    //   return getPIPButtonInParent(el.parentElement, TTL)
-    // }
-    // let pipSvg = dq1('#画中画icon'),
-    //   pipBtn = getPIPButtonInParent(pipSvg)
-    // sendMessage('event-hacker:disable', {
-    //   qs: '.' + [...pipBtn.classList].join('.'),
-    //   event: 'click',
-    // })
-    window.addEventListener(
-      'click',
-      (e) => {
-        let target = e.target as HTMLElement
-        if (target.getAttribute('title') == '开启画中画') {
-          console.log('画中画')
-          e.preventDefault()
-          e.stopImmediatePropagation()
-          e.stopPropagation()
-          this.startPIPPlay()
-        }
-      },
-      false
-    )
-  }
-  protected _startPIPPlay(): void | Promise<void> {
-    if (!this.miniPlayer) {
-      let videoEl = document.querySelector('video')
-      this.miniPlayer = new MiniPlayer({
-        videoEl,
-      })
+  // async bindToPIPEvent(): Promise<void> {
+  //   await onWindowLoad()
+  //   window.addEventListener(
+  //     'click',
+  //     (e) => {
+  //       let target = e.target as HTMLElement
+  //       if (target.getAttribute('title') == '开启画中画') {
+  //         console.log('画中画')
+  //         e.preventDefault()
+  //         e.stopImmediatePropagation()
+  //         e.stopPropagation()
+  //         this.startPIPPlay()
+  //       }
+  //     },
+  //     false
+  //   )
+  // }
+  protected async initMiniPlayer(
+    options?: Partial<{ videoEl: HTMLVideoElement }>
+  ) {
+    const miniPlayer = await super.initMiniPlayer(options)
 
-      this.miniPlayer.startRenderAsCanvas()
-      this.miniPlayer.onLeavePictureInPicture = () => {
-        this.miniPlayer.stopRenderAsCanvas()
-        // this.stopObserveHtmlDanmaku()
-        this.stopObserveWs()
+    // 弹幕相关
+    this.miniPlayer.on('PIPClose', () => {
+      this.stopObserveWs()
+    })
+    this.startObserverWs()
+
+    function dq1Adv(q: string) {
+      const top = dq1(q)
+      if (top) {
+        return top
       }
-    } else {
-      this.miniPlayer.startRenderAsCanvas()
+      for (const iframe of dq('iframe')) {
+        try {
+          const child = iframe.contentWindow.document.querySelector(q)
+          if (child) return child as HTMLElement
+        } catch (error) {}
+      }
     }
 
-    // this.startObserveHtmlDanmaku()
-    this.startObserverWs()
-    this.miniPlayer.startCanvasPIPPlay()
+    this.miniPlayer.initBarrageSender({
+      webSendButton: dq1Adv('.ChatSend-button'),
+      webTextInput: dq1Adv('.ChatSend-txt') as HTMLInputElement,
+    })
+
+    return miniPlayer
   }
 
   // web模式没法知道颜色
@@ -78,13 +77,13 @@ export default class DouyuLiveProvider extends WebProvider {
       nodes.forEach((node: HTMLElement) => {
         let isDanmu = node.classList.contains('danmaku-item')
         if (!isDanmu) return
-        this.miniPlayer.danmaku.barrages.push(
+        this.miniPlayer.danmakuController.barrages.push(
           new Barrage({
             player: this.miniPlayer,
             config: {
               color: '#fff',
               text: node.dataset.danmaku,
-              time: this.miniPlayer.videoEl.currentTime,
+              time: this.miniPlayer.webPlayerVideoEl.currentTime,
               type: 'right',
             },
           })
@@ -108,18 +107,17 @@ export default class DouyuLiveProvider extends WebProvider {
     return new URLSearchParams(location.search).get('rid')
   }
   startObserverWs() {
-    if (!this.barrageClient)
-      this.barrageClient = new DouyuLiveBarrageClient(this.getRoomId())
+    this.barrageClient = new DouyuLiveBarrageClient(this.getRoomId())
 
     this.fn = (data: { color: string; text: string }) => {
-      this.miniPlayer.danmaku.barrages.push(
+      this.miniPlayer.danmakuController.barrages.push(
         new Barrage({
           player: this.miniPlayer,
           config: {
             // TODO
             color: data.color,
             text: data.text,
-            time: this.miniPlayer.videoEl.currentTime,
+            time: this.miniPlayer.webPlayerVideoEl.currentTime,
             // TODO
             type: 'right',
           },
@@ -130,5 +128,6 @@ export default class DouyuLiveProvider extends WebProvider {
   }
   stopObserveWs() {
     this.barrageClient.removeListener('danmu', this.fn)
+    this.barrageClient.close()
   }
 }

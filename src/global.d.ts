@@ -1,4 +1,20 @@
 interface Window {
+  documentPictureInPicture: {
+    window: Window
+    requestWindow: (options?: {
+      width: number
+      height: number
+    }) => Promise<Window>
+    onenter: () => void
+  }
+  videoPlayers: {
+    add(index: string | number, val: VpAction): void
+    remove(index: string | number): void
+    play(index: string | number): void
+    list: Map<string | number, VpAction>
+    /**被focus过的视频 */
+    focusIndex: string | number
+  }
   [k: string]: any
 }
 

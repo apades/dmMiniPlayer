@@ -1,16 +1,13 @@
-import { PlasmoCSConfig } from 'plasmo'
-import { getWebProvider } from '../web-provider'
+import { type PlasmoCSConfig } from 'plasmo'
+import getWebProvider from '../web-provider/getWebProvider'
 import { listen } from '@plasmohq/messaging/message'
 import AsyncLock from '@root/utils/AsyncLock'
+import { onMessage } from '@root/inject/contentSender'
+import { onceCall } from '@root/utils'
 // import {} from '@plasmohq/messaging/port'
 
 export const config: PlasmoCSConfig = {
-  matches: [
-    'https://www.bilibili.com/*',
-    'https://live.bilibili.com/*',
-    'https://www.douyu.com/*',
-    'https://cc.163.com/*',
-  ],
+  matches: ['<all_urls>'],
   run_at: 'document_end',
   // TODO CC有多个iframe，不知道对别的有没有影响
   // all_frames: true,
@@ -18,7 +15,11 @@ export const config: PlasmoCSConfig = {
 
 console.log('run content')
 
-let provider = getWebProvider()
+let provider = onceCall(() => {
+  let provider = getWebProvider()
+  window.provider = provider
+  return provider
+})
 
 let hasClickPage = false,
   isWaiting = false
@@ -45,7 +46,7 @@ listen(async (req, res) => {
       isWaiting = true
       await clickLock.waiting()
       isWaiting = false
-      provider.startPIPPlay()
+      provider().startPIPPlay()
       res.send({ state: 'ok' })
 
       function handleBlur() {
@@ -60,5 +61,8 @@ listen(async (req, res) => {
   }
 })
 
+onMessage('start-PIP', (data) => {
+  provider().startPIPPlay({ videoEl: data.videoEl })
+})
+
 window.getWebProvider = getWebProvider
-window.provider = provider

@@ -1,5 +1,5 @@
+import BarrageClient from '@root/core/danmaku/BarrageClient'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
-import { EventEmitter } from 'events'
 
 export const proto = {
   nested: {
@@ -16,10 +16,7 @@ const getRoomid = async (short: number) => {
   return room_id
 }
 
-type LiveEvent = {
-  danmu: { color: string; text: string }
-}
-export default class BilibiliLiveBarrageClient extends EventEmitter {
+export default class BilibiliLiveBarrageClient extends BarrageClient {
   ws: LiveWS
   constructor(public id: number) {
     super()
@@ -43,20 +40,9 @@ export default class BilibiliLiveBarrageClient extends EventEmitter {
         text = info[1]
 
       this.emit('danmu', { color, text })
-      // console.log(`${color} ${text}`, data)
     })
   }
-
-  addEventListener<TType extends keyof LiveEvent>(
-    e: TType,
-    cb: (data: LiveEvent[TType]) => void
-  ) {
-    return super.addListener(e as string, cb)
-  }
-  emit<TType extends keyof LiveEvent>(
-    eventName: TType,
-    args: LiveEvent[TType]
-  ): boolean {
-    return super.emit(eventName, args)
+  close(): void {
+    this.ws.ws.close()
   }
 }

@@ -1,10 +1,7 @@
-import { EventEmitter } from 'events'
 import CCWs from './websocket'
+import BarrageClient from '@root/core/danmaku/BarrageClient'
 
-type LiveEvent = {
-  danmu: { color: string; text: string }
-}
-export default class CCLiveBarrageClient extends EventEmitter {
+export default class CCLiveBarrageClient extends BarrageClient {
   ws: CCWs
   constructor(public id: number) {
     super()
@@ -22,17 +19,7 @@ export default class CCLiveBarrageClient extends EventEmitter {
       })
     })
   }
-
-  addEventListener<TType extends keyof LiveEvent>(
-    e: TType,
-    cb: (data: LiveEvent[TType]) => void
-  ) {
-    return super.addListener(e as string, cb)
-  }
-  emit<TType extends keyof LiveEvent>(
-    eventName: TType,
-    args: LiveEvent[TType]
-  ): boolean {
-    return super.emit(eventName, args)
+  close(): void {
+    this.ws.ws.close()
   }
 }

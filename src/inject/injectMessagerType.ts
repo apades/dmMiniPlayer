@@ -1,4 +1,4 @@
-import { ProtocolWithReturn } from '@root/utils/Messager'
+import type { ProtocolWithReturn } from '@root/utils/Messager'
 
 // TODO 修改messager结构，现在onMessage都需要返回肯定不行
 // 这里定义那些event
@@ -27,4 +27,5 @@ export type TProtocolMap = {
   >
 
   'msg-test': ProtocolWithReturn<any, any>
+  'start-PIP': { videoEl?: HTMLVideoElement }
 }

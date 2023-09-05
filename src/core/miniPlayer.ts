@@ -1,20 +1,26 @@
 import { throttle } from 'lodash-es'
-import DanmakuController, { DanmakuProps } from './danmaku'
-import configStore from './store/config'
+import DanmakuController, { type DanmakuProps } from '../danmaku'
+import configStore from '../store/config'
 import { observe } from 'mobx'
+import mitt, { type Emitter } from 'mitt'
+import { type PlayerEvents } from './event'
+import type { Props as BarrageSenderProps } from './danmaku/BarrageSender'
+import { onceCallGet } from '@root/utils/decorator'
+import videoRender from '@root/store/videoRender'
 
-export type Props = {
+export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
   danmu?: Omit<DanmakuProps, 'player'>
 }
 
+type EventHandler = Emitter<PlayerEvents>
 export default class MiniPlayer {
-  props: Required<Props>
+  props: Required<MiniPlayerProps>
   //
-  videoEl: HTMLVideoElement
+  webPlayerVideoEl: HTMLVideoElement
 
   // 弹幕器
-  danmaku: DanmakuController
+  danmakuController: DanmakuController
 
   // canvas相关
   canvas = document.createElement('canvas')
@@ -23,22 +29,26 @@ export default class MiniPlayer {
   animationFrameSignal: number
 
   /**canvas的captureStream */
-  canvasVideoStream: MediaStream
+  // @onceCallGet
+  get canvasVideoStream() {
+    return this.canvas.captureStream()
+  }
+
+  private eventHandler = mitt<PlayerEvents>()
+
   /**canvas的captureStream放在这里播放 */
-  playerVideoEl = document.createElement('video')
+  canvasPlayerVideoEl = document.createElement('video')
 
   isPause = true
+  isLive = false
 
-  /**在离开画中画时触发 */
-  onLeavePictureInPicture: () => void = () => 1
-
-  constructor(props: Props) {
+  constructor(props: MiniPlayerProps) {
     let { danmu = {}, ...otherProps } = props
 
     this.props = { ...otherProps, danmu }
-    this.videoEl = props.videoEl
+    this.webPlayerVideoEl = props.videoEl
 
-    this.danmaku = new DanmakuController({
+    this.danmakuController = new DanmakuController({
       player: this,
       ...danmu,
     })
@@ -47,58 +57,39 @@ export default class MiniPlayer {
     this.updateCanvasSize()
   }
 
-  // TODO 全局按键用来暂停播放，隐藏pip窗口
   bindVideoElEvents() {
-    let videoEl = this.videoEl
+    let videoEl = this.webPlayerVideoEl
 
     this.isPause = videoEl.paused
     videoEl.addEventListener('pause', () => {
       this.isPause = true
-      this.playerVideoEl.pause()
+      this.canvasPlayerVideoEl.pause()
     })
     videoEl.addEventListener('play', () => {
       this.isPause = false
-      this.playerVideoEl.play()
+      this.canvasPlayerVideoEl.play()
     })
     videoEl.addEventListener('seeked', () => {
-      this.danmaku.tunnelsMap = {
+      this.danmakuController.tunnelsMap = {
         bottom: [],
         right: [],
         top: [],
       }
-      this.danmaku.barrages.forEach((b) => {
+      this.danmakuController.barrages.forEach((b) => {
         b.initd = false
         b.tunnelOuted = false
       })
     })
     videoEl.addEventListener('loadedmetadata', () => {
-      configStore.renderHeight =
-        (configStore.renderWidth / videoEl.videoWidth) * videoEl.videoHeight
-
       this.updateCanvasSize()
     })
-
-    // observe(configStore, 'renderWidth', () => {
-    //   console.log('update width')
-    //   this.updateCanvasSize()
-    //   this.canvasUpdate(true)
-    // })
-    // observe(configStore, 'renderHeight', () => {
-    //   console.log('update height')
-    //   this.updateCanvasSize()
-    //   this.canvasUpdate(true)
-    // })
   }
 
-  updateCanvasSize() {
-    this.canvas.width = configStore.renderWidth
-    this.canvas.height = configStore.renderHeight
-  }
-
-  getCanvasVideoStream() {
-    if (!this.canvasVideoStream)
-      this.canvasVideoStream = this.canvas.captureStream()
-    return this.canvasVideoStream
+  updateCanvasSize(option?: { width: number; height: number }) {
+    console.log('update', option)
+    videoRender.updateSize(this.webPlayerVideoEl, option)
+    this.canvas.width = videoRender.containerWidth
+    this.canvas.height = videoRender.containerHeight
   }
 
   // 在video play时使用，减少性能消耗
@@ -109,6 +100,7 @@ export default class MiniPlayer {
       )
       return true
     } catch (error) {
+      console.error('启动startRenderAsCanvas错误', error)
       return false
     }
   }
@@ -119,16 +111,23 @@ export default class MiniPlayer {
     this.animationFrameSignal = null
   }
 
-  private withoutLimitLastUpdateTime = Date.now()
+  protected withoutLimitLastUpdateTime = Date.now()
   withoutLimitAnimaFPS = 0
+  private hansDraw = false
   canvasUpdate() {
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
-      const videoEl = this.props.videoEl,
-        width = configStore.renderWidth,
-        height = configStore.renderHeight
+      const videoEl = this.props.videoEl
 
-      if (!this.isPause) {
-        this.ctx.drawImage(videoEl, 0, 0, width, height)
+      if (!this.isPause || !this.hansDraw) {
+        this.hansDraw = true
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        this.ctx.drawImage(
+          videoEl,
+          videoRender.x,
+          videoRender.y,
+          videoRender.videoWidth,
+          videoRender.videoHeight
+        )
         this.detectFPS()
         this.renderDanmu()
       }
@@ -154,37 +153,38 @@ export default class MiniPlayer {
   }
 
   renderDanmu() {
-    this.danmaku.draw()
+    this.danmakuController.draw()
   }
 
-  startCanvasPIPPlay() {
-    if (!this.playerVideoEl.srcObject) {
-      this.playerVideoEl.srcObject = this.getCanvasVideoStream()
+  startPIPPlay() {
+    if (!this.canvasPlayerVideoEl.srcObject) {
+      this.canvasPlayerVideoEl.srcObject = this.canvasVideoStream
 
-      this.playerVideoEl.addEventListener('loadedmetadata', () => {
-        this.playerVideoEl.play()
-        this.startPlayerElPIPPlay()
-        this.playerVideoEl.addEventListener('leavepictureinpicture', () => {
-          this.onLeavePictureInPicture()
-        })
+      this.canvasPlayerVideoEl.addEventListener('loadedmetadata', () => {
+        this.canvasPlayerVideoEl.play()
+        this.requestPIP()
+        this.canvasPlayerVideoEl.addEventListener(
+          'leavepictureinpicture',
+          () => {
+            this.emit('PIPClose')
+          }
+        )
       })
     } else {
-      this.startPlayerElPIPPlay()
+      this.requestPIP()
     }
   }
 
-  startPlayerElPIPPlay() {
-    this.playerVideoEl.requestPictureInPicture().then((pipWindow) => {
+  protected requestPIP() {
+    this.canvasPlayerVideoEl.requestPictureInPicture().then((pipWindow) => {
       let onResize = () => {
-        if (configStore.autoResizeInPIP) {
-          configStore.setRatioWidth(this.videoEl, {
-            renderWidth: pipWindow.width,
-          })
-          this.updateCanvasSize()
-        }
+        this.updateCanvasSize({
+          width: pipWindow.width,
+          height: pipWindow.height,
+        })
       }
       onResize()
-      pipWindow.onresize = throttle(onResize, 500)
+      pipWindow.addEventListener('resize', throttle(onResize, 500))
     })
   }
 
@@ -214,7 +214,7 @@ export default class MiniPlayer {
   animaVideoFPS = 0
 
   detectFPS() {
-    let nowTime = this.videoEl.currentTime
+    let nowTime = this.webPlayerVideoEl.currentTime
 
     this.performanceInfoLimit(() => {
       if (this.lastTime) this.animaVideoFPS = ~~(1 / (nowTime - this.lastTime))
@@ -245,7 +245,7 @@ export default class MiniPlayer {
   renderPerformanceInfo() {
     const padding = 4,
       fontSize = 14
-    let renderStartY = configStore.renderHeight + fontSize
+    let renderStartY = videoRender.containerHeight + fontSize
 
     let getY = () => {
       renderStartY = renderStartY - padding - fontSize
@@ -267,16 +267,57 @@ export default class MiniPlayer {
     if (
       !(
         configStore.videoProgress_show &&
-        this.videoEl.duration &&
-        this.videoEl.duration != Infinity
+        this.webPlayerVideoEl.duration &&
+        this.webPlayerVideoEl.duration != Infinity
       )
     )
       return
     let ctx = this.ctx
-    let video = this.videoEl
+    let video = this.webPlayerVideoEl
     const height = configStore.videoProgress_height,
-      width = (video.currentTime / video.duration) * configStore.renderWidth
+      width = (video.currentTime / video.duration) * videoRender.containerWidth
     ctx.fillStyle = configStore.videoProgress_color
-    ctx.fillRect(0, configStore.renderHeight - height, width, height)
+    ctx.fillRect(0, videoRender.containerHeight - height, width, height)
+  }
+
+  on: EventHandler['on'] = (...args: [any, any]) => {
+    // const ev = args[0] as string
+    // if (/^wp\:/.test(ev)) {
+    //   this.webPlayerVideoEl.addEventListener(ev.replace('wp:', ''), () => {
+    //     this.emit(ev as any)
+    //   })
+    // }
+    // if (/^cp\:/.test(ev)) {
+    // }
+    return this.eventHandler.on(...args)
+  }
+  off: EventHandler['off'] = function (...args: []) {
+    return this.eventHandler.off(...args)
+  }
+  emit: EventHandler['emit'] = function (...args: []) {
+    return this.eventHandler.emit(...args)
+  }
+  get eventAll() {
+    return this.eventHandler.all
+  }
+
+  private test_appendCanvasToBody() {
+    ;(this.canvas as any).style = 'position:fixed;z-index:1000;top:0;left:0;'
+    document.body.appendChild(this.canvas)
+  }
+
+  initBarrageSender(props: Omit<BarrageSenderProps, 'textInput'>) {}
+
+  openPlayer() {
+    console.log('openPlayer')
+    this.startRenderAsCanvas()
+    this.bindOnClosePlayer()
+    this.startPIPPlay()
+  }
+
+  protected bindOnClosePlayer() {
+    this.on('PIPClose', () => {
+      this.stopRenderAsCanvas()
+    })
   }
 }

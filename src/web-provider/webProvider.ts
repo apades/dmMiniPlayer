@@ -1,9 +1,12 @@
-import MiniPlayer from '@root/miniPlayer'
 import { sendToBackground } from '@plasmohq/messaging'
 import { listen } from '@plasmohq/messaging/message'
+import { getMiniPlayer } from '@root/core'
+import type BarrageClient from '@root/core/danmaku/BarrageClient'
+import MiniPlayer from '@root/core/miniPlayer'
 import configStore from '@root/store/config'
+import { dq, dq1 } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
-import { wait } from '@root/utils'
+import type { OrPromise } from '@root/utils/typeUtils'
 
 let hasClickPage = false,
   isWaiting = false
@@ -13,30 +16,70 @@ window.addEventListener('click', () => {
   clickLock.ok()
 })
 
-export type StartPIPPlayOptions = Partial<{ onNeedUserClick: () => void }>
+export type StartPIPPlayOptions = Partial<{ videoEl: HTMLVideoElement }>
 export default abstract class WebProvider {
   miniPlayer: MiniPlayer
+  // barrageClient: BarrageClient
+  // abstract isWs: boolean
 
   constructor() {
-    this.bindToPIPEvent()
     this.bindCommandsEvent()
   }
 
-  /**处理进入画中画的事件，比如复写原本网站的画中画按钮 */
-  abstract bindToPIPEvent(): void | Promise<void>
-
-  protected abstract _startPIPPlay(): void | Promise<void>
+  protected initMiniPlayer(
+    options?: StartPIPPlayOptions
+  ): OrPromise<MiniPlayer> {
+    const miniPlayer = getMiniPlayer({ videoEl: options.videoEl })
+    this.miniPlayer = miniPlayer
+    return miniPlayer
+  }
 
   async startPIPPlay(options?: StartPIPPlayOptions) {
-    await this._startPIPPlay()
+    if (document.pictureInPictureElement) return
+    this.miniPlayer = await this.initMiniPlayer({
+      ...(options ?? {}),
+      videoEl: options?.videoEl ?? (await this.getVideoEl()),
+    })
+    this.miniPlayer.openPlayer()
+    this.miniPlayer.on('PIPClose', () => {
+      this.miniPlayer = null
+    })
     sendToBackground({ name: 'PIP-active' })
   }
+
+  /**获取视频 */
+  protected getVideoEl(): OrPromise<HTMLVideoElement> {
+    const videos = [
+      ...dq('video'),
+      ...dq('iframe')
+        .map((iframe) => {
+          try {
+            return Array.from(
+              iframe.contentWindow?.document.querySelectorAll('video')
+            )
+          } catch (error) {
+            return null
+          }
+        })
+        .filter((v) => !!v)
+        .flat(),
+    ]
+
+    const targetVideo = videos.reduce((tar, now) => {
+      if (tar.clientHeight < now.clientHeight) return now
+      return tar
+    }, videos[0])
+
+    console.log('targetVideo', targetVideo)
+    return targetVideo
+  }
+  // protected abstract initBarrageSender(): OrPromise<void>
 
   bindCommandsEvent() {
     listen(async (req, res) => {
       if (req.name != 'PIP-action') return
-      if (!this.miniPlayer || !this.miniPlayer.videoEl) return
-      const { videoEl } = this.miniPlayer
+      if (!this.miniPlayer || !this.miniPlayer.webPlayerVideoEl) return
+      const { webPlayerVideoEl: videoEl } = this.miniPlayer
       switch (req?.body) {
         case 'back': {
           videoEl.currentTime -= 5

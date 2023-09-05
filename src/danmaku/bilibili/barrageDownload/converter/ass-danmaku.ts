@@ -1,4 +1,4 @@
-import { BasicDanmakuData, Danmaku } from './danmaku-data'
+import { type BasicDanmakuData, Danmaku } from './danmaku-data'
 import { DanmakuType } from './danmaku-type'
 
 export type Duration = (danmaku: Danmaku) => number

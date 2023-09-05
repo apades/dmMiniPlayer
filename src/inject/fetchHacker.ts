@@ -6,10 +6,8 @@ import { onMessage_inject, sendMessage_inject } from './injectListener'
 console.log('💀 fetch hacker running')
 let ofetch = fetch
 
-let triggerMap: Map<
-  RegExp,
-  (url: string, args: any[], res: any) => void
-> = new Map()
+let triggerMap: Map<RegExp, (url: string, args: any[], res: any) => void> =
+  new Map()
 
 async function _fetch(...args: any[]) {
   // console.log('fetch hacker:args', ...args)

@@ -1,9 +1,9 @@
 import { Barrage } from '@root/danmaku'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
-import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
+import { getMiniPlayer } from '@root/core'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
@@ -18,85 +18,36 @@ export default class BilibiliLiveProvider extends WebProvider {
       'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
   }
 
-  async bindToPIPEvent(): Promise<void> {
-    await onWindowLoad()
-    // function getPIPButtonInParent(el: HTMLElement, TTL = 5): HTMLElement {
-    //   if (TTL-- || el == null) return null
-    //   if (el.classList.contains('icon')) return el
-    //   return getPIPButtonInParent(el.parentElement, TTL)
-    // }
-    // let pipSvg = dq1('#画中画icon'),
-    //   pipBtn = getPIPButtonInParent(pipSvg)
-    // sendMessage('event-hacker:disable', {
-    //   qs: '.' + [...pipBtn.classList].join('.'),
-    //   event: 'click',
-    // })
-    window.addEventListener(
-      'click',
-      (e) => {
-        let target = e.target as HTMLElement
-        if (target.querySelector('#画中画icon')) {
-          console.log('画中画')
-          e.preventDefault()
-          e.stopImmediatePropagation()
-          e.stopPropagation()
-          this.startPIPPlay()
-        }
-      },
-      false
-    )
-    window.addEventListener(
-      'click',
-      (e) => {
-        let target = e.target as HTMLElement
-        if (target.querySelector('#画中画icon')) {
-          console.log('画中画')
-          e.preventDefault()
-          e.stopImmediatePropagation()
-          e.stopPropagation()
-          this.startPIPPlay()
-        }
-      },
-      true
-    )
-    // pipBtn.addEventListener('click', (e) => {
-    //   e.stopPropagation()
-    //   e.preventDefault()
-    //   console.log('click pipBtn')
-    //   this.startPIPPlay()
-    // })
-  }
-  protected _startPIPPlay(): void | Promise<void> {
-    if (!this.miniPlayer) {
-      let videoEl = document.querySelector('video')
-      if (!videoEl) {
-        let iframeEls = dq('iframe')
-        iframeEls.find((i) => {
-          let tar = i?.contentWindow?.document.querySelector('video')
-          tar && (videoEl = tar)
-          return tar
-        })
-      }
-      // 实在找不到
-      if (!videoEl)
-        throw new Error('找不到video el，建议在github提供issue和地址，非常感谢')
-      this.miniPlayer = new MiniPlayer({
-        videoEl,
-      })
+  protected async initMiniPlayer(
+    options?: Partial<{ videoEl: HTMLVideoElement }>
+  ) {
+    const miniPlayer = await super.initMiniPlayer(options)
 
-      this.miniPlayer.startRenderAsCanvas()
-      this.miniPlayer.onLeavePictureInPicture = () => {
-        this.miniPlayer.stopRenderAsCanvas()
-        // this.stopObserveHtmlDanmaku()
-        this.stopObserveWs()
-      }
-    } else {
-      this.miniPlayer.startRenderAsCanvas()
-    }
-
-    // this.startObserveHtmlDanmaku()
+    // 弹幕相关
+    this.miniPlayer.on('PIPClose', () => {
+      this.stopObserveWs()
+    })
     this.startObserverWs()
-    this.miniPlayer.startCanvasPIPPlay()
+    function dq1Adv(q: string) {
+      const top = dq1(q)
+      if (top) {
+        return top
+      }
+      for (const iframe of dq('iframe')) {
+        try {
+          const child = iframe.contentWindow.document.querySelector(q)
+          if (child) return child as HTMLElement
+        } catch (error) {}
+      }
+    }
+    this.miniPlayer.initBarrageSender({
+      webSendButton: dq1Adv('#chat-control-panel-vm .bottom-actions button'),
+      webTextInput: dq1Adv(
+        '#chat-control-panel-vm textarea'
+      ) as HTMLInputElement,
+    })
+
+    return miniPlayer
   }
 
   // web模式没法知道颜色
@@ -109,13 +60,13 @@ export default class BilibiliLiveProvider extends WebProvider {
       nodes.forEach((node: HTMLElement) => {
         let isDanmu = node.classList.contains('danmaku-item')
         if (!isDanmu) return
-        this.miniPlayer.danmaku.barrages.push(
+        this.miniPlayer.danmakuController.barrages.push(
           new Barrage({
             player: this.miniPlayer,
             config: {
               color: '#fff',
               text: node.dataset.danmaku,
-              time: this.miniPlayer.videoEl.currentTime,
+              time: this.miniPlayer.webPlayerVideoEl.currentTime,
               type: 'right',
             },
           })
@@ -133,20 +84,19 @@ export default class BilibiliLiveProvider extends WebProvider {
 
   private fn: (data: { color: string; text: string }) => void = () => 1
   startObserverWs() {
-    if (!this.barrageClient)
-      this.barrageClient = new BilibiliLiveBarrageClient(
-        +location.pathname.split('/').pop()
-      )
+    this.barrageClient = new BilibiliLiveBarrageClient(
+      +location.pathname.split('/').pop()
+    )
 
     this.fn = (data: { color: string; text: string }) => {
-      this.miniPlayer.danmaku.barrages.push(
+      this.miniPlayer.danmakuController.barrages.push(
         new Barrage({
           player: this.miniPlayer,
           config: {
             // TODO
             color: data.color,
             text: data.text,
-            time: this.miniPlayer.videoEl.currentTime,
+            time: this.miniPlayer.webPlayerVideoEl.currentTime,
             // TODO
             type: 'right',
           },
@@ -157,5 +107,6 @@ export default class BilibiliLiveProvider extends WebProvider {
   }
   stopObserveWs() {
     this.barrageClient.removeListener('danmu', this.fn)
+    this.barrageClient.close()
   }
 }

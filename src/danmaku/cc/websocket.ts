@@ -1,7 +1,7 @@
 import { v1 as uuid } from 'uuid'
 import struct from './struct.mjs'
 import { isArray, isNumber, isObject, isString } from 'lodash-es'
-import { oncePromise, wait } from '@root/utils'
+import { onceCall, wait } from '@root/utils'
 import { CCMsgDecode } from './CCMsgDecode'
 import pako from 'pako'
 
@@ -43,7 +43,7 @@ export default class CCWs {
     this.init_ws()
   }
 
-  init_ws = oncePromise(async () => {
+  init_ws = onceCall(async () => {
     const { url, reg_datas } = await this.get_ws_info()
     this.ws = new WebSocket(url)
     this.ws.binaryType = 'arraybuffer'
@@ -102,8 +102,7 @@ export default class CCWs {
       '25': 'Linux',
       '29': '163_cc',
       '30': '',
-      '31':
-        'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Mobile Safari/537.36',
+      '31': 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Mobile Safari/537.36',
     }
     let device_token = uuid() + '@web.cc.163.com'
     let macAdd = device_token

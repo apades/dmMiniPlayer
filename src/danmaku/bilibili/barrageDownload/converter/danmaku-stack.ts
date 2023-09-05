@@ -1,5 +1,5 @@
 import { DanmakuType } from './danmaku-type'
-import { Resolution, Duration, FontStyles } from './ass-danmaku'
+import type { Resolution, Duration, FontStyles } from './ass-danmaku'
 import { Danmaku } from './danmaku-data'
 
 /** 兼容v1的API, 仅按精度直接截断数字, 不做四舍五入, 若未达到精度会添加0

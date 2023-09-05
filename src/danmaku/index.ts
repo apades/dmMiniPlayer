@@ -1,5 +1,6 @@
-import MiniPlayer from '@root/miniPlayer'
-import configStore from '@root/store/config'
+import MiniPlayer from '@root/core/miniPlayer'
+import configStore, { MaxTunnelType } from '@root/store/config'
+import videoRender from '@root/store/videoRender'
 import { getTextWidth } from '@root/utils'
 import { clamp, omit } from 'lodash-es'
 import { observe } from 'mobx'
@@ -38,24 +39,23 @@ class DanmakuController {
 
     this.maxTunnel = this.calcMaxTunnel()
 
-    observe(configStore, 'renderHeight', () => {
+    observe(videoRender, 'containerHeight', () => {
       this.maxTunnel = this.calcMaxTunnel()
     })
   }
 
   calcMaxTunnel() {
-    let { maxTunnel, renderHeight, gap, fontSize } = configStore
+    let { maxTunnel, gap, fontSize } = configStore
+    let { containerHeight: renderHeight } = videoRender
 
     // (fontSize + gap) * x = renderHeight
     switch (maxTunnel) {
-      case '1/2':
+      case MaxTunnelType['1/2']:
         return renderHeight / 2 / (+fontSize + +gap)
-      case '1/4':
+      case MaxTunnelType['1/4']:
         return renderHeight / 4 / (+fontSize + +gap)
-      case 'full':
+      case MaxTunnelType['full']:
         return 100
-      default:
-        return maxTunnel
     }
   }
 
@@ -69,7 +69,7 @@ class DanmakuController {
 
   // 绘制弹幕文本
   draw() {
-    let videoCTime = this.player.videoEl.currentTime
+    let videoCTime = this.player.webPlayerVideoEl.currentTime
     for (let barrage of this.barrages) {
       // 这里+1是给计算popTunnel用的
       let isInTimeRange =
@@ -80,7 +80,7 @@ class DanmakuController {
       // }
       if (!barrage.disabled && isInTimeRange) {
         // 根据新位置绘制圆圈圈
-        barrage.draw(this.player.videoEl.currentTime)
+        barrage.draw(this.player.webPlayerVideoEl.currentTime)
       }
     }
   }
@@ -176,7 +176,7 @@ export class Barrage {
 
     if (props.type != 'right') {
       this.x = (canvas.width - this.width) / 2
-      observe(configStore, 'renderWidth', () => {
+      observe(videoRender, 'containerWidth', () => {
         this.x = (canvas.width - this.width) / 2
       })
     } else {
@@ -185,7 +185,7 @@ export class Barrage {
 
     this.initd = true
 
-    this.tunnel = this.player.danmaku.getTunnel(this.props.type)
+    this.tunnel = this.player.danmakuController.getTunnel(this.props.type)
 
     this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
     observe(configStore, 'gap', () => {
@@ -210,16 +210,17 @@ export class Barrage {
 
     switch (this.props.type) {
       case 'right': {
-        this.x = configStore.renderWidth * percent - (1 - percent) * this.width
+        this.x =
+          videoRender.containerWidth * percent - (1 - percent) * this.width
 
         // 如果弹幕全部进入canvas，释放占位tunnel
         if (
-          this.x <= configStore.renderWidth - this.width &&
+          this.x <= videoRender.containerWidth - this.width &&
           !this.tunnelOuted
         ) {
           this.tunnelOuted = true
           // console.log('tunnelOuted')
-          this.player.danmaku.popTunnel(this.props.type, this.tunnel)
+          this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
         }
         break
       }
@@ -228,7 +229,7 @@ export class Barrage {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
           this.tunnelOuted = true
           // console.log('tunnelOuted')
-          this.player.danmaku.popTunnel(this.props.type, this.tunnel)
+          this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
         }
         break
       }

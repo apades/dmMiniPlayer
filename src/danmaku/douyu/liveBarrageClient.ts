@@ -1,13 +1,9 @@
-import EventEmitter from 'events'
 import { Ex_WebSocket_UnLogin } from './websokect'
 import { getStrMiddle, getTransColor } from './utils'
 import { STT } from './STT'
+import BarrageClient from '@root/core/danmaku/BarrageClient'
 
-type LiveEvent = {
-  danmu: { color: string; text: string }
-}
-
-export default class DouyuLiveBarrageClient extends EventEmitter {
+export default class DouyuLiveBarrageClient extends BarrageClient {
   ws: Ex_WebSocket_UnLogin
   stt = new STT()
   constructor(public id: string | number) {
@@ -15,11 +11,13 @@ export default class DouyuLiveBarrageClient extends EventEmitter {
     this.initWs()
   }
 
+  isClose = false
   initWs() {
     this.ws = new Ex_WebSocket_UnLogin(
       this.id,
       this.handleMsg.bind(this),
       () => {
+        if (this.isClose) return
         this.ws.close()
         this.initWs()
       }
@@ -61,16 +59,8 @@ export default class DouyuLiveBarrageClient extends EventEmitter {
     }
   }
 
-  addEventListener<TType extends keyof LiveEvent>(
-    e: TType,
-    cb: (data: LiveEvent[TType]) => void
-  ) {
-    return super.addListener(e as string, cb)
-  }
-  emit<TType extends keyof LiveEvent>(
-    eventName: TType,
-    args: LiveEvent[TType]
-  ): boolean {
-    return super.emit(eventName, args)
+  close(): void {
+    this.isClose = true
+    this.ws.close()
   }
 }

@@ -1,9 +1,10 @@
 import { Barrage } from '@root/danmaku'
-import MiniPlayer from '@root/miniPlayer'
 import configStore from '@root/store/config'
 import { dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import CCLiveBarrageClient from '@root/danmaku/cc/liveBarrageClient'
+import { getMiniPlayer } from '@root/core'
+import type { OrPromise } from '@root/utils/typeUtils'
 
 window.CCLiveBarrageClient = CCLiveBarrageClient
 export default class CCLiveProvider extends WebProvider {
@@ -20,66 +21,35 @@ export default class CCLiveProvider extends WebProvider {
     configStore.fontWeight = 700
   }
 
-  async bindToPIPEvent(): Promise<void> {}
-  protected _startPIPPlay(): void | Promise<void> {
-    if (!this.miniPlayer) {
-      let videoEl =
-        document.querySelector('video') ||
-        (document.getElementById(
-          'liveIframe'
-        ) as HTMLIFrameElement)?.contentWindow?.document?.querySelector?.(
-          'video'
-        )
+  protected async initMiniPlayer(
+    options?: Partial<{ videoEl: HTMLVideoElement }>
+  ) {
+    const miniPlayer = await super.initMiniPlayer(options)
 
-      // console.log('videoEl', videoEl, document.querySelector('video'))
-      this.miniPlayer = new MiniPlayer({
-        videoEl,
-      })
-
-      this.miniPlayer.startRenderAsCanvas()
-      this.miniPlayer.onLeavePictureInPicture = () => {
-        this.miniPlayer.stopRenderAsCanvas()
-        // this.stopObserveHtmlDanmaku()
-        this.stopObserveWs()
-      }
-    } else {
-      this.miniPlayer.startRenderAsCanvas()
-    }
-
-    // FIXME 我真搞不懂为什么就cc报错 Must be handling a user gesture if there isn't already an element in Picture-in-Picture.
-    // navigator.mediaSession.setActionHandler('pause', (e) => {
-    //   console.log('pause')
-    // })
-    // navigator.mediaSession.setActionHandler('play', () => {
-    //   console.log('play')
-    // })
-
-    // this.startObserveHtmlDanmaku()
+    // 弹幕相关
+    this.miniPlayer.on('PIPClose', () => {
+      this.stopObserveWs()
+    })
     this.startObserverWs()
-    this.miniPlayer.startCanvasPIPPlay()
-  }
 
-  stopObserveHtmlDanmaku() {
-    this.observer.disconnect()
+    return miniPlayer
   }
 
   private fn: (data: { color: string; text: string }) => void = () => 1
   startObserverWs() {
-    if (!this.barrageClient) {
-      const pathArr = location.pathname.split('/')
-      pathArr.pop()
-      this.barrageClient = new CCLiveBarrageClient(+pathArr.pop())
-    }
+    const pathArr = location.pathname.split('/')
+    pathArr.pop()
+    this.barrageClient = new CCLiveBarrageClient(+pathArr.pop())
 
     this.fn = (data: { color: string; text: string }) => {
-      this.miniPlayer.danmaku.barrages.push(
+      this.miniPlayer.danmakuController.barrages.push(
         new Barrage({
           player: this.miniPlayer,
           config: {
             // TODO
             color: data.color,
             text: data.text,
-            time: this.miniPlayer.videoEl.currentTime,
+            time: this.miniPlayer.webPlayerVideoEl.currentTime,
             // TODO
             type: 'right',
           },
@@ -90,5 +60,6 @@ export default class CCLiveProvider extends WebProvider {
   }
   stopObserveWs() {
     this.barrageClient.removeListener('danmu', this.fn)
+    this.barrageClient.close()
   }
 }
