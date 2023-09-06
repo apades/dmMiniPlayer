@@ -60,7 +60,8 @@ export default class DocMiniPlayer extends MiniPlayer {
         break
       }
       case DocPIPRenderType.reactVP_webVideo: {
-        // TODO
+        await this.renderReactVPWithWebVideo()
+        break
       }
     }
 
@@ -202,8 +203,79 @@ export default class DocMiniPlayer extends MiniPlayer {
     )
   }
 
+  /**把web的video插到pip中 */
+  async renderReactVPWithWebVideo() {
+    let pipWindow = this.pipWindow
+    let re: ReturnType<typeof createRoot>
+    // 原始位置
+    const originParent = this.webPlayerVideoEl.parentElement,
+      originInParentIndex = [
+        ...this.webPlayerVideoEl.parentElement.children,
+      ].findIndex((child) => child == this.webPlayerVideoEl),
+      hasController = this.webPlayerVideoEl.controls,
+      originStyle = this.webPlayerVideoEl.getAttribute('style')
+
+    if (!this.videoPlayer) {
+      this.webPlayerVideoEl.controls = false
+      // this.webPlayerVideoEl.setAttribute('style', '')
+      this.videoPlayer = createElement('div')
+      re = createRoot(this.videoPlayer)
+      re.render(
+        <VideoPlayer
+          index={1}
+          webVideo={this.webPlayerVideoEl}
+          keydownWindow={pipWindow}
+          useWebVideo
+          mobxOption={this.vpMobxOption}
+        />
+      )
+    }
+
+    await onVideoPlayerLoad()
+    ;(this.canvas as any).style = ''
+    pipWindow.document.head.appendChild(this.styleEl)
+    pipWindow.document.body.appendChild(this.canvas)
+    pipWindow.document.body.appendChild(this.videoPlayer)
+    pipWindow.addEventListener('pagehide', () => {
+      // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
+      // ! 而且还有个很严重的问题，不能重复关闭打开(大概2次以上)，否则会出现tab崩溃的情况
+      this.appendCanvasToBody()
+      this.emit('PIPClose')
+      re.unmount()
+      this.videoPlayer = null
+
+      this.webPlayerVideoEl.controls = hasController
+      // this.webPlayerVideoEl.setAttribute('style', originStyle)
+      if (!originParent.childNodes[originInParentIndex]) {
+        originParent.appendChild(this.webPlayerVideoEl)
+      } else {
+        originParent.insertBefore(
+          this.webPlayerVideoEl,
+          originParent.childNodes[originInParentIndex]
+        )
+      }
+
+      //   this.pipWindow = null
+    })
+    pipWindow.addEventListener(
+      'resize',
+      throttle(() => {
+        console.log('resize', pipWindow.innerWidth)
+        this.updateCanvasSize({
+          height: pipWindow.innerHeight,
+          width: pipWindow.innerWidth,
+        })
+      }, 500)
+    )
+  }
+
   canvasUpdate() {
-    if (configStore.docPIP_renderType == DocPIPRenderType.reactVP_canvasCs)
+    if (
+      [
+        DocPIPRenderType.reactVP_canvasCs,
+        DocPIPRenderType.reactVP_webVideo,
+      ].includes(configStore.docPIP_renderType)
+    )
       return super.canvasUpdate()
 
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {

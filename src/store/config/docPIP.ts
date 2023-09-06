@@ -20,8 +20,6 @@ export enum DocPIPRenderType {
    * */
   oVP_cs = 'oVP_cs',
   /**
-   * TODO
-   *
    * react播放器，但里面的video标签替换成webVideo
    *  */
   reactVP_webVideo = 'reactVP_webVideo',
@@ -35,9 +33,8 @@ export const docPIPConfig = {
   }),
   docPIP_renderType: config<DocPIPRenderType>({
     notRecommended: true,
-    label: 'docPIP视频模式',
-    desc: '测试用',
-    defaultValue: DocPIPRenderType.reactVP_canvasCs,
+    label: '新画中画模式',
+    defaultValue: DocPIPRenderType.reactVP_webVideo,
     type: 'group',
     group: [
       DocPIPRenderType.reactVP_canvasCs,

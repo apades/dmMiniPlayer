@@ -102,11 +102,12 @@
       }
     }
     video {
-      .wh(100%);
-
-      position: absolute;
-      margin: 0 auto;
-      cursor: pointer;
+      position: absolute !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 auto !important;
+      cursor: pointer !important;
+      pointer-events: none;
     }
 
     &:hover {

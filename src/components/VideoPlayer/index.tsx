@@ -42,6 +42,7 @@ export type Props = EventBase & {
 } & {
   mobxOption?: { canSendBarrage: boolean }
   webVideo?: HTMLVideoElement
+  useWebVideo?: boolean
   keydownWindow?: Window
   uri?: string
   srcObject?: MediaProvider
@@ -128,6 +129,16 @@ const VideoPlayer = observer(
 
     useOnce(() => {
       window.dispatchEvent(VideoPlayerLoadEvent)
+    })
+
+    useOnce(() => {
+      if (!(props.useWebVideo && props.webVideo)) return
+      const videoContainer = player.current.querySelector('.video-container')
+      videoContainer.insertBefore(props.webVideo, videoContainer.children[0])
+
+      videoRef.current = props.webVideo
+
+      compVideoRef.current = props.webVideo
     })
 
     useEffect(() => {
@@ -643,18 +654,20 @@ const VideoPlayer = observer(
             handleResetActionAreaShow()
           }}
         >
-          <video
-            ref={(ref) => {
-              if (!props.webVideo) videoRef.current = ref
+          {!props.useWebVideo && (
+            <video
+              ref={(ref) => {
+                if (!props.webVideo) videoRef.current = ref
 
-              compVideoRef.current = ref
-            }}
-            src={props.uri}
-            controls={_env.vpBufferTest}
-            autoPlay
-            muted
-            {...(props.originAttr || {})}
-          />
+                compVideoRef.current = ref
+              }}
+              src={props.uri}
+              controls={_env.vpBufferTest}
+              autoPlay
+              muted
+              {...(props.originAttr || {})}
+            />
+          )}
 
           {/* 视频封面 */}
           <div className="video-cover full-view-layer">
