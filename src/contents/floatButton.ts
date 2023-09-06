@@ -25,8 +25,19 @@ function initVideoFloatBtn(
     )}"/></div>`,
     onclick: (e) => {
       e.stopPropagation()
+      const videoEl =
+        container instanceof HTMLVideoElement
+          ? container
+          : container.querySelector('video')
+
+      console.log('videoEl', videoEl, container)
       const event = new CustomEvent('inject-response', {
-        detail: { type: 'start-PIP', data: { videoEl: vel } },
+        detail: {
+          type: 'start-PIP',
+          data: {
+            videoEl,
+          },
+        },
       })
       getTopWindow().dispatchEvent(event)
     },
