@@ -59,14 +59,24 @@ export const dqParents: {
 export function getTopParentsWithSameRect(
   el: HTMLElement,
   /**例如video,img标签会出现自身高度略小于容器高度 */
-  offset = 3
+  offset = 3,
+  /**如果有一个absolute+h-full挂在relative下，可能会使relative的height为0 */
+  skipHeight0 = true
 ) {
   const rs: HTMLElement[] = []
   let p = el
   while (true) {
     const pel = p.parentElement
     if (pel) {
-      if (
+      const isAbHeightFull = skipHeight0
+        ? !pel.clientHeight &&
+          (p.computedStyleMap().get('position') as any).value == 'absolute'
+        : false
+      if (isAbHeightFull) {
+        rs.push(p)
+        rs.push(p.parentElement)
+        p = p.parentElement.parentElement
+      } else if (
         Math.abs(pel.clientHeight - p.clientHeight) <= offset &&
         pel.clientWidth == p.clientWidth
       ) {

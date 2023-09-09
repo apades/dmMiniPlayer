@@ -1,27 +1,30 @@
 @bgColor:#262626;
 
 .rc-float-btn{
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  height: 28px;
-  overflow: hidden;
-  color: #F5F5F5;
-  font-size: 12px;
-  text-align: center;
-  border-radius: 4px;
-  cursor: pointer;
-  opacity: 1;
-  transition: all .2s;
+  position: absolute !important;
+  top: 5px !important;
+  left: 5px !important;
+  z-index: 100 !important;
+  display: flex !important;
+  align-items: center !important;
+  width: fit-content !important;
+  min-width: fit-content !important;
+  height: 28px !important;
+  min-height: fit-content !important;
+  overflow: hidden !important;
+  color: #F5F5F5 !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+  transition: all .2s !important;
   
   img{
     height: 16px;
   }
   &.hidden{
-    opacity: 0;
+    opacity: 0 !important;
   }
   &>div{
     display: flex;
