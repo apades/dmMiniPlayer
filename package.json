@@ -6,7 +6,7 @@
   "packageManager": "pnpm@7.29.1",
   "scripts": {
     "dev": "plasmo dev",
-    "build": "plasmo build",
+    "build": "node ./scripts/build.mjs",
     "package": "plasmo package",
     "test": "vite serve -c ./src/test/vite.config.js ./src/test"
   },
@@ -25,6 +25,7 @@
     "@types/webextension-polyfill": "^0.10.0",
     "@vitejs/plugin-react": "^4.0.4",
     "cross-env": "^7.0.3",
+    "fs-extra": "^11.1.1",
     "less": "^4.2.0",
     "prettier": "2.8.7",
     "protobufjs": "^7.2.3",
@@ -60,6 +61,7 @@
     "host_permissions": [
       "<all_urls>"
     ],
+    "default_locale": "zh_CN",
     "web_accessible_resources": [
       {
         "resources": [
