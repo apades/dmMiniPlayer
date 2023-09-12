@@ -10,17 +10,24 @@ export function injectFunction<
   keys: K[] | K,
   cb: (...args: any) => void
 ): {
-  originKeysValue: T[K][]
+  originKeysValue: Record<K, T[K]>
+  /**还原所有方法 */
+  restore: () => void
   // proxy: T
 } {
   if (!isArray(keys)) keys = [keys]
 
-  let originKeysValue = keys.map((k) => origin[k])
+  let originKeysValue = keys.reduce((obj, key) => {
+    obj[key] = origin[key]
+    return obj
+  }, {} as Record<K, T[K]>)
+
+  keys.map((k) => origin[k])
 
   keys.map((key, i) => {
     ;(origin as any)[key] = (...args: any) => {
       cb(...args)
-      return (originKeysValue[i] as Function).apply(origin, args)
+      return (originKeysValue[key] as Function).apply(origin, args)
     }
   })
   // TODO set value的proxy
@@ -45,5 +52,12 @@ export function injectFunction<
   //   },
   // })
 
-  return { originKeysValue /* , proxy */ }
+  return {
+    originKeysValue,
+    restore: () => {
+      for (let key in originKeysValue) {
+        origin[key] = (originKeysValue[key] as Function).bind(origin)
+      }
+    } /* , proxy */,
+  }
 }

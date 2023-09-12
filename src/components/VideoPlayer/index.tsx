@@ -82,6 +82,7 @@ export type VideoPlayerHandle = {
   setCurrentTime: (time: number, isPause?: boolean) => void
   pause: () => void
   play: () => void
+  updateVideoRef: (videoEl: HTMLVideoElement) => void
   ref: React.MutableRefObject<HTMLVideoElement>
 }
 
@@ -93,7 +94,7 @@ const VideoPlayer = observer(
       keydownWindow = window,
     } = props
     let videoRef = useRef<HTMLVideoElement>(props.webVideo)
-    let compVideoRef = useRef<HTMLVideoElement>(null)
+    let compVideoRef = useRef<HTMLVideoElement>(props.webVideo)
     let player = useRef<HTMLDivElement>(null)
     const playBtnEl = useRef<HTMLSpanElement>(null)
     const barrageInputRef = useRef<HTMLInputElement>()
@@ -131,15 +132,18 @@ const VideoPlayer = observer(
       window.dispatchEvent(VideoPlayerLoadEvent)
     })
 
-    useOnce(() => {
+    useEffect(() => {
       if (!(props.useWebVideo && props.webVideo)) return
       const videoContainer = player.current.querySelector('.video-container')
-      videoContainer.insertBefore(props.webVideo, videoContainer.children[0])
-
-      videoRef.current = props.webVideo
+      videoContainer.insertBefore(videoRef.current, videoContainer.children[0])
+      const oldVideoEl = videoRef.current
 
       compVideoRef.current = props.webVideo
-    })
+      return () => {
+        console.log('去除旧videoEl', oldVideoEl)
+        // videoContainer.removeChild(oldVideoEl)
+      }
+    }, [videoRef.current])
 
     useEffect(() => {
       if (window.videoPlayers) return
@@ -208,6 +212,10 @@ const VideoPlayer = observer(
         },
         play() {
           playerOpause('play')
+        },
+        updateVideoRef(videoEl) {
+          console.log('updateVideoRef', videoEl)
+          videoRef.current = videoEl
         },
         ref: videoRef,
       })
@@ -542,7 +550,9 @@ const VideoPlayer = observer(
       )
     }
 
-    const eventsMap = useMemo(() => {
+    // 挂载事件
+    useEffect(() => {
+      if (!videoRef.current) return
       let eventsMap: React.DetailedHTMLProps<
         React.VideoHTMLAttributes<HTMLVideoElement>,
         HTMLVideoElement
@@ -610,23 +620,19 @@ const VideoPlayer = observer(
         }
       })
 
-      return eventsMap
-    }, [videoRef])
-
-    // 挂载事件
-    useEffect(() => {
-      if (!videoRef.current) return
       const entries = Object.entries(eventsMap)
       console.log('emap', entries, videoRef.current)
       entries.forEach(([key, fn]) => {
         videoRef.current.addEventListener(key, fn)
       })
+
+      const oldVideoEl = videoRef.current
       return () => {
         entries.forEach(([key, fn]) => {
-          videoRef.current.removeEventListener(key, fn)
+          oldVideoEl.removeEventListener(key, fn)
         })
       }
-    }, [videoRef.current, eventsMap])
+    }, [videoRef.current])
 
     // ---video event---
 

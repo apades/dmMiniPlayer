@@ -45,7 +45,7 @@ export const dqParents: {
 } = (el: HTMLElement, selectors: string) => {
   if (!el) return []
   const rs: HTMLElement[] = []
-  let p = el
+  let p = el.parentElement
   while (true) {
     const v = p.matches(selectors)
     if (v) rs.push(p)

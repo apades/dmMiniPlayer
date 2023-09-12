@@ -7,6 +7,7 @@ import { type PlayerEvents } from './event'
 import type { Props as BarrageSenderProps } from './danmaku/BarrageSender'
 import { onceCallGet } from '@root/utils/decorator'
 import videoRender from '@root/store/videoRender'
+import { addEventListener } from '@root/utils'
 
 export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
@@ -61,29 +62,34 @@ export default class MiniPlayer {
     let videoEl = this.webPlayerVideoEl
 
     this.isPause = videoEl.paused
-    videoEl.addEventListener('pause', () => {
-      this.isPause = true
-      this.canvasPlayerVideoEl.pause()
-    })
-    videoEl.addEventListener('play', () => {
-      this.isPause = false
-      this.canvasPlayerVideoEl.play()
-    })
-    videoEl.addEventListener('seeked', () => {
-      this.danmakuController.tunnelsMap = {
-        bottom: [],
-        right: [],
-        top: [],
-      }
-      this.danmakuController.barrages.forEach((b) => {
-        b.initd = false
-        b.tunnelOuted = false
+
+    this.clearEventListener = addEventListener(videoEl, (videoEl) => {
+      videoEl.addEventListener('pause', () => {
+        this.isPause = true
+        this.canvasPlayerVideoEl.pause()
+      })
+      videoEl.addEventListener('play', () => {
+        this.isPause = false
+        this.canvasPlayerVideoEl.play()
+      })
+      videoEl.addEventListener('seeked', () => {
+        this.danmakuController.tunnelsMap = {
+          bottom: [],
+          right: [],
+          top: [],
+        }
+        this.danmakuController.barrages.forEach((b) => {
+          b.initd = false
+          b.tunnelOuted = false
+        })
+      })
+      videoEl.addEventListener('loadedmetadata', () => {
+        this.updateCanvasSize()
       })
     })
-    videoEl.addEventListener('loadedmetadata', () => {
-      this.updateCanvasSize()
-    })
   }
+
+  clearEventListener() {}
 
   updateCanvasSize(option?: { width: number; height: number }) {
     console.log('update', option)
@@ -307,6 +313,12 @@ export default class MiniPlayer {
   }
 
   initBarrageSender(props: Omit<BarrageSenderProps, 'textInput'>) {}
+
+  updateWebVideoPlayerEl(videoEl: HTMLVideoElement) {
+    this.clearEventListener()
+    this.webPlayerVideoEl = videoEl
+    this.bindVideoElEvents()
+  }
 
   openPlayer() {
     console.log('openPlayer')

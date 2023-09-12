@@ -29,11 +29,12 @@ export const docPIPConfig = {
   useDocPIP: config({
     defaultValue: !!window?.documentPictureInPicture,
     label: '使用新版画中画',
-    desc: '如果浏览器支持新版画中画，这个默认为关闭',
+    desc: '如果浏览器支持新版画中画，默认为开启',
   }),
   docPIP_renderType: config<DocPIPRenderType>({
-    notRecommended: true,
-    label: '新画中画模式',
+    // notRecommended: true,
+    label: '新版画中画播放模式',
+    desc: '默认的reactVP_webVideo是将网页的视频转移到画中画里，但有些网站会锁定视频位置，需要切换成reactVP_canvasCs双视频模式(例如b站直播带选主播的特殊活动页面)',
     defaultValue: DocPIPRenderType.reactVP_webVideo,
     type: 'group',
     group: [

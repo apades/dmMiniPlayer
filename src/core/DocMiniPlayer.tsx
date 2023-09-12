@@ -1,4 +1,6 @@
-import VideoPlayer from '@root/components/VideoPlayer'
+import VideoPlayer, {
+  type VideoPlayerHandle,
+} from '@root/components/VideoPlayer'
 import {
   loadLock,
   onVideoPlayerLoad,
@@ -13,6 +15,7 @@ import BarrageSender, {
   type Props as BarrageSenderProps,
 } from './danmaku/BarrageSender'
 import MiniPlayer from './miniPlayer'
+import { observeVideoEl } from '@root/utils/observeVideoEl'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
@@ -162,20 +165,42 @@ export default class DocMiniPlayer extends MiniPlayer {
   async renderCanvasVideoPlayer() {
     let pipWindow = this.pipWindow
     let re: ReturnType<typeof createRoot>
-    if (!this.videoPlayer) {
-      this.videoPlayer = createElement('div')
-      re = createRoot(this.videoPlayer)
-      re.render(
-        <VideoPlayer
-          index={1}
-          srcObject={this.canvasVideoStream}
-          webVideo={this.webPlayerVideoEl}
-          keydownWindow={pipWindow}
-          mobxOption={this.vpMobxOption}
-        />
-      )
+    let unobserveVideoElChange = observeVideoEl(
+      this.webPlayerVideoEl,
+      (newVideoEl) => {
+        console.log('change', newVideoEl)
+        this.updateWebVideoPlayerEl(newVideoEl)
+      }
+    )
+    let restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
+      this.webPlayerVideoEl
+    )
+
+    let vpRef: VideoPlayerHandle
+    this.videoPlayer = createElement('div')
+    re = createRoot(this.videoPlayer)
+    re.render(
+      <VideoPlayer
+        index={1}
+        srcObject={this.canvasVideoStream}
+        webVideo={this.webPlayerVideoEl}
+        keydownWindow={pipWindow}
+        mobxOption={this.vpMobxOption}
+        ref={(ref) => {
+          if (!ref) return
+          vpRef = ref
+          window.vpRef = vpRef
+        }}
+      />
+    )
+    this.updateWebVideoPlayerEl = (videoEl) => {
+      super.updateWebVideoPlayerEl(videoEl)
+      restoreWebVideoPlayerElState()
+      console.log('new videoEl', videoEl)
+      vpRef.updateVideoRef(videoEl)
+      // 控制要不要把上一个还原
+      restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
     }
-    console.log('this.videoPlayer1', this.videoPlayer)
 
     await onVideoPlayerLoad()
     ;(this.canvas as any).style = ''
@@ -188,7 +213,11 @@ export default class DocMiniPlayer extends MiniPlayer {
       this.emit('PIPClose')
       re.unmount()
       this.videoPlayer = null
-      //   this.pipWindow = null
+
+      this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
+
+      restoreWebVideoPlayerElState()
+      unobserveVideoElChange()
     })
     console.log('this.videoPlayer2', this.videoPlayer)
     pipWindow.addEventListener(
@@ -207,28 +236,43 @@ export default class DocMiniPlayer extends MiniPlayer {
   async renderReactVPWithWebVideo() {
     let pipWindow = this.pipWindow
     let re: ReturnType<typeof createRoot>
-    // 原始位置
-    const originParent = this.webPlayerVideoEl.parentElement,
-      originInParentIndex = [
-        ...this.webPlayerVideoEl.parentElement.children,
-      ].findIndex((child) => child == this.webPlayerVideoEl),
-      hasController = this.webPlayerVideoEl.controls,
-      originStyle = this.webPlayerVideoEl.getAttribute('style')
+    let unobserveVideoElChange = observeVideoEl(
+      this.webPlayerVideoEl,
+      (newVideoEl) => {
+        console.log('change', newVideoEl)
+        this.updateWebVideoPlayerEl(newVideoEl)
+      }
+    )
+    // let unobserveVideoElChange = () => 0
+    let restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
+      this.webPlayerVideoEl
+    )
 
-    if (!this.videoPlayer) {
-      this.webPlayerVideoEl.controls = false
-      // this.webPlayerVideoEl.setAttribute('style', '')
-      this.videoPlayer = createElement('div')
-      re = createRoot(this.videoPlayer)
-      re.render(
-        <VideoPlayer
-          index={1}
-          webVideo={this.webPlayerVideoEl}
-          keydownWindow={pipWindow}
-          useWebVideo
-          mobxOption={this.vpMobxOption}
-        />
-      )
+    let vpRef: VideoPlayerHandle
+    // this.webPlayerVideoEl.setAttribute('style', '')
+    this.videoPlayer = createElement('div')
+    re = createRoot(this.videoPlayer)
+    re.render(
+      <VideoPlayer
+        index={1}
+        webVideo={this.webPlayerVideoEl}
+        keydownWindow={pipWindow}
+        useWebVideo
+        mobxOption={this.vpMobxOption}
+        ref={(ref) => {
+          if (!ref) return
+          vpRef = ref
+          window.vpRef = vpRef
+        }}
+      />
+    )
+    this.updateWebVideoPlayerEl = (videoEl) => {
+      super.updateWebVideoPlayerEl(videoEl)
+      // restoreWebVideoPlayerElState()
+      console.log('new videoEl', videoEl)
+      vpRef.updateVideoRef(videoEl)
+      // 控制要不要把上一个还原
+      restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
     }
 
     await onVideoPlayerLoad()
@@ -243,19 +287,10 @@ export default class DocMiniPlayer extends MiniPlayer {
       this.emit('PIPClose')
       re.unmount()
       this.videoPlayer = null
+      this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
 
-      this.webPlayerVideoEl.controls = hasController
-      // this.webPlayerVideoEl.setAttribute('style', originStyle)
-      if (!originParent.childNodes[originInParentIndex]) {
-        originParent.appendChild(this.webPlayerVideoEl)
-      } else {
-        originParent.insertBefore(
-          this.webPlayerVideoEl,
-          originParent.childNodes[originInParentIndex]
-        )
-      }
-
-      //   this.pipWindow = null
+      restoreWebVideoPlayerElState()
+      unobserveVideoElChange()
     })
     pipWindow.addEventListener(
       'resize',
@@ -267,6 +302,29 @@ export default class DocMiniPlayer extends MiniPlayer {
         })
       }, 500)
     )
+  }
+
+  /**return的函数运行是还原videoEl位置和状态 */
+  initWebVideoPlayerElState(videoEl: HTMLVideoElement) {
+    const originParent = videoEl.parentElement,
+      originInParentIndex = [...videoEl.parentElement.children].findIndex(
+        (child) => child == videoEl
+      ),
+      hasController = videoEl.controls,
+      originStyle = videoEl.getAttribute('style')
+    videoEl.controls = false
+
+    return () => {
+      videoEl.controls = hasController
+      if (!originParent.childNodes[originInParentIndex]) {
+        originParent.appendChild(videoEl)
+      } else {
+        originParent.insertBefore(
+          videoEl,
+          originParent.childNodes[originInParentIndex]
+        )
+      }
+    }
   }
 
   canvasUpdate() {
@@ -341,3 +399,5 @@ export default class DocMiniPlayer extends MiniPlayer {
     }
   }
 }
+
+window.observeVideoEl = observeVideoEl
