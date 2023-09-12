@@ -2,6 +2,7 @@ import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
 import CCLiveProvider from './cc'
 import CommonProvider from './common'
+import DdrkProvider from './ddrk'
 import DouyuLiveProvider from './douyu'
 import WebProvider from './webProvider'
 
@@ -21,6 +22,10 @@ const providerList = [
   {
     reg: /https:\/\/cc\.163\.com\/.*/,
     provider: CCLiveProvider,
+  },
+  {
+    reg: /https:\/\/ddys\.(art|pro)\/.*/,
+    provider: DdrkProvider,
   },
   {
     reg: /.*/,

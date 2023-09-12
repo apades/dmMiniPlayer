@@ -321,6 +321,7 @@ export default class MiniPlayer {
   }
 
   openPlayer() {
+    this.emit('PIPOpen')
     console.log('openPlayer')
     this.startRenderAsCanvas()
     this.bindOnClosePlayer()
