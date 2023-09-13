@@ -56,7 +56,7 @@
   },
   "manifest": {
     "name": "弹幕画中画播放器",
-    "description": "带弹幕的画中画播放器，支持B站和斗鱼、CC直播的弹幕播放，且支持所有的网站启动",
+    "description": "支持最新的画中画API功能，且在b站、斗鱼可以播放/发送弹幕",
     "version": "0.3.0",
     "host_permissions": [
       "<all_urls>"
