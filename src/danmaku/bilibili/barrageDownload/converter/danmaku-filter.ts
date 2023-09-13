@@ -27,7 +27,7 @@ export default class DanmakuFilter {
         this.transJsonDanmakuToXmlDanmaku(danmaku)
       )
       // 应用传入的过滤器
-      if (!config.blockFilter(xmlDanmaku)) {
+      if (config.blockFilter ? !config.blockFilter(xmlDanmaku) : false) {
         continue
       }
       filterDanmakus.push(danmaku)

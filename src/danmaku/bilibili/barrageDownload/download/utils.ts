@@ -270,7 +270,7 @@ export const convertToAssFromJson = async (danmaku: JsonDanmaku) => {
 }
 export const convertToJsonFromOriginJson = async (danmaku: JsonDanmaku) => {
   const converter = new DanmakuFilter(await getUserDanmakuConfig())
-  return JSON.stringify(converter.filterJsonDanamku(danmaku.jsonDanmakus))
+  return JSON.stringify(danmaku.jsonDanmakus)
 }
 
 export const convertToXmlFromJson = (danmaku: JsonDanmaku) => {

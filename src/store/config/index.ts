@@ -81,6 +81,12 @@ export const baseConfigMap = {
     label: '快捷键的倍速播放速率',
   }),
 
+  biliVideoPakkuFilter: config({
+    defaultValue: true,
+    label: 'b站视频弹幕使用pakku.js过滤',
+    desc: '目前只有过滤+减少弹幕，原始json文件一屏弹幕量会非常多，没有特殊功能',
+  }),
+
   // debug
   performanceInfo: config({
     defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',

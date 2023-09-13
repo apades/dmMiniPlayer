@@ -138,12 +138,16 @@ export default class BilibiliVideoProvider extends WebProvider {
       pid = +new URLSearchParams(location.search).get('p') || 1
     console.log('视频bv+ pid', bv, pid)
     // TODO 先不要开启json模式，ass模式有过滤最大弹幕不知道怎么实现的
-    let danmuContent = await this.getDamuContent(bv, pid)
-    let dans = this.transAssContentToDans(danmuContent)
-    // let danmuContent = await this.getDamuContent(bv, 'json')
-    // let dans = this.transJsonContentToDans(danmuContent)
-    // console.log('dans', dans)
+    let danmuContent = await this.getDamuContent(
+      bv,
+      pid,
+      configStore.biliVideoPakkuFilter ? 'ass' : 'originJson'
+    )
 
-    return dans
+    if (configStore.biliVideoPakkuFilter) {
+      return this.transAssContentToDans(danmuContent)
+    } else {
+      return this.transJsonContentToDans(danmuContent)
+    }
   }
 }
