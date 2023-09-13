@@ -6,6 +6,8 @@ export function observeVideoEl(
   onChange: (videoEl: HTMLVideoElement) => void
 ) {
   console.log('observeVideoEl', videoEl)
+  let t = 0,
+    timer: NodeJS.Timeout
   function observe(videoEl: HTMLElement) {
     return new Promise<HTMLElement>((res) => {
       const parents = dqParents(videoEl, '*').reverse()
@@ -57,10 +59,16 @@ export function observeVideoEl(
   ;(async () => {
     while (!stop) {
       const newParent = await observe(videoEl)
+      t++
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        t = 0
+      }, 1000)
+      if (t == 3) throw Error('短时间内videoEl刷新次数过多，紧急停止监听守护')
       await wait()
       console.log('newParent', newParent)
       videoEl = newParent.querySelector('video')
-      if (!videoEl) throw Error('找不到videoEl了')
+      if (!videoEl) throw Error('无法找到新的videoEl')
       onChange(videoEl)
     }
   })()

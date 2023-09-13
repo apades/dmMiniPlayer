@@ -18,23 +18,6 @@ export default class DouyuLiveProvider extends WebProvider {
       'Segoe UI Emoji,SimHei,Microsoft JhengHei,Arial,Helvetica,sans-serif'
   }
 
-  // async bindToPIPEvent(): Promise<void> {
-  //   await onWindowLoad()
-  //   window.addEventListener(
-  //     'click',
-  //     (e) => {
-  //       let target = e.target as HTMLElement
-  //       if (target.getAttribute('title') == '开启画中画') {
-  //         console.log('画中画')
-  //         e.preventDefault()
-  //         e.stopImmediatePropagation()
-  //         e.stopPropagation()
-  //         this.startPIPPlay()
-  //       }
-  //     },
-  //     false
-  //   )
-  // }
   protected async initMiniPlayer(
     options?: Partial<{ videoEl: HTMLVideoElement }>
   ) {
@@ -65,38 +48,6 @@ export default class DouyuLiveProvider extends WebProvider {
     })
 
     return miniPlayer
-  }
-
-  // web模式没法知道颜色
-  startObserveHtmlDanmaku() {
-    this.observer = new MutationObserver((list) => {
-      let nodes = list?.[0].addedNodes
-      if (!nodes)
-        return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
-
-      nodes.forEach((node: HTMLElement) => {
-        let isDanmu = node.classList.contains('danmaku-item')
-        if (!isDanmu) return
-        this.miniPlayer.danmakuController.barrages.push(
-          new Barrage({
-            player: this.miniPlayer,
-            config: {
-              color: '#fff',
-              text: node.dataset.danmaku,
-              time: this.miniPlayer.webPlayerVideoEl.currentTime,
-              type: 'right',
-            },
-          })
-        )
-      })
-    })
-    this.observer.observe(dq1('.chat-items'), {
-      childList: true,
-    })
-  }
-
-  stopObserveHtmlDanmaku() {
-    this.observer.disconnect()
   }
 
   private fn: (data: { color: string; text: string }) => void = () => 1

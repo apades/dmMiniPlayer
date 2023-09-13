@@ -1,9 +1,10 @@
 import { Barrage } from '@root/danmaku'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
-import configStore from '@root/store/config'
+import configStore, { DocPIPRenderType } from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
 import { getMiniPlayer } from '@root/core'
+import { runInAction } from 'mobx'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
@@ -21,6 +22,15 @@ export default class BilibiliLiveProvider extends WebProvider {
   protected async initMiniPlayer(
     options?: Partial<{ videoEl: HTMLVideoElement }>
   ) {
+    // b站的iframe video会锁住，需要换模式
+    if (options.videoEl.ownerDocument != document) {
+      console.warn(
+        'b站的iframe videoEl有自己的监听守护，没法把videoEl提取出来，临时切换reactVP_canvasCs模式'
+      )
+      runInAction(() => {
+        configStore.docPIP_renderType = DocPIPRenderType.reactVP_canvasCs
+      })
+    }
     const miniPlayer = await super.initMiniPlayer(options)
 
     // 弹幕相关
@@ -48,38 +58,6 @@ export default class BilibiliLiveProvider extends WebProvider {
     })
 
     return miniPlayer
-  }
-
-  // web模式没法知道颜色
-  startObserveHtmlDanmaku() {
-    this.observer = new MutationObserver((list) => {
-      let nodes = list?.[0].addedNodes
-      if (!nodes)
-        return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
-
-      nodes.forEach((node: HTMLElement) => {
-        let isDanmu = node.classList.contains('danmaku-item')
-        if (!isDanmu) return
-        this.miniPlayer.danmakuController.barrages.push(
-          new Barrage({
-            player: this.miniPlayer,
-            config: {
-              color: '#fff',
-              text: node.dataset.danmaku,
-              time: this.miniPlayer.webPlayerVideoEl.currentTime,
-              type: 'right',
-            },
-          })
-        )
-      })
-    })
-    this.observer.observe(dq1('.chat-items'), {
-      childList: true,
-    })
-  }
-
-  stopObserveHtmlDanmaku() {
-    this.observer.disconnect()
   }
 
   private fn: (data: { color: string; text: string }) => void = () => 1
