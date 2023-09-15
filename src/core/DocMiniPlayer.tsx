@@ -169,12 +169,13 @@ export default class DocMiniPlayer extends MiniPlayer {
       this.webPlayerVideoEl,
       (newVideoEl) => {
         console.log('change', newVideoEl)
-        this.updateWebVideoPlayerEl(newVideoEl)
+        // this.updateWebVideoPlayerEl(newVideoEl)
+        // restoreWebVideoPlayerElState = () => {}
       }
     )
-    let restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
-      this.webPlayerVideoEl
-    )
+    // let restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
+    //   this.webPlayerVideoEl
+    // )
 
     let vpRef: VideoPlayerHandle
     this.videoPlayer = createElement('div')
@@ -195,11 +196,11 @@ export default class DocMiniPlayer extends MiniPlayer {
     )
     this.updateWebVideoPlayerEl = (videoEl) => {
       super.updateWebVideoPlayerEl(videoEl)
-      restoreWebVideoPlayerElState()
+      // restoreWebVideoPlayerElState()
       console.log('new videoEl', videoEl)
       vpRef.updateVideoRef(videoEl)
       // 控制要不要把上一个还原
-      restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
+      // restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
     }
 
     await onVideoPlayerLoad()
@@ -216,7 +217,7 @@ export default class DocMiniPlayer extends MiniPlayer {
 
       this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
 
-      restoreWebVideoPlayerElState()
+      // restoreWebVideoPlayerElState()
       unobserveVideoElChange()
     })
     console.log('this.videoPlayer2', this.videoPlayer)
