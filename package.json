@@ -57,7 +57,7 @@
   "manifest": {
     "name": "弹幕画中画播放器",
     "description": "支持最新的画中画API功能，且在b站、斗鱼可以播放/发送弹幕",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "host_permissions": [
       "<all_urls>"
     ],
