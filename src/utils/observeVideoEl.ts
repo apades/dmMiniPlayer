@@ -63,7 +63,7 @@ export function observeVideoEl(
       clearTimeout(timer)
       timer = setTimeout(() => {
         t = 0
-      }, 1000)
+      }, 5000)
       if (t == 3) throw Error('短时间内videoEl刷新次数过多，紧急停止监听守护')
       await wait()
       console.log('newParent', newParent)
