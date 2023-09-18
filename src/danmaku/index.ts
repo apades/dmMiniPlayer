@@ -239,14 +239,15 @@ export class Barrage {
       opacity = configStore.opacity,
       fontSize = configStore.fontSize
 
-    context.shadowColor = 'rgba(0,0,0,' + opacity + ')'
+    context.shadowColor = 'rgba(0,0,0,0.5)'
+    context.globalAlpha = opacity
     context.shadowBlur = 2
     context.font = `${configStore.fontWeight} ${fontSize}px ${configStore.fontFamily}`
     context.fillStyle = this.color
     context.fillText(this.text, this.x, this.y)
     context.shadowColor = 'none'
     context.shadowBlur = 0
-
+    context.globalAlpha = 1
     return true
   }
 }
