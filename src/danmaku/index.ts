@@ -196,6 +196,7 @@ export class Barrage {
       })
     } else {
       this.x = canvas.width
+      // TODO 跳时间进来时，偶然出现x会重叠，需要调整y值
       if (time) {
         const offsetTime = time - this.startTime
         // 大于5秒的再计算位置
