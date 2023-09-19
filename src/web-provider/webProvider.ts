@@ -42,8 +42,8 @@ export default abstract class WebProvider {
     })
     this.miniPlayer.openPlayer()
     this.miniPlayer.on('PIPClose', () => {
-      this.miniPlayer = null
       this.miniPlayer.clearEventListener()
+      this.miniPlayer = null
     })
     sendToBackground({ name: 'PIP-active' })
   }
