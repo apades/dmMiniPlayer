@@ -84,7 +84,12 @@ export const baseConfigMap = {
   biliVideoPakkuFilter: config({
     defaultValue: true,
     label: 'b站视频弹幕使用pakku.js过滤',
-    desc: '目前只有过滤+减少弹幕，原始json文件一屏弹幕量会非常多，没有特殊功能',
+    desc: '只有bilibili-evaolved模式开了才能用。目前只有过滤+减少弹幕，原始json文件一屏弹幕量会非常多，没有特殊功能',
+  }),
+  biliVideoDansFromBiliEvaolved: config({
+    defaultValue: false,
+    label: '使用bilibili-evaolved获取b站视频弹幕',
+    desc: '该模式有问题没法下载完全的弹幕',
   }),
 
   // debug

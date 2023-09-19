@@ -1,19 +1,20 @@
 import type MiniPlayer from '@root/core/miniPlayer'
 import type { DanType } from '@root/danmaku'
-import { DanmakuStack } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-stack'
-import { DanmakuType } from '@root/danmaku/bilibili/barrageDownload/converter/danmaku-type'
+import { DanmakuStack } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-stack'
+import type { DanmakuType } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-type'
 import {
   JsonDanmaku,
   getTextByType,
   type DanmakuDownloadType,
-} from '@root/danmaku/bilibili/barrageDownload/download/utils'
+} from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
 import { onMessage, sendMessage } from '@root/inject/contentSender'
 import configStore from '@root/store/config'
 import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
+import { windowsOnceCall } from '@root/utils/decorator'
 import type { OrPromise } from '@root/utils/typeUtils'
 import WebProvider from '../webProvider'
-import { windowsOnceCall } from '@root/utils/decorator'
+import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-api'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
@@ -86,11 +87,8 @@ export default class BilibiliVideoProvider extends WebProvider {
       this.miniPlayer.danmakuController.initDans(dans)
     )
   }
-  async getDamuContent(
-    bid: string,
-    pid = 1,
-    type: DanmakuDownloadType = 'ass'
-  ): Promise<string> {
+
+  async getVideoInfo(bid: string, pid = 1) {
     let res = (
       await fetch(
         `https://api.bilibili.com/x/web-interface/view?bvid=${bid}`
@@ -106,8 +104,14 @@ export default class BilibiliVideoProvider extends WebProvider {
       }
     }
 
-    console.log('视频cid', cid)
+    return { aid, cid }
+  }
 
+  async getDamuContent(
+    aid: string,
+    cid: string,
+    type: DanmakuDownloadType = 'ass'
+  ): Promise<string> {
     return await getTextByType(type, { aid, cid })
   }
 
@@ -137,17 +141,25 @@ export default class BilibiliVideoProvider extends WebProvider {
         .replace(/bv/i, ''),
       pid = +new URLSearchParams(location.search).get('p') || 1
     console.log('视频bv+ pid', bv, pid)
-    // TODO 先不要开启json模式，ass模式有过滤最大弹幕不知道怎么实现的
-    let danmuContent = await this.getDamuContent(
-      bv,
-      pid,
-      configStore.biliVideoPakkuFilter ? 'ass' : 'originJson'
-    )
 
-    if (configStore.biliVideoPakkuFilter) {
-      return this.transAssContentToDans(danmuContent)
+    const { aid, cid } = await this.getVideoInfo(bv, pid)
+
+    if (configStore.biliVideoDansFromBiliEvaolved) {
+      // 这里是旧的bilibili-evaolved获取逻辑
+      // ass模式有过滤最大弹幕不知道怎么实现的
+      let danmuContent = await this.getDamuContent(
+        aid,
+        cid,
+        configStore.biliVideoPakkuFilter ? 'ass' : 'originJson'
+      )
+
+      if (configStore.biliVideoPakkuFilter) {
+        return this.transAssContentToDans(danmuContent)
+      } else {
+        return this.transJsonContentToDans(danmuContent)
+      }
     } else {
-      return this.transJsonContentToDans(danmuContent)
+      return getBiliBiliVideoDanmu(cid)
     }
   }
 }
