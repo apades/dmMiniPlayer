@@ -1,4 +1,4 @@
-import { makeAutoObservable, observe, runInAction } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 
 class VideoRender {
   containerWidth = 0

@@ -1,7 +1,6 @@
 import { throttle } from 'lodash-es'
 import DanmakuController, { type DanmakuProps } from '../danmaku'
 import configStore from '../store/config'
-import { observe } from 'mobx'
 import mitt, { type Emitter } from 'mitt'
 import { type PlayerEvents } from './event'
 import type { Props as BarrageSenderProps } from './danmaku/BarrageSender'
@@ -80,6 +79,7 @@ export default class MiniPlayer {
         }
         this.danmakuController.barrages.forEach((b) => {
           b.initd = false
+          b.disabled = false
           b.tunnelOuted = false
         })
       })
@@ -119,6 +119,7 @@ export default class MiniPlayer {
 
   protected withoutLimitLastUpdateTime = Date.now()
   withoutLimitAnimaFPS = 0
+  // 进入pip时渲染第一帧画面
   private hansDraw = false
   canvasUpdate() {
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {

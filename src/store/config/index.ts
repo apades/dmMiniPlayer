@@ -34,6 +34,15 @@ export const baseConfigMap = {
   }),
 
   // 弹幕设置
+  danSpeed: config({
+    defaultValue: 20,
+    label: '弹幕速度',
+    desc: '受 canvas渲染的帧数 影响，每次x+=val/10',
+  }),
+  danVerticalSafeTime: config({
+    defaultValue: 5,
+    label: '垂直弹幕停留时间',
+  }),
   opacity: config({
     defaultValue: 1,
     desc: '默认1，范围0 ~ 1',

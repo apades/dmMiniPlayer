@@ -71,16 +71,8 @@ class DanmakuController {
   draw() {
     let videoCTime = this.player.webPlayerVideoEl.currentTime
     for (let barrage of this.barrages) {
-      // 这里+1是给计算popTunnel用的
-      let isInTimeRange =
-        videoCTime >= barrage.startTime && videoCTime <= barrage.endTime + 1
-
-      // if (!barrage.initd) {
-      //   barrage.init()
-      // }
-      if (!barrage.disabled && isInTimeRange) {
-        // 根据新位置绘制圆圈圈
-        barrage.draw(this.player.webPlayerVideoEl.currentTime)
+      if (!barrage.disabled) {
+        barrage.draw(videoCTime)
       }
     }
   }
@@ -127,13 +119,12 @@ export class Barrage {
   x = 0
   y = 0
 
+  /**移动了的x */
+  moveX = 0
+
   width = 0
 
   startTime = 0
-  /**
-   * FIXME 因为用的简单endTime会导致很多弹幕下会有多个弹幕重叠问题
-   * TODO 现在是简单的startTime + 5，可能需要支持计算长度的endTime
-   */
   endTime = 0
 
   text = ''
@@ -146,20 +137,40 @@ export class Barrage {
   tunnel = 0
   tunnelOuted = false
 
+  speed = 20
+  hasObserve = false
+
+  observer: any[] = []
   constructor(props: { player: MiniPlayer; config: DanType }) {
     let { config } = props
     // 一些变量参数
     this.text = config.text
 
     this.startTime = config.time
-    this.endTime = this.startTime + 5
 
     this.player = props.player
     this.props = config
   }
 
-  init() {
+  init(time?: number) {
     let { props } = this
+
+    const _observer: typeof observe = (...args: any) => {
+      if (this.hasObserve) return () => 0
+      const unObserver = observe(...(args as [any, any]))
+      this.observer.push(unObserver)
+      return unObserver
+    }
+
+    if (props.type != 'right') {
+      this.endTime = this.startTime + configStore.danVerticalSafeTime
+      _observer(configStore, 'danVerticalSafeTime', () => {
+        this.endTime = this.startTime + configStore.danVerticalSafeTime
+      })
+    }
+    // 清除mobx的observer可能造成的内存问题
+    this.observer.forEach((ob) => ob())
+    this.observer = []
 
     let fontSize = configStore.fontSize ?? 12
 
@@ -171,16 +182,22 @@ export class Barrage {
 
     let canvas = this.player.canvas
 
-    // TODO 这里可以observe config的width，然后改top type弹幕的位置，不然resize pip窗口会出现top弹幕错位
     // 初始水平位置和垂直位置
-
     if (props.type != 'right') {
       this.x = (canvas.width - this.width) / 2
-      observe(videoRender, 'containerWidth', () => {
+      // 这里observe config的width，然后改top type弹幕的位置，不然resize pip窗口会出现top弹幕错位
+
+      _observer(videoRender, 'containerWidth', () => {
+        console.log('change', canvas.width)
         this.x = (canvas.width - this.width) / 2
       })
     } else {
       this.x = canvas.width
+      this.moveX = 0
+      this.speed = configStore.danSpeed / 10
+      _observer(configStore, 'danSpeed', () => {
+        this.speed = configStore.danSpeed / 10
+      })
     }
 
     this.initd = true
@@ -188,39 +205,39 @@ export class Barrage {
     this.tunnel = this.player.danmakuController.getTunnel(this.props.type)
 
     this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
-    observe(configStore, 'gap', () => {
+    _observer(configStore, 'gap', () => {
       this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
     })
 
     this.color = props.color || 'white'
+    this.hasObserve = true
   }
 
   // 根据此时x位置绘制文本
   draw(time: number) {
-    if (time < this.startTime || this.disabled || time > this.endTime) return
-    if (!this.initd) {
-      // console.log('init')
-      this.init()
+    if (this.disabled) return
+    if (time < this.startTime) return
+    if (this.endTime && (time < this.startTime || time > this.endTime)) {
+      this.disabled = true
+      return
     }
-    let percent = clamp(
-      1 - (time - this.startTime) / (this.endTime - this.startTime),
-      0,
-      1
-    )
+    if (!this.initd) {
+      this.init(time)
+    }
 
     switch (this.props.type) {
       case 'right': {
-        this.x =
-          videoRender.containerWidth * percent - (1 - percent) * this.width
+        this.moveX += this.speed
+        this.x = videoRender.containerWidth - this.moveX
 
         // 如果弹幕全部进入canvas，释放占位tunnel
-        if (
-          this.x <= videoRender.containerWidth - this.width &&
-          !this.tunnelOuted
-        ) {
+        if (this.moveX >= this.width && !this.tunnelOuted) {
           this.tunnelOuted = true
           // console.log('tunnelOuted')
           this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
+        }
+        if (this.x + this.width <= 0) {
+          this.disabled = true
         }
         break
       }

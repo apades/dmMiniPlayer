@@ -18,14 +18,16 @@ export async function getBiliBiliVideoDanmu(cid: string): Promise<DanType[]> {
 
   const xmlDans = Array.from(doc.querySelectorAll('d'))
 
-  return xmlDans.map((xmlDan) => {
-    const attr = xmlDan.getAttribute('p')
-    const d = attr.split(',')
-    return {
-      color: '#' + (+d[3]).toString(16),
-      text: xmlDan.textContent,
-      time: +d[0],
-      type: (d[1] == '4' && 'bottom') || (d[1] == '5' && 'top') || 'right',
-    }
-  })
+  return xmlDans
+    .map((xmlDan) => {
+      const attr = xmlDan.getAttribute('p')
+      const d = attr.split(',')
+      return {
+        color: '#' + (+d[3]).toString(16),
+        text: xmlDan.textContent,
+        time: +d[0],
+        type: (d[1] == '4' && 'bottom') || (d[1] == '5' && 'top') || 'right',
+      } as DanType
+    })
+    .sort((a, b) => a.time - b.time)
 }
