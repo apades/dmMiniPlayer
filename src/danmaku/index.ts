@@ -167,12 +167,15 @@ export class Barrage {
       _observer(configStore, 'danVerticalSafeTime', () => {
         this.endTime = this.startTime + configStore.danVerticalSafeTime
       })
+    } else {
+      // ! 加个保底的time，不然跳到后段时需要计算太多的前面的弹幕位置了
+      this.endTime = this.startTime + 30
     }
-    // 清除mobx的observer可能造成的内存问题
-    this.observer.forEach((ob) => ob())
-    this.observer = []
-
     let fontSize = configStore.fontSize ?? 12
+    this.speed = configStore.danSpeed / 10
+    _observer(configStore, 'danSpeed', () => {
+      this.speed = configStore.danSpeed / 10
+    })
 
     // 求得文字内容宽度
     this.width = getTextWidth(props.text, {
@@ -193,11 +196,16 @@ export class Barrage {
       })
     } else {
       this.x = canvas.width
-      this.moveX = 0
-      this.speed = configStore.danSpeed / 10
-      _observer(configStore, 'danSpeed', () => {
-        this.speed = configStore.danSpeed / 10
-      })
+      if (time) {
+        const offsetTime = time - this.startTime
+        // 大于5秒的再计算位置
+        if (offsetTime > 3) {
+          this.moveX =
+            offsetTime * this.player.withoutLimitAnimaFPS * this.speed
+        } else this.moveX = 0
+      } else {
+        this.moveX = 0
+      }
     }
 
     this.initd = true
@@ -213,12 +221,19 @@ export class Barrage {
     this.hasObserve = true
   }
 
+  clearAllObserve() {
+    this.observer.forEach((ob) => ob())
+    this.observer = []
+    this.hasObserve = false
+  }
+
   // 根据此时x位置绘制文本
   draw(time: number) {
-    if (this.disabled) return
-    if (time < this.startTime) return
+    if (this.disabled) return this.clearAllObserve()
+    if (time < this.startTime) return this.clearAllObserve()
     if (this.endTime && (time < this.startTime || time > this.endTime)) {
       this.disabled = true
+      this.clearAllObserve()
       return
     }
     if (!this.initd) {

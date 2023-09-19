@@ -81,6 +81,7 @@ export default class MiniPlayer {
           b.initd = false
           b.disabled = false
           b.tunnelOuted = false
+          b.clearAllObserve()
         })
       })
       videoEl.addEventListener('loadedmetadata', () => {
