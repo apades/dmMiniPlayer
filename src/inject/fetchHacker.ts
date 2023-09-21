@@ -19,7 +19,11 @@ async function _fetch(...args: any[]) {
   // console.log('fetch hacker:onTrigger', hasTrigger)
   let res = await ofetch.apply(this, arguments)
   let fn = triggerMap.get(hasTrigger)
-  fn(args[0], args, await res.text())
+  try {
+    fn(args[0], args, await res.text())
+  } catch (error) {
+    console.warn(`fetch hacker没法触发回调，该地址返回数据的非text`, args[0])
+  }
 
   return res
 }
