@@ -1,3 +1,4 @@
+import BiliBiliBangumiProvider from './bilibili/bangumi'
 import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
 import CCLiveProvider from './cc'
@@ -10,6 +11,10 @@ const providerList = [
   {
     reg: /https:\/\/www.bilibili.com\/video\/.*/,
     provider: BilibiliVideoProvider,
+  },
+  {
+    reg: /https:\/\/www.bilibili.com\/bangumi\/.*/,
+    provider: BiliBiliBangumiProvider,
   },
   {
     reg: /https:\/\/live.bilibili.com\/.*/,
