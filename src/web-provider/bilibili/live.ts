@@ -1,6 +1,9 @@
 import { Barrage } from '@root/danmaku'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
-import configStore, { DocPIPRenderType } from '@root/store/config'
+import configStore, {
+  DocPIPRenderType,
+  temporarySetConfigStore,
+} from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
 import { getMiniPlayer } from '@root/core'
@@ -27,9 +30,10 @@ export default class BilibiliLiveProvider extends WebProvider {
       console.warn(
         'b站的iframe videoEl有自己的监听守护，没法把videoEl提取出来，临时切换reactVP_canvasCs模式'
       )
-      runInAction(() => {
-        configStore.docPIP_renderType = DocPIPRenderType.reactVP_canvasCs
-      })
+      temporarySetConfigStore(
+        'docPIP_renderType',
+        DocPIPRenderType.reactVP_canvasCs
+      )
     }
     const miniPlayer = await super.initMiniPlayer(options)
 

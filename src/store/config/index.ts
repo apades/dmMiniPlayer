@@ -152,8 +152,13 @@ if (isPluginEnv) {
   })
 }
 
-export const { configStore, openSettingPanel, closeSettingPanel, observe } =
-  initSetting({ ...settingProps })
+export const {
+  configStore,
+  openSettingPanel,
+  closeSettingPanel,
+  observe,
+  temporarySetConfigStore,
+} = initSetting({ ...settingProps })
 
 window.configStore = configStore
 window.openSettingPanel = openSettingPanel
