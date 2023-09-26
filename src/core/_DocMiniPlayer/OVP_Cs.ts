@@ -1,5 +1,4 @@
-import { createElement } from '@root/utils'
-import { throttle } from 'lodash-es'
+import { createElement, throttle } from '@root/utils'
 import BaseDocMiniPlayer from './Base'
 
 export default class DocMiniPlayer_OVP_Cs extends BaseDocMiniPlayer {

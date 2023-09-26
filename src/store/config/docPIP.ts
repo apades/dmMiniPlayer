@@ -10,7 +10,6 @@ export enum DocPIPRenderType {
   /**
    * react播放器，但用的旧miniPlayer的canvasPlayer的captureStream到reactVP的video中
    *
-   * *目前默认使用*
    * */
   reactVP_canvasCs = 'reactVP_canvasCs',
   /**
@@ -21,6 +20,8 @@ export enum DocPIPRenderType {
   oVP_cs = 'oVP_cs',
   /**
    * react播放器，但里面的video标签替换成webVideo
+   *
+   * *目前默认使用*
    *  */
   reactVP_webVideo = 'reactVP_webVideo',
 }
@@ -34,7 +35,7 @@ export const docPIPConfig = {
   docPIP_renderType: config<DocPIPRenderType>({
     // notRecommended: true,
     label: '新版画中画播放模式',
-    desc: '默认的reactVP_webVideo是将网页的视频转移到画中画里，但有些网站会锁定视频位置，需要切换成reactVP_canvasCs双视频模式(例如b站直播带选主播的特殊活动页面)',
+    desc: '默认的reactVP_webVideo是将网页的视频转移到画中画里，可以节省canvas性能。reactVP_canvasCs双视频模式是针对网页视频嵌在iframe里，采用canvas渲染视频，目前新的侧边栏**非SPA路由跳转视频**需要用该模式',
     defaultValue: DocPIPRenderType.reactVP_webVideo,
     type: 'group',
     group: [

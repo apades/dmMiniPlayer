@@ -3,7 +3,7 @@ import './eventHacker'
 import './fetchHacker'
 import './injectPIPFunction'
 import { injectFunction } from '@root/utils/injectFunction'
-import { get } from 'lodash-es'
+import { get } from '@root/utils'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)

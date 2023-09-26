@@ -1,8 +1,7 @@
 import MiniPlayer from '@root/core/miniPlayer'
 import configStore, { MaxTunnelType } from '@root/store/config'
 import videoRender from '@root/store/videoRender'
-import { getTextWidth } from '@root/utils'
-import { clamp, omit } from 'lodash-es'
+import { clamp, getTextWidth } from '@root/utils'
 import { observe } from 'mobx'
 
 export type DanmakuProps = {

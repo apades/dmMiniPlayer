@@ -8,6 +8,13 @@ import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
 import { getMiniPlayer } from '@root/core'
 import { runInAction } from 'mobx'
+import DocMiniPlayer from '@root/core/DocMiniPlayer'
+import VideoPlayerSide, {
+  type VideoItem,
+} from '@root/components/VideoPlayer/Side'
+import { useRef, useState } from 'react'
+import { useOnce } from '@root/hook'
+import API_bilibili from '@root/api/bilibili'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
@@ -37,6 +44,10 @@ export default class BilibiliLiveProvider extends WebProvider {
     }
     const miniPlayer = await super.initMiniPlayer(options)
 
+    if (miniPlayer instanceof DocMiniPlayer) {
+      this.initSideActionAreaRender(miniPlayer)
+    }
+
     // 弹幕相关
     this.miniPlayer.on('PIPClose', () => {
       this.stopObserveWs()
@@ -65,10 +76,8 @@ export default class BilibiliLiveProvider extends WebProvider {
   }
 
   private fn: (data: { color: string; text: string }) => void = () => 1
-  startObserverWs() {
-    this.barrageClient = new BilibiliLiveBarrageClient(
-      +location.pathname.split('/').pop()
-    )
+  startObserverWs(id = +location.pathname.split('/').pop()) {
+    this.barrageClient = new BilibiliLiveBarrageClient(id)
 
     this.fn = (data: { color: string; text: string }) => {
       this.miniPlayer.danmakuController.barrages.push(
@@ -90,5 +99,55 @@ export default class BilibiliLiveProvider extends WebProvider {
   stopObserveWs() {
     this.barrageClient.removeListener('danmu', this.fn)
     this.barrageClient.close()
+  }
+
+  // b站的iframe不给转移videoEl出来...原来不止是
+  initSideActionAreaRender(miniPlayer: DocMiniPlayer) {
+    if (!configStore.biliLiveSide) return
+    const Side = () => {
+      const [liveActives, setLiveActives] = useState<VideoItem[]>([])
+      const oldWebVideoRef = useRef<HTMLVideoElement>(
+        miniPlayer.webPlayerVideoEl
+      )
+
+      useOnce(async () => {
+        const liveActivesRes = await API_bilibili.getLiveActiveUsers()
+        setLiveActives(
+          liveActivesRes.map((l) => {
+            return {
+              el: null,
+              link: l.link,
+              linkEl: null,
+              title: l.title,
+              user: l.user,
+              cover: l.cover,
+              id: l.roomid + '',
+            }
+          })
+        )
+      })
+
+      return (
+        <VideoPlayerSide
+          videoList={[
+            {
+              category: '正在直播',
+              isSpa: false,
+              items: liveActives,
+            },
+          ]}
+          webProvider={this}
+          onChange={(item) => {
+            oldWebVideoRef.current.pause()
+            oldWebVideoRef.current = miniPlayer.webPlayerVideoEl
+            this.stopObserveWs()
+            miniPlayer.danmakuController.initDans([])
+            this.startObserverWs(+item.id)
+          }}
+        />
+      )
+    }
+
+    miniPlayer.renderSideActionArea = () => <Side />
   }
 }

@@ -1,9 +1,39 @@
-import { isNumber, isNull, isEqual, extend, isFunction } from 'lodash-es'
+import isEqual from 'fast-deep-equal'
 import type { CSSProperties } from 'react'
-import AsyncLock from './AsyncLock'
-import type { Rec } from './typeUtils'
+import type { Rec, ValueOf } from './typeUtils'
 
 let el: HTMLSpanElement = null
+
+import _throttle from './feat/throttle'
+// export * as debounce from './feat/debounce'
+
+export const throttle = _throttle
+export const isNumber = (val: any): val is number => typeof val == 'number'
+export const isNull = (val: any): val is null => val == null
+export const isArray = (val: any): val is Array<any> => val instanceof Array
+export const isString = (val: any): val is string => typeof val == 'string'
+export const isObject = (val: any): val is object => typeof val == 'object'
+export const isUndefined = (val: any): val is undefined =>
+  typeof val == 'undefined'
+export const isNone = (val: any): val is null | undefined =>
+  isNull(val) || isUndefined(val)
+
+export function omit<T, K extends keyof T>(obj: T, key: K[]): Omit<T, K> {
+  let rs = { ...obj }
+  key.forEach((k) => delete rs[k])
+  return rs
+}
+export function get<T>(tar: any, key: string, defaultVal?: T): T {
+  const keyArr = key.split('.')
+  let val = tar
+  while (keyArr.length) {
+    const key = keyArr.shift()
+    if (isUndefined(val[key])) return defaultVal
+    val = val[key]
+  }
+  return val
+}
+
 export function getTextWidth(text: string, style: CSSProperties): number {
   if (!el) {
     el = document.createElement('span')
@@ -65,19 +95,41 @@ export const ascendingSort =
   (a: T, b: T) =>
     itemProp(a) - itemProp(b)
 
-export function dq<K extends keyof HTMLElementTagNameMap>(selector: K) {
-  return Array.from(document.querySelectorAll(selector))
+export const dq: {
+  <K extends keyof HTMLElementTagNameMap>(
+    selectors: K,
+    tar?: Document | ValueOf<HTMLElementTagNameMap> | Element
+  ): HTMLElementTagNameMap[K][]
+  <K extends keyof SVGElementTagNameMap>(
+    selectors: K,
+    tar?: Document | ValueOf<SVGElementTagNameMap> | Element
+  ): SVGElementTagNameMap[K][]
+  <K extends keyof MathMLElementTagNameMap>(
+    selectors: K,
+    tar?: Document | ValueOf<MathMLElementTagNameMap> | Element
+  ): MathMLElementTagNameMap[K][]
+  <E extends Element = HTMLDivElement>(
+    selectors: string,
+    tar?: Document | Element
+  ): E[]
+} = (selector: string, tar = window.document) => {
+  return Array.from(tar.querySelectorAll(selector))
 }
 export let dq1: {
-  <K extends keyof HTMLElementTagNameMap>(selectors: K):
-    | HTMLElementTagNameMap[K]
-    | null
-  <K extends keyof SVGElementTagNameMap>(selectors: K):
-    | SVGElementTagNameMap[K]
-    | null
-  <E extends Element = HTMLDivElement>(selectors: string): E | null
-} = (selector: string) => {
-  let dom = document.querySelector(selector)
+  <K extends keyof HTMLElementTagNameMap>(
+    selectors: K,
+    tar?: Document | ValueOf<HTMLElementTagNameMap> | Element
+  ): HTMLElementTagNameMap[K] | null
+  <K extends keyof SVGElementTagNameMap>(
+    selectors: K,
+    tar?: Document | ValueOf<SVGElementTagNameMap> | Element
+  ): SVGElementTagNameMap[K] | null
+  <E extends Element = HTMLDivElement>(
+    selectors: string,
+    tar?: Document | Element
+  ): E | null
+} = (selector: string, tar = window.document) => {
+  let dom = tar.querySelector(selector)
   return dom
 }
 
@@ -112,7 +164,7 @@ export async function wait(time = 0) {
   return new Promise<void>((res) => setTimeout(res, time))
 }
 
-type noop = (this: any, ...args: any[]) => any
+export type noop = (this: any, ...args: any[]) => any
 
 export function onceCall<T extends noop>(fn: T): T {
   if (isPromiseFunction(fn)) return oncePromise(fn)
@@ -163,6 +215,7 @@ export function createElement<T extends HTMLElement>(
 
 export let minmax = (v: number, min = v, max = v): number =>
   v < min ? min : v > max ? max : v
+export const clamp = minmax
 
 export function formatTime(time: number, hasMs?: boolean): string {
   let min = ~~(time / 60),
@@ -261,4 +314,12 @@ export function getTopWindow() {
     if (parent != nowWindow) nowWindow = parent
     else return nowWindow
   }
+}
+
+export function formatView(view: number): string {
+  const b = view / 1_000_000
+  if (b >= 1) return b.toFixed(2) + 'b'
+  const k = view / 1_000
+  if (k >= 1) return k.toFixed(2) + 'k'
+  return view + ''
 }

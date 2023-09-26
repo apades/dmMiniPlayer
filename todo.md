@@ -1,8 +1,10 @@
 - [ ] 优化DanmakuController
   - [ ] 将所有弹幕拆分成时间段，当currentTime在11.2s这样就加载10的时间段弹幕，有些弹幕量很大一直重复检测很浪费性能
   - [ ] 弹幕退出时自动清除，在直播中很有用，基本不会回退直播
-  - [ ] (非必要) 弹幕tunnel的计算，目前会出现2弹幕同一位置
+  - [x] (非必要) 弹幕tunnel的计算，目前会出现2弹幕同一位置
   - [ ] bottom type的弹幕
-- [ ] 优化MiniPlayer
-  - [ ] 视频fps和弹幕fps分开，视频在帧数空档期为image渲染，不知道会不会影响性能
-- [ ] option页面优化
+- [ ] 优化MiniPlayer canvas视频模式
+  - [ ] 视频fps和弹幕fps分开，视频canvas和弹幕canvas分开，不知道会不会影响性能
+- [x] option页面优化
+- [ ] 自定义侧边栏切换视频
+  - [ ] 自定义selector的dom视图 https://luna.liriliri.io/?path=/story/dom-viewer--dom-viewer

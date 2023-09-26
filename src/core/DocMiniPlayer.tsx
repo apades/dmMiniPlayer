@@ -6,8 +6,7 @@ import {
   onVideoPlayerLoad,
 } from '@root/components/VideoPlayer/events'
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import { createElement } from '@root/utils'
-import { throttle } from 'lodash-es'
+import { createElement, throttle } from '@root/utils'
 import { makeAutoObservable } from 'mobx'
 import { createRoot } from 'react-dom/client'
 import styleUrl from 'url:./DocMiniPlayer.less'
@@ -16,6 +15,8 @@ import BarrageSender, {
 } from './danmaku/BarrageSender'
 import MiniPlayer from './miniPlayer'
 import { observeVideoEl } from '@root/utils/observeVideoEl'
+import { type ReactElement } from 'react'
+import { runInAction } from 'mobx'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
@@ -30,6 +31,8 @@ export default class DocMiniPlayer extends MiniPlayer {
   videoPlayer: HTMLElement
   sender: BarrageSender
   vpMobxOption = makeAutoObservable({ canSendBarrage: false })
+
+  renderSideActionArea = () => null as ReactElement
 
   /**canvas的captureStream */
   private _webPlayerVideoStream: MediaStream
@@ -51,19 +54,19 @@ export default class DocMiniPlayer extends MiniPlayer {
     console.log('docPIP渲染模式', configStore.docPIP_renderType)
     switch (configStore.docPIP_renderType) {
       case DocPIPRenderType.reactVP_canvasCs: {
-        await this.renderCanvasVideoPlayer()
+        await this.render_reactVP_canvasCs()
         break
       }
       case DocPIPRenderType.oVP_cs: {
-        await this.renderSimpleVideoPlayer()
+        await this.render_oVP_cs()
         break
       }
       case DocPIPRenderType.reactVP_cs: {
-        await this.renderReactVideoPlayer()
+        await this.render_reactVP_cs()
         break
       }
       case DocPIPRenderType.reactVP_webVideo: {
-        await this.renderReactVPWithWebVideo()
+        await this.render_reactVP_webVideo()
         break
       }
     }
@@ -85,7 +88,7 @@ export default class DocMiniPlayer extends MiniPlayer {
   }
 
   /**只使用最简单的canvas 弹幕 + video标签 */
-  async renderSimpleVideoPlayer() {
+  async render_oVP_cs() {
     let pipWindow = this.pipWindow
 
     this.videoPlayer = createElement('video', {
@@ -118,7 +121,7 @@ export default class DocMiniPlayer extends MiniPlayer {
   }
 
   /**使用react的videoPlayer，目前可以看到视频帧率明显不高，比canvas还低 */
-  async renderReactVideoPlayer() {
+  async render_reactVP_cs() {
     let pipWindow = this.pipWindow
     let re: ReturnType<typeof createRoot>
     if (!this.videoPlayer) {
@@ -131,6 +134,7 @@ export default class DocMiniPlayer extends MiniPlayer {
           webVideo={this.webPlayerVideoEl}
           keydownWindow={pipWindow}
           mobxOption={this.vpMobxOption}
+          renderSideActionArea={this.renderSideActionArea()}
         />
       )
     }
@@ -162,7 +166,7 @@ export default class DocMiniPlayer extends MiniPlayer {
   }
 
   /**使用canvas画的videoStream */
-  async renderCanvasVideoPlayer() {
+  async render_reactVP_canvasCs() {
     let pipWindow = this.pipWindow
     let re: ReturnType<typeof createRoot>
     let unobserveVideoElChange = observeVideoEl(
@@ -173,9 +177,6 @@ export default class DocMiniPlayer extends MiniPlayer {
         // restoreWebVideoPlayerElState = () => {}
       }
     )
-    // let restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
-    //   this.webPlayerVideoEl
-    // )
 
     let vpRef: VideoPlayerHandle
     this.videoPlayer = createElement('div')
@@ -187,6 +188,7 @@ export default class DocMiniPlayer extends MiniPlayer {
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
         mobxOption={this.vpMobxOption}
+        renderSideActionArea={this.renderSideActionArea()}
         ref={(ref) => {
           if (!ref) return
           vpRef = ref
@@ -196,11 +198,10 @@ export default class DocMiniPlayer extends MiniPlayer {
     )
     this.updateWebVideoPlayerEl = (videoEl) => {
       super.updateWebVideoPlayerEl(videoEl)
-      // restoreWebVideoPlayerElState()
+      this.webPlayerVideoEl = videoEl
       console.log('new videoEl', videoEl)
-      vpRef.updateVideoRef(videoEl)
+      vpRef.updateVideo(videoEl)
       // 控制要不要把上一个还原
-      // restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
     }
 
     await onVideoPlayerLoad()
@@ -217,7 +218,6 @@ export default class DocMiniPlayer extends MiniPlayer {
 
       this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
 
-      // restoreWebVideoPlayerElState()
       unobserveVideoElChange()
     })
     console.log('this.videoPlayer2', this.videoPlayer)
@@ -234,7 +234,7 @@ export default class DocMiniPlayer extends MiniPlayer {
   }
 
   /**把web的video插到pip中 */
-  async renderReactVPWithWebVideo() {
+  async render_reactVP_webVideo() {
     let pipWindow = this.pipWindow
     let re: ReturnType<typeof createRoot>
     let unobserveVideoElChange = observeVideoEl(
@@ -260,6 +260,7 @@ export default class DocMiniPlayer extends MiniPlayer {
         keydownWindow={pipWindow}
         useWebVideo
         mobxOption={this.vpMobxOption}
+        renderSideActionArea={this.renderSideActionArea()}
         ref={(ref) => {
           if (!ref) return
           vpRef = ref
@@ -271,7 +272,7 @@ export default class DocMiniPlayer extends MiniPlayer {
       super.updateWebVideoPlayerEl(videoEl)
       // restoreWebVideoPlayerElState()
       console.log('new videoEl', videoEl)
-      vpRef.updateVideoRef(videoEl)
+      vpRef.updateVideo(videoEl)
       // 控制要不要把上一个还原
       restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
     }
@@ -394,7 +395,9 @@ export default class DocMiniPlayer extends MiniPlayer {
         }
       })
 
-      this.vpMobxOption.canSendBarrage = true
+      runInAction(() => {
+        this.vpMobxOption.canSendBarrage = true
+      })
     } catch (error) {
       console.error('初始化BarrageSender错误', error)
     }

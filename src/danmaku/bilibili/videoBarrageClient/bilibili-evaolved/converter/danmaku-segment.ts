@@ -1,6 +1,5 @@
 import { sendMessage } from '@root/inject/contentSender'
 import { loadLib } from '@root/utils/loadLib'
-import lodash from 'lodash-es'
 // import { protobufLibrary } from '../runtime-library'
 
 export const proto = {
@@ -274,34 +273,36 @@ export const proto = {
     },
   },
 }
-const decode = lodash.curry(async (type: string, blob: Blob) => {
-  const buffer = new Uint8Array(
-    'arrayBuffer' in Blob.prototype
-      ? await blob.arrayBuffer()
-      : await new Response(blob).arrayBuffer()
-  )
+const decode = (type: string) => {
+  return async (blob: Blob) => {
+    const buffer = new Uint8Array(
+      'arrayBuffer' in Blob.prototype
+        ? await blob.arrayBuffer()
+        : await new Response(blob).arrayBuffer()
+    )
 
-  await loadLib('protobuf.js')
-  /**
-   * 由于protobuf内部用了eval代码，v3是不允许外部加载的代码再使用eval的，所以需要丢到top window运行。
-   * protobuf丢在了top层，但这个sandbox层没法读到，这里传代码到top层运行再返回来结果
-   */
-  function run(
-    _proto: typeof proto,
-    _type: typeof type,
-    _buffer: typeof buffer
-  ) {
-    const root = window.protobuf.Root.fromJSON(_proto)
-    const reply = root.lookupType(_type)
-    const message = reply.decode(_buffer)
-    return reply.toObject(message)
+    await loadLib('protobuf.js')
+    /**
+     * 由于protobuf内部用了eval代码，v3是不允许外部加载的代码再使用eval的，所以需要丢到top window运行。
+     * protobuf丢在了top层，但这个sandbox层没法读到，这里传代码到top层运行再返回来结果
+     */
+    function run(
+      _proto: typeof proto,
+      _type: typeof type,
+      _buffer: typeof buffer
+    ) {
+      const root = window.protobuf.Root.fromJSON(_proto)
+      const reply = root.lookupType(_type)
+      const message = reply.decode(_buffer)
+      return reply.toObject(message)
+    }
+
+    let topRunnerRs = await sendMessage('run-code', {
+      function: run.toString(),
+      args: [proto, type, buffer],
+    })
+    return topRunnerRs
   }
-
-  let topRunnerRs = await sendMessage('run-code', {
-    function: run.toString(),
-    args: [proto, type, buffer],
-  })
-  return topRunnerRs
-})
+}
 export const decodeDanmakuSegment = decode('DmSegMobileReply')
 export const decodeDanmakuView = decode('DmWebViewReply')

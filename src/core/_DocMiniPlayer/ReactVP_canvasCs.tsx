@@ -1,7 +1,6 @@
 import VideoPlayer from '@root/components/VideoPlayer'
 import { onVideoPlayerLoad } from '@root/components/VideoPlayer/events'
-import { createElement } from '@root/utils'
-import { throttle } from 'lodash-es'
+import { createElement, throttle } from '@root/utils'
 import { createRoot } from 'react-dom/client'
 import BaseDocMiniPlayer from './Base'
 

@@ -1,5 +1,5 @@
 import ProgressBar from '@root/components/ProgressBar'
-import _env from '@root/store/config'
+import _env, { configStore } from '@root/store/config'
 import { formatTime, minmax, wait } from '@root/utils'
 import cls from 'classnames'
 import {
@@ -10,7 +10,7 @@ import {
   useImperativeHandle,
   useRef,
   useState,
-  useMemo,
+  type CSSProperties,
 } from 'react'
 import { checkJumpInBufferArea } from './utls'
 import VolumeBar from './VolumeBar'
@@ -75,14 +75,14 @@ export type Props = EventBase & {
     HTMLVideoElement
   >
 
-  renderSiderActionArea?: () => ReactElement
+  renderSideActionArea?: ReactElement
 }
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, isPause?: boolean) => void
   pause: () => void
   play: () => void
-  updateVideoRef: (videoEl: HTMLVideoElement) => void
+  updateVideo: (video: HTMLVideoElement /*  | MediaProvider */) => void
   ref: React.MutableRefObject<HTMLVideoElement>
 }
 
@@ -213,9 +213,14 @@ const VideoPlayer = observer(
         play() {
           playerOpause('play')
         },
-        updateVideoRef(videoEl) {
-          console.log('updateVideoRef', videoEl)
-          videoRef.current = videoEl
+        updateVideo(video) {
+          console.log('updateVideo', video)
+          videoRef.current = video
+          // if (video instanceof HTMLVideoElement) {
+          //   videoRef.current = video
+          // } else {
+          //   compVideoRef.current.srcObject = video
+          // }
         },
         ref: videoRef,
       })
@@ -644,6 +649,11 @@ const VideoPlayer = observer(
           'is-firstplay': isFirstPlay,
           'is-live': getIsLive(),
         })}
+        style={
+          {
+            '--side-width': configStore.sideWidth + 'px',
+          } as CSSProperties
+        }
         tabIndex={-1}
         data-vid={index}
         onFocus={() => setFoucs(true)}
@@ -721,13 +731,13 @@ const VideoPlayer = observer(
         </div>
 
         {/* 侧边操作栏 */}
-        {props.renderSiderActionArea && (
+        {props.renderSideActionArea && (
           <div
             className="side-action-area"
-            onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
-            onMouseLeave={handleResetActionAreaShow}
+            // onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
+            // onMouseLeave={handleResetActionAreaShow}
           >
-            {props.renderSiderActionArea()}
+            {props.renderSideActionArea}
           </div>
         )}
 

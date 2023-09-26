@@ -13,6 +13,19 @@ export const config: PlasmoCSConfig = {
   // all_frames: true,
 }
 
+// dev模式的refresh-react有问题，side用了hook就会报错
+{
+  ;(globalThis as any).$RefreshReg$ =
+    (globalThis as any).$RefreshReg$ ?? function () {}
+  ;(globalThis as any).$RefreshSig$ =
+    (globalThis as any).$RefreshSig$ ??
+    function () {
+      return function (type: any) {
+        return type
+      }
+    }
+}
+
 console.log('run content')
 
 let provider = onceCall(() => {

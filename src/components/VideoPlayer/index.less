@@ -12,6 +12,7 @@
   --btn-icon-size: 64px;
   --box-shadow: 0 2px 4px rgba(55, 60, 68, 0.2);
   --c-text-main: rgba(0, 0, 0, 0.85);
+  --side-width: 200px;
   .wh(100%);
 
   position: relative;
@@ -392,6 +393,7 @@
     position: absolute;
     top: 50%;
     right: 0;
+    z-index: 2;
     transform: translateY(-50%);
   }
 
@@ -549,6 +551,121 @@
   &.is-live{
     .played-progress-bar{
       display: none !important;
+    }
+  }
+
+
+  .side-action-area{
+    right: calc(var(--side-width) * -1) !important;
+    z-index: 10;
+    width: calc(var(--side-width) + 20px);
+    height: 100%;
+    transition: all .5s;
+    &:hover{
+      right: 0 !important;
+    }
+    .side-outer-container{
+      height: 100%;
+    }
+    .side-inner-container{
+      width: var(--side-width);
+      height: 100%;
+      margin-left: auto;
+      padding: 8px;
+      overflow: auto;
+      color: #fff;
+      background-color: #0007;
+      border-left: 1px solid #fff7;
+      &::-webkit-scrollbar{
+        width: 10px;
+        height: 10px;
+      }
+      &::-webkit-scrollbar-corner{
+        background: transparent;
+      }
+      &::-webkit-scrollbar-thumb{
+        background: #fff7;
+        background-clip: content-box;
+        border: 2px solid transparent;
+        border-radius: 16px;
+      
+        &:hover {
+          background-color: #fffa;
+        }
+      }
+      
+      &::-webkit-scrollbar-track{
+        display: none;
+      }
+  
+      .select-list{
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+      }
+      .select{
+        .f-i-center();
+
+        gap: 4px;
+        padding: 2px 8px;
+        overflow: hidden;
+        font-size: 12px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border: 1px solid #fff7;
+        border-radius: 2px;
+        cursor: pointer;
+        &.active{
+          background-color: #80bfff;
+        }
+
+        .img-container{
+          .wh(99px,66px);
+
+          position: relative;
+          font-size: 12px;
+          img{
+            .wh(100%);
+
+            object-fit: contain;
+          }
+          .duration{
+            right: 4px;
+            bottom: 4px;
+          }
+          .info{
+            bottom: 4px;
+            left: 4px;
+          }
+          .duration,.info{
+            position: absolute;
+            padding: 1px 2px;
+            background-color: #0005;
+            border-radius: 4px;
+          }
+        }
+        .right{
+          flex: 1;
+          overflow: hidden;
+          .title{
+            .line-clamp(2);
+
+            margin-bottom: 4px;
+            text-wrap: wrap;
+          }
+          .name{
+            color: #fffc;
+            font-size: 12px;
+          }
+        }
+      }
+      h3{
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
     }
   }
 }

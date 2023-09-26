@@ -1,4 +1,3 @@
-import { throttle } from 'lodash-es'
 import DanmakuController, { type DanmakuProps } from '../danmaku'
 import configStore from '../store/config'
 import mitt, { type Emitter } from 'mitt'
@@ -6,7 +5,7 @@ import { type PlayerEvents } from './event'
 import type { Props as BarrageSenderProps } from './danmaku/BarrageSender'
 import { onceCallGet } from '@root/utils/decorator'
 import videoRender from '@root/store/videoRender'
-import { addEventListener } from '@root/utils'
+import { addEventListener, throttle } from '@root/utils'
 
 export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
@@ -124,7 +123,7 @@ export default class MiniPlayer {
   private hansDraw = false
   canvasUpdate() {
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
-      const videoEl = this.props.videoEl
+      const videoEl = this.webPlayerVideoEl
 
       if (!this.isPause || !this.hansDraw) {
         this.hansDraw = true

@@ -1,7 +1,13 @@
 import { v1 as uuid } from 'uuid'
 import struct from './struct.mjs'
-import { isArray, isNumber, isObject, isString } from 'lodash-es'
-import { onceCall, wait } from '@root/utils'
+import {
+  isArray,
+  isNumber,
+  isObject,
+  isString,
+  onceCall,
+  wait,
+} from '@root/utils'
 import { CCMsgDecode } from './CCMsgDecode'
 import pako from 'pako'
 

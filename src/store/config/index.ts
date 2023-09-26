@@ -77,6 +77,10 @@ export const baseConfigMap = {
     group: [MaxTunnelType['1/2'], MaxTunnelType['1/4'], MaxTunnelType.full],
   }),
 
+  sideWidth: config({
+    defaultValue: 300,
+    label: '侧边栏宽度',
+  }),
   // TODO
   // showInfoInBackOrForward: config({
   //   defaultValue: true,
@@ -99,6 +103,11 @@ export const baseConfigMap = {
     defaultValue: false,
     label: '使用bilibili-evaolved获取b站视频弹幕',
     desc: '该模式有问题没法下载完全的弹幕',
+  }),
+  biliLiveSide: config({
+    defaultValue: false,
+    label: 'b站直播侧边栏',
+    desc: '实验性功能，同时需要切换reactVP_canvasCs模式',
   }),
 
   // debug

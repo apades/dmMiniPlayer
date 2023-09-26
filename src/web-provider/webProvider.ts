@@ -1,6 +1,7 @@
 import { sendToBackground } from '@plasmohq/messaging'
 import { listen } from '@plasmohq/messaging/message'
 import { getMiniPlayer } from '@root/core'
+import VideoChanger from '@root/core/VideoChanger'
 import type BarrageClient from '@root/core/danmaku/BarrageClient'
 import MiniPlayer from '@root/core/miniPlayer'
 import configStore from '@root/store/config'
@@ -16,9 +17,11 @@ window.addEventListener('click', () => {
   clickLock.ok()
 })
 
+window.VideoChanger = VideoChanger
 export type StartPIPPlayOptions = Partial<{ videoEl: HTMLVideoElement }>
 export default abstract class WebProvider {
-  miniPlayer: MiniPlayer
+  miniPlayer?: MiniPlayer
+  videoChanger?: VideoChanger
   // barrageClient: BarrageClient
   // abstract isWs: boolean
 
@@ -38,7 +41,7 @@ export default abstract class WebProvider {
     if (document.pictureInPictureElement) return
     this.miniPlayer = await this.initMiniPlayer({
       ...(options ?? {}),
-      videoEl: options?.videoEl ?? (await this.getVideoEl()),
+      videoEl: options?.videoEl ?? this.getVideoEl(),
     })
     this.miniPlayer.openPlayer()
     this.miniPlayer.on('PIPClose', () => {
@@ -49,10 +52,10 @@ export default abstract class WebProvider {
   }
 
   /**获取视频 */
-  protected getVideoEl(): OrPromise<HTMLVideoElement> {
+  getVideoEl(document = window.document): HTMLVideoElement {
     const videos = [
-      ...dq('video'),
-      ...dq('iframe')
+      ...dq('video', document),
+      ...dq('iframe', document)
         .map((iframe) => {
           try {
             return Array.from(

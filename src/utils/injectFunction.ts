@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { isArray } from 'lodash-es'
+import { isArray } from '.'
 import type { KeyOfType } from './typeUtils'
 
 export function injectFunction<

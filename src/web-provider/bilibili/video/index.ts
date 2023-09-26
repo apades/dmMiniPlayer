@@ -1,3 +1,4 @@
+import DocMiniPlayer from '@root/core/DocMiniPlayer'
 import type MiniPlayer from '@root/core/miniPlayer'
 import type { DanType } from '@root/danmaku'
 import { DanmakuStack } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-stack'
@@ -13,8 +14,10 @@ import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 import { windowsOnceCall } from '@root/utils/decorator'
 import type { OrPromise } from '@root/utils/typeUtils'
-import WebProvider from '../webProvider'
 import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-api'
+import WebProvider from '../../webProvider'
+import { initSideActionAreaRender } from './sider'
+import AsyncLock from '@root/utils/AsyncLock'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
@@ -61,16 +64,15 @@ export default class BilibiliVideoProvider extends WebProvider {
     })
   }
 
-  protected getVideoEl(): OrPromise<HTMLVideoElement> {
-    return document.querySelector('video')
-  }
-
   protected async initMiniPlayer(
     options?: Partial<{ videoEl: HTMLVideoElement }>
   ): Promise<MiniPlayer> {
     const miniPlayer = await super.initMiniPlayer(options)
     this.videoEl = this.miniPlayer.webPlayerVideoEl
 
+    if (miniPlayer instanceof DocMiniPlayer) {
+      initSideActionAreaRender(miniPlayer, this)
+    }
     this.miniPlayer.on('PIPClose', () => {
       this.videoEl.pause()
     })
@@ -89,6 +91,7 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
 
   async getVideoInfo(bid: string, pid = 1) {
+    this.aidLock.reWaiting()
     let res = (
       await fetch(
         `https://api.bilibili.com/x/web-interface/view?bvid=${bid}`
@@ -103,6 +106,8 @@ export default class BilibiliVideoProvider extends WebProvider {
         console.error('出现了pid/pages不存在的问题', res, pid)
       }
     }
+    this.aid = aid
+    this.aidLock.ok()
 
     return { aid, cid }
   }
@@ -113,6 +118,13 @@ export default class BilibiliVideoProvider extends WebProvider {
     type: DanmakuDownloadType = 'ass'
   ): Promise<string> {
     return await getTextByType(type, { aid, cid })
+  }
+  private aidLock = new AsyncLock()
+  private aid = ''
+  /**获取当前视频的aid */
+  async getAid() {
+    await this.aidLock.waiting()
+    return this.aid
   }
 
   transAssContentToDans(assContent: string): DanType[] {

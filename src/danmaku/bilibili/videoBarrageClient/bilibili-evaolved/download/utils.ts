@@ -6,8 +6,7 @@ import {
 } from '../converter/danmaku-converter'
 import { DanmakuType } from '../converter/danmaku-type'
 import { XmlDanmaku } from '../converter/xml-danmaku'
-import lodash from 'lodash-es'
-import { ascendingSort, dq1 } from '@root/utils'
+import { ascendingSort, clamp, dq1, get, omit } from '@root/utils'
 import {
   decodeDanmakuSegment,
   decodeDanmakuView,
@@ -64,7 +63,7 @@ export class JsonDanmaku {
     const { total } = view.dmSge
     if (total === undefined) {
       throw new Error(
-        `获取弹幕分页数失败: ${JSON.stringify(lodash.omit(view, 'flag'))}`
+        `获取弹幕分页数失败: ${JSON.stringify(omit(view, ['flag']))}`
       )
     }
     // console.log('segment count =', total)
@@ -121,7 +120,7 @@ export const getUserDanmakuConfig = async () => {
     if (playerSettingsJson) {
       const playerSettings = JSON.parse(playerSettingsJson)
       const getConfig = <T>(prop: string, defaultValue?: T): T =>
-        lodash.get(playerSettings, `setting_config.${prop}`, defaultValue)
+        get(playerSettings, `setting_config.${prop}`, defaultValue)
       // 屏蔽类型
       config.blockTypes = (() => {
         const result: (DanmakuType | 'color')[] = []
@@ -134,7 +133,7 @@ export const getUserDanmakuConfig = async () => {
 
         for (const [type, value] of Object.entries(blockValues)) {
           if (
-            lodash.get(playerSettings, `block.type_${type}`, true) === false
+            get<boolean>(playerSettings, `block.type_${type}`, true) === false
           ) {
             result.push(...(value as (DanmakuType | 'color')[]))
           }
@@ -146,11 +145,7 @@ export const getUserDanmakuConfig = async () => {
       config.bold = getConfig('bold', false)
 
       // 透明度
-      config.alpha = lodash.clamp(
-        1 - parseFloat(getConfig('opacity', '0.4')),
-        0,
-        1
-      )
+      config.alpha = clamp(1 - parseFloat(getConfig('opacity', '0.4')), 0, 1)
 
       // 分辨率
       const resolutionFactor = 1.4 - 0.4 * getConfig('fontsize', 1)
@@ -185,7 +180,7 @@ export const getUserDanmakuConfig = async () => {
       }
 
       // 用户屏蔽词
-      const blockSettings = lodash.get(playerSettings, 'block.list', []) as {
+      const blockSettings = get(playerSettings, 'block.list', []) as {
         /** 类型 */
         t: 'keyword' | 'regexp' | 'user'
         /** 内容 */

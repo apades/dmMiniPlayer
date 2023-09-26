@@ -56,6 +56,7 @@ export const dqParents: {
   return rs
 }
 
+// TODO 测试，修改到了核心的选择功能
 export function getTopParentsWithSameRect(
   el: HTMLElement,
   /**例如video,img标签会出现自身高度略小于容器高度 */
@@ -80,7 +81,7 @@ export function getTopParentsWithSameRect(
         Math.abs(pel.clientHeight - p.clientHeight) <= offset &&
         pel.clientWidth == p.clientWidth
       ) {
-        rs.push(p)
+        rs.push(pel)
         p = p.parentElement
       } else break
     } else break

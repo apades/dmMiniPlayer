@@ -1,8 +1,8 @@
-import { createElement, dq, dq1, getTopWindow, wait } from '@root/utils'
+import { createElement, getTopWindow, throttle } from '@root/utils'
 import type { PlasmoCSConfig } from 'plasmo'
 import Browser from 'webextension-polyfill'
 import './floatButton.less'
-import { throttle } from 'lodash-es'
+
 import { getTopParentsWithSameRect } from '@root/utils/dom'
 
 export const config: PlasmoCSConfig = {
