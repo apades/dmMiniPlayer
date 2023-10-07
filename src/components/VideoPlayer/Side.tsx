@@ -74,8 +74,10 @@ const VideoPlayerSide: FC<Props> = (props) => {
                       key={item.id ?? ii}
                       className={classNames(
                         'select',
-                        activeMap[vi] == ii && 'active'
+                        activeMap[vi] == ii && 'active',
+                        isCoverTitle && 'cover-title'
                       )}
+                      title={item.title}
                       onClick={() => {
                         props.onClick?.(item)
                         if (list.isSpa === false) {
