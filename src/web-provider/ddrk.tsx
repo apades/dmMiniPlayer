@@ -67,6 +67,8 @@ export default class DdrkProvider extends WebProvider {
   }
 
   initSideActionAreaRender(miniPlayer: DocMiniPlayer) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const webProvider = this
     function Side() {
       const videoPElList = dq('.wp-playlist-item')
       const videoPItems: VideoItem[] = videoPElList.map((el) => {
@@ -98,7 +100,7 @@ export default class DdrkProvider extends WebProvider {
       return (
         <VideoPlayerSide
           videoList={[{ category: '视频分P', items: videoPItems }]}
-          webProvider={this}
+          webProvider={webProvider}
         />
       )
     }
