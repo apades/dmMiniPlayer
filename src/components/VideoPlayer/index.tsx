@@ -140,7 +140,7 @@ const VideoPlayer = observer(
 
       compVideoRef.current = props.webVideo
       return () => {
-        console.log('去除旧videoEl', oldVideoEl)
+        // console.log('去除旧videoEl', oldVideoEl)
         // videoContainer.removeChild(oldVideoEl)
       }
     }, [videoRef.current])
@@ -180,7 +180,7 @@ const VideoPlayer = observer(
       if (isFirstPlay) return
       Object.entries(eventListenMap).forEach(([event, cbs]) => {
         cbs.forEach((cb) => {
-          console.log('add', event)
+          // console.log('add', event)
           videoRef.current.addEventListener(event, cb)
         })
       })
@@ -214,7 +214,7 @@ const VideoPlayer = observer(
           playerOpause('play')
         },
         updateVideo(video) {
-          console.log('updateVideo', video)
+          console.log('播放器更新视频', video)
           videoRef.current = video
           // if (video instanceof HTMLVideoElement) {
           //   videoRef.current = video
@@ -384,7 +384,7 @@ const VideoPlayer = observer(
       if (getIsLive()) return
       if (!canPlay) return
       if (isFirstPlay) setIsFirstPlay(false)
-      console.log('playerOpause', playing, canPause)
+      console.log('播放', playing, '能否暂停', canPause)
       await wait(0)
       if ((playing || type === 'pause') && canPause && type !== 'play') {
         console.log('pause')
@@ -602,11 +602,10 @@ const VideoPlayer = observer(
         },
         onCanPlayThrough: () => {},
         onDurationChange: (e) => {
-          console.log('e.target', e)
           setDuration((e.target as HTMLVideoElement).duration)
         },
         onError: (e) => {
-          console.error('is paly error', e)
+          console.error('播放出错了', e)
         },
       }
 

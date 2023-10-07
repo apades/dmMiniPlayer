@@ -53,7 +53,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
       activeMap[i] = activeIndex
     })
 
-    console.log('side activeMap', activeMap, props.videoList)
+    console.log('侧边栏传入数据', activeMap, props.videoList)
 
     setActiveMap(activeMap)
   }, [props.videoList])

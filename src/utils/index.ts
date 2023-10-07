@@ -308,14 +308,6 @@ export function addEventListener<
   }
 }
 
-export function getTopWindow() {
-  let nowWindow: Window = window
-  while (true) {
-    if (parent != nowWindow) nowWindow = parent
-    else return nowWindow
-  }
-}
-
 export function formatView(view: number): string {
   const b = view / 1_000_000
   if (b >= 1) return b.toFixed(2) + 'b'
