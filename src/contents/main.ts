@@ -14,7 +14,7 @@ export const config: PlasmoCSConfig = {
 }
 
 // dev模式的refresh-react有问题，side用了hook就会报错
-{
+if (process.env.PLASMO_PUBLIC_IS_DEV) {
   ;(globalThis as any).$RefreshReg$ =
     (globalThis as any).$RefreshReg$ ?? function () {}
   ;(globalThis as any).$RefreshSig$ =
