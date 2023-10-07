@@ -120,7 +120,7 @@ export default class MiniPlayer {
   protected withoutLimitLastUpdateTime = Date.now()
   withoutLimitAnimaFPS = 0
   // 进入pip时渲染第一帧画面
-  private hansDraw = false
+  protected hansDraw = false
   canvasUpdate() {
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
       const videoEl = this.webPlayerVideoEl

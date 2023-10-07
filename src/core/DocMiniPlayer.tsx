@@ -331,15 +331,15 @@ export default class DocMiniPlayer extends MiniPlayer {
 
   canvasUpdate() {
     if (
-      [
-        DocPIPRenderType.reactVP_canvasCs,
-        DocPIPRenderType.reactVP_webVideo,
-      ].includes(configStore.docPIP_renderType)
+      [DocPIPRenderType.reactVP_canvasCs].includes(
+        configStore.docPIP_renderType
+      )
     )
       return super.canvasUpdate()
 
     if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
-      if (!this.isPause) {
+      if (!this.isPause || !this.hansDraw) {
+        this.hansDraw = true
         this.detectFPS()
         this.renderDanmu()
       }

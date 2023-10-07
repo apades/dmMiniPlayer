@@ -96,7 +96,9 @@ let handleMousemove = throttle((e: MouseEvent) => {
   const topParents = getTopParentsWithSameRect(target)
   const topParentWithPosition =
     topParents.findLast(
-      (el) => (el.computedStyleMap().get('position') as any).value != 'static'
+      (el) =>
+        ((el.computedStyleMap().get('position') as any)?.value ?? '') !=
+        'static'
     ) ?? topParents[topParents.length - 1]
 
   if (topParentWithPosition instanceof HTMLVideoElement)
