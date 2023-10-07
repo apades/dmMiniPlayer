@@ -82,6 +82,7 @@
     "commands": {
       "back": {
         "suggested_key": {
+          "default": "Alt+Shift+Comma",
           "windows": "Alt+Shift+Comma",
           "mac": "Command+Shift+Left"
         },
@@ -89,6 +90,7 @@
       },
       "forward": {
         "suggested_key": {
+          "default": "Alt+Shift+Period",
           "windows": "Alt+Shift+Period",
           "mac": "Command+Shift+Right"
         },
@@ -96,6 +98,7 @@
       },
       "pause/play": {
         "suggested_key": {
+          "default": "Alt+Shift+M",
           "windows": "Alt+Shift+M",
           "mac": "Command+Shift+Space"
         },
@@ -103,7 +106,8 @@
       },
       "hide": {
         "suggested_key": {
-          "windows": "Ctrl+Shift+H",
+          "default": "Alt+Shift+H",
+          "windows": "Alt+Shift+H",
           "mac": "Command+Shift+H"
         },
         "description": "隐藏画中画"

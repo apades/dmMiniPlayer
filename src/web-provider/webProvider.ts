@@ -99,9 +99,12 @@ export default abstract class WebProvider {
           videoEl.paused ? videoEl.play() : videoEl.pause()
           break
         }
-        case 'show/hide': {
+        case 'hide': {
           document.body.click()
           if (document.pictureInPictureElement) document.exitPictureInPicture()
+          if (window.documentPictureInPicture?.window) {
+            window.documentPictureInPicture.window.close()
+          }
           // TODO 显示的提示
           // TODO
           // document.pictureInPictureElement
