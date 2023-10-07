@@ -219,6 +219,8 @@ export class Barrage {
 
     this.color = props.color || 'white'
     this.hasObserve = true
+
+    if (this.tunnel == -1) this.disabled = true
   }
 
   clearAllObserve() {
