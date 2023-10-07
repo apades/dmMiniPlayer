@@ -8,3 +8,4 @@
 - [x] option页面优化
 - [ ] 自定义侧边栏切换视频
   - [ ] 自定义selector的dom视图 https://luna.liriliri.io/?path=/story/dom-viewer--dom-viewer
+- [ ] 插件结构化组件，带unmount这个通用方法，在player卸载时调用去除里面的监听

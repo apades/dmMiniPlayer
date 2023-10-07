@@ -69,6 +69,8 @@ export default abstract class WebProvider {
         .flat(),
     ]
 
+    if (!videos.length)
+      throw Error('页面中不存在video，或者video在不支持的非同源iframe中')
     const targetVideo = videos.reduce((tar, now) => {
       if (tar.clientHeight < now.clientHeight) return now
       return tar
