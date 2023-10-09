@@ -64,6 +64,11 @@ export const baseConfigMap = {
     desc: '原本默认 "microsoft yahei", sans-serif，但现在都用了网站的默认字体，后续再开放修改',
     label: '弹幕字体',
   }),
+  fontShadow: config({
+    defaultValue: true,
+    label: '弹幕阴影加深',
+    desc: '额外渲染了一次字体，可能会加大性能消耗',
+  }),
   gap: config({
     defaultValue: 4,
     desc: '默认为4',
