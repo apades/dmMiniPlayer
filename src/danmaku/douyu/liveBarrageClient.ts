@@ -1,5 +1,5 @@
 import { Ex_WebSocket_UnLogin } from './websokect'
-import { getStrMiddle, getTransColor } from './utils'
+import { getRealRid, getStrMiddle, getTransColor } from './utils'
 import { STT } from './STT'
 import BarrageClient from '@root/core/danmaku/BarrageClient'
 
@@ -12,9 +12,9 @@ export default class DouyuLiveBarrageClient extends BarrageClient {
   }
 
   isClose = false
-  initWs() {
+  async initWs() {
     this.ws = new Ex_WebSocket_UnLogin(
-      this.id,
+      await getRealRid(this.id + ''),
       this.handleMsg.bind(this),
       () => {
         if (this.isClose) return

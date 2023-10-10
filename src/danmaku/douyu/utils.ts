@@ -1,3 +1,5 @@
+import bgFetch from '@root/utils/bgFetch'
+
 const LOCAL_NAME = 'monitor_options'
 
 export function redirectUrl(url: string): void {
@@ -102,17 +104,15 @@ export function getBagGiftData(): Promise<IGiftData> {
 
 export function getRealRid(rid: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    fetch('https://wxapp.douyucdn.cn/Live/Room/info/' + rid, {
+    bgFetch('https://wxapp.douyucdn.cn/Live/Room/info/' + rid, {
       method: 'GET',
       credentials: 'include',
     })
-      .then((res) => {
-        return res.json()
-      })
       .then((ret) => {
         resolve(ret.data.room_id)
       })
       .catch((err) => {
+        console.log('getRealRid err', err)
         reject(err)
       })
   })
