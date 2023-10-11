@@ -4,6 +4,7 @@ import configStore from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import { getMiniPlayer } from '@root/core'
+import { sendMessage } from '@root/inject/contentSender'
 
 window.DouyuLiveBarrageClient = DouyuLiveBarrageClient
 export default class DouyuLiveProvider extends WebProvider {
@@ -26,8 +27,18 @@ export default class DouyuLiveProvider extends WebProvider {
     // 弹幕相关
     this.miniPlayer.on('PIPClose', () => {
       this.stopObserveWs()
+      sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
+      sendMessage('event-hacker:enable', {
+        qs: 'document',
+        event: 'visibilitychange',
+      })
     })
     this.startObserverWs()
+    sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
+    sendMessage('event-hacker:disable', {
+      qs: 'document',
+      event: 'visibilitychange',
+    })
 
     function dq1Adv(q: string) {
       const top = dq1(q)
