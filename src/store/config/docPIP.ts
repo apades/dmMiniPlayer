@@ -44,5 +44,7 @@ export const docPIPConfig = {
       DocPIPRenderType.oVP_cs,
       DocPIPRenderType.reactVP_webVideo,
     ],
+    relateBy: 'useDocPIP',
+    relateByValue: true,
   }),
 }

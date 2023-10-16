@@ -1,5 +1,5 @@
 import { Barrage } from '@root/danmaku'
-import configStore from '@root/store/config'
+import configStore, { temporarySetConfigStore } from '@root/store/config'
 import { dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import CCLiveBarrageClient from '@root/danmaku/cc/liveBarrageClient'
@@ -16,9 +16,11 @@ export default class CCLiveProvider extends WebProvider {
 
     // TODO cc的弹幕字体
     // // 斗鱼的字体
-    configStore.fontFamily =
+    temporarySetConfigStore(
+      'fontFamily',
       'PingFang SC,-apple-system,Microsoft YaHei,宋体,Arial,Verdana'
-    configStore.fontWeight = 700
+    )
+    temporarySetConfigStore('fontWeight', 700)
   }
 
   protected async initMiniPlayer(

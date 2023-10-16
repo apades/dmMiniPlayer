@@ -1,6 +1,6 @@
 import { Barrage } from '@root/danmaku'
 import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
-import configStore from '@root/store/config'
+import configStore, { temporarySetConfigStore } from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import { getMiniPlayer } from '@root/core'
@@ -15,8 +15,10 @@ export default class DouyuLiveProvider extends WebProvider {
     super()
 
     // 斗鱼的字体
-    configStore.fontFamily =
+    temporarySetConfigStore(
+      'fontFamily',
       'Segoe UI Emoji,SimHei,Microsoft JhengHei,Arial,Helvetica,sans-serif'
+    )
   }
 
   protected async initMiniPlayer(

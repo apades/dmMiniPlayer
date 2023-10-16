@@ -9,7 +9,7 @@ import {
   type DanmakuDownloadType,
 } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
 import { onMessage, sendMessage } from '@root/inject/contentSender'
-import configStore from '@root/store/config'
+import configStore, { temporarySetConfigStore } from '@root/store/config'
 import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 import { windowsOnceCall } from '@root/utils/decorator'
@@ -25,8 +25,10 @@ export default class BilibiliVideoProvider extends WebProvider {
     super()
 
     // b站的字体
-    configStore.fontFamily =
+    temporarySetConfigStore(
+      'fontFamily',
       'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
+    )
 
     this.bindPIPActions()
     this.injectHistoryChange()
