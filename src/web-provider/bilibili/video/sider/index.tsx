@@ -8,6 +8,7 @@ import { offMessage, onMessage } from '@root/inject/contentSender'
 import { dq } from '@root/utils'
 import { useState } from 'react'
 import type BilibiliVideoProvider from '..'
+import { injectorClient } from '@root/inject/client'
 
 type RecommendVideo = {
   el: HTMLElement
@@ -107,6 +108,7 @@ export function initSideActionAreaRender(
         updateRecommendVideos()
       }
 
+      // TODO 替换
       onMessage('inject-api:onTrigger', handleLocationChange)
       window.addEventListener('popstate', handleLocationChange)
 

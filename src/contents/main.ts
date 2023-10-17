@@ -1,9 +1,10 @@
-import { type PlasmoCSConfig } from 'plasmo'
-import getWebProvider from '../web-provider/getWebProvider'
 import { listen } from '@plasmohq/messaging/message'
-import AsyncLock from '@root/utils/AsyncLock'
 import { onMessage } from '@root/inject/contentSender'
 import { onceCall } from '@root/utils'
+import AsyncLock from '@root/utils/AsyncLock'
+import { type PlasmoCSConfig } from 'plasmo'
+import '../inject/client'
+import getWebProvider from '../web-provider/getWebProvider'
 // import {} from '@plasmohq/messaging/port'
 
 export const config: PlasmoCSConfig = {
@@ -74,7 +75,8 @@ listen(async (req, res) => {
   }
 })
 
-onMessage('start-PIP', (data) => {
+window.addEventListener('floatBtn-PIP', (e: any) => {
+  const data = e.detail
   provider().startPIPPlay({ videoEl: data.videoEl })
 })
 

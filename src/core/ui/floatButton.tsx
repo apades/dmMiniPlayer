@@ -38,8 +38,8 @@ const Btn: FC<{ vel: HTMLElement }> = (props) => {
   const onClick = useMemoizedFn(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.stopPropagation()
-      const event = new CustomEvent('inject-request', {
-        detail: { type: 'start-PIP', data: { videoEl: props.vel } },
+      const event = new CustomEvent('floatBtn-PIP', {
+        detail: { videoEl: props.vel },
       })
       window.dispatchEvent(event)
     }

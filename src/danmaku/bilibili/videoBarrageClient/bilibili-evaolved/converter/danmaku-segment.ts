@@ -1,4 +1,4 @@
-import { sendMessage } from '@root/inject/contentSender'
+import { injectorClient } from '@root/inject/client'
 import { loadLib } from '@root/utils/loadLib'
 // import { protobufLibrary } from '../runtime-library'
 
@@ -297,10 +297,7 @@ const decode = (type: string) => {
       return reply.toObject(message)
     }
 
-    let topRunnerRs = await sendMessage('run-code', {
-      function: run.toString(),
-      args: [proto, type, buffer],
-    })
+    let topRunnerRs = await injectorClient.eval.run(run, [proto, type, buffer])
     return topRunnerRs
   }
 }

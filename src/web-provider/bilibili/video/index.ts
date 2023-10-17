@@ -8,7 +8,6 @@ import {
   getTextByType,
   type DanmakuDownloadType,
 } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
-import { onMessage, sendMessage } from '@root/inject/contentSender'
 import configStore, { temporarySetConfigStore } from '@root/store/config'
 import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
@@ -18,6 +17,7 @@ import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient
 import WebProvider from '../../webProvider'
 import { initSideActionAreaRender } from './sider'
 import AsyncLock from '@root/utils/AsyncLock'
+import { injectorClient } from '@root/inject/client'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
@@ -48,22 +48,34 @@ export default class BilibiliVideoProvider extends WebProvider {
       // navigator.mediaSession.playbackState = 'playing'
     })
   }
+
+  pathname: string
   @windowsOnceCall('bili_history')
-  injectHistoryChange() {
-    sendMessage('inject-api:run', {
-      origin: 'history',
-      keys: ['pushState', 'forward', 'replaceState'],
-      onTriggerEvent: 'history',
+  async injectHistoryChange() {
+    await injectorClient.config.updateFeats({ route: true })
+    this.pathname = location.pathname
+    injectorClient.route.onChange(() => {
+      console.log('切换了路由')
+      // bili进入页面会改一些url query参数
+      if (this.miniPlayer && this.pathname != location.pathname) {
+        this.initDans()
+        this.pathname = location.pathname
+      }
     })
-    onMessage('inject-api:onTrigger', (data) => {
-      if (data.event != 'history') return null
-      console.log('切换了路由 history')
-      if (this.miniPlayer) this.initDans()
-    })
-    window.addEventListener('popstate', () => {
-      console.log('切换了路由 popstate')
-      if (this.miniPlayer) this.initDans()
-    })
+    // sendMessage('inject-api:run', {
+    //   origin: 'history',
+    //   keys: ['pushState', 'forward', 'replaceState'],
+    //   onTriggerEvent: 'history',
+    // })
+    // onMessage('inject-api:onTrigger', (data) => {
+    //   if (data.event != 'history') return null
+    //   console.log('切换了路由 history')
+    //   if (this.miniPlayer) this.initDans()
+    // })
+    // window.addEventListener('popstate', () => {
+    //   console.log('切换了路由 popstate')
+    //   if (this.miniPlayer) this.initDans()
+    // })
   }
 
   protected async initMiniPlayer(

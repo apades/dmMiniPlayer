@@ -3,11 +3,12 @@ import VideoPlayerSide, {
 } from '@root/components/VideoPlayer/Side'
 import DocMiniPlayer from '@root/core/DocMiniPlayer'
 import { useOnce } from '@root/hook'
-import { offMessage, onMessage, sendMessage } from '@root/inject/contentSender'
+import { offMessage, onMessage } from '@root/inject/contentSender'
 import { dq, dq1, wait } from '@root/utils'
 import { windowsOnceCall } from '@root/utils/decorator'
 import { useState } from 'react'
 import WebProvider from './webProvider'
+import { injectorClient } from '@root/inject/client'
 
 export default class DdrkProvider extends WebProvider {
   inPIPPlayMode = false
@@ -37,21 +38,11 @@ export default class DdrkProvider extends WebProvider {
   }
 
   @windowsOnceCall('ddrk_history')
-  injectHistoryChange() {
-    sendMessage('inject-api:run', {
-      origin: 'history',
-      keys: ['pushState', 'forward', 'replaceState'],
-      onTriggerEvent: 'history',
-    })
-    onMessage('inject-api:onTrigger', (data) => {
-      if (data.event != 'history') return null
-      console.log('切换了路由 history')
-      if (this.inPIPPlayMode) {
-        this.clickButtonToAppendSrcInVideoTag()
-      }
-    })
-    window.addEventListener('popstate', () => {
-      console.log('切换了路由 popstate')
+  async injectHistoryChange() {
+    await injectorClient.config.updateFeats({ route: true })
+    injectorClient.route.onChange(() => {
+      console.log('切换了路由')
+      // bili进入页面会改一些url query参数
       if (this.inPIPPlayMode) {
         this.clickButtonToAppendSrcInVideoTag()
       }
