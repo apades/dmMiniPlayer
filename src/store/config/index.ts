@@ -3,6 +3,7 @@ import { extStorage } from '@root/utils/storage'
 import * as mobx from 'mobx'
 import { runInAction } from 'mobx'
 import { docPIPConfig } from './docPIP'
+import { domMoverConfig } from './domMover'
 
 export { DocPIPRenderType } from './docPIP'
 
@@ -128,6 +129,7 @@ export const baseConfigMap = {
   vpActionAreaLock: false,
   vpBufferTest: false,
   ...docPIPConfig,
+  ...domMoverConfig,
 }
 
 const LOCAL_CONFIG = 'LOCAL_CONFIG'

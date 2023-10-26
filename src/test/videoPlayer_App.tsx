@@ -7,6 +7,7 @@ import { Input } from 'antd'
 import { useRef, useState, type FC } from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
+import DomMover from '@root/core/DomMover'
 
 window.listSelector = listSelector
 const Side: FC = () => {
@@ -42,6 +43,9 @@ const App = () => {
 
     window.sender = sender
     console.log('ref.current')
+
+    const domMover = new DomMover()
+    window.domMover = domMover
   })
 
   return (
@@ -52,7 +56,7 @@ const App = () => {
           mobxOption={{ canSendBarrage: true }}
           // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
           webVideo={videoRef.current}
-          renderSideActionArea={() => <Side />}
+          renderSideActionArea={<Side />}
         />
       </div>
       <button onClick={() => openSettingPanel()}>open setting</button>
