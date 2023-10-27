@@ -23,12 +23,6 @@ export default class BilibiliLiveProvider extends WebProvider {
 
   constructor() {
     super()
-
-    // b站的字体
-    temporarySetConfigStore(
-      'fontFamily',
-      'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
-    )
   }
 
   protected async initMiniPlayer(

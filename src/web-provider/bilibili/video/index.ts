@@ -23,13 +23,6 @@ export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
   constructor() {
     super()
-
-    // b站的字体
-    temporarySetConfigStore(
-      'fontFamily',
-      'SimHei, "Microsoft JhengHei", Arial, Helvetica, sans-serif'
-    )
-
     this.bindPIPActions()
     this.injectHistoryChange()
   }

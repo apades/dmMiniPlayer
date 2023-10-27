@@ -69,9 +69,7 @@ export const baseConfigMap = {
     category: DANMAKU,
   }),
   fontFamily: config({
-    notRecommended: true,
-    defaultValue: '"microsoft yahei", sans-serif',
-    desc: '原本默认 "microsoft yahei", sans-serif，但现在都用了网站的默认字体，后续再开放修改',
+    defaultValue: 'Segoe UI Emoji, SimHei, "microsoft yahei", sans-serif',
     label: '弹幕字体',
   }),
   fontShadow: config({

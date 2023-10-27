@@ -13,12 +13,6 @@ export default class DouyuLiveProvider extends WebProvider {
 
   constructor() {
     super()
-
-    // 斗鱼的字体
-    temporarySetConfigStore(
-      'fontFamily',
-      'Segoe UI Emoji,SimHei,Microsoft JhengHei,Arial,Helvetica,sans-serif'
-    )
   }
 
   protected async initMiniPlayer(

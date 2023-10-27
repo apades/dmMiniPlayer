@@ -13,14 +13,6 @@ export default class CCLiveProvider extends WebProvider {
 
   constructor() {
     super()
-
-    // TODO cc的弹幕字体
-    // // 斗鱼的字体
-    temporarySetConfigStore(
-      'fontFamily',
-      'PingFang SC,-apple-system,Microsoft YaHei,宋体,Arial,Verdana'
-    )
-    temporarySetConfigStore('fontWeight', 700)
   }
 
   protected async initMiniPlayer(
