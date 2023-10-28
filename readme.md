@@ -2,6 +2,9 @@
 
 可以带弹幕的画中画播放器，且可以在播放器中发送弹幕，狠狠的摸！
 
+- [chrome商店](https://chrome.google.com/webstore/detail/%E5%BC%B9%E5%B9%95%E7%94%BB%E4%B8%AD%E7%94%BB%E6%92%AD%E6%94%BE%E5%99%A8/nahbabjlllhocabmecfjmcblchhpoclj)
+- [edge商店](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
+
 目前已支持:
 - [x] bilibili 视频 + 直播
 - [x] 斗鱼直播
