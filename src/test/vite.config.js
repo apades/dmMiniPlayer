@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig } from 'vite'
 import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
+import fs from 'fs'
 
 function plasmoUrlReplace() {
   const virtualModuleId = /import (.*?) from "url\:(.*)"/g
@@ -39,5 +40,11 @@ export default defineConfig({
   },
   define: {
     ...getDefinesObject('dev'),
+  },
+  server: {
+    https: {
+      key: fs.readFileSync(pr('../../localhost-key.pem')),
+      cert: fs.readFileSync(pr('../../localhost.pem')),
+    },
   },
 })

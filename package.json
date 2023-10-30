@@ -8,7 +8,7 @@
     "dev": "plasmo dev",
     "build": "node ./scripts/build.mjs",
     "package": "plasmo package",
-    "test": "vite serve -c ./src/test/vite.config.js ./src/test"
+    "test": "sh ./scripts/run-test.sh"
   },
   "devDependencies": {
     "@apad/env-tools": "^1.0.5",
