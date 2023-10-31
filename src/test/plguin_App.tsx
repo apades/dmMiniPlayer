@@ -1,14 +1,17 @@
 import DocMiniPlayer from '@root/core/DocMiniPlayer'
 import MiniPlayer from '@root/core/miniPlayer'
 import { useOnce } from '@root/hook'
-import { openSettingPanel } from '@root/store/config'
+import configStore, { openSettingPanel } from '@root/store/config'
 import '@apad/setting-panel/lib/index.css'
-import { dq, dq1, wait } from '@root/utils'
+import { dq, dq1, formatTime, wait } from '@root/utils'
 import { useState, type FC, useRef } from 'react'
 import AsyncLock from '@root/utils/AsyncLock'
 import { injectFunction } from '@root/utils/injectFunction'
 import { dqParents } from '@root/utils/dom'
 import { observeVideoEl } from '@root/utils/observeVideoEl'
+import type { DanType } from '@root/danmaku'
+import { runInAction } from 'mobx'
+import vpConfig from '@root/store/vpConfig'
 
 const trustLock = new AsyncLock()
 window.addEventListener('click', () => trustLock.ok())
@@ -31,10 +34,9 @@ async function docPIP() {
 const v1 = () => (
   <div key="v1">
     <video
-      src={process.env.videoUrl}
+      src={'sample-mp4-file.mp4'}
       className="video1"
       muted
-      crossOrigin="anonymous"
       controls
       height="200"
     ></video>
@@ -44,10 +46,9 @@ const v2 = () => (
   <div key="v2">
     <div>
       <video
-        src={process.env.video2Url}
+        src={'sample-mp4-file.mp4'}
         className="video2"
         muted
-        crossOrigin="anonymous"
         controls
         height="300"
       ></video>
@@ -58,6 +59,15 @@ const v2 = () => (
 window.dqParents = dqParents
 
 console.log('process.env.video2Url', process.env.video2Url)
+const dans = new Array(255).fill(1).map((_, i) => {
+  const time = Math.random() * 120
+  return {
+    color: '#fff',
+    text: `asdf ${formatTime(time)}`,
+    time,
+    type: 'right',
+  } as DanType
+})
 
 const App: FC = (props) => {
   let [player, setPlayer] = useState<DocMiniPlayer>()
@@ -69,8 +79,16 @@ const App: FC = (props) => {
     setPlayer(
       new DocMiniPlayer({
         videoEl: dq1('video'),
+        danmu: {
+          dans,
+        },
       })
     )
+    runInAction(() => {
+      configStore.vpActionAreaLock = true
+      vpConfig.canShowBarrage = true
+      vpConfig.canSendBarrage = true
+    })
   })
 
   useOnce(() => {

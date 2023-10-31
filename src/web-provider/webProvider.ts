@@ -5,9 +5,11 @@ import VideoChanger from '@root/core/VideoChanger'
 import type BarrageClient from '@root/core/danmaku/BarrageClient'
 import MiniPlayer from '@root/core/miniPlayer'
 import configStore from '@root/store/config'
+import vpConfig from '@root/store/vpConfig'
 import { dq, dq1 } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
 import type { OrPromise } from '@root/utils/typeUtils'
+import { runInAction } from 'mobx'
 
 let hasClickPage = false,
   isWaiting = false
@@ -47,6 +49,9 @@ export default abstract class WebProvider {
     this.miniPlayer.on('PIPClose', () => {
       this.miniPlayer.clearEventListener()
       this.miniPlayer = null
+      runInAction(() => {
+        vpConfig.reset()
+      })
     })
     sendToBackground({ name: 'PIP-active' })
   }

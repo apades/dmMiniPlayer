@@ -1,6 +1,9 @@
+import VideoPlayer from '@root/components/VideoPlayer'
 import configStore from '@root/store/config'
-import { createElement } from '@root/utils'
-import { makeAutoObservable } from 'mobx'
+import vpConfig from '@root/store/vpConfig'
+import { createElement, throttle } from '@root/utils'
+import type { ComponentProps } from 'react'
+import { createRoot } from 'react-dom/client'
 import styleUrl from 'url:./DocMiniPlayer.less'
 import BarrageSender, {
   type Props as BarrageSenderProps,
@@ -8,18 +11,17 @@ import BarrageSender, {
 import MiniPlayer from '../miniPlayer'
 
 export default class BaseDocMiniPlayer extends MiniPlayer {
+  /**appendChild到pipWindow.body中的htmlEl根 */
+  videoPlayerRoot: HTMLElement
   pipWindow: Window
-
   hasInit = false
 
   styleEl = createElement('link', {
     rel: 'stylesheet',
     href: styleUrl,
   })
-
-  videoPlayer: HTMLElement
-  sender: BarrageSender
-  vpMobxOption = makeAutoObservable({ canSendBarrage: false })
+  barrageSender: BarrageSender
+  reactRoot: ReturnType<typeof createRoot>
 
   /**canvas的captureStream */
   private _webPlayerVideoStream: MediaStream
@@ -31,44 +33,63 @@ export default class BaseDocMiniPlayer extends MiniPlayer {
     return this._webPlayerVideoStream
   }
 
-  async iniDocumentPIP() {
+  async initReactVP(props: Omit<ComponentProps<typeof VideoPlayer>, 'index'>) {
+    this.videoPlayerRoot = createElement('div')
+    this.reactRoot = createRoot(this.videoPlayerRoot)
+    this.reactRoot.render(
+      <VideoPlayer
+        index={1}
+        keydownWindow={this.pipWindow ?? window}
+        {...props}
+      />
+    )
+    return this.reactRoot
+  }
+
+  async initDocumentPIP() {
     let pipWindow = await window.documentPictureInPicture.requestWindow({
       width: this.canvas.width,
       height: this.canvas.height,
     })
     this.pipWindow = pipWindow
+    pipWindow.addEventListener(
+      'resize',
+      throttle(() => {
+        this.updateCanvasSize()
+      }, 500)
+    )
 
     return pipWindow
   }
 
   initBarrageSender(props: Omit<BarrageSenderProps, 'textInput'>) {
     if (!configStore.useDocPIP) return
-    const playerInput = this.videoPlayer.querySelector<HTMLInputElement>(
+    const playerInput = this.videoPlayerRoot.querySelector<HTMLInputElement>(
       '.barrage-input input'
     )
-    this.sender = new BarrageSender({
+    this.barrageSender = new BarrageSender({
       ...props,
       textInput: playerInput,
     })
     playerInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault()
-        this.sender.send()
+        this.barrageSender.send()
       }
     })
 
-    this.vpMobxOption.canSendBarrage = true
+    vpConfig.canSendBarrage = true
   }
 
   async test_captureVideo() {
-    this.videoPlayer = createElement('video', {
+    this.videoPlayerRoot = createElement('video', {
       srcObject: this.webPlayerVideoStream,
       muted: true,
       autoplay: true,
       style: 'position:fixed;right:0;top:0;z-index:999',
       width: '500',
     })
-    document.body.appendChild(this.videoPlayer)
+    document.body.appendChild(this.videoPlayerRoot)
   }
 
   appendCanvasToBody() {

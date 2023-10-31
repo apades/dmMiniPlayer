@@ -6,24 +6,25 @@ import ProgressBar from '../ProgressBar'
 
 type Props = {
   setVolume: (value: React.SetStateAction<number>) => void
+  setMute: (value: React.SetStateAction<boolean>) => void
   volume: number
+  videoRef: React.MutableRefObject<HTMLVideoElement>
 }
-let VolumeBar: FC<Props> = (props) => {
-  let { setVolume, volume } = props
+const VolumeBar: FC<Props> = (props) => {
+  const { setVolume, volume } = props
 
-  let [beforeMuteVolume, setBeforeMuteVolume] = useState(volume)
-  let [isActive, setActive] = useState(false)
+  const [isActive, setActive] = useState(false)
 
-  let className = classNames([
+  const className = classNames([
     'icon',
     'volume',
     {
-      mute: !volume,
+      mute: !volume || props.videoRef.current.muted,
       active: isActive,
     },
   ])
 
-  let timmer = useRef<NodeJS.Timeout>()
+  const timmer = useRef<NodeJS.Timeout>()
 
   return (
     <div className={className}>
@@ -34,6 +35,12 @@ let VolumeBar: FC<Props> = (props) => {
           direction="v"
           loadColor="var(--color-main)"
           onClick={(p) => {
+            if (props.videoRef.current.muted) {
+              props.setMute((m) => {
+                props.videoRef.current.muted = !m
+                return !m
+              })
+            }
             setVolume(p)
             setActive(true)
             clearTimeout(timmer.current)
@@ -52,17 +59,15 @@ let VolumeBar: FC<Props> = (props) => {
       </div>
       <div
         onClick={() => {
-          if (!volume) {
-            setVolume(beforeMuteVolume)
-          } else {
-            setVolume(0)
-            setBeforeMuteVolume(volume)
-          }
+          props.setMute((m) => {
+            props.videoRef.current.muted = !m
+            return !m
+          })
         }}
         className="v-icon"
       >
-        <Iconfont className="normal" type="iconicon_player_volume" />
-        <Iconfont className="muted" type="iconMute1" />
+        <Iconfont size={14} className="normal" type="iconicon_player_volume" />
+        <Iconfont size={14} className="muted" type="iconMute1" />
       </div>
     </div>
   )

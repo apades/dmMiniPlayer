@@ -1,12 +1,14 @@
 import VideoPlayer from '@root/components/VideoPlayer'
 import BarrageSender from '@root/core/danmaku/BarrageSender'
 import { useOnce } from '@root/hook'
-import { openSettingPanel } from '@root/store/config'
+import configStore, { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
 import { Input } from 'antd'
 import { useRef, useState, type FC } from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
+import { runInAction } from 'mobx'
+import vpConfig from '@root/store/vpConfig'
 
 window.listSelector = listSelector
 const Side: FC = () => {
@@ -39,6 +41,11 @@ const App = () => {
       webSendButton: dq1('.btn1'),
       webTextInput: dq1('.input1'),
     })
+    runInAction(() => {
+      vpConfig.canSendBarrage = true
+      vpConfig.showBarrage = true
+      configStore.vpActionAreaLock = true
+    })
 
     window.sender = sender
     console.log('ref.current')
@@ -49,10 +56,9 @@ const App = () => {
       <div style={{ height: 200 }}>
         <VideoPlayer
           index={1}
-          mobxOption={{ canSendBarrage: true }}
           // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
           webVideo={videoRef.current}
-          renderSideActionArea={() => <Side />}
+          renderSideActionArea={<Side />}
         />
       </div>
       <button onClick={() => openSettingPanel()}>open setting</button>

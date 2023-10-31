@@ -1,25 +1,27 @@
+import { LoadingOutlined } from '@ant-design/icons'
 import ProgressBar from '@root/components/ProgressBar'
+import { useOnce } from '@root/hook'
 import _env, { configStore } from '@root/store/config'
 import { formatTime, minmax, wait } from '@root/utils'
-import cls from 'classnames'
+import { default as classNames, default as cls } from 'classnames'
+import { observer } from 'mobx-react'
 import {
   forwardRef,
   memo,
-  type ReactElement,
   useEffect,
   useImperativeHandle,
   useRef,
   useState,
   type CSSProperties,
+  type ReactElement,
 } from 'react'
-import { checkJumpInBufferArea } from './utls'
-import VolumeBar from './VolumeBar'
 import Iconfont from '../Iconfont'
-import { LoadingOutlined } from '@ant-design/icons'
 import BarrageInput from './BarrageInput'
-import { useOnce } from '@root/hook'
+import VolumeBar from './VolumeBar'
 import { VideoPlayerLoadEvent } from './events'
-import { observer } from 'mobx-react'
+import { checkJumpInBufferArea } from './utls'
+import vpConfig from '@root/store/vpConfig'
+import { runInAction } from 'mobx'
 
 type BarEventsKey = 'onMouseMove' | 'onMouseOut' | 'onMouseEnter' | 'onClick'
 
@@ -40,7 +42,6 @@ export type Props = EventBase & {
     ) => void
   }
 } & {
-  mobxOption?: { canSendBarrage: boolean }
   webVideo?: HTMLVideoElement
   useWebVideo?: boolean
   keydownWindow?: Window
@@ -88,39 +89,40 @@ export type VideoPlayerHandle = {
 
 const VideoPlayer = observer(
   forwardRef<VideoPlayerHandle, Props>((props, ref) => {
-    let {
+    const {
       canPlay = true,
       isRenderNotifiChild = true,
       keydownWindow = window,
     } = props
-    let videoRef = useRef<HTMLVideoElement>(props.webVideo)
-    let compVideoRef = useRef<HTMLVideoElement>(props.webVideo)
-    let player = useRef<HTMLDivElement>(null)
+    const videoRef = useRef<HTMLVideoElement>(props.webVideo)
+    const compVideoRef = useRef<HTMLVideoElement>(props.webVideo)
+    const player = useRef<HTMLDivElement>(null)
     const playBtnEl = useRef<HTMLSpanElement>(null)
-    const barrageInputRef = useRef<HTMLInputElement>()
 
-    let [currentTime, setCurrentTime] = useState(0)
-    let [duration, setDuration] = useState(props.duration || 0)
+    const [currentTime, setCurrentTime] = useState(0)
+    const [duration, setDuration] = useState(props.duration || 0)
 
-    let [isVisibleActionAreaInFC, setVisibleActionAreaInFC] = useState(false)
-    let [isActionAreaLock, setActionAreaLock] = useState(false)
+    const [isVisibleActionAreaInFC, setVisibleActionAreaInFC] = useState(false)
+    const [isActionAreaLock, setActionAreaLock] = useState(false)
 
-    let [playing, setPlaying] = useState(!props?.webVideo?.paused)
-    let [canPause, setCanPause] = useState(true)
-    let [isLoading, setLoading] = useState(false)
-    let [isInputMode, setInputMode] = useState(false)
+    const [playing, setPlaying] = useState(!props?.webVideo?.paused)
+    const [canPause, setCanPause] = useState(true)
+    const [isLoading, setLoading] = useState(false)
+    const [isInputMode, setInputMode] = useState(false)
 
-    let [loaded, setLoaded] = useState<{ s: number; e: number }[]>([])
-    let [isFirstPlay, setIsFirstPlay] = useState(false)
+    const [loaded, setLoaded] = useState<{ s: number; e: number }[]>([])
+    const [isFirstPlay, setIsFirstPlay] = useState(false)
+    const [isSpeedMode, setSpeedMode] = useState(false)
 
-    let [volume, setVolume] = useState(props?.webVideo?.volume * 100)
+    const [volume, setVolume] = useState(props?.webVideo?.volume * 100)
+    const [isMute, setMute] = useState(props?.webVideo?.muted)
 
-    let [playedPercent, setPlayedPercent] = useState(0)
-    let [isPlayEnd, setPlayEnd] = useState(false)
-    let [timeupdateQueue, setTimeupdateQueue] = useState<
+    const [playedPercent, setPlayedPercent] = useState(0)
+    const [isPlayEnd, setPlayEnd] = useState(false)
+    const [timeupdateQueue, setTimeupdateQueue] = useState<
       ((time: number) => void)[]
     >([])
-    let [eventListenMap, setEventListenMap] = useState<{
+    const [eventListenMap, setEventListenMap] = useState<{
       [k in keyof HTMLMediaElementEventMap]?: ((
         event: HTMLMediaElementEventMap[k]
       ) => void)[]
@@ -227,7 +229,7 @@ const VideoPlayer = observer(
     )
 
     // 多个播放器标识
-    let index = props.index ?? -1
+    const index = props.index ?? -1
     useEffect(() => {
       if (isFirstPlay) return
       videoRef.current.volume = volume / 100
@@ -247,34 +249,24 @@ const VideoPlayer = observer(
       }
     }, [videoRef.current])
 
-    let [speed, setSpeed] = useState(1)
-    useEffect(() => {
-      if (isFirstPlay) return
-      videoRef.current.playbackRate = speed
-    }, [speed, isFirstPlay])
-
-    // keydowm
-    let [isFocus, setFoucs] = useState(false)
+    const [isFocus, setFocus] = useState(false)
     useEffect(() => {
       if (isFocus) window.videoPlayers.focusIndex = index
     }, [isFocus])
 
     useEffect(() => {
-      // if (!videoRef.current) return
-
-      // system
-      let handleKeyDown = (e: KeyboardEvent) => {
+      let speedModeTimer: NodeJS.Timeout,
+        isSpeedMode = false
+      const handleKeyDown = (e: KeyboardEvent) => {
         if (window.videoPlayers.focusIndex !== index) return
-        let tar = e.target as HTMLElement
-        // console.log('tar', _isFocused, index, isFirstPlay)
+        const tar = e.target as HTMLElement
         if (
           tar.tagName === 'TEXTAREA' ||
           tar.tagName === 'INPUT' ||
           tar.contentEditable === 'true'
         )
           return
-        e.stopPropagation()
-        // console.log('keydown', e.code)
+        // e.stopPropagation()
         switch (e.code) {
           case 'ArrowDown':
             e.preventDefault()
@@ -302,18 +294,12 @@ const VideoPlayer = observer(
             break
           }
           case 'ArrowRight': {
-            if (getIsLive()) return
-            e.preventDefault()
-            let getNewTime = () =>
-              minmax(videoRef.current.currentTime + 5, 0, duration)
-
-            if (isFirstPlay) {
-              playerOpause('play').then(() => {
-                videoRef.current.currentTime = getNewTime()
-              })
-            } else {
-              videoRef.current.currentTime = getNewTime()
-            }
+            if (speedModeTimer) return
+            speedModeTimer = setTimeout(() => {
+              isSpeedMode = true
+              videoRef.current.playbackRate = configStore.playbackRate
+              setSpeedMode(true)
+            }, 200)
             break
           }
           case 'Space':
@@ -329,27 +315,66 @@ const VideoPlayer = observer(
       }
       keydownWindow.addEventListener('keydown', handleKeyDown)
 
+      const handleKeyUp = (e: KeyboardEvent) => {
+        if (window.videoPlayers.focusIndex !== index) return
+        const tar = e.target as HTMLElement
+        if (
+          tar.tagName === 'TEXTAREA' ||
+          tar.tagName === 'INPUT' ||
+          tar.contentEditable === 'true'
+        )
+          return
+        e.stopPropagation()
+
+        switch (e.code) {
+          case 'ArrowRight': {
+            if (getIsLive()) return
+            e.preventDefault()
+            clearTimeout(speedModeTimer)
+            speedModeTimer = null
+            setSpeedMode(false)
+
+            if (isSpeedMode) {
+              videoRef.current.playbackRate = 1
+              isSpeedMode = false
+            } else {
+              const getNewTime = () =>
+                minmax(videoRef.current.currentTime + 5, 0, duration)
+
+              if (isFirstPlay) {
+                playerOpause('play').then(() => {
+                  videoRef.current.currentTime = getNewTime()
+                })
+              } else {
+                videoRef.current.currentTime = getNewTime()
+              }
+            }
+          }
+        }
+      }
+      keydownWindow.addEventListener('keyup', handleKeyUp)
+
       return () => {
-        // console.log('vp quit')
         keydownWindow.removeEventListener('keydown', handleKeyDown)
+        keydownWindow.removeEventListener('keyup', handleKeyUp)
       }
     }, [videoRef.current, duration, isFirstPlay])
 
     useEffect(() => {
       if (!window.videoPlayers.list.size) window.videoPlayers.focusIndex = index
 
-      let player = {
+      const player = {
         pause() {
-          let el = player.videoEl()
+          const el = player.videoEl()
           if (!el) return
           if (el.classList.contains('can-pause')) el.pause()
         },
         async setCurrentTime(time: number, isPause: boolean) {
           if (isFirstPlay) setIsFirstPlay(false)
           await wait()
-          let el = player.videoEl()
+          const el = player.videoEl()
 
-          let isInBuffer = checkJumpInBufferArea(el.buffered, time)
+          const isInBuffer = checkJumpInBufferArea(el.buffered, time)
           if (!isInBuffer) setLoading(true)
           el.currentTime = time
           if (isPause) el.pause()
@@ -406,109 +431,6 @@ const VideoPlayer = observer(
             throw err
           })
       }
-    }
-
-    let RenderVideoNoti = (
-      props: {
-        state: boolean
-        el: ReactElement
-      }[]
-    ) => {
-      let showIndex = props.findIndex((d) => d.state === true),
-        isShow = showIndex !== -1
-      return (
-        <div
-          className="video-noti"
-          style={{
-            display: isShow ? 'block' : 'none',
-          }}
-        >
-          {isShow && props[showIndex].el}
-        </div>
-      )
-    }
-
-    let RenderActionArea = () => {
-      return (
-        <div className={cls('actions', isInputMode && 'is-input')}>
-          {getIsLive() ? (
-            <span className="live-dot"></span>
-          ) : (
-            <span ref={playBtnEl} className="pp" onClick={() => playerOpause()}>
-              {playing ? (
-                <Iconfont type="iconicon_player_pause" />
-              ) : (
-                <Iconfont type="iconicon_player_play" />
-              )}
-            </span>
-          )}
-
-          <span style={{ whiteSpace: 'nowrap' }}>
-            {formatTime(currentTime)}
-            {!getIsLive() && ` / ${formatTime(duration)} `}
-          </span>
-          {props.mobxOption?.canSendBarrage && (
-            <Iconfont
-              type="input"
-              onClick={() => {
-                setInputMode((v) => {
-                  if (!v) {
-                    wait().then(() => barrageInputRef.current.focus())
-                  }
-                  return !v
-                })
-              }}
-              style={{ fontSize: 16, cursor: 'pointer', lineHeight: 0 }}
-            />
-          )}
-
-          <BarrageInput
-            ref={barrageInputRef}
-            setActionAreaLock={(v) => {
-              setActionAreaLock(v)
-              console.log('reset', v)
-              if (!v) setVisibleActionAreaInFC(false)
-            }}
-          />
-
-          <div className="played-progress-bar">
-            <ProgressBar
-              percent={playedPercent}
-              onClick={(percent) => {
-                if (!canPlay) return
-                if (isFirstPlay) {
-                  playerOpause()
-                }
-                setPlayedPercent(percent)
-
-                setTimeout(() => {
-                  percent = percent / 100
-                  videoRef.current.currentTime = duration * percent
-                  setCurrentTime(duration * percent)
-                }, 0)
-              }}
-              loadColor="#0669ff"
-            >
-              <div className="bar-loaded">
-                {loaded.map(({ s, e }) => (
-                  <span
-                    key={s}
-                    style={{
-                      left: `${(s / duration) * 100}%`,
-                      width: `${((e - s) / duration) * 100}%`,
-                      top: 0,
-                    }}
-                  ></span>
-                ))}
-              </div>
-            </ProgressBar>
-          </div>
-
-          <div className="func">
-            <VolumeBar setVolume={setVolume} volume={volume} />
-          </div>
-        </div>
-      )
     }
 
     let [isVolumeNotiShow, setVolumeNotiShow] = useState(false)
@@ -604,6 +526,11 @@ const VideoPlayer = observer(
         onDurationChange: (e) => {
           setDuration((e.target as HTMLVideoElement).duration)
         },
+        onVolumeChange(e) {
+          const tar = e.target as HTMLVideoElement
+          setMute(tar.muted)
+          setVolume(tar.volume * 100)
+        },
         onError: (e) => {
           console.error('播放出错了', e)
         },
@@ -655,8 +582,8 @@ const VideoPlayer = observer(
         }
         tabIndex={-1}
         data-vid={index}
-        onFocus={() => setFoucs(true)}
-        onBlur={() => setFoucs(false)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
         ref={player}
       >
         <div
@@ -685,9 +612,7 @@ const VideoPlayer = observer(
           )}
 
           {/* 视频封面 */}
-          <div className="video-cover full-view-layer">
-            {props.renderCoverChild?.()}
-          </div>
+          <div className="video-cover">{props.renderCoverChild?.()}</div>
 
           {props.renderVideoContainerChild?.()}
 
@@ -715,6 +640,11 @@ const VideoPlayer = observer(
                   </div>
                 ),
               },
+              {
+                state: isSpeedMode,
+                el: <div>{configStore.playbackRate}倍速中&gt;&gt;</div>,
+                className: 'speed-mode-noti',
+              },
               ...(props.notifiChild || []),
             ])}
         </div>
@@ -726,7 +656,86 @@ const VideoPlayer = observer(
           onMouseLeave={handleResetActionAreaShow}
         >
           <div className="mask"></div>
-          {RenderActionArea()}
+          <div className={cls('actions', isInputMode && 'is-input')}>
+            {getIsLive() ? (
+              <span className="live-dot"></span>
+            ) : (
+              <Iconfont
+                ref={playBtnEl}
+                onClick={() => playerOpause()}
+                type={
+                  playing ? 'iconicon_player_pause' : 'iconicon_player_play'
+                }
+              />
+            )}
+
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {formatTime(currentTime)}
+              {!getIsLive() && ` / ${formatTime(duration)} `}
+            </span>
+
+            {vpConfig.canShowBarrage && (
+              <Iconfont
+                onClick={() => {
+                  runInAction(() => {
+                    vpConfig.showBarrage = !vpConfig.showBarrage
+                  })
+                }}
+                size={18}
+                type={vpConfig.showBarrage ? 'danmaku_open' : 'danmaku_close'}
+              />
+            )}
+            <BarrageInput
+              setActionAreaLock={(v) => {
+                if (configStore.vpActionAreaLock) return
+                setActionAreaLock(v)
+                if (!v) setVisibleActionAreaInFC(false)
+              }}
+              setInputMode={setInputMode}
+            />
+
+            <div className="played-progress-bar">
+              <ProgressBar
+                percent={playedPercent}
+                onClick={(percent) => {
+                  if (!canPlay) return
+                  if (isFirstPlay) {
+                    playerOpause()
+                  }
+                  setPlayedPercent(percent)
+
+                  setTimeout(() => {
+                    percent = percent / 100
+                    videoRef.current.currentTime = duration * percent
+                    setCurrentTime(duration * percent)
+                  }, 0)
+                }}
+                loadColor="#0669ff"
+              >
+                <div className="bar-loaded">
+                  {loaded.map(({ s, e }) => (
+                    <span
+                      key={s}
+                      style={{
+                        left: `${(s / duration) * 100}%`,
+                        width: `${((e - s) / duration) * 100}%`,
+                        top: 0,
+                      }}
+                    ></span>
+                  ))}
+                </div>
+              </ProgressBar>
+            </div>
+
+            <div className="func">
+              <VolumeBar
+                videoRef={videoRef}
+                setMute={setMute}
+                setVolume={setVolume}
+                volume={volume}
+              />
+            </div>
+          </div>
         </div>
 
         {/* 侧边操作栏 */}
@@ -754,5 +763,27 @@ const VideoPlayer = observer(
     )
   })
 )
+
+const RenderVideoNoti = (
+  props: {
+    state: boolean
+    el: ReactElement
+    className?: string
+  }[]
+) => {
+  const showIndex = props.findIndex((d) => d.state === true),
+    isShow = showIndex !== -1,
+    tar = props[showIndex]
+  return (
+    <div
+      className={classNames('video-noti', tar?.className)}
+      style={{
+        display: isShow ? 'block' : 'none',
+      }}
+    >
+      {isShow && tar.el}
+    </div>
+  )
+}
 
 export default memo(VideoPlayer)

@@ -26,7 +26,6 @@ export default class DdrkProvider extends WebProvider {
     })
     miniPlayer.on('PIPClose', () => {
       this.inPIPPlayMode = false
-      this.miniPlayer.webPlayerVideoEl.pause()
     })
 
     if (miniPlayer instanceof DocMiniPlayer) {

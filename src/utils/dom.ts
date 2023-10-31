@@ -43,7 +43,7 @@ export const dqParents: {
     | SVGElementTagNameMap[K][]
   <E extends Element = HTMLDivElement>(el: HTMLElement, selectors: string): E[]
 } = (el: HTMLElement, selectors: string) => {
-  if (!el) return []
+  if (!el || !el.parentElement) return []
   const rs: HTMLElement[] = []
   let p = el.parentElement
   while (true) {

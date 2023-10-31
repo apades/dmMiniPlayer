@@ -20,6 +20,12 @@ export const baseConfigMap = {
     desc: '限制渲染帧数，默认60，设置0就是无上限',
     label: 'canvas渲染的帧数',
   }),
+  FPS_limitOffsetAccurate: config({
+    defaultValue: false,
+    label: 'FPS限制算法使用精准now时间',
+    desc: '默认记录的上一次更新时间是now - (offset % renderFPS)',
+    notRecommended: true,
+  }),
   videoProgress_show: config({
     defaultValue: true,
     desc: '非直播视频底下增加进度条显示',
@@ -107,7 +113,18 @@ export const baseConfigMap = {
   playbackRate: config({
     defaultValue: 3,
     desc: '直播下无效',
-    label: '快捷键的倍速播放速率',
+    label: '快捷键/长按右键的倍速播放速率',
+  }),
+  pauseInClose_video: config({
+    defaultValue: true,
+    label: '关闭视频时暂停',
+  }),
+  pauseInClose_live: config({
+    defaultValue: false,
+    label: '关闭直播也暂停',
+    desc: '并不是很推荐',
+    relateBy: 'pauseInClose_video',
+    relateByValue: true,
   }),
 
   biliVideoDansFromBiliEvaolved: config({

@@ -18,6 +18,8 @@ import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient
 import WebProvider from '../../webProvider'
 import { initSideActionAreaRender } from './sider'
 import AsyncLock from '@root/utils/AsyncLock'
+import { runInAction } from 'mobx'
+import vpConfig from '@root/store/vpConfig'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
@@ -68,9 +70,6 @@ export default class BilibiliVideoProvider extends WebProvider {
     if (miniPlayer instanceof DocMiniPlayer) {
       initSideActionAreaRender(miniPlayer, this)
     }
-    this.miniPlayer.on('PIPClose', () => {
-      this.videoEl.pause()
-    })
     this.initDans()
     miniPlayer.initBarrageSender({
       webTextInput: dq1('.bpx-player-dm-input'),
@@ -80,6 +79,9 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
 
   initDans() {
+    runInAction(() => {
+      vpConfig.canShowBarrage = true
+    })
     this.getDans().then((dans) =>
       this.miniPlayer.danmakuController.initDans(dans)
     )

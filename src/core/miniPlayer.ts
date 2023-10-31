@@ -5,7 +5,9 @@ import { type PlayerEvents } from './event'
 import type { Props as BarrageSenderProps } from './danmaku/BarrageSender'
 import { onceCallGet } from '@root/utils/decorator'
 import videoRender from '@root/store/videoRender'
-import { addEventListener, throttle } from '@root/utils'
+import { addEventListener, createElement, throttle } from '@root/utils'
+import { observe } from 'mobx'
+import vpConfig from '@root/store/vpConfig'
 
 export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
@@ -101,8 +103,8 @@ export default class MiniPlayer {
   // 在video play时使用，减少性能消耗
   startRenderAsCanvas() {
     try {
-      this.animationFrameSignal = requestAnimationFrame(
-        this.canvasUpdate.bind(this)
+      this.animationFrameSignal = requestAnimationFrame(() =>
+        this.canvasUpdate()
       )
       return true
     } catch (error) {
@@ -121,11 +123,11 @@ export default class MiniPlayer {
   withoutLimitAnimaFPS = 0
   // 进入pip时渲染第一帧画面
   protected hansDraw = false
-  canvasUpdate() {
-    if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
+  canvasUpdate(force = false) {
+    if (force || (configStore.renderFPS != 0 ? this.checkFPSLimit() : true)) {
       const videoEl = this.webPlayerVideoEl
 
-      if (!this.isPause || !this.hansDraw) {
+      if (force || !this.isPause || !this.hansDraw) {
         this.hansDraw = true
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.ctx.drawImage(
@@ -137,24 +139,22 @@ export default class MiniPlayer {
         )
         this.detectFPS()
         this.renderDanmu()
+        if (configStore.performanceInfo) {
+          this.renderPerformanceInfo()
+        }
       }
     }
+    if (force) return
 
-    if (configStore.performanceInfo) {
-      this.renderPerformanceInfo()
-    }
-
-    let now = Date.now()
-    let offset = now - this.withoutLimitLastUpdateTime
+    const now = Date.now()
     this.performanceInfoLimit(() => {
+      const offset = now - this.withoutLimitLastUpdateTime
       this.withoutLimitAnimaFPS = ~~(1000 / offset)
     })
     this.withoutLimitLastUpdateTime = now
 
     this.inUpdateFrame = false
-    this.animationFrameSignal = requestAnimationFrame(
-      this.canvasUpdate.bind(this)
-    )
+    this.animationFrameSignal = requestAnimationFrame(() => this.canvasUpdate())
 
     this.renderVideoProgress()
   }
@@ -200,14 +200,18 @@ export default class MiniPlayer {
   /**设置FPS限制canvasUpdate的requestAnimationFrame下的draw update触发间隔 */
   animaFPS = 0
   checkFPSLimit() {
-    let now = Date.now()
-    let offset = now - this.lastUpdateTime
+    const now = Date.now()
+    const offset = now - this.lastUpdateTime
     if (offset > 1000 / configStore.renderFPS) {
       this.performanceInfoLimit(() => {
         this.animaFPS = ~~(1000 / offset)
       })
 
-      this.lastUpdateTime = now - (offset % configStore.renderFPS) /* now */
+      if (configStore.FPS_limitOffsetAccurate) {
+        this.lastUpdateTime = now
+      } else {
+        this.lastUpdateTime = now - (offset % configStore.renderFPS) /* now */
+      }
       return true
     }
     return false
@@ -261,13 +265,9 @@ export default class MiniPlayer {
     let ctx = this.ctx
     ctx.fillStyle = '#fff'
     ctx.font = `600 ${fontSize}px ${configStore.fontFamily}`
-    ctx.fillText(
-      `withoutLimitAnimaFPS:${this.withoutLimitAnimaFPS}`,
-      padding,
-      getY()
-    )
-    ctx.fillText(`animaVideoFPS:${this.animaVideoFPS}`, padding, getY())
-    ctx.fillText(`animaFPS:${this.animaFPS}`, padding, getY())
+    ctx.fillText(`浏览器最大FPS:${this.withoutLimitAnimaFPS}`, padding, getY())
+    // ctx.fillText(`animaVideoFPS:${this.animaVideoFPS}`, padding, getY())
+    ctx.fillText(`运行中FPS:${this.animaFPS}`, padding, getY())
   }
 
   renderVideoProgress() {
@@ -327,6 +327,21 @@ export default class MiniPlayer {
     this.startRenderAsCanvas()
     this.bindOnClosePlayer()
     this.startPIPPlay()
+    const disObserver = observe(vpConfig, 'showBarrage', () => {
+      console.log('showBarrage update')
+      this.canvasUpdate(true)
+    })
+    this.on('PIPClose', () => {
+      disObserver()
+
+      if (configStore.pauseInClose_video) {
+        const video = this.webPlayerVideoEl
+        const isLive = video.duration == Infinity
+        if (configStore.pauseInClose_live || !isLive) {
+          this.webPlayerVideoEl.pause()
+        }
+      }
+    })
   }
 
   protected bindOnClosePlayer() {

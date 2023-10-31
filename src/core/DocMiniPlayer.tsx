@@ -17,6 +17,7 @@ import MiniPlayer from './miniPlayer'
 import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { type ReactElement } from 'react'
 import { runInAction } from 'mobx'
+import vpConfig from '@root/store/vpConfig'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
@@ -30,8 +31,6 @@ export default class DocMiniPlayer extends MiniPlayer {
 
   videoPlayer: HTMLElement
   sender: BarrageSender
-  vpMobxOption = makeAutoObservable({ canSendBarrage: false })
-
   renderSideActionArea = () => null as ReactElement
 
   /**canvas的captureStream */
@@ -133,7 +132,6 @@ export default class DocMiniPlayer extends MiniPlayer {
           srcObject={this.webPlayerVideoStream}
           webVideo={this.webPlayerVideoEl}
           keydownWindow={pipWindow}
-          mobxOption={this.vpMobxOption}
           renderSideActionArea={this.renderSideActionArea()}
         />
       )
@@ -187,7 +185,6 @@ export default class DocMiniPlayer extends MiniPlayer {
         srcObject={this.canvasVideoStream}
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
-        mobxOption={this.vpMobxOption}
         renderSideActionArea={this.renderSideActionArea()}
         ref={(ref) => {
           if (!ref) return
@@ -259,7 +256,6 @@ export default class DocMiniPlayer extends MiniPlayer {
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
         useWebVideo
-        mobxOption={this.vpMobxOption}
         renderSideActionArea={this.renderSideActionArea()}
         ref={(ref) => {
           if (!ref) return
@@ -329,25 +325,25 @@ export default class DocMiniPlayer extends MiniPlayer {
     }
   }
 
-  canvasUpdate() {
+  canvasUpdate(force = false) {
     if (
       [DocPIPRenderType.reactVP_canvasCs].includes(
         configStore.docPIP_renderType
       )
     )
-      return super.canvasUpdate()
+      return super.canvasUpdate(force)
 
-    if (configStore.renderFPS != 0 ? this.checkFPSLimit() : true) {
-      if (!this.isPause || !this.hansDraw) {
+    if (force || (configStore.renderFPS != 0 ? this.checkFPSLimit() : true)) {
+      if (force || !this.isPause || !this.hansDraw) {
         this.hansDraw = true
         this.detectFPS()
         this.renderDanmu()
+        if (configStore.performanceInfo) {
+          this.renderPerformanceInfo()
+        }
       }
     }
-
-    if (configStore.performanceInfo) {
-      this.renderPerformanceInfo()
-    }
+    if (force) return
 
     let now = Date.now()
     let offset = now - this.withoutLimitLastUpdateTime
@@ -357,9 +353,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     this.withoutLimitLastUpdateTime = now
 
     this.inUpdateFrame = false
-    this.animationFrameSignal = requestAnimationFrame(
-      this.canvasUpdate.bind(this)
-    )
+    this.animationFrameSignal = requestAnimationFrame(() => this.canvasUpdate())
   }
 
   renderDanmu() {
@@ -378,7 +372,7 @@ export default class DocMiniPlayer extends MiniPlayer {
 
   async initBarrageSender(props: Omit<BarrageSenderProps, 'textInput'>) {
     if (!configStore.useDocPIP) return
-    console.log('videoPlayer', this.videoPlayer)
+    console.log('初始化BarrageSender')
     try {
       await onVideoPlayerLoad()
       const playerInput = this.videoPlayer.querySelector<HTMLInputElement>(
@@ -396,12 +390,10 @@ export default class DocMiniPlayer extends MiniPlayer {
       })
 
       runInAction(() => {
-        this.vpMobxOption.canSendBarrage = true
+        vpConfig.canSendBarrage = true
       })
     } catch (error) {
       console.error('初始化BarrageSender错误', error)
     }
   }
 }
-
-window.observeVideoEl = observeVideoEl
