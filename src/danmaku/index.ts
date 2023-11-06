@@ -2,7 +2,7 @@ import MiniPlayer from '@root/core/miniPlayer'
 import configStore, { MaxTunnelType } from '@root/store/config'
 import videoRender from '@root/store/videoRender'
 import vpConfig from '@root/store/vpConfig'
-import { clamp, getTextWidth } from '@root/utils'
+import { clamp, filterList, getTextWidth } from '@root/utils'
 import { observe } from 'mobx'
 
 export type DanmakuProps = {
@@ -74,6 +74,54 @@ class DanmakuController {
       if (!barrage.disabled) {
         barrage.draw(videoCTime)
       }
+    }
+  }
+  // 绘制第一帧的弹幕，在时间变动时需要用的
+  drawInSeek() {
+    const offsetStartTime = 10
+
+    const videoCTime = this.player.webPlayerVideoEl.currentTime
+    const dansToDraw: Barrage[] = []
+    const rightDans: Barrage[] = []
+    for (const barrage of this.barrages) {
+      if (barrage.startTime > videoCTime) break
+      if (barrage.startTime > videoCTime - offsetStartTime) {
+        if (barrage.props.type === 'right') rightDans.push(barrage)
+        dansToDraw.push(barrage)
+      }
+    }
+    dansToDraw.forEach((b) => {
+      b.init(videoCTime)
+    })
+    rightDans.forEach((b) => {
+      b.disabled = false
+    })
+
+    // 这里只计算type:right的弹幕位置
+    const rightDanOccupyWidthMap: Record<number, number> = {}
+    for (const barrage of rightDans) {
+      const startX = videoRender.containerWidth - barrage.moveX,
+        occupyRight = startX + barrage.width
+      let toTunnel = 1
+      while (true) {
+        if (!rightDanOccupyWidthMap[toTunnel]) {
+          rightDanOccupyWidthMap[toTunnel] = occupyRight
+          break
+        }
+        if (rightDanOccupyWidthMap[toTunnel] < startX) {
+          rightDanOccupyWidthMap[toTunnel] = occupyRight
+          break
+        }
+        toTunnel++
+      }
+      if (toTunnel > this.maxTunnel) {
+        continue
+      }
+      barrage.tunnel = toTunnel
+      barrage.y =
+        (barrage.tunnel + 1) * configStore.fontSize +
+        barrage.tunnel * configStore.gap
+      barrage.draw(videoCTime)
     }
   }
 
@@ -200,10 +248,7 @@ export class Barrage {
       if (time) {
         const offsetTime = time - this.startTime
         // 大于5秒的再计算位置
-        if (offsetTime > 3) {
-          this.moveX =
-            offsetTime * this.player.withoutLimitAnimaFPS * this.speed
-        } else this.moveX = 0
+        this.moveX = offsetTime * this.player.withoutLimitAnimaFPS * this.speed
       } else {
         this.moveX = 0
       }
@@ -240,7 +285,7 @@ export class Barrage {
       return
     }
     if (!this.initd) {
-      this.init(time)
+      this.init()
     }
 
     switch (this.props.type) {

@@ -315,3 +315,17 @@ export function formatView(view: number): string {
   if (k >= 1) return k.toFixed(2) + 'k'
   return view + ''
 }
+
+/**过滤数组，callback里返回true的都放在[left,right]的left里，其余的在right */
+export function filterList<T>(
+  list: T[],
+  callback: (data: T) => boolean
+): [T[], T[]] {
+  let left: T[] = [],
+    right: T[] = []
+  list.forEach((l) => {
+    let v = callback(l)
+    v ? left.push(l) : right.push(l)
+  })
+  return [left, right]
+}

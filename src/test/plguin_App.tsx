@@ -59,15 +59,18 @@ const v2 = () => (
 window.dqParents = dqParents
 
 console.log('process.env.video2Url', process.env.video2Url)
-const dans = new Array(255).fill(1).map((_, i) => {
-  const time = Math.random() * 120
-  return {
-    color: '#fff',
-    text: `asdf ${formatTime(time)}`,
-    time,
-    type: 'right',
-  } as DanType
-})
+const dans = new Array(255)
+  .fill(1)
+  .map((_, i) => {
+    const time = Math.random() * 120
+    return {
+      color: '#fff',
+      text: `asdf ${formatTime(time)}`,
+      time,
+      type: 'right',
+    } as DanType
+  })
+  .sort((a, b) => a.time - b.time)
 
 const App: FC = (props) => {
   let [player, setPlayer] = useState<DocMiniPlayer>()
