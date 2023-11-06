@@ -294,6 +294,7 @@ const VideoPlayer = observer(
             break
           }
           case 'ArrowRight': {
+            if (getIsLive()) return
             if (speedModeTimer) return
             speedModeTimer = setTimeout(() => {
               isSpeedMode = true
@@ -746,6 +747,7 @@ const VideoPlayer = observer(
             // onMouseLeave={handleResetActionAreaShow}
           >
             {props.renderSideActionArea}
+            <div className="side-dragger"></div>
           </div>
         )}
 
