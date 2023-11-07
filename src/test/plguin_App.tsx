@@ -65,7 +65,7 @@ const dans = new Array(255)
     const time = Math.random() * 120
     return {
       color: '#fff',
-      text: `asdf ${formatTime(time)}`,
+      text: `asdfasdfasdfasdfasdfadfs ${formatTime(time)}`,
       time,
       type: 'right',
     } as DanType

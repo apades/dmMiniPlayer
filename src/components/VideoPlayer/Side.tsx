@@ -60,7 +60,6 @@ const VideoPlayerSide: FC<Props> = (props) => {
 
   return (
     <div className="side-outer-container">
-      {/* TODO 侧边栏提示 */}
       <div className="side-inner-container">
         {props.videoList.map((list, vi) => {
           const isCoverTitle = !!list.items?.[0]?.cover

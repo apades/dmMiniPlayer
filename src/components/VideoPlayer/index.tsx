@@ -23,8 +23,6 @@ import { checkJumpInBufferArea } from './utls'
 import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
 
-type BarEventsKey = 'onMouseMove' | 'onMouseOut' | 'onMouseEnter' | 'onClick'
-
 type EventBase = Omit<
   {
     [k in keyof React.DOMAttributes<HTMLVideoElement>]?: (
@@ -35,13 +33,6 @@ type EventBase = Omit<
 >
 
 export type Props = EventBase & {
-  barEvents?: {
-    [key in BarEventsKey]?: (
-      rect: DOMRect,
-      e: React.MouseEvent<HTMLDivElement, MouseEvent>
-    ) => void
-  }
-} & {
   webVideo?: HTMLVideoElement
   useWebVideo?: boolean
   keydownWindow?: Window
@@ -410,10 +401,10 @@ const VideoPlayer = observer(
       if (getIsLive()) return
       if (!canPlay) return
       if (isFirstPlay) setIsFirstPlay(false)
-      console.log('播放', playing, '能否暂停', canPause)
+      // console.log('播放', playing, '能否暂停', canPause)
       await wait(0)
       if ((playing || type === 'pause') && canPause && type !== 'play') {
-        console.log('pause')
+        // console.log('pause')
         videoRef.current.pause()
       } else {
         videoRef.current.classList.remove('can-pause')
@@ -481,18 +472,17 @@ const VideoPlayer = observer(
     // 挂载事件
     useEffect(() => {
       if (!videoRef.current) return
-      let eventsMap: React.DetailedHTMLProps<
+      const eventsMap: React.DetailedHTMLProps<
         React.VideoHTMLAttributes<HTMLVideoElement>,
         HTMLVideoElement
       > = {}
 
-      let eventBase: EventBase = {
-        onLoadedMetadata: (e) => {
-          //
-        },
+      const eventBase: EventBase = {
+        onLoadedMetadata: (e) => {},
+        onSeeked: () => {},
+        onSeeking: () => {},
         onPause: () => setPlaying(false),
         onPlay: (e) => {
-          console.log('onPlay')
           setPlaying(true)
           setPlayEnd(false)
           window.videoPlayers.play(index)
@@ -553,7 +543,7 @@ const VideoPlayer = observer(
       })
 
       const entries = Object.entries(eventsMap)
-      console.log('emap', entries, videoRef.current)
+      console.log('video事件监听', entries, videoRef.current)
       entries.forEach(([key, fn]) => {
         videoRef.current.addEventListener(key, fn)
       })

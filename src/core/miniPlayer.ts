@@ -79,10 +79,7 @@ export default class MiniPlayer {
           top: [],
         }
         this.danmakuController.barrages.forEach((b) => {
-          b.initd = false
-          b.disabled = false
-          b.tunnelOuted = false
-          b.clearAllObserve()
+          b.reset()
         })
       })
       videoEl.addEventListener('loadedmetadata', () => {
@@ -94,7 +91,6 @@ export default class MiniPlayer {
   clearEventListener() {}
 
   updateCanvasSize(option?: { width: number; height: number }) {
-    console.log('update', option)
     videoRender.updateSize(this.webPlayerVideoEl, option)
     this.canvas.width = videoRender.containerWidth
     this.canvas.height = videoRender.containerHeight
@@ -106,6 +102,7 @@ export default class MiniPlayer {
       this.animationFrameSignal = requestAnimationFrame(() =>
         this.canvasUpdate()
       )
+      this.on('seek', this.handleOnSeek)
       return true
     } catch (error) {
       console.error('启动startRenderAsCanvas错误', error)
@@ -115,6 +112,7 @@ export default class MiniPlayer {
 
   // 在video loading,pause时使用，减少性能消耗
   stopRenderAsCanvas() {
+    this.off('seek', this.handleOnSeek)
     cancelAnimationFrame(this.animationFrameSignal)
     this.animationFrameSignal = null
   }
@@ -163,7 +161,18 @@ export default class MiniPlayer {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
+  hasSeek = false
+  hasListen = false
+  private handleOnSeek = () => {
+    this.hasSeek = true
+    this.clearCanvas()
+    this.danmakuController.drawInSeek()
+  }
   renderDanmu() {
+    if (this.hasSeek) {
+      this.hasSeek = false
+      return
+    }
     this.danmakuController.draw()
   }
 

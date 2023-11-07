@@ -14,7 +14,6 @@ window.listSelector = listSelector
 const Side: FC = () => {
   return (
     <div className="side-outer-container">
-      {/* TODO 侧边栏提示 */}
       <div className="side-inner-container">
         <ul className="select-list">
           {new Array(10).fill(0).map((_, i) => {

@@ -83,11 +83,16 @@ class DanmakuController {
     const videoCTime = this.player.webPlayerVideoEl.currentTime
     const dansToDraw: Barrage[] = []
     const rightDans: Barrage[] = []
+    // 在这个now ~ now - 30s范围前面的弹幕全部disabled
+    // 现在把barrage.draw里的init没有传入time了，导致了seek后没有正确的moveX
+    const beforeOffsetTimeDans: Barrage[] = []
     for (const barrage of this.barrages) {
       if (barrage.startTime > videoCTime) break
       if (barrage.startTime > videoCTime - offsetStartTime) {
         if (barrage.props.type === 'right') rightDans.push(barrage)
         dansToDraw.push(barrage)
+      } else {
+        beforeOffsetTimeDans.push(barrage)
       }
     }
     dansToDraw.forEach((b) => {
@@ -96,13 +101,17 @@ class DanmakuController {
     rightDans.forEach((b) => {
       b.disabled = false
     })
+    beforeOffsetTimeDans.forEach((b) => {
+      b.disabled = true
+    })
 
+    this.tunnelsMap = { ...this.tunnelsMap, right: [] }
     // 这里只计算type:right的弹幕位置
     const rightDanOccupyWidthMap: Record<number, number> = {}
     for (const barrage of rightDans) {
       const startX = videoRender.containerWidth - barrage.moveX,
         occupyRight = startX + barrage.width
-      let toTunnel = 1
+      let toTunnel = 0
       while (true) {
         if (!rightDanOccupyWidthMap[toTunnel]) {
           rightDanOccupyWidthMap[toTunnel] = occupyRight
@@ -110,6 +119,10 @@ class DanmakuController {
         }
         if (rightDanOccupyWidthMap[toTunnel] < startX) {
           rightDanOccupyWidthMap[toTunnel] = occupyRight
+          // 这里是渲染时就在屏幕外，就站一个tunnel通道
+          if (occupyRight >= videoRender.containerWidth) {
+            this.tunnelsMap.right[toTunnel] = false
+          }
           break
         }
         toTunnel++
@@ -132,7 +145,7 @@ class DanmakuController {
   }
   /**
    * 控制Y值
-   * 这里绘制Barrage的y值需要在这里控制，tunnel采用boolean[]表示占位和y位，根据width + x计算是否还在tunnel占位，如果都在占位，就push一个新的tunnel值
+   * 这里绘制Barrage的y值需要在这里控制，tunnel采用false和boolean[]表示占位和y位，根据width + x计算是否还在tunnel占位，如果都在占位，就push一个新的tunnel值
    */
   getTunnel(type: DanMoveType) {
     let find = this.tunnelsMap[type].findIndex((v) => v)
@@ -160,24 +173,22 @@ class DanmakuController {
 }
 
 export class Barrage {
-  player: MiniPlayer
-  props: DanType
-
   /**渲染的x,y */
   x = 0
   y = 0
+
+  startTime = 0
+  endTime = 0
+
+  text = ''
 
   /**移动了的x */
   moveX = 0
 
   width = 0
 
-  startTime = 0
-  endTime = 0
-
-  text = ''
   color = 'white'
-  timeLeft = 5000
+  // timeLeft = 5000
 
   disabled = false
   initd = false
@@ -187,6 +198,9 @@ export class Barrage {
 
   speed = 20
   hasObserve = false
+
+  player: MiniPlayer
+  props: DanType
 
   observer: any[] = []
   constructor(props: { player: MiniPlayer; config: DanType }) {
@@ -228,7 +242,7 @@ export class Barrage {
     // 求得文字内容宽度
     this.width = getTextWidth(props.text, {
       fontSize: fontSize + 'px',
-      fontFamily: '"microsoft yahei", sans-serif',
+      fontFamily: configStore.fontFamily,
     })
 
     let canvas = this.player.canvas
@@ -239,15 +253,12 @@ export class Barrage {
       // 这里observe config的width，然后改top type弹幕的位置，不然resize pip窗口会出现top弹幕错位
 
       _observer(videoRender, 'containerWidth', () => {
-        console.log('change', canvas.width)
         this.x = (canvas.width - this.width) / 2
       })
     } else {
       this.x = canvas.width
-      // TODO 跳时间进来时，偶然出现x会重叠，需要调整y值
       if (time) {
         const offsetTime = time - this.startTime
-        // 大于5秒的再计算位置
         this.moveX = offsetTime * this.player.withoutLimitAnimaFPS * this.speed
       } else {
         this.moveX = 0
@@ -275,6 +286,17 @@ export class Barrage {
     this.hasObserve = false
   }
 
+  reset() {
+    this.initd = false
+    this.disabled = false
+    this.tunnelOuted = false
+    this.moveX = 0
+    this.x = 0
+    this.y = 0
+    this.tunnel = 0
+    this.clearAllObserve()
+  }
+
   // 根据此时x位置绘制文本
   draw(time: number) {
     if (this.disabled) return this.clearAllObserve()
@@ -296,7 +318,6 @@ export class Barrage {
         // 如果弹幕全部进入canvas，释放占位tunnel
         if (this.moveX >= this.width && !this.tunnelOuted) {
           this.tunnelOuted = true
-          // console.log('tunnelOuted')
           this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
         }
         if (this.x + this.width <= 0) {
@@ -308,7 +329,6 @@ export class Barrage {
       case 'top': {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
           this.tunnelOuted = true
-          // console.log('tunnelOuted')
           this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
         }
         break

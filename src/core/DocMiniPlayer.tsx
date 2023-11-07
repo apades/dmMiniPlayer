@@ -110,7 +110,6 @@ export default class DocMiniPlayer extends MiniPlayer {
     pipWindow.addEventListener(
       'resize',
       throttle(() => {
-        console.log('resize', pipWindow.innerWidth)
         this.updateCanvasSize({
           height: pipWindow.innerHeight,
           width: pipWindow.innerWidth,
@@ -133,6 +132,10 @@ export default class DocMiniPlayer extends MiniPlayer {
           webVideo={this.webPlayerVideoEl}
           keydownWindow={pipWindow}
           renderSideActionArea={this.renderSideActionArea()}
+          // emit事件
+          onSeeked={() => this.emit('seek')}
+          onPlay={() => this.emit('play')}
+          onPause={() => this.emit('pause')}
         />
       )
     }
@@ -154,7 +157,6 @@ export default class DocMiniPlayer extends MiniPlayer {
     pipWindow.addEventListener(
       'resize',
       throttle(() => {
-        console.log('resize', pipWindow.innerWidth)
         this.updateCanvasSize({
           height: pipWindow.innerHeight,
           width: pipWindow.innerWidth,
@@ -191,6 +193,10 @@ export default class DocMiniPlayer extends MiniPlayer {
           vpRef = ref
           window.vpRef = vpRef
         }}
+        // emit事件
+        onSeeked={() => this.emit('seek')}
+        onPlay={() => this.emit('play')}
+        onPause={() => this.emit('pause')}
       />
     )
     this.updateWebVideoPlayerEl = (videoEl) => {
@@ -217,11 +223,9 @@ export default class DocMiniPlayer extends MiniPlayer {
 
       unobserveVideoElChange()
     })
-    console.log('this.videoPlayer2', this.videoPlayer)
     pipWindow.addEventListener(
       'resize',
       throttle(() => {
-        console.log('resize', pipWindow.innerWidth)
         this.updateCanvasSize({
           height: pipWindow.innerHeight,
           width: pipWindow.innerWidth,
@@ -262,6 +266,10 @@ export default class DocMiniPlayer extends MiniPlayer {
           vpRef = ref
           window.vpRef = vpRef
         }}
+        // emit事件
+        onSeeked={() => this.emit('seek')}
+        onPlay={() => this.emit('play')}
+        onPause={() => this.emit('pause')}
       />
     )
     this.updateWebVideoPlayerEl = (videoEl) => {
@@ -293,7 +301,6 @@ export default class DocMiniPlayer extends MiniPlayer {
     pipWindow.addEventListener(
       'resize',
       throttle(() => {
-        console.log('resize', pipWindow.innerWidth)
         this.updateCanvasSize({
           height: pipWindow.innerHeight,
           width: pipWindow.innerWidth,
@@ -336,6 +343,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     if (force || (configStore.renderFPS != 0 ? this.checkFPSLimit() : true)) {
       if (force || !this.isPause || !this.hansDraw) {
         this.hansDraw = true
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.detectFPS()
         this.renderDanmu()
         if (configStore.performanceInfo) {
@@ -354,14 +362,6 @@ export default class DocMiniPlayer extends MiniPlayer {
 
     this.inUpdateFrame = false
     this.animationFrameSignal = requestAnimationFrame(() => this.canvasUpdate())
-  }
-
-  renderDanmu() {
-    if (configStore.docPIP_renderType == DocPIPRenderType.reactVP_canvasCs)
-      return super.renderDanmu()
-
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.danmakuController.draw()
   }
 
   appendCanvasToBody() {

@@ -9,7 +9,6 @@ import { onceCall } from '@root/utils'
 export const config: PlasmoCSConfig = {
   matches: ['<all_urls>'],
   run_at: 'document_end',
-  // TODO CC有多个iframe，不知道对别的有没有影响
   // all_frames: true,
 }
 

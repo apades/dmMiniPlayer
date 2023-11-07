@@ -24,7 +24,6 @@ export default class DocMiniPlayer_OVP_Cs extends BaseDocMiniPlayer {
     pipWindow.addEventListener(
       'resize',
       throttle(() => {
-        console.log('resize', pipWindow.innerWidth)
         this.updateCanvasSize()
       }, 500)
     )

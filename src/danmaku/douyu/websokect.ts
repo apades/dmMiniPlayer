@@ -10,7 +10,7 @@ class Ex_WebSocket_UnLogin {
   // 调用方法：
   // 连接：let a = new Ex_WebSocket_UnLogin("房间号", 消息回调函数);
   // 关闭连接: a.WebSocket_Close(); a = null; 记得null掉变量再重新连接
-  // 消息回调函数建议用箭头函数，示例：(msg) => {// TODO}
+  // 消息回调函数建议用箭头函数，示例：(msg) => {}
   constructor(
     rid: string | number,
     msgHandler: (msg: string) => void,
