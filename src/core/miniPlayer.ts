@@ -161,15 +161,15 @@ export default class MiniPlayer {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  hasSeek = false
+  hasSeek = true
   hasListen = false
   private handleOnSeek = () => {
     this.hasSeek = true
-    this.clearCanvas()
-    this.danmakuController.drawInSeek()
   }
   renderDanmu() {
+    if (!this.danmakuController.barrages.length) return
     if (this.hasSeek) {
+      this.danmakuController.drawInSeek()
       this.hasSeek = false
       return
     }

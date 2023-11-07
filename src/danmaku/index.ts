@@ -78,6 +78,7 @@ class DanmakuController {
   }
   // 绘制第一帧的弹幕，在时间变动时需要用的
   drawInSeek() {
+    console.log('drawInSeek')
     const offsetStartTime = 10
 
     const videoCTime = this.player.webPlayerVideoEl.currentTime
@@ -119,16 +120,17 @@ class DanmakuController {
         }
         if (rightDanOccupyWidthMap[toTunnel] < startX) {
           rightDanOccupyWidthMap[toTunnel] = occupyRight
-          // 这里是渲染时就在屏幕外，就站一个tunnel通道
-          if (occupyRight >= videoRender.containerWidth) {
-            this.tunnelsMap.right[toTunnel] = false
-          }
           break
         }
         toTunnel++
       }
+
       if (toTunnel > this.maxTunnel) {
         continue
+      }
+      // 这里是渲染时就在屏幕外，就站一个tunnel通道
+      if (occupyRight >= videoRender.containerWidth) {
+        this.tunnelsMap.right[toTunnel] = false
       }
       barrage.tunnel = toTunnel
       barrage.y =
@@ -259,7 +261,11 @@ export class Barrage {
       this.x = canvas.width
       if (time) {
         const offsetTime = time - this.startTime
-        this.moveX = offsetTime * this.player.withoutLimitAnimaFPS * this.speed
+        this.moveX =
+          offsetTime *
+          (configStore.renderFPS || this.player.withoutLimitAnimaFPS || 60) *
+          this.speed
+        console.log('this.moveX', this.moveX)
       } else {
         this.moveX = 0
       }
