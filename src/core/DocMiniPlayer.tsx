@@ -18,6 +18,7 @@ import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { type ReactElement } from 'react'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
+import { getPIPWindowConfig, setPIPWindowConfig } from '@root/utils/storage'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
@@ -44,9 +45,13 @@ export default class DocMiniPlayer extends MiniPlayer {
   }
 
   async startPIPPlay() {
-    let pipWindow = await window.documentPictureInPicture.requestWindow({
-      width: this.canvas.width,
-      height: this.canvas.height,
+    const pipWindowConfig = await getPIPWindowConfig()
+    const width = pipWindowConfig?.width ?? this.canvas.width,
+      height = pipWindowConfig?.height ?? this.canvas.height
+
+    const pipWindow = await window.documentPictureInPicture.requestWindow({
+      width,
+      height,
     })
     this.pipWindow = pipWindow
 
@@ -70,8 +75,22 @@ export default class DocMiniPlayer extends MiniPlayer {
       }
     }
 
+    pipWindow.addEventListener(
+      'resize',
+      throttle(() => {
+        this.updateCanvasSize({
+          height: pipWindow.innerHeight,
+          width: pipWindow.innerWidth,
+        })
+      }, 500)
+    )
+
     this.on('PIPClose', () => {
       loadLock.reWaiting()
+      setPIPWindowConfig({
+        width: pipWindow.outerWidth,
+        height: pipWindow.outerHeight,
+      })
     })
   }
 
@@ -107,15 +126,6 @@ export default class DocMiniPlayer extends MiniPlayer {
       this.videoPlayer = null
       //   this.pipWindow = null
     })
-    pipWindow.addEventListener(
-      'resize',
-      throttle(() => {
-        this.updateCanvasSize({
-          height: pipWindow.innerHeight,
-          width: pipWindow.innerWidth,
-        })
-      }, 500)
-    )
   }
 
   /**使用react的videoPlayer，目前可以看到视频帧率明显不高，比canvas还低 */
@@ -154,15 +164,6 @@ export default class DocMiniPlayer extends MiniPlayer {
       this.videoPlayer = null
       //   this.pipWindow = null
     })
-    pipWindow.addEventListener(
-      'resize',
-      throttle(() => {
-        this.updateCanvasSize({
-          height: pipWindow.innerHeight,
-          width: pipWindow.innerWidth,
-        })
-      }, 500)
-    )
   }
 
   /**使用canvas画的videoStream */
@@ -223,15 +224,6 @@ export default class DocMiniPlayer extends MiniPlayer {
 
       unobserveVideoElChange()
     })
-    pipWindow.addEventListener(
-      'resize',
-      throttle(() => {
-        this.updateCanvasSize({
-          height: pipWindow.innerHeight,
-          width: pipWindow.innerWidth,
-        })
-      }, 500)
-    )
   }
 
   /**把web的video插到pip中 */
@@ -298,15 +290,6 @@ export default class DocMiniPlayer extends MiniPlayer {
       restoreWebVideoPlayerElState()
       unobserveVideoElChange()
     })
-    pipWindow.addEventListener(
-      'resize',
-      throttle(() => {
-        this.updateCanvasSize({
-          height: pipWindow.innerHeight,
-          width: pipWindow.innerWidth,
-        })
-      }, 500)
-    )
   }
 
   /**return的函数运行是还原videoEl位置和状态 */
