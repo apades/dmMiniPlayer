@@ -75,6 +75,10 @@ export default class DocMiniPlayer extends MiniPlayer {
       }
     }
 
+    this.updateCanvasSize({
+      height: pipWindow.innerHeight,
+      width: pipWindow.innerWidth,
+    })
     pipWindow.addEventListener(
       'resize',
       throttle(() => {
