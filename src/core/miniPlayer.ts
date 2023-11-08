@@ -43,6 +43,7 @@ export default class MiniPlayer {
   isPause = true
   isLive = false
 
+  private fpsInterval = 0
   constructor(props: MiniPlayerProps) {
     let { danmu = {}, ...otherProps } = props
 
@@ -56,6 +57,11 @@ export default class MiniPlayer {
 
     this.bindVideoElEvents()
     this.updateCanvasSize()
+
+    this.fpsInterval = 1000 / configStore.renderFPS
+    observe(configStore, 'renderFPS', () => {
+      this.fpsInterval = 1000 / configStore.renderFPS
+    })
   }
 
   bindVideoElEvents() {
@@ -215,7 +221,7 @@ export default class MiniPlayer {
   checkFPSLimit() {
     const now = Date.now()
     const offset = now - this.lastUpdateTime
-    if (offset > 1000 / configStore.renderFPS) {
+    if (offset > this.fpsInterval) {
       this.performanceInfoLimit(() => {
         this.animaFPS = ~~(1000 / offset)
       })
@@ -223,7 +229,7 @@ export default class MiniPlayer {
       if (configStore.FPS_limitOffsetAccurate) {
         this.lastUpdateTime = now
       } else {
-        this.lastUpdateTime = now - (offset % configStore.renderFPS) /* now */
+        this.lastUpdateTime = now - (offset % this.fpsInterval) /* now */
       }
       return true
     }
