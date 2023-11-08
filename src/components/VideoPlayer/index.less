@@ -53,6 +53,29 @@
         cursor: pointer;
         backdrop-filter: blur(2.71828px);
         transition: all 0.3s;
+        img{
+          width: var(--btn-icon-size);
+        }        
+        .mobile({
+          .wh(60px);
+          img{
+            width: auto;
+          }
+        });
+
+        @keyframes rotate {
+          from {
+            transform: rotate(0);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        &.v-loading {
+          img {
+            animation: rotate infinite 3s linear;
+          }
+        }
       }
       &.speed-mode-noti{
         top: 20px;
@@ -376,6 +399,17 @@
   .bottom-played-bar{
     position: absolute;
     bottom: 0;
+  }
+
+  .anticon-spin{
+    @keyframes loadingCircle {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    display: inline-block;
+    animation: loadingCircle 1s infinite linear;
   }
 
   .live-dot{
