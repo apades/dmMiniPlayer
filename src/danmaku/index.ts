@@ -84,6 +84,7 @@ class DanmakuController {
     const videoCTime = this.player.webPlayerVideoEl.currentTime
     const dansToDraw: Barrage[] = []
     const rightDans: Barrage[] = []
+    const topDans: Barrage[] = []
     // 在这个now ~ now - 30s范围前面的弹幕全部disabled
     // 现在把barrage.draw里的init没有传入time了，导致了seek后没有正确的moveX
     const beforeOffsetTimeDans: Barrage[] = []
@@ -91,6 +92,7 @@ class DanmakuController {
       if (barrage.startTime > videoCTime) break
       if (barrage.startTime > videoCTime - offsetStartTime) {
         if (barrage.props.type === 'right') rightDans.push(barrage)
+        if (barrage.props.type === 'top') topDans.push(barrage)
         dansToDraw.push(barrage)
       } else {
         beforeOffsetTimeDans.push(barrage)
@@ -106,7 +108,7 @@ class DanmakuController {
       b.disabled = true
     })
 
-    this.tunnelsMap = { ...this.tunnelsMap, right: [] }
+    this.initTunnelMap()
     // 这里只计算type:right的弹幕位置
     const rightDanOccupyWidthMap: Record<number, number> = {}
     for (const barrage of rightDans) {
@@ -138,6 +140,27 @@ class DanmakuController {
         barrage.tunnel * configStore.gap
       barrage.draw(videoCTime)
     }
+    let topTunnel = 0
+    const top: boolean[] = []
+    // FIXME 这些渲染的top会和接下来渲染的重叠
+    for (const barrage of topDans) {
+      if (
+        barrage.endTime &&
+        (videoCTime < barrage.startTime || videoCTime > barrage.endTime)
+      ) {
+        barrage.disabled = true
+        continue
+      }
+      if (barrage.disabled) continue
+      top[topTunnel] = true
+      barrage.tunnel = topTunnel
+      barrage.y =
+        (barrage.tunnel + 1) * configStore.fontSize +
+        barrage.tunnel * configStore.gap
+      barrage.draw(videoCTime)
+      topTunnel++
+    }
+    this.tunnelsMap = { ...this.tunnelsMap, top }
   }
 
   tunnelsMap: { [key in DanMoveType]: boolean[] } = {
@@ -171,6 +194,13 @@ class DanmakuController {
   }
   popTunnel(type: DanMoveType, tunnel: number) {
     this.tunnelsMap[type][tunnel] = true
+  }
+  initTunnelMap() {
+    this.tunnelsMap = {
+      bottom: [],
+      right: [],
+      top: [],
+    }
   }
 }
 
@@ -265,7 +295,6 @@ export class Barrage {
           offsetTime *
           (configStore.renderFPS || this.player.withoutLimitAnimaFPS || 60) *
           this.speed
-        console.log('this.moveX', this.moveX)
       } else {
         this.moveX = 0
       }

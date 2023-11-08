@@ -67,7 +67,7 @@ const dans = new Array(255)
       color: '#fff',
       text: `asdfasdfasdfasdfasdfadfs ${formatTime(time)}`,
       time,
-      type: 'right',
+      type: 'top',
     } as DanType
   })
   .sort((a, b) => a.time - b.time)
