@@ -92,8 +92,9 @@ export default class DocMiniPlayer extends MiniPlayer {
     this.on('PIPClose', () => {
       loadLock.reWaiting()
       setPIPWindowConfig({
-        width: pipWindow.outerWidth,
-        height: pipWindow.outerHeight,
+        width: pipWindow.outerWidth + configStore.saveWidthOnDocPIPCloseOffset,
+        height:
+          pipWindow.outerHeight + configStore.saveHeightOnDocPIPCloseOffset,
       })
     })
   }

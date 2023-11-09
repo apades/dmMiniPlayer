@@ -166,6 +166,18 @@ export const baseConfigMap = {
     notRecommended: true,
     defaultValue: false,
   }),
+  saveHeightOnDocPIPCloseOffset: config({
+    defaultValue: 8,
+    label: '关闭docPIP时保存高度偏移',
+    desc: 'chrome上很奇怪的用指定height打开docPIP会少8px，如果还偏移了可以调整',
+    notRecommended: true,
+  }),
+  saveWidthOnDocPIPCloseOffset: config({
+    defaultValue: 16,
+    label: '关闭docPIP时保存宽度偏移',
+    desc: '和 高度偏移一样',
+    notRecommended: true,
+  }),
   ...docPIPConfig,
 }
 
