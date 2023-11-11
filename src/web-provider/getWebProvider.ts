@@ -8,6 +8,7 @@ import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
 import WebProvider from './webProvider'
+import TwitchProvider from './twitch'
 
 const providerList = [
   {
@@ -41,6 +42,10 @@ const providerList = [
   {
     reg: /https:\/\/ani\.gamer\.com\.tw\/.*/,
     provider: DonghuafengProvider,
+  },
+  {
+    reg: /https:\/\/www\.twitch\.tv\/.*/,
+    provider: TwitchProvider,
   },
   {
     reg: /.*/,

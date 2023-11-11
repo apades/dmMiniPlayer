@@ -1,7 +1,5 @@
 import { dq1 } from '@root/utils'
-import WebProvider from './webProvider'
-import { sendMessage } from '@root/inject/contentSender'
-import { windowsOnceCall } from '@root/utils/decorator'
+import HtmlDanmakuProvider from './htmlDanmakuProvider'
 
 /**
  * ? 还需要解决页面最小化时，视频开始掉帧问题(还需要观测，下面的视窗监听在另一台电脑没有复现)
@@ -36,60 +34,22 @@ import { windowsOnceCall } from '@root/utils/decorator'
 
   content是弹幕内容
  */
-export default class DouyinProvider extends WebProvider {
-  protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ) {
-    const miniPlayer = await super.initMiniPlayer(options)
-
-    this.miniPlayer.on('PIPClose', () => {
-      this.stopObserveHtmlDanmaku()
-      sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
-      sendMessage('event-hacker:enable', { qs: 'document', event: 'pagehide' })
-      sendMessage('event-hacker:enable', {
-        qs: 'window',
-        event: 'visibilitychange',
-      })
-      sendMessage('event-hacker:enable', {
-        qs: 'document',
-        event: 'visibilitychange',
-      })
-    })
-    this.injectVisibilityState()
-    sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
-    sendMessage('event-hacker:disable', { qs: 'document', event: 'pagehide' })
-    sendMessage('event-hacker:disable', {
-      qs: 'window',
-      event: 'visibilitychange',
-    })
-    sendMessage('event-hacker:disable', {
-      qs: 'document',
-      event: 'visibilitychange',
-    })
-    this.startObserveHtmlDanmaku({
+export default class DouyinProvider extends HtmlDanmakuProvider {
+  getObserveHtmlDanmakuConfig(): Parameters<
+    this['startObserveHtmlDanmaku']
+  >[0] {
+    return {
       container: dq1('.webcast-chatroom___items>div:first-child'),
       child: '.webcast-chatroom___item',
       text: '.webcast-chatroom___content-with-emoji-text',
-    })
-
-    miniPlayer.initBarrageSender({
+    }
+  }
+  getBarrageSenderConfig(): Parameters<
+    this['miniPlayer']['initBarrageSender']
+  >[0] {
+    return {
       webTextInput: dq1('.webcast-chatroom___input-container textarea'),
       webSendButton: dq1('.webcast-chatroom___send-btn'),
-    })
-
-    return miniPlayer
-  }
-
-  @windowsOnceCall('visibilityState')
-  injectVisibilityState() {
-    // 抖音好像是通过interval一直获取document.visibilityState来判断是否要继续在弹幕区里加载弹幕
-    function fn() {
-      Object.defineProperty(document, 'visibilityState', {
-        get() {
-          return 'visible'
-        },
-      })
     }
-    sendMessage('run-code', { function: fn.toString() })
   }
 }

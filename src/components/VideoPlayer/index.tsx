@@ -22,6 +22,7 @@ import { VideoPlayerLoadEvent } from './events'
 import { checkJumpInBufferArea } from './utls'
 import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
+import { checkIsLive } from '@root/utils/video'
 
 type EventBase = Omit<
   {
@@ -119,7 +120,7 @@ const VideoPlayer = observer(
       ) => void)[]
     }>({})
 
-    const getIsLive = () => videoRef.current.duration == Infinity
+    const getIsLive = () => checkIsLive(videoRef.current)
 
     useOnce(() => {
       window.dispatchEvent(VideoPlayerLoadEvent)

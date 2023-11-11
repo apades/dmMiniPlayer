@@ -8,6 +8,7 @@ import videoRender from '@root/store/videoRender'
 import { addEventListener, createElement, throttle } from '@root/utils'
 import { observe } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
+import { checkIsLive } from '@root/utils/video'
 
 export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
@@ -294,7 +295,7 @@ export default class MiniPlayer {
       !(
         configStore.videoProgress_show &&
         this.webPlayerVideoEl.duration &&
-        this.webPlayerVideoEl.duration != Infinity
+        checkIsLive(this.webPlayerVideoEl)
       )
     )
       return
@@ -355,7 +356,7 @@ export default class MiniPlayer {
 
       if (configStore.pauseInClose_video) {
         const video = this.webPlayerVideoEl
-        const isLive = video.duration == Infinity
+        const isLive = checkIsLive(video)
         if (configStore.pauseInClose_live || !isLive) {
           this.webPlayerVideoEl.pause()
         }
