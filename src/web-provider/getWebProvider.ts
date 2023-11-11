@@ -4,6 +4,7 @@ import BilibiliVideoProvider from './bilibili/video'
 import CCLiveProvider from './cc'
 import CommonProvider from './common'
 import DdrkProvider from './ddrk'
+import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
 import WebProvider from './webProvider'
@@ -32,6 +33,10 @@ const providerList = [
   {
     reg: /https:\/\/ddys\.(art|pro)\/.*/,
     provider: DdrkProvider,
+  },
+  {
+    reg: /https:\/\/live\.douyin\.com\/.*/,
+    provider: DouyinProvider,
   },
   {
     reg: /https:\/\/ani\.gamer\.com\.tw\/.*/,

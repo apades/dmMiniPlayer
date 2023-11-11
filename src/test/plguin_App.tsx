@@ -1,17 +1,15 @@
+import '@apad/setting-panel/lib/index.css'
 import DocMiniPlayer from '@root/core/DocMiniPlayer'
-import MiniPlayer from '@root/core/miniPlayer'
+import type { DanType } from '@root/danmaku'
 import { useOnce } from '@root/hook'
 import configStore, { openSettingPanel } from '@root/store/config'
-import '@apad/setting-panel/lib/index.css'
-import { dq, dq1, formatTime, wait } from '@root/utils'
-import { useState, type FC, useRef } from 'react'
-import AsyncLock from '@root/utils/AsyncLock'
-import { injectFunction } from '@root/utils/injectFunction'
-import { dqParents } from '@root/utils/dom'
-import { observeVideoEl } from '@root/utils/observeVideoEl'
-import type { DanType } from '@root/danmaku'
-import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
+import { createElement, dq1, formatTime } from '@root/utils'
+import AsyncLock from '@root/utils/AsyncLock'
+import { dqParents } from '@root/utils/dom'
+import { injectFunction } from '@root/utils/injectFunction'
+import { runInAction } from 'mobx'
+import { useRef, useState, type FC } from 'react'
 
 const trustLock = new AsyncLock()
 window.addEventListener('click', () => trustLock.ok())
@@ -104,10 +102,38 @@ const App: FC = (props) => {
       }
     )
 
-    observeVideoEl(dq1('video'), (videoEl) => {
-      console.log('更换了videoEl', videoEl)
-      window.player.updateWebVideoPlayerEl(videoEl)
+    // observeVideoEl(dq1('video'), (videoEl) => {
+    //   console.log('更换了videoEl', videoEl)
+    //   window.player.updateWebVideoPlayerEl(videoEl)
+    // })
+
+    // 测试监听
+    // 目前得出的是有其他应用窗口挡住当前tab就会setTimeout拉长
+    const p = dq1('.main')
+    const childObserve = new MutationObserver((list) => {
+      const nodes = list[0].addedNodes
+      for (const node of nodes) {
+        console.log('add Node', node.textContent)
+      }
     })
+    childObserve.observe(p, { childList: true })
+    let i = 0
+    const run = () => {
+      p.appendChild(createElement('div', { textContent: `添加的${i++}` }))
+      setTimeout(run, 100)
+    }
+    run()
+
+    // const observer = new IntersectionObserver((entries) => {
+    //   console.log(
+    //     'entries isVisible',
+    //     entries[0].isVisible,
+    //     'isIntersecting',
+    //     entries[0].isIntersecting
+    //   )
+    // })
+    // observer.observe(dq1('.setting'))
+
     // let observer = new MutationObserver((list) => {
     //   console.log('list', list)
     // })
@@ -125,7 +151,7 @@ const App: FC = (props) => {
       {isV2 ? v2() : v1()}
       {/* {v1()}
       {v2()} */}
-      <div>
+      <div className="setting">
         <button onClick={() => player.openPlayer()}>open</button>
         <button onClick={() => openSettingPanel()}>setting</button>
         <button
@@ -153,6 +179,9 @@ const App: FC = (props) => {
           toggle
         </button>
       </div>
+
+      {/* {new Array(100).fill(1).map((_,i)=><div>)} */}
+      {/* <div style={{ height: 1000000 }}></div> */}
     </div>
   )
 }
