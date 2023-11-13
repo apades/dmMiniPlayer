@@ -25,6 +25,10 @@ export default class CCLiveProvider extends WebProvider {
       this.stopObserveWs()
     })
     this.startObserverWs()
+    miniPlayer.initBarrageSender({
+      webTextInput: dq1('.chat-input'),
+      webSendButton: dq1('.send-msg'),
+    })
 
     return miniPlayer
   }
