@@ -33,6 +33,7 @@ const App = () => {
   const ref = useRef<HTMLDivElement>()
   const videoRef = useRef<HTMLVideoElement>(dq1('.video'))
   let [input, setInput] = useState('')
+  const [editInput, setEditInput] = useState('edit')
 
   useOnce(() => {
     const sender = new BarrageSender({
@@ -40,6 +41,13 @@ const App = () => {
       webSendButton: dq1('.btn1'),
       webTextInput: dq1('.input1'),
     })
+
+    const sender2 = new BarrageSender({
+      textInput: dq1('.input-o2'),
+      webSendButton: dq1('.btn2'),
+      webTextInput: dq1('.input2'),
+    })
+
     runInAction(() => {
       vpConfig.canSendBarrage = true
       vpConfig.showBarrage = true
@@ -47,6 +55,7 @@ const App = () => {
     })
 
     window.sender = sender
+    window.sender2 = sender2
     console.log('ref.current')
   })
 
@@ -61,27 +70,54 @@ const App = () => {
         />
       </div>
       <button onClick={() => openSettingPanel()}>open setting</button>
-      <input className="input-o" />
-      <Input
-        className="input1"
-        onChange={(e) => {
-          console.log('change')
-          let val = e.target.value
-          if (val.length > 3) val = val.slice(0, 3)
-          setInput(val)
-        }}
-        value={input}
-        maxLength={3}
-        // onInput={(e) => setInput(e.target.value)}
-      />
-      <button
-        className="btn1"
-        onClick={() => {
-          console.log(input)
-        }}
-      >
-        test
-      </button>
+      <div>
+        <p>input 测试</p>
+        <input className="input-o" />
+        <Input
+          className="input1"
+          onChange={(e) => {
+            console.log('change')
+            let val = e.target.value
+            if (val.length > 3) val = val.slice(0, 3)
+            setInput(val)
+          }}
+          value={input}
+          maxLength={3}
+          // onInput={(e) => setInput(e.target.value)}
+        />
+        <button
+          className="btn1"
+          onClick={() => {
+            console.log(input)
+          }}
+        >
+          test
+        </button>
+      </div>
+      <div>
+        <p>contentEditable 测试</p>
+        <input className="input-o2" />
+        <div
+          contentEditable
+          className="input2"
+          onInput={(e) => {
+            let val = (e.target as HTMLDivElement).textContent || ''
+            console.log('change', val)
+            // if (val.length > 3) val = val.slice(0, 3)
+            setEditInput(val)
+          }}
+        >
+          edit
+        </div>
+        <button
+          className="btn2"
+          onClick={() => {
+            console.log(editInput)
+          }}
+        >
+          test
+        </button>
+      </div>
 
       <div>
         <ul className="select-list">

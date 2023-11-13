@@ -9,6 +9,7 @@ import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
 import WebProvider from './webProvider'
 import TwitchProvider from './twitch'
+import YoutubeProvider from './youtube'
 
 const providerList = [
   {
@@ -46,6 +47,10 @@ const providerList = [
   {
     reg: /https:\/\/www\.twitch\.tv\/.*/,
     provider: TwitchProvider,
+  },
+  {
+    reg: /https:\/\/www\.youtube\.com\/.*/,
+    provider: YoutubeProvider,
   },
   {
     reg: /.*/,
