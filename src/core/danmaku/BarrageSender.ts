@@ -10,12 +10,20 @@ export default class BarrageSender implements Props {
   textInput: HTMLInputElement
   webTextInput: HTMLTextAreaElement | HTMLInputElement
   webSendButton: HTMLElement
+  isHtmlInputMode = false
 
   constructor(props: Props) {
     Object.assign(this, props)
-    this.textInput.value = this.webTextInput.value
+    this.isHtmlInputMode = this.webTextInput?.contentEditable == 'true'
+    this.textInput.value = this.webTextValue
 
     this.onInput()
+  }
+
+  get webTextValue() {
+    return this.isHtmlInputMode
+      ? this.webTextInput.textContent
+      : this.webTextInput.value
   }
 
   protected onInput() {
@@ -29,14 +37,14 @@ export default class BarrageSender implements Props {
       this.setWebTextInput(val)
       if (!(e as any).isComposing) {
         this.onWebTextInputGetEvents().then(() => {
-          this.textInput.value = this.webTextInput.value
+          this.textInput.value = this.webTextValue
         })
       }
       this.triggerInputEvent()
     })
     this.textInput.addEventListener('compositionend', (e) => {
       this.onWebTextInputGetEvents().then(() => {
-        this.textInput.value = this.webTextInput.value
+        this.textInput.value = this.webTextValue
       })
     })
   }
@@ -78,6 +86,10 @@ export default class BarrageSender implements Props {
 
   setWebTextInput(value: string) {
     const element = this.webTextInput
+    if (this.isHtmlInputMode) {
+      element.textContent = value
+      return
+    }
     try {
       // react 的onChange特有的修改setter
       const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set
