@@ -2,12 +2,10 @@ import { sendToBackground } from '@plasmohq/messaging'
 import { listen } from '@plasmohq/messaging/message'
 import { getMiniPlayer } from '@root/core'
 import VideoChanger from '@root/core/VideoChanger'
-import type BarrageClient from '@root/core/danmaku/BarrageClient'
 import MiniPlayer from '@root/core/miniPlayer'
-import { Barrage } from '@root/danmaku'
 import configStore from '@root/store/config'
 import vpConfig from '@root/store/vpConfig'
-import { dq, dq1 } from '@root/utils'
+import { dq } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
 import type { OrPromise } from '@root/utils/typeUtils'
 import { runInAction } from 'mobx'
@@ -130,50 +128,5 @@ export default abstract class WebProvider {
         }
       }
     })
-  }
-
-  htmlDanmakuObserver: MutationObserver
-  /**监听web的弹幕，这个是下策方法 */
-  startObserveHtmlDanmaku(props: {
-    container: HTMLElement
-    child: string
-    text: string
-    isDanmu?: (child: HTMLElement) => boolean
-  }) {
-    this.htmlDanmakuObserver = new MutationObserver((list) => {
-      const nodes = list?.[0].addedNodes
-      console.log('nodes', nodes)
-      if (!nodes)
-        return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
-
-      nodes.forEach((node: HTMLElement) => {
-        const isDanmuChild = node.matches(props.child)
-        if (!isDanmuChild) return
-        const isDanmu = props?.isDanmu?.(node) ?? true
-        if (!isDanmu) return
-        const text = dq1(props.text, node)?.textContent
-        console.log('text', text)
-        if (!text) return
-
-        this.miniPlayer.danmakuController.barrages.push(
-          new Barrage({
-            player: this.miniPlayer,
-            config: {
-              color: '#fff',
-              text,
-              time: this.miniPlayer.webPlayerVideoEl.currentTime,
-              type: 'right',
-            },
-          })
-        )
-      })
-    })
-    this.htmlDanmakuObserver.observe(props.container, {
-      childList: true,
-    })
-  }
-
-  stopObserveHtmlDanmaku() {
-    this.htmlDanmakuObserver.disconnect()
   }
 }

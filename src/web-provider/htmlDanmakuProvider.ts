@@ -2,6 +2,7 @@ import { sendMessage } from '@root/inject/contentSender'
 import { dq1 } from '@root/utils'
 import { windowsOnceCall } from '@root/utils/decorator'
 import WebProvider from './webProvider'
+import { Barrage } from '@root/danmaku'
 
 export default abstract class HtmlDanmakuProvider extends WebProvider {
   protected async initMiniPlayer(
@@ -59,5 +60,50 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
       })
     }
     sendMessage('run-code', { function: fn.toString() })
+  }
+
+  htmlDanmakuObserver: MutationObserver
+  /**监听web的弹幕，这个是下策方法 */
+  startObserveHtmlDanmaku(props: {
+    container: HTMLElement
+    child: string
+    text: string
+    isDanmu?: (child: HTMLElement) => boolean
+  }) {
+    this.htmlDanmakuObserver = new MutationObserver((list) => {
+      const nodes = list.map((l) => [...l.addedNodes]).flat()
+      console.log('nodes', list.length, nodes)
+      if (!nodes)
+        return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
+
+      nodes.forEach((node: HTMLElement) => {
+        const isDanmuChild = node.matches(props.child)
+        if (!isDanmuChild) return
+        const isDanmu = props?.isDanmu?.(node) ?? true
+        if (!isDanmu) return
+        const text = dq1(props.text, node)?.textContent
+        console.log('text', text)
+        if (!text) return
+
+        this.miniPlayer.danmakuController.barrages.push(
+          new Barrage({
+            player: this.miniPlayer,
+            config: {
+              color: '#fff',
+              text,
+              time: this.miniPlayer.webPlayerVideoEl.currentTime,
+              type: 'right',
+            },
+          })
+        )
+      })
+    })
+    this.htmlDanmakuObserver.observe(props.container, {
+      childList: true,
+    })
+  }
+
+  stopObserveHtmlDanmaku() {
+    this.htmlDanmakuObserver.disconnect()
   }
 }
