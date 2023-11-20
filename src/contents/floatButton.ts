@@ -95,9 +95,14 @@ function initVideoFloatBtn(
 
 let handleMousemove = throttle((e: MouseEvent) => {
   const target = e.target as HTMLElement
-  if (target instanceof HTMLVideoElement)
+  if (target instanceof HTMLVideoElement) {
+    // console.log('video的')
     return initVideoFloatBtn(target, target)
-  const topParents = getTopParentsWithSameRect(target)
+  }
+  const videoTarget = target.querySelector('video')
+  if (!videoTarget) return
+  const topParents = getTopParentsWithSameRect(videoTarget)
+  // console.log('topParents', topParents)
   const topParentWithPosition =
     topParents.findLast(
       (el) =>
@@ -105,9 +110,14 @@ let handleMousemove = throttle((e: MouseEvent) => {
         'static'
     ) ?? topParents[topParents.length - 1]
 
-  if (topParentWithPosition instanceof HTMLVideoElement)
+  if (topParentWithPosition instanceof HTMLVideoElement) {
+    // console.log('top的', topParentWithPosition)
     return initVideoFloatBtn(topParentWithPosition, topParentWithPosition)
+  }
   const video = topParentWithPosition?.querySelector?.('video')
-  if (video) initVideoFloatBtn(topParentWithPosition, video)
+  if (video) {
+    // console.log('最末尾的')
+    initVideoFloatBtn(topParentWithPosition, video)
+  }
 }, 1000)
 window.addEventListener('mousemove', handleMousemove)
