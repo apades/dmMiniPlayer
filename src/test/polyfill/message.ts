@@ -37,7 +37,7 @@ function _sendMessage(category: string, _content: any) {
   // 这里需要把content带上发送者的信息，
   // src\background\automator\chat.tsx:50 这里的`ender.tab?.id !== targetTab.id`需要tabId
   content.from = {
-    tabId: _env.tabId
+    tabId: _env.tabId,
   }
 
   console.log('💬:发送消息 类别:', category, ' content:', _content)
@@ -45,7 +45,7 @@ function _sendMessage(category: string, _content: any) {
     case 'mac': {
       return window.webkit.messageHandlers.toNative.postMessage({
         title: category,
-        content
+        content,
       })
     }
     case 'web': {
@@ -63,12 +63,18 @@ function _sendMessage(category: string, _content: any) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
 const messageMap: Record<string, Function[]> = {}
 window.messageMap = messageMap
-export function onMessage(category: string, callback: (content: MessageContent) => void) {
+export function onMessage(
+  category: string,
+  callback: (content: MessageContent) => void
+) {
   messageMap[category] = messageMap[category] || []
   messageMap[category].push(callback)
 }
 
-export function offMessage(category: string, callback: (content: MessageContent) => void) {
+export function offMessage(
+  category: string,
+  callback: (content: MessageContent) => void
+) {
   if (!messageMap[category]) return
   messageMap[category].splice(
     messageMap[category].findIndex((cb) => cb == callback),
@@ -82,7 +88,10 @@ export function dispatchMessage(category: string, content: MessageContent) {
 }
 window.dispatchMessage = dispatchMessage
 
-export function sendMessageWaitResp(category: string, content: MessageContent): Promise<any> {
+export function sendMessageWaitResp(
+  category: string,
+  content: MessageContent
+): Promise<any> {
   try {
     _sendMessage(category, content)
 
