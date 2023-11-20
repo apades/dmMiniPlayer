@@ -22,6 +22,10 @@ export default function App() {
           </a>
         </p>
       </video>
+
+      <div className="mt-8">
+        <video src="../sample-mp4-file.mp4" />
+      </div>
     </div>
   )
 }
