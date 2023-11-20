@@ -16,6 +16,7 @@ function initVideoFloatBtn(
   vel: HTMLVideoElement
 ): void {
   if (container.getAttribute(INIT_ATTR) === 'true') return
+  console.log('创建VideoFloatBtn', container, vel)
   let timmer: NodeJS.Timeout = null
 
   let floatBtn = createElement('div', {

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://127.0.0.1:8080/build/ChatGPT-Sidebar/user-webview.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- <iframe src="http://localhost:8080/polyfill/test/bg.html" width="100" height="100" /> -->
+    <script>
+        window.openBG = async () => {
+            let width = 408
+            let height = 600
+            window.tarBG = window.open(
+                'http://localhost:8080/polyfill/test/bg.html',
+                '_blank',
+                `top=${(screen.height - height) / 2},left=${(screen.width - width) / 2
+                },width=${width},height=${height},menubar=no,toolbar=no,scrollbars=yes`
+            )
+        }
+
+        window.addEventListener('message', e => console.log('user e', e.data))
+    </script>
+    test -api
+
+    <button onclick="openBG()">open bg</button>
+</body>
+
+</html>

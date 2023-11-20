@@ -36,6 +36,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@root': pr('../'),
+      'webextension-polyfill': pr('./polyfill/browser/index.ts'),
     },
   },
   define: {
