@@ -71,7 +71,7 @@ export function getTopParentsWithSameRect(
     if (pel) {
       const isAbHeightFull = skipHeight0
         ? !pel.clientHeight &&
-          (p.computedStyleMap().get('position') as any).value == 'absolute'
+          (p.computedStyleMap()?.get?.('position') as any)?.value == 'absolute'
         : false
       if (isAbHeightFull) {
         rs.push(p)
