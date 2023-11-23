@@ -35,14 +35,28 @@ export const docPIPConfig = {
   docPIP_renderType: config<DocPIPRenderType>({
     // notRecommended: true,
     label: '新版画中画播放模式',
-    desc: '默认的reactVP_webVideo是将网页的视频转移到画中画里，可以节省canvas性能。reactVP_canvasCs双视频模式是针对网页视频嵌在iframe里，采用canvas渲染视频，目前新的侧边栏**非SPA路由跳转视频**需要用该模式',
     defaultValue: DocPIPRenderType.reactVP_webVideo,
     type: 'group',
     group: [
-      DocPIPRenderType.reactVP_canvasCs,
-      DocPIPRenderType.reactVP_cs,
-      DocPIPRenderType.oVP_cs,
-      DocPIPRenderType.reactVP_webVideo,
+      {
+        value: DocPIPRenderType.reactVP_webVideo,
+        label: '转移网页视频标签到画中画',
+        desc: '默认推荐使用',
+      },
+      {
+        value: DocPIPRenderType.reactVP_canvasCs,
+        label: '双视频模式',
+        desc: '针对视频在iframe中的方案，把网页视频流放在canvas里绘制，与旧版画中画核心一致，比较消耗性能',
+      },
+      {
+        value: DocPIPRenderType.reactVP_cs,
+        label: '不经过canvas的双视频模式',
+        desc: '有帧率不如[双视频模式]的问题，60fps视频很明显',
+      },
+      {
+        value: DocPIPRenderType.oVP_cs,
+        label: '不经过canvas的双视频模式到原始video',
+      },
     ],
     relateBy: 'useDocPIP',
     relateByValue: true,

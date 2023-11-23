@@ -4,20 +4,19 @@ import * as mobx from 'mobx'
 import { runInAction } from 'mobx'
 import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
+import config_danmaku from './danmaku'
+import config_bilibili from './bilibili'
 
 export { DocPIPRenderType } from './docPIP'
 
-export enum MaxTunnelType {
-  '1/2' = '1/2',
-  '1/4' = '1/4',
-  full = 'full',
-}
-
-const DANMAKU = '弹幕'
 export const baseConfigMap = {
+  ...config_danmaku,
+  ...config_bilibili,
+
+  // fps限制相关
   renderFPS: config({
     defaultValue: 60,
-    desc: '限制渲染帧数，默认60，设置0就是无上限',
+    desc: '限制弹幕渲染帧数，设置0就是无上限。如果是旧版画中画或[双视频模式]模式，视频会受此影响',
     label: 'canvas渲染的帧数',
   }),
   FPS_limitOffsetAccurate: config({
@@ -26,6 +25,7 @@ export const baseConfigMap = {
     desc: '默认记录的上一次更新时间是now - (offset % renderFPS)',
     notRecommended: true,
   }),
+
   videoProgress_show: config({
     defaultValue: true,
     desc: '非直播视频底下增加进度条显示',
@@ -42,61 +42,6 @@ export const baseConfigMap = {
     label: '进度条高度',
     relateBy: 'videoProgress_show',
     relateByValue: true,
-  }),
-
-  // 弹幕设置
-  danSpeed: config({
-    defaultValue: 20,
-    label: '弹幕速度',
-    desc: '受 canvas渲染的帧数 影响，每次x+=val/10',
-    category: DANMAKU,
-  }),
-  danVerticalSafeTime: config({
-    defaultValue: 5,
-    label: '垂直弹幕停留时间',
-    category: DANMAKU,
-  }),
-  opacity: config({
-    defaultValue: 1,
-    desc: '默认1，范围0 ~ 1',
-    label: '弹幕透明度',
-    category: DANMAKU,
-  }),
-  fontSize: config({
-    defaultValue: 16,
-    desc: '默认16',
-    label: '弹幕字体大小',
-    category: DANMAKU,
-  }),
-  fontWeight: config({
-    defaultValue: 600,
-    desc: '默认600',
-    label: '弹幕字体宽度',
-    category: DANMAKU,
-  }),
-  fontFamily: config({
-    defaultValue: 'Segoe UI Emoji, SimHei, "microsoft yahei", sans-serif',
-    label: '弹幕字体',
-  }),
-  fontShadow: config({
-    defaultValue: true,
-    label: '弹幕阴影加深',
-    desc: '额外渲染了一次字体，可能会加大性能消耗',
-    category: DANMAKU,
-  }),
-  gap: config({
-    defaultValue: 4,
-    desc: '默认为4',
-    label: '上下弹幕之间的间距',
-    category: DANMAKU,
-  }),
-  maxTunnel: config<MaxTunnelType>({
-    defaultValue: MaxTunnelType['1/2'],
-    desc: '默认1/2半屏，还支持 1/2 | 1/4 | full，剩下的只能填数字',
-    label: '弹幕最大渲染行数',
-    type: 'group',
-    group: [MaxTunnelType['1/2'], MaxTunnelType['1/4'], MaxTunnelType.full],
-    category: DANMAKU,
   }),
 
   sideWidth: config({
@@ -126,26 +71,6 @@ export const baseConfigMap = {
     relateBy: 'pauseInClose_video',
     relateByValue: true,
   }),
-
-  biliVideoDansFromBiliEvaolved: config({
-    defaultValue: false,
-    label: '使用bilibili-evaolved获取b站视频弹幕',
-    desc: '该模式有问题没法下载完全的弹幕',
-  }),
-  biliVideoPakkuFilter: config({
-    defaultValue: true,
-    label: 'b站视频弹幕使用pakku.js过滤',
-    desc: '只有bilibili-evaolved模式开了才能用。目前只有过滤+减少弹幕，原始json文件一屏弹幕量会非常多，没有特殊功能',
-    relateBy: 'biliVideoDansFromBiliEvaolved',
-    relateByValue: true,
-  }),
-
-  biliLiveSide: config({
-    defaultValue: false,
-    label: 'b站直播侧边栏',
-    desc: '实验性功能，同时需要切换reactVP_canvasCs模式',
-  }),
-
   // debug
   performanceInfo: config({
     defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',

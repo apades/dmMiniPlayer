@@ -1,5 +1,6 @@
 import MiniPlayer from '@root/core/miniPlayer'
-import configStore, { MaxTunnelType } from '@root/store/config'
+import configStore from '@root/store/config'
+import { MaxTunnelType } from '@root/store/config/danmaku'
 import videoRender from '@root/store/videoRender'
 import vpConfig from '@root/store/vpConfig'
 import { clamp, filterList, getTextWidth } from '@root/utils'
