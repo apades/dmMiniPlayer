@@ -52,6 +52,33 @@ const config_danmaku = {
     type: 'group',
     group: [MaxTunnelType['1/2'], MaxTunnelType['1/4'], MaxTunnelType.full],
   }),
+
+  adjustFontsizeByPIPWidthResize: config({
+    defaultValue: false,
+    label: '动态字体大小',
+    desc: '画中画大小改变时字体大小跟着调整',
+  }),
+  adjustFontsizeStartWidth: config({
+    defaultValue: 500,
+    label: '标准宽度',
+    desc: '画中画在这个宽度时是 $弹幕字体大小 设定的大小，往小了字体不会缩小，往大了字体跟着放大',
+    relateBy: 'adjustFontsizeByPIPWidthResize',
+    relateByValue: true,
+  }),
+  adjustFontsizeScaleRate: config({
+    defaultValue: 0.6,
+    label: '弹幕字体大小缩放乘比',
+    desc: '计算公式: 实际字体大小 = $弹幕字体大小 / $标准宽度 * $画中画此时宽度 * $val',
+    relateBy: 'adjustFontsizeByPIPWidthResize',
+    relateByValue: true,
+  }),
+  adjustFontsizeMaxSize: config({
+    defaultValue: 24,
+    label: '最大字体大小',
+    desc: '限制调整的最大字体大小',
+    relateBy: 'adjustFontsizeByPIPWidthResize',
+    relateByValue: true,
+  }),
 }
 
 export default config_danmaku

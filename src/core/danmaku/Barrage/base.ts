@@ -4,7 +4,7 @@ import configStore, { observe } from '@root/store/config'
 import { observe as mobxObserver } from 'mobx'
 import videoRender from '@root/store/videoRender'
 import vpConfig from '@root/store/vpConfig'
-import { getTextWidth } from '@root/utils'
+import { getTextWidth, minmax } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import type { Lambda } from 'mobx'
 
@@ -116,6 +116,29 @@ export class CanvasBarrage extends Barrage {
         fontFamily: configStore.fontFamily,
       })
     })
+
+    const fontResizeEvents: (keyof typeof configStore)[] = [
+      'adjustFontsizeByPIPWidthResize',
+      'adjustFontsizeStartWidth',
+      'adjustFontsizeScaleRate',
+      'adjustFontsizeMaxSize',
+      'fontSize',
+    ]
+
+    const handleOnFontResize = () => {
+      if (!configStore.adjustFontsizeByPIPWidthResize) return
+      const tarSize =
+        (configStore.fontSize / configStore.adjustFontsizeStartWidth) *
+        videoRender.containerWidth *
+        configStore.adjustFontsizeScaleRate
+
+      this.width = getTextWidth(this.text, {
+        fontSize: minmax(tarSize, 0, configStore.adjustFontsizeMaxSize) + 'px',
+        fontFamily: configStore.fontFamily,
+      })
+    }
+    fontResizeEvents.forEach((e) => this.onConfigChange(e, handleOnFontResize))
+    this.onConfigChange(videoRender, 'containerWidth', handleOnFontResize)
 
     const canvas = this.player.canvas
     // 初始水平位置和垂直位置
