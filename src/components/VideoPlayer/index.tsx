@@ -250,7 +250,7 @@ const VideoPlayer = observer(
       let speedModeTimer: NodeJS.Timeout,
         isSpeedMode = false
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (window.videoPlayers.focusIndex !== index) return
+        // if (window.videoPlayers.focusIndex !== index) return
         const tar = e.target as HTMLElement
         if (
           tar.tagName === 'TEXTAREA' ||
