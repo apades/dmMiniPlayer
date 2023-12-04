@@ -78,7 +78,7 @@ export default class BaseDocMiniPlayer extends MiniPlayer {
       }
     })
 
-    vpConfig.canSendBarrage = true
+    vpConfig.canSendDanmaku = true
   }
 
   async test_captureVideo() {

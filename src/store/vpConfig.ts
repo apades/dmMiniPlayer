@@ -1,19 +1,22 @@
+import type { Barrage } from '@root/danmaku'
 import { makeAutoObservable, runInAction } from 'mobx'
 
 class VpConfig {
-  canShowBarrage = false
-  showBarrage = true
-  canSendBarrage = false
+  canShowDanmakus = false
+  showDanmakus = true
+  canSendDanmaku = false
   canShowSubtitle = false
+
+
   constructor() {
     makeAutoObservable(this)
   }
   reset() {
     runInAction(() => {
-      this.canSendBarrage = false
+      this.canSendDanmaku = false
       this.canShowSubtitle = false
-      this.canShowBarrage = false
-      this.showBarrage = true
+      this.canShowDanmakus = false
+      this.showDanmakus = true
     })
   }
 }

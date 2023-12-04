@@ -23,7 +23,8 @@ export default class AssParser {
   get dans(): DanType[] {
     if (this.dialogues.length && !this._dans.length) {
       this.dialogues.forEach(({ color = 'white', start, text, type }) => {
-        this._dans.push({ color, text, time: start, type })
+        // TODO 删了或者兼容
+        this._dans.push({ color, text, time: start, type, uid: '', uname: '' })
       })
     }
     return this._dans

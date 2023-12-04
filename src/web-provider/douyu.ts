@@ -1,10 +1,8 @@
-import { Barrage } from '@root/danmaku'
+import { Barrage, type DanType } from '@root/danmaku'
 import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
-import configStore, { temporarySetConfigStore } from '@root/store/config'
-import { dq, dq1, onWindowLoad } from '@root/utils'
-import WebProvider from './webProvider'
-import { getMiniPlayer } from '@root/core'
 import { sendMessage } from '@root/inject/contentSender'
+import { dq, dq1 } from '@root/utils'
+import WebProvider from './webProvider'
 
 window.DouyuLiveBarrageClient = DouyuLiveBarrageClient
 export default class DouyuLiveProvider extends WebProvider {
@@ -67,7 +65,7 @@ export default class DouyuLiveProvider extends WebProvider {
     return miniPlayer
   }
 
-  private fn: (data: { color: string; text: string }) => void = () => 1
+  private fn: (data: DanType) => void = () => 1
 
   getRoomId() {
     let locationId = location.pathname.split('/').pop()
@@ -77,15 +75,16 @@ export default class DouyuLiveProvider extends WebProvider {
   startObserverWs() {
     this.barrageClient = new DouyuLiveBarrageClient(this.getRoomId())
 
-    this.fn = (data: { color: string; text: string }) => {
+    this.fn = (data: DanType) => {
       this.miniPlayer.danmakuController.barrages.push(
         new Barrage({
           player: this.miniPlayer,
           config: {
-            // TODO
             color: data.color,
             text: data.text,
             time: this.miniPlayer.webPlayerVideoEl.currentTime,
+            uid: data.uid,
+            uname: data.uname,
             // TODO
             type: 'right',
           },

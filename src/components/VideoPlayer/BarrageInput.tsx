@@ -11,7 +11,7 @@ const BarrageInput: FC<{
   const barrageInputRef = useRef<HTMLInputElement>()
   return (
     <div className="barrage-input">
-      {vpConfig.canSendBarrage && (
+      {vpConfig.canSendDanmaku && (
         <Iconfont
           type="input"
           onClick={() => {

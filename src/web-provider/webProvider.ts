@@ -52,7 +52,7 @@ export default abstract class WebProvider {
         vpConfig.reset()
       })
     })
-    sendToBackground({ name: 'PIP-active' })
+    sendToBackground({ name: 'PIP-active' } as any)
   }
 
   /**获取视频 */

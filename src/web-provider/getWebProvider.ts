@@ -4,11 +4,11 @@ import BilibiliVideoProvider from './bilibili/video'
 import CCLiveProvider from './cc'
 import CommonProvider from './common'
 import DdrkProvider from './ddrk'
-import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
+import DouyinProvider from './douyin'
 import DouyuLiveProvider from './douyu'
-import WebProvider from './webProvider'
 import TwitchProvider from './twitch'
+import WebProvider from './webProvider'
 import YoutubeProvider from './youtube'
 
 const providerList = [

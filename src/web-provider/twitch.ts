@@ -9,6 +9,7 @@ export default class TwitchProvider extends HtmlDanmakuProvider {
       container: dq1('.chat-scrollable-area__message-container'),
       child: '.chat-line__message',
       text: '.chat-line__message-container .chat-line__username-container ~ span:last-of-type',
+      uname: '.chat-author__display-name',
     }
   }
   getBarrageSenderConfig(): Parameters<

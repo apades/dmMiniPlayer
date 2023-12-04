@@ -80,7 +80,7 @@ export default class BilibiliVideoProvider extends WebProvider {
 
   initDans() {
     runInAction(() => {
-      vpConfig.canShowBarrage = true
+      vpConfig.canShowDanmakus = true
     })
     this.getDans().then((dans) =>
       this.miniPlayer.danmakuController.initDans(dans)
@@ -139,6 +139,8 @@ export default class BilibiliVideoProvider extends WebProvider {
         text: d.content,
         time: d.progress ? d.progress / 1000 : 0,
         type: type == 'top' ? 'top' : 'right',
+        uid: d.idStr,
+        uname: d.idStr,
       } as DanType
     })
   }

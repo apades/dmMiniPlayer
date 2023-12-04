@@ -13,8 +13,8 @@ export default class CCLiveBarrageClient extends BarrageClient {
         const list = this.ws.decode_msg(e.data)
 
         if (!list) return
-        list.forEach(({ color, content }) => {
-          this.emit('danmu', { color, text: content })
+        list.forEach((content) => {
+          this.emit('danmu', content)
         })
       })
     })

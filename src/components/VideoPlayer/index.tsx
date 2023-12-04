@@ -669,15 +669,17 @@ const VideoPlayer = observer(
                 {!getIsLive() && ` / ${formatTime(duration)} `}
               </span>
 
-              {vpConfig.canShowBarrage && (
+              {vpConfig.canShowDanmakus && (
                 <Iconfont
                   onClick={() => {
                     runInAction(() => {
-                      vpConfig.showBarrage = !vpConfig.showBarrage
+                      vpConfig.showDanmakus = !vpConfig.showDanmakus
                     })
                   }}
                   size={18}
-                  type={vpConfig.showBarrage ? 'danmaku_open' : 'danmaku_close'}
+                  type={
+                    vpConfig.showDanmakus ? 'danmaku_open' : 'danmaku_close'
+                  }
                 />
               )}
               <BarrageInput

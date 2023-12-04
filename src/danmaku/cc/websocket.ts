@@ -10,6 +10,7 @@ import {
 } from '@root/utils'
 import { CCMsgDecode } from './CCMsgDecode'
 import pako from 'pako'
+import type { DanType } from '..'
 
 export function bytes(b: number[] | string): ArrayBuffer {
   if (isArray(b)) {
@@ -274,9 +275,7 @@ export default class CCWs {
     }
   }
 
-  decode_msg(
-    e: ArrayBuffer
-  ): { content: string; name: string; color: string }[] {
+  decode_msg(e: ArrayBuffer): Omit<DanType, 'time'>[] {
     const [n, r, p] = struct('<HHI').unpack(e.slice(0, 8))
     const i = `tcp-${n}-${r}`
     const studio: Record<string, string> = {
@@ -339,12 +338,18 @@ export default class CCWs {
               }
             }
             if (color[0] != '#') color = '#' + color
-            console.log(
-              `${name}:${content}`,
-              `color? ${data[35]} ${color}`,
-              data
-            )
-            return { name, content, color }
+            // console.log(
+            //   `${name}:${content}`,
+            //   `color? ${data[35]} ${color}`,
+            //   data
+            // )
+            return {
+              text: content,
+              color,
+              type: 'right',
+              uid: name,
+              uname: name,
+            } as Omit<DanType, 'time'>
           })
         }
         // 这什么鬼玩意没触发过，不管了

@@ -14,6 +14,8 @@ export async function getDonghuafengDanmu(id: string): Promise<DanType[]> {
         text: r.text,
         time: r.time / 10,
         type: r.position == 0 ? 'right' : 'top',
+        uname: r.userid,
+        uid: r.sn + '',
       } as DanType)
   )
 }

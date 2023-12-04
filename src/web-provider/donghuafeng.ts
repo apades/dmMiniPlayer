@@ -1,10 +1,10 @@
 import type MiniPlayer from '@root/core/miniPlayer'
-import { dq1 } from '@root/utils'
-import WebProvider from './webProvider'
-import vpConfig from '@root/store/vpConfig'
-import { runInAction } from 'mobx'
-import { getDonghuafengDanmu } from '@root/danmaku/donghuafeng'
 import type { DanType } from '@root/danmaku'
+import { getDonghuafengDanmu } from '@root/danmaku/donghuafeng'
+import vpConfig from '@root/store/vpConfig'
+import { dq1 } from '@root/utils'
+import { runInAction } from 'mobx'
+import WebProvider from './webProvider'
 
 export default class DonghuafengProvider extends WebProvider {
   constructor() {
@@ -26,7 +26,7 @@ export default class DonghuafengProvider extends WebProvider {
 
   initDans() {
     runInAction(() => {
-      vpConfig.canShowBarrage = true
+      vpConfig.canShowDanmakus = true
     })
     this.getDans().then((dans) =>
       this.miniPlayer.danmakuController.initDans(dans)

@@ -1,8 +1,8 @@
+import { Barrage } from '@root/danmaku'
 import { sendMessage } from '@root/inject/contentSender'
 import { dq1 } from '@root/utils'
 import { windowsOnceCall } from '@root/utils/decorator'
 import WebProvider from './webProvider'
-import { Barrage } from '@root/danmaku'
 
 export default abstract class HtmlDanmakuProvider extends WebProvider {
   protected async initMiniPlayer(
@@ -68,6 +68,8 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     container: HTMLElement
     child: string
     text: string
+    uname: string
+    // uid?: string
     isDanmu?: (child: HTMLElement) => boolean
   }) {
     this.htmlDanmakuObserver = new MutationObserver((list) => {
@@ -82,8 +84,13 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
         const isDanmu = props?.isDanmu?.(node) ?? true
         if (!isDanmu) return
         const text = dq1(props.text, node)?.textContent
-        console.log('text', text)
         if (!text) return
+        const uname = (dq1(props.uname, node)?.textContent ?? '').replace(
+            /(:|：)$/,
+            ''
+          ),
+          // TODO 独立uid
+          uid = uname
 
         this.miniPlayer.danmakuController.barrages.push(
           new Barrage({
@@ -93,6 +100,8 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
               text,
               time: this.miniPlayer.webPlayerVideoEl.currentTime,
               type: 'right',
+              uid,
+              uname,
             },
           })
         )

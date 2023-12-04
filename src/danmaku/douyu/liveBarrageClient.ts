@@ -55,6 +55,9 @@ export default class DouyuLiveBarrageClient extends BarrageClient {
       this.emit('danmu', {
         text: obj.txt,
         color: getTransColor(obj.color),
+        type: 'right',
+        uid: obj.nn,
+        uname: obj.nn,
       })
     }
   }

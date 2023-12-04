@@ -1,5 +1,5 @@
 import BarrageClient from '@root/core/danmaku/BarrageClient'
-import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
+import { LiveWS } from 'bilibili-live-ws'
 
 export const proto = {
   nested: {
@@ -35,11 +35,18 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
     })
 
     this.ws.on('DANMU_MSG', (data) => {
-      let info = data.info
+      let info = data.info,
+        userInfo = info[2]
       let color = '#' + info[0][3].toString(16),
         text = info[1]
 
-      this.emit('danmu', { color, text })
+      this.emit('danmu', {
+        color,
+        text,
+        type: 'right',
+        uid: userInfo[0] + '',
+        uname: userInfo[1] + '',
+      })
     })
   }
   close(): void {

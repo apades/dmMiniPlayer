@@ -1,4 +1,4 @@
-import { Barrage } from '@root/danmaku'
+import { Barrage, type DanType } from '@root/danmaku'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
 import configStore, {
   DocPIPRenderType,
@@ -71,19 +71,20 @@ export default class BilibiliLiveProvider extends WebProvider {
     return miniPlayer
   }
 
-  private fn: (data: { color: string; text: string }) => void = () => 1
+  private fn: (data: DanType) => void = () => 1
   startObserverWs(id = +location.pathname.split('/').pop()) {
     this.barrageClient = new BilibiliLiveBarrageClient(id)
 
-    this.fn = (data: { color: string; text: string }) => {
+    this.fn = (data: DanType) => {
       this.miniPlayer.danmakuController.barrages.push(
         new Barrage({
           player: this.miniPlayer,
           config: {
-            // TODO
             color: data.color,
             text: data.text,
             time: this.miniPlayer.webPlayerVideoEl.currentTime,
+            uid: data.uid,
+            uname: data.uname,
             // TODO
             type: 'right',
           },

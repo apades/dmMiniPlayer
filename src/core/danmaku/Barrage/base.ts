@@ -196,7 +196,7 @@ export class CanvasBarrage extends Barrage {
     }
 
     const context = this.player.ctx,
-      opacity = vpConfig.showBarrage ? configStore.opacity : 0,
+      opacity = vpConfig.showDanmakus ? configStore.opacity : 0,
       fontSize = configStore.fontSize
 
     context.shadowColor = 'rgba(0,0,0,0.5)'

@@ -16,9 +16,11 @@ export type DanMoveType = 'top' | 'right' | 'bottom'
 
 export type DanType = {
   text: string
-  time: number
+  time?: number
   color: string
   type: DanMoveType
+  uid: string
+  uname: string
 }
 
 class DanmakuController {
@@ -235,6 +237,8 @@ export class Barrage {
   player: MiniPlayer
   props: DanType
   coverFontsize: number
+  uid: string
+  uname: string
 
   observer: any[] = []
   constructor(props: { player: MiniPlayer; config: DanType }) {
@@ -246,6 +250,8 @@ export class Barrage {
 
     this.player = props.player
     this.props = config
+    this.uid = config.uid
+    this.uname = config.uname
   }
 
   init(time?: number) {
@@ -405,7 +411,7 @@ export class Barrage {
     }
 
     let context = this.player.ctx,
-      opacity = vpConfig.showBarrage ? configStore.opacity : 0,
+      opacity = vpConfig.showDanmakus ? configStore.opacity : 0,
       fontSize = this.coverFontsize ?? configStore.fontSize
 
     context.shadowColor = 'rgba(0,0,0,0.5)'

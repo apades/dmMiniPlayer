@@ -22,6 +22,7 @@ export default class YoutubeLiveProvider extends HtmlDanmakuProvider {
       ),
       child: 'yt-live-chat-text-message-renderer',
       text: '#message',
+      uname: '.author-name',
     }
   }
   getBarrageSenderConfig(): Parameters<

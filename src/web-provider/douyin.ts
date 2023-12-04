@@ -42,6 +42,7 @@ export default class DouyinProvider extends HtmlDanmakuProvider {
       container: dq1('.webcast-chatroom___items>div:first-child'),
       child: '.webcast-chatroom___item',
       text: '.webcast-chatroom___content-with-emoji-text',
+      uname: 'div:nth-child(1) > span:nth-child(2)',
     }
   }
   getBarrageSenderConfig(): Parameters<

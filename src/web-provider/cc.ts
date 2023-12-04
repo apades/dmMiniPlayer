@@ -1,4 +1,4 @@
-import { Barrage } from '@root/danmaku'
+import { Barrage, type DanType } from '@root/danmaku'
 import configStore, { temporarySetConfigStore } from '@root/store/config'
 import { dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
@@ -33,21 +33,22 @@ export default class CCLiveProvider extends WebProvider {
     return miniPlayer
   }
 
-  private fn: (data: { color: string; text: string }) => void = () => 1
+  private fn: (data: DanType) => void = () => 1
   startObserverWs() {
     const pathArr = location.pathname.split('/')
     pathArr.pop()
     this.barrageClient = new CCLiveBarrageClient(+pathArr.pop())
 
-    this.fn = (data: { color: string; text: string }) => {
+    this.fn = (data: DanType) => {
       this.miniPlayer.danmakuController.barrages.push(
         new Barrage({
           player: this.miniPlayer,
           config: {
-            // TODO
             color: data.color,
             text: data.text,
             time: this.miniPlayer.webPlayerVideoEl.currentTime,
+            uid: data.uid,
+            uname: data.uname,
             // TODO
             type: 'right',
           },

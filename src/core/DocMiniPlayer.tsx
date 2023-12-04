@@ -378,7 +378,7 @@ export default class DocMiniPlayer extends MiniPlayer {
       })
 
       runInAction(() => {
-        vpConfig.canSendBarrage = true
+        vpConfig.canSendDanmaku = true
       })
     } catch (error) {
       console.error('初始化BarrageSender错误', error)
