@@ -97,7 +97,7 @@ const VideoPlayer = observer(
     const [isVisibleActionAreaInFC, setVisibleActionAreaInFC] = useState(false)
     const [isActionAreaLock, setActionAreaLock] = useState(false)
 
-    const [playing, setPlaying] = useState(!props?.webVideo?.paused)
+    const [playing, setPlaying] = useState(!props?.webVideo?.paused ?? false)
     const [canPause, setCanPause] = useState(true)
     const [isLoading, setLoading] = useState(false)
     const [isInputMode, setInputMode] = useState(false)
@@ -106,8 +106,8 @@ const VideoPlayer = observer(
     const [isFirstPlay, setIsFirstPlay] = useState(false)
     const [isSpeedMode, setSpeedMode] = useState(false)
 
-    const [volume, setVolume] = useState(props?.webVideo?.volume * 100)
-    const [isMute, setMute] = useState(props?.webVideo?.muted)
+    const [volume, setVolume] = useState((props?.webVideo?.volume ?? 1) * 100)
+    const [isMute, setMute] = useState(props?.webVideo?.muted ?? false)
 
     const [playedPercent, setPlayedPercent] = useState(0)
     const [isPlayEnd, setPlayEnd] = useState(false)
@@ -223,7 +223,8 @@ const VideoPlayer = observer(
     // 多个播放器标识
     const index = props.index ?? -1
     useEffect(() => {
-      if (isFirstPlay) return
+      if (isFirstPlay || !videoRef.current) return
+      console.log('videoRef.current', videoRef.current, volume / 100)
       videoRef.current.volume = volume / 100
       localStorage['vp_volume'] = volume
     }, [volume])
@@ -566,6 +567,7 @@ const VideoPlayer = observer(
           'buffer-test': _env.vpBufferTest,
           'is-firstplay': isFirstPlay,
           'is-live': getIsLive(),
+          'is-lock-side': configStore.sideLock,
         })}
         style={
           {
@@ -578,154 +580,156 @@ const VideoPlayer = observer(
         onBlur={() => setFocus(false)}
         ref={player}
       >
-        <div
-          className="video-container"
-          onClick={() => {
-            playerOpause()
-          }}
-          onMouseMove={(e) => {
-            handleFullscreenShowActionArea(true)
-            handleResetActionAreaShow()
-          }}
-        >
-          {!props.useWebVideo && (
-            <video
-              ref={(ref) => {
-                if (!props.webVideo) videoRef.current = ref
+        <div className="left-container">
+          <div
+            className="video-container"
+            onClick={() => {
+              playerOpause()
+            }}
+            onMouseMove={(e) => {
+              handleFullscreenShowActionArea(true)
+              handleResetActionAreaShow()
+            }}
+          >
+            {!props.useWebVideo && (
+              <video
+                ref={(ref) => {
+                  if (!props.webVideo) videoRef.current = ref
 
-                compVideoRef.current = ref
-              }}
-              src={props.uri}
-              controls={_env.vpBufferTest}
-              autoPlay
-              muted
-              {...(props.originAttr || {})}
-            />
-          )}
-
-          {/* 视频封面 */}
-          <div className="video-cover">{props.renderCoverChild?.()}</div>
-
-          {props.renderVideoContainerChild?.()}
-
-          {isRenderNotifiChild &&
-            RenderVideoNoti([
-              {
-                state: isLoading && !isFirstPlay,
-                el: (
-                  <div className="v-defalut-noti v-loading">
-                    <LoadingOutlined
-                      style={{
-                        fontSize: 'var(--btn-icon-size)',
-                        color: 'var(--color-main)',
-                      }}
-                    />
-                  </div>
-                ),
-              },
-              {
-                state: isVolumeNotiShow,
-                el: (
-                  <div>
-                    <Iconfont type="iconicon_player_volume" />
-                    <span style={{ marginLeft: 10 }}>{volume}%</span>
-                  </div>
-                ),
-              },
-              {
-                state: isSpeedMode,
-                el: <div>{configStore.playbackRate}倍速中&gt;&gt;</div>,
-                className: 'speed-mode-noti',
-              },
-              ...(props.notifiChild || []),
-            ])}
-        </div>
-
-        {/* 底部操作栏 */}
-        <div
-          className="video-action-area"
-          onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
-          onMouseLeave={handleResetActionAreaShow}
-        >
-          <div className="mask"></div>
-          <div className={cls('actions', isInputMode && 'is-input')}>
-            {getIsLive() ? (
-              <span className="live-dot"></span>
-            ) : (
-              <Iconfont
-                ref={playBtnEl}
-                onClick={() => playerOpause()}
-                type={
-                  playing ? 'iconicon_player_pause' : 'iconicon_player_play'
-                }
-              />
-            )}
-
-            <span style={{ whiteSpace: 'nowrap' }}>
-              {formatTime(currentTime)}
-              {!getIsLive() && ` / ${formatTime(duration)} `}
-            </span>
-
-            {vpConfig.canShowBarrage && (
-              <Iconfont
-                onClick={() => {
-                  runInAction(() => {
-                    vpConfig.showBarrage = !vpConfig.showBarrage
-                  })
+                  compVideoRef.current = ref
                 }}
-                size={18}
-                type={vpConfig.showBarrage ? 'danmaku_open' : 'danmaku_close'}
+                src={props.uri}
+                controls={_env.vpBufferTest}
+                autoPlay
+                muted
+                {...(props.originAttr || {})}
               />
             )}
-            <BarrageInput
-              setActionAreaLock={(v) => {
-                if (configStore.vpActionAreaLock) return
-                setActionAreaLock(v)
-                if (!v) setVisibleActionAreaInFC(false)
-              }}
-              setInputMode={setInputMode}
-            />
 
-            <div className="played-progress-bar">
-              <ProgressBar
-                percent={playedPercent}
-                onClick={(percent) => {
-                  if (!canPlay) return
-                  if (isFirstPlay) {
-                    playerOpause()
+            {/* 视频封面 */}
+            <div className="video-cover">{props.renderCoverChild?.()}</div>
+
+            {props.renderVideoContainerChild?.()}
+
+            {isRenderNotifiChild &&
+              RenderVideoNoti([
+                {
+                  state: isLoading && !isFirstPlay,
+                  el: (
+                    <div className="v-defalut-noti v-loading">
+                      <LoadingOutlined
+                        style={{
+                          fontSize: 'var(--btn-icon-size)',
+                          color: 'var(--color-main)',
+                        }}
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  state: isVolumeNotiShow,
+                  el: (
+                    <div>
+                      <Iconfont type="iconicon_player_volume" />
+                      <span style={{ marginLeft: 10 }}>{volume}%</span>
+                    </div>
+                  ),
+                },
+                {
+                  state: isSpeedMode,
+                  el: <div>{configStore.playbackRate}倍速中&gt;&gt;</div>,
+                  className: 'speed-mode-noti',
+                },
+                ...(props.notifiChild || []),
+              ])}
+          </div>
+
+          {/* 底部操作栏 */}
+          <div
+            className="video-action-area"
+            onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
+            onMouseLeave={handleResetActionAreaShow}
+          >
+            <div className="mask"></div>
+            <div className={cls('actions', isInputMode && 'is-input')}>
+              {getIsLive() ? (
+                <span className="live-dot"></span>
+              ) : (
+                <Iconfont
+                  ref={playBtnEl}
+                  onClick={() => playerOpause()}
+                  type={
+                    playing ? 'iconicon_player_pause' : 'iconicon_player_play'
                   }
-                  setPlayedPercent(percent)
+                />
+              )}
 
-                  setTimeout(() => {
-                    percent = percent / 100
-                    videoRef.current.currentTime = duration * percent
-                    setCurrentTime(duration * percent)
-                  }, 0)
+              <span style={{ whiteSpace: 'nowrap' }}>
+                {formatTime(currentTime)}
+                {!getIsLive() && ` / ${formatTime(duration)} `}
+              </span>
+
+              {vpConfig.canShowBarrage && (
+                <Iconfont
+                  onClick={() => {
+                    runInAction(() => {
+                      vpConfig.showBarrage = !vpConfig.showBarrage
+                    })
+                  }}
+                  size={18}
+                  type={vpConfig.showBarrage ? 'danmaku_open' : 'danmaku_close'}
+                />
+              )}
+              <BarrageInput
+                setActionAreaLock={(v) => {
+                  if (configStore.vpActionAreaLock) return
+                  setActionAreaLock(v)
+                  if (!v) setVisibleActionAreaInFC(false)
                 }}
-                loadColor="#0669ff"
-              >
-                <div className="bar-loaded">
-                  {loaded.map(({ s, e }) => (
-                    <span
-                      key={s}
-                      style={{
-                        left: `${(s / duration) * 100}%`,
-                        width: `${((e - s) / duration) * 100}%`,
-                        top: 0,
-                      }}
-                    ></span>
-                  ))}
-                </div>
-              </ProgressBar>
-            </div>
-
-            <div className="func">
-              <VolumeBar
-                videoRef={videoRef}
-                setMute={setMute}
-                setVolume={setVolume}
-                volume={volume}
+                setInputMode={setInputMode}
               />
+
+              <div className="played-progress-bar">
+                <ProgressBar
+                  percent={playedPercent}
+                  onClick={(percent) => {
+                    if (!canPlay) return
+                    if (isFirstPlay) {
+                      playerOpause()
+                    }
+                    setPlayedPercent(percent)
+
+                    setTimeout(() => {
+                      percent = percent / 100
+                      videoRef.current.currentTime = duration * percent
+                      setCurrentTime(duration * percent)
+                    }, 0)
+                  }}
+                  loadColor="#0669ff"
+                >
+                  <div className="bar-loaded">
+                    {loaded.map(({ s, e }) => (
+                      <span
+                        key={s}
+                        style={{
+                          left: `${(s / duration) * 100}%`,
+                          width: `${((e - s) / duration) * 100}%`,
+                          top: 0,
+                        }}
+                      ></span>
+                    ))}
+                  </div>
+                </ProgressBar>
+              </div>
+
+              <div className="func">
+                <VolumeBar
+                  videoRef={videoRef}
+                  setMute={setMute}
+                  setVolume={setVolume}
+                  volume={volume}
+                />
+              </div>
             </div>
           </div>
         </div>

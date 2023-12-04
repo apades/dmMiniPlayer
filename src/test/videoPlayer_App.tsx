@@ -9,9 +9,26 @@ import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
+import VideoPlayerSide, {
+  type VideoItem,
+} from '@root/components/VideoPlayer/Side'
+import type WebProvider from '@root/web-provider/webProvider'
 
 window.listSelector = listSelector
 const Side: FC = () => {
+  return (
+    <VideoPlayerSide
+      videoList={[
+        {
+          category: '分集',
+          items: new Array(10).fill(0).map((_, i) => {
+            return { el: null, link: '', linkEl: null, title: `第${i + 1}集` }
+          }),
+        },
+      ]}
+      webProvider={{} as WebProvider}
+    ></VideoPlayerSide>
+  )
   return (
     <div className="side-outer-container">
       <div className="side-inner-container">
@@ -51,7 +68,7 @@ const App = () => {
     runInAction(() => {
       vpConfig.canSendBarrage = true
       vpConfig.showBarrage = true
-      configStore.vpActionAreaLock = true
+      // configStore.vpActionAreaLock = true
     })
 
     window.sender = sender
@@ -64,8 +81,8 @@ const App = () => {
       <div style={{ height: 200 }}>
         <VideoPlayer
           index={1}
-          // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
-          webVideo={videoRef.current}
+          uri="sample-mp4-file.mp4"
+          // webVideo={videoRef.current}
           renderSideActionArea={<Side />}
         />
       </div>

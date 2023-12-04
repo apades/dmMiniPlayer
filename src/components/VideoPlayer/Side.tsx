@@ -4,7 +4,11 @@ import { formatTime, formatView } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import type WebProvider from '@root/web-provider/webProvider'
 import classNames from 'classnames'
-import { useRef, type FC, useState, useEffect } from 'react'
+import { observer } from 'mobx-react'
+import { useEffect, useRef, useState, type FC } from 'react'
+import { LockFilled, UnlockFilled } from '@ant-design/icons'
+import configStore from '@root/store/config'
+import { runInAction } from 'mobx'
 
 export type VideoItem = {
   /**spa点击切换路由的link元素 */
@@ -61,6 +65,19 @@ const VideoPlayerSide: FC<Props> = (props) => {
   return (
     <div className="side-outer-container">
       <div className="side-inner-container">
+        <div className="action-panel">
+          <div style={{ flex: 1 }}></div>
+          <div
+            className="btn"
+            onClick={() => {
+              runInAction(() => {
+                configStore.sideLock = !configStore.sideLock
+              })
+            }}
+          >
+            {configStore.sideLock ? <LockFilled /> : <UnlockFilled />}
+          </div>
+        </div>
         {props.videoList.map((list, vi) => {
           const isCoverTitle = !!list.items?.[0]?.cover
           return (
@@ -125,4 +142,4 @@ const CoverTitleItem: FC<VideoItem> = (data) => {
   )
 }
 
-export default VideoPlayerSide
+export default observer(VideoPlayerSide)

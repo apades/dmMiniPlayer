@@ -2,4 +2,4 @@
 const isLiveMinDuration = 60 * 60 * 5
 
 export const checkIsLive = (video: HTMLVideoElement) =>
-  video.duration == Infinity || video.duration > isLiveMinDuration
+  video?.duration == Infinity || video?.duration > isLiveMinDuration

@@ -48,6 +48,10 @@ export const baseConfigMap = {
     defaultValue: 300,
     label: '侧边栏宽度',
   }),
+  sideLock: config({
+    defaultValue: false,
+    label: '侧边栏默认锁定',
+  }),
   // TODO
   // showInfoInBackOrForward: config({
   //   defaultValue: true,

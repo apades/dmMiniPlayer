@@ -19,7 +19,7 @@ const VolumeBar: FC<Props> = (props) => {
     'icon',
     'volume',
     {
-      mute: !volume || props.videoRef.current.muted,
+      mute: !volume || props.videoRef.current?.muted,
       active: isActive,
     },
   ])
