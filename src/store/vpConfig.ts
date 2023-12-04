@@ -7,6 +7,21 @@ class VpConfig {
   canSendDanmaku = false
   canShowSubtitle = false
 
+  // allDanmakus: Barrage[] = []
+  activeDanmakusMap = new Map<string, Barrage>()
+  get activeDanmakus() {
+    return this.activeDanmakusMap.values()
+  }
+  pushActiveDanmaku(danmaku: Barrage) {
+    runInAction(() => {
+      this.activeDanmakusMap.set(danmaku.id, danmaku)
+    })
+  }
+  removeActiveDanmaku(id: string) {
+    runInAction(() => {
+      this.activeDanmakusMap.delete(id)
+    })
+  }
 
   constructor() {
     makeAutoObservable(this)

@@ -4,6 +4,7 @@ import { MaxTunnelType } from '@root/store/config/danmaku'
 import videoRender from '@root/store/videoRender'
 import vpConfig from '@root/store/vpConfig'
 import { clamp, filterList, getTextWidth, minmax } from '@root/utils'
+import { v1 as uuid } from 'uuid'
 import { observe } from 'mobx'
 
 export type DanmakuProps = {
@@ -239,6 +240,7 @@ export class Barrage {
   coverFontsize: number
   uid: string
   uname: string
+  id: string
 
   observer: any[] = []
   constructor(props: { player: MiniPlayer; config: DanType }) {
@@ -252,6 +254,7 @@ export class Barrage {
     this.props = config
     this.uid = config.uid
     this.uname = config.uname
+    this.id = uuid()
   }
 
   init(time?: number) {
