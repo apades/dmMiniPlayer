@@ -127,7 +127,7 @@ export function initSideActionAreaRender(
             category: '推荐视频',
             items: recommendVideos.map((v) => ({ ...v, id: v.bvid })),
           },
-        ]}
+        ].filter((v) => v.items.length > 0)}
         webProvider={webProvider}
       />
     )
