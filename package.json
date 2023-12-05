@@ -6,8 +6,7 @@
   "packageManager": "pnpm@7.29.1",
   "scripts": {
     "dev": "plasmo dev",
-    "build": "node ./scripts/build.mjs",
-    "package": "plasmo package",
+    "build": "node ./scripts/build.mjs && plasmo package",
     "test": "sh ./scripts/run-test.sh"
   },
   "devDependencies": {
