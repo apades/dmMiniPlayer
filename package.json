@@ -57,13 +57,13 @@
     "webextension-polyfill": "^0.10.0"
   },
   "manifest": {
-    "name": "弹幕画中画播放器",
-    "description": "支持最新的画中画API功能，且可以在 视频/直播 中 播放/发送 弹幕",
+    "name": "__MSG_appName__",
+    "description": "__MSG_appDesc__",
     "version": "0.3.11",
     "host_permissions": [
       "<all_urls>"
     ],
-    "default_locale": "zh_CN",
+    "default_locale": "en",
     "web_accessible_resources": [
       {
         "resources": [
@@ -89,7 +89,7 @@
           "windows": "Alt+Shift+Comma",
           "mac": "Command+Shift+Left"
         },
-        "description": "后退"
+        "description": "__MSG_back__"
       },
       "forward": {
         "suggested_key": {
@@ -97,7 +97,7 @@
           "windows": "Alt+Shift+Period",
           "mac": "Command+Shift+Right"
         },
-        "description": "快进"
+        "description": "__MSG_forward__"
       },
       "pause/play": {
         "suggested_key": {
@@ -105,7 +105,7 @@
           "windows": "Alt+Shift+M",
           "mac": "Command+Shift+Space"
         },
-        "description": "暂停/播放"
+        "description": "__MSG_playOrPause__"
       },
       "hide": {
         "suggested_key": {
@@ -113,10 +113,10 @@
           "windows": "Alt+Shift+H",
           "mac": "Command+Shift+H"
         },
-        "description": "隐藏画中画"
+        "description": "__MSG_hide__"
       },
       "playbackRate": {
-        "description": "开启/关闭倍速，默认3倍速，修改请到设置页"
+        "description": "__MSG_playbackRate__"
       }
     }
   }

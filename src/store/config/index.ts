@@ -1,11 +1,12 @@
 import { config, initSetting } from '@apad/setting-panel'
 import { extStorage } from '@root/utils/storage'
 import * as mobx from 'mobx'
-import { runInAction } from 'mobx'
 import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
+import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
 import config_bilibili from './bilibili'
+import { isEn, t } from '@root/utils/i18n'
 
 export { DocPIPRenderType } from './docPIP'
 
@@ -16,37 +17,37 @@ export const baseConfigMap = {
   // fps限制相关
   renderFPS: config({
     defaultValue: 60,
-    desc: '限制弹幕渲染帧数，设置0就是无上限。如果是旧版画中画或[双视频模式]模式，视频会受此影响',
-    label: 'canvas渲染的帧数',
+    label: t('settingPanel.renderFPS'),
+    desc: t('settingPanel.renderFPSDesc'),
   }),
   FPS_limitOffsetAccurate: config({
     defaultValue: false,
-    label: 'FPS限制算法使用精准now时间',
-    desc: '默认记录的上一次更新时间是now - (offset % renderFPS)',
+    desc: t('settingPanel.FPS_limitOffsetAccurateDesc'),
+    label: t('settingPanel.FPS_limitOffsetAccurate'),
     notRecommended: true,
   }),
 
   videoProgress_show: config({
     defaultValue: true,
-    desc: '非直播视频底下增加进度条显示',
-    label: '显示进度条',
+    label: t('settingPanel.videoProgress_show'),
+    desc: t('settingPanel.videoProgress_showDesc'),
   }),
   videoProgress_color: config({
     defaultValue: '#00AEEC',
-    label: '进度条颜色',
+    label: t('settingPanel.videoProgress_color'),
     relateBy: 'videoProgress_show',
     relateByValue: true,
   }),
   videoProgress_height: config({
     defaultValue: 2,
-    label: '进度条高度',
+    label: t('settingPanel.videoProgress_height'),
     relateBy: 'videoProgress_show',
     relateByValue: true,
   }),
 
   sideWidth: config({
     defaultValue: 300,
-    label: '侧边栏宽度',
+    label: t('settingPanel.sideWidth'),
   }),
   // TODO
   // showInfoInBackOrForward: config({
@@ -57,29 +58,29 @@ export const baseConfigMap = {
   // }),
   playbackRate: config({
     defaultValue: 3,
-    desc: '直播下无效',
-    label: '快捷键/长按右键的倍速播放速率',
+    label: t('settingPanel.playbackRate'),
+    desc: t('settingPanel.playbackRateDesc'),
   }),
   pauseInClose_video: config({
     defaultValue: true,
-    label: '关闭视频时暂停',
+    label: t('settingPanel.pauseInClose_video'),
   }),
   pauseInClose_live: config({
     defaultValue: false,
-    label: '关闭直播也暂停',
-    desc: '并不是很推荐',
+    label: t('settingPanel.pauseInClose_live'),
+    desc: t('settingPanel.pauseInClose_liveDesc'),
     relateBy: 'pauseInClose_video',
     relateByValue: true,
   }),
   // debug
   performanceInfo: config({
     defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',
-    label: '性能面版',
+    label: t('settingPanel.performanceInfo'),
   }),
   performanceUpdateFrame: config({
     defaultValue: 30,
-    desc: '性能面板每触发request多少次更新一次，默认30',
-    label: '性能面版更新频率',
+    label: t('settingPanel.performanceUpdateFrame'),
+    desc: t('settingPanel.performanceUpdateFrameDesc'),
     relateBy: 'performanceInfo',
     relateByValue: true,
   }),
@@ -93,14 +94,14 @@ export const baseConfigMap = {
   }),
   saveHeightOnDocPIPCloseOffset: config({
     defaultValue: 8,
-    label: '关闭docPIP时保存高度偏移',
-    desc: 'chrome上很奇怪的用指定height打开docPIP会少8px，如果还偏移了可以调整',
+    label: t('settingPanel.saveHeightOnDocPIPCloseOffset'),
+    desc: t('settingPanel.saveHeightOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
   }),
   saveWidthOnDocPIPCloseOffset: config({
     defaultValue: 16,
-    label: '关闭docPIP时保存宽度偏移',
-    desc: '和 高度偏移一样',
+    label: t('settingPanel.saveWidthOnDocPIPCloseOffset'),
+    desc: t('settingPanel.saveWidthOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
   }),
   ...docPIPConfig,
@@ -115,7 +116,7 @@ const settingProps = {
   settings: baseConfigMap,
   saveInLocal: !isPluginEnv,
   mobx,
-  i18n: zh,
+  i18n: isEn ? en : zh,
 }
 
 if (isPluginEnv) {
@@ -124,9 +125,7 @@ if (isPluginEnv) {
       if (newConfig.useDocPIP) {
         if (!window?.documentPictureInPicture) {
           delete newConfig.useDocPIP
-          alert(
-            '你的浏览器不支持新的画中画功能，请替换chrome/edge浏览器且版本在116及以上\n或者在浏览器中chrome://flags/#document-picture-in-picture-api查看该功能是否存在并设置为Enabled，然后重启浏览器'
-          )
+          alert(t('settingPanel.unsupportDocPIPTips'))
         }
       }
       return extStorage.set(LOCAL_CONFIG, newConfig)

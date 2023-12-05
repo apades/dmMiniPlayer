@@ -1,4 +1,5 @@
 import { config } from '@apad/setting-panel'
+import { t } from '@root/utils/i18n'
 
 export enum DocPIPRenderType {
   /**
@@ -29,33 +30,33 @@ export enum DocPIPRenderType {
 export const docPIPConfig = {
   useDocPIP: config({
     defaultValue: !!window?.documentPictureInPicture,
-    label: '使用新版画中画',
-    desc: '如果浏览器支持新版画中画，默认为开启',
+    label: t('settingPanel.useDocPIP'),
+    desc: t('settingPanel.useDocPIPDesc'),
   }),
   docPIP_renderType: config<DocPIPRenderType>({
     // notRecommended: true,
-    label: '新版画中画播放模式',
+    label: t('settingPanel.docPIP_renderType'),
     defaultValue: DocPIPRenderType.reactVP_webVideo,
     type: 'group',
     group: [
       {
         value: DocPIPRenderType.reactVP_webVideo,
-        label: '转移网页视频标签到画中画',
-        desc: '默认推荐使用',
+        label: t('settingPanel.reactVP_webVideo'),
+        desc: t('settingPanel.reactVP_webVideoDesc'),
       },
       {
         value: DocPIPRenderType.reactVP_canvasCs,
-        label: '双视频模式',
-        desc: '针对视频在iframe中的方案，把网页视频流放在canvas里绘制，与旧版画中画核心一致，比较消耗性能',
+        label: t('settingPanel.reactVP_canvasCs'),
+        desc: t('settingPanel.reactVP_canvasCsDesc'),
       },
       {
         value: DocPIPRenderType.reactVP_cs,
-        label: '不经过canvas的双视频模式',
-        desc: '有帧率不如[双视频模式]的问题，60fps视频很明显',
+        label: t('settingPanel.reactVP_cs'),
+        desc: t('settingPanel.reactVP_csDesc'),
       },
       {
         value: DocPIPRenderType.oVP_cs,
-        label: '不经过canvas的双视频模式到原始video',
+        label: t('settingPanel.oVP_cs'),
       },
     ],
     relateBy: 'useDocPIP',
