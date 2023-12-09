@@ -32,7 +32,7 @@ export default class DocMiniPlayer extends MiniPlayer {
 
   videoPlayer: HTMLElement
   sender: BarrageSender
-  renderSideActionArea = () => null as ReactElement
+  renderSideActionArea?(): ReactElement
 
   /**canvas的captureStream */
   private _webPlayerVideoStream: MediaStream
@@ -146,7 +146,7 @@ export default class DocMiniPlayer extends MiniPlayer {
           srcObject={this.webPlayerVideoStream}
           webVideo={this.webPlayerVideoEl}
           keydownWindow={pipWindow}
-          renderSideActionArea={this.renderSideActionArea()}
+          renderSideActionArea={this.renderSideActionArea?.()}
           // emit事件
           onSeeked={() => this.emit('seek')}
           onPlay={() => this.emit('play')}
@@ -193,7 +193,7 @@ export default class DocMiniPlayer extends MiniPlayer {
         srcObject={this.canvasVideoStream}
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
-        renderSideActionArea={this.renderSideActionArea()}
+        renderSideActionArea={this.renderSideActionArea?.()}
         ref={(ref) => {
           if (!ref) return
           vpRef = ref
@@ -257,7 +257,7 @@ export default class DocMiniPlayer extends MiniPlayer {
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
         useWebVideo
-        renderSideActionArea={this.renderSideActionArea()}
+        renderSideActionArea={this.renderSideActionArea?.()}
         ref={(ref) => {
           if (!ref) return
           vpRef = ref

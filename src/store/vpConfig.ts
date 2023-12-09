@@ -7,10 +7,13 @@ class VpConfig {
   canSendDanmaku = false
   canShowSubtitle = false
 
-  // allDanmakus: Barrage[] = []
+  inactiveDanmakusMap = new Map<string, Barrage>()
   activeDanmakusMap = new Map<string, Barrage>()
   get activeDanmakus() {
-    return this.activeDanmakusMap.values()
+    return [...this.activeDanmakusMap.values()]
+  }
+  get inactiveDanmakus() {
+    return [...this.inactiveDanmakusMap.values()]
   }
   pushActiveDanmaku(danmaku: Barrage) {
     runInAction(() => {

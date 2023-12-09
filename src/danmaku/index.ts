@@ -5,7 +5,7 @@ import videoRender from '@root/store/videoRender'
 import vpConfig from '@root/store/vpConfig'
 import { clamp, filterList, getTextWidth, minmax } from '@root/utils'
 import { v1 as uuid } from 'uuid'
-import { observe } from 'mobx'
+import { observe, runInAction } from 'mobx'
 
 export type DanmakuProps = {
   player: MiniPlayer
@@ -357,20 +357,53 @@ export class Barrage {
     this.y = 0
     this.tunnel = 0
     this.clearAllObserve()
+
+    this.hasActiveAction = false
+    this.hasInactiveAction = false
+  }
+
+  private hasActiveAction = false
+  pushToActiveDanmakus() {
+    if (this.hasActiveAction) return
+    this.hasActiveAction = true
+    runInAction(() => {
+      vpConfig.activeDanmakusMap.set(this.id, this)
+    })
+  }
+  private hasInactiveAction = false
+  pushToInactiveDanmakus() {
+    if (this.hasInactiveAction) return
+    this.hasInactiveAction = true
+    runInAction(() => {
+      vpConfig.inactiveDanmakusMap.set(this.id, this)
+      vpConfig.activeDanmakusMap.delete(this.id)
+    })
   }
 
   // 根据此时x位置绘制文本
   draw(time: number) {
-    if (this.disabled) return this.clearAllObserve()
-    if (time < this.startTime) return this.clearAllObserve()
+    if (this.disabled) {
+      this.pushToInactiveDanmakus()
+      return this.clearAllObserve()
+    }
+    if (time < this.startTime) {
+      this.pushToInactiveDanmakus()
+      return this.clearAllObserve()
+    }
     if (this.endTime && (time < this.startTime || time > this.endTime)) {
       this.disabled = true
+      this.pushToInactiveDanmakus()
       this.clearAllObserve()
       return
     }
     if (!this.initd) {
       this.init()
     }
+    if (this.disabled) {
+      this.pushToInactiveDanmakus()
+      return
+    }
+    this.pushToActiveDanmakus()
 
     switch (this.props.type) {
       case 'right': {
@@ -383,6 +416,7 @@ export class Barrage {
           this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
         }
         if (this.x + this.width <= 0) {
+          this.pushToInactiveDanmakus()
           this.disabled = true
         }
         break
@@ -390,6 +424,7 @@ export class Barrage {
       case 'bottom':
       case 'top': {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
+          this.pushToInactiveDanmakus()
           this.tunnelOuted = true
           this.player.danmakuController.popTunnel(this.props.type, this.tunnel)
         }

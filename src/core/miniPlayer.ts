@@ -88,6 +88,7 @@ export default class MiniPlayer {
         this.danmakuController.barrages.forEach((b) => {
           b.reset()
         })
+        // TODO seeked时清除
       })
       videoEl.addEventListener('loadedmetadata', () => {
         this.updateCanvasSize()

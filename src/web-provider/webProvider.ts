@@ -12,6 +12,8 @@ import AsyncLock from '@root/utils/AsyncLock'
 import type { OrPromise } from '@root/utils/typeUtils'
 import { runInAction } from 'mobx'
 import type { Props as BarrageSenderProps } from '../core/danmaku/BarrageSender'
+import DocMiniPlayer from '@root/core/DocMiniPlayer'
+import CommonSide from './CommonSide'
 
 let hasClickPage = false,
   isWaiting = false
@@ -40,7 +42,16 @@ export default abstract class WebProvider {
     this.miniPlayer = miniPlayer
     this.initBarrageClient()
     this.initBarrageSender()
+    this.initSide()
+
     return miniPlayer
+  }
+
+  initSide() {
+    if (!(this.miniPlayer instanceof DocMiniPlayer)) return
+    if (this.miniPlayer.renderSideActionArea) return
+    if (!this.barrageClient) return
+    this.miniPlayer.renderSideActionArea = CommonSide(this)
   }
 
   // 弹幕相关
