@@ -1,11 +1,13 @@
+import { LiveBarrageClient } from '@root/core/danmaku/BarrageClient'
 import CCWs from './websocket'
-import BarrageClient from '@root/core/danmaku/BarrageClient'
 
-export default class CCLiveBarrageClient extends BarrageClient {
+export default class CCLiveBarrageClient extends LiveBarrageClient {
   ws: CCWs
-  constructor(public id: number) {
-    super()
-    this.ws = new CCWs(this.id)
+  getId() {
+    return location.pathname.split('/').pop()
+  }
+  protected onInit(): void {
+    this.ws = new CCWs(this.getId())
 
     this.ws.getWs().then((ws) => {
       console.log('getWs', ws)
@@ -19,7 +21,7 @@ export default class CCLiveBarrageClient extends BarrageClient {
       })
     })
   }
-  close(): void {
+  onClose(): void {
     this.ws.ws.close()
   }
 }

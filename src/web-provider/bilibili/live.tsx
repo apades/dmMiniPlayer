@@ -15,11 +15,12 @@ import VideoPlayerSide, {
 import { useRef, useState } from 'react'
 import { useOnce } from '@root/hook'
 import API_bilibili from '@root/api/bilibili'
+import type { Props } from '@root/core/danmaku/BarrageSender'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
   observer: MutationObserver
-  barrageClient: BilibiliLiveBarrageClient
+  barrageClient = new BilibiliLiveBarrageClient()
 
   constructor() {
     super()
@@ -38,17 +39,10 @@ export default class BilibiliLiveProvider extends WebProvider {
         DocPIPRenderType.reactVP_canvasCs
       )
     }
-    const miniPlayer = await super.initMiniPlayer(options)
+    return super.initMiniPlayer(options)
+  }
 
-    if (miniPlayer instanceof DocMiniPlayer) {
-      this.initSideActionAreaRender(miniPlayer)
-    }
-
-    // 弹幕相关
-    this.miniPlayer.on('PIPClose', () => {
-      this.stopObserveWs()
-    })
-    this.startObserverWs()
+  onInitBarrageSender() {
     function dq1Adv(q: string) {
       const top = dq1(q)
       if (top) {
@@ -61,41 +55,13 @@ export default class BilibiliLiveProvider extends WebProvider {
         } catch (error) {}
       }
     }
-    this.miniPlayer.initBarrageSender({
+
+    return {
       webSendButton: dq1Adv('#chat-control-panel-vm .bottom-actions button'),
       webTextInput: dq1Adv(
         '#chat-control-panel-vm textarea'
       ) as HTMLInputElement,
-    })
-
-    return miniPlayer
-  }
-
-  private fn: (data: DanType) => void = () => 1
-  startObserverWs(id = +location.pathname.split('/').pop()) {
-    this.barrageClient = new BilibiliLiveBarrageClient(id)
-
-    this.fn = (data: DanType) => {
-      this.miniPlayer.danmakuController.barrages.push(
-        new Barrage({
-          player: this.miniPlayer,
-          config: {
-            color: data.color,
-            text: data.text,
-            time: this.miniPlayer.webPlayerVideoEl.currentTime,
-            uid: data.uid,
-            uname: data.uname,
-            // TODO
-            type: 'right',
-          },
-        })
-      )
     }
-    this.barrageClient.addEventListener('danmu', this.fn)
-  }
-  stopObserveWs() {
-    this.barrageClient.removeListener('danmu', this.fn)
-    this.barrageClient.close()
   }
 
   // b站的iframe不给转移videoEl出来...原来不止是
@@ -137,9 +103,6 @@ export default class BilibiliLiveProvider extends WebProvider {
           onChange={(item) => {
             oldWebVideoRef.current.pause()
             oldWebVideoRef.current = miniPlayer.webPlayerVideoEl
-            this.stopObserveWs()
-            miniPlayer.danmakuController.initDans([])
-            this.startObserverWs(+item.id)
           }}
         />
       )

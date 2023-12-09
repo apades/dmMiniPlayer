@@ -2,13 +2,16 @@ import { sendToBackground } from '@plasmohq/messaging'
 import { listen } from '@plasmohq/messaging/message'
 import { getMiniPlayer } from '@root/core'
 import VideoChanger from '@root/core/VideoChanger'
+import type BarrageClient from '@root/core/danmaku/BarrageClient'
 import MiniPlayer from '@root/core/miniPlayer'
+import { Barrage } from '@root/danmaku'
 import configStore from '@root/store/config'
 import vpConfig from '@root/store/vpConfig'
 import { dq } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
 import type { OrPromise } from '@root/utils/typeUtils'
 import { runInAction } from 'mobx'
+import type { Props as BarrageSenderProps } from '../core/danmaku/BarrageSender'
 
 let hasClickPage = false,
   isWaiting = false
@@ -21,9 +24,9 @@ window.addEventListener('click', () => {
 window.VideoChanger = VideoChanger
 export type StartPIPPlayOptions = Partial<{ videoEl: HTMLVideoElement }>
 export default abstract class WebProvider {
-  miniPlayer?: MiniPlayer
+  miniPlayer: MiniPlayer
   videoChanger?: VideoChanger
-  // barrageClient: BarrageClient
+  barrageClient?: BarrageClient
   // abstract isWs: boolean
 
   constructor() {
@@ -35,8 +38,42 @@ export default abstract class WebProvider {
   ): OrPromise<MiniPlayer> {
     const miniPlayer = getMiniPlayer({ videoEl: options.videoEl })
     this.miniPlayer = miniPlayer
+    this.initBarrageClient()
+    this.initBarrageSender()
     return miniPlayer
   }
+
+  // 弹幕相关
+  initBarrageClient() {
+    if (!this.barrageClient) return
+    // if (!(this.miniPlayer instanceof DocMiniPlayer)) return
+    this.miniPlayer.on('PIPClose', () => {
+      this.barrageClient.close()
+    })
+    this.barrageClient.init()
+    this.barrageClient.addEventListener('danmu', (data) => {
+      this.miniPlayer.danmakuController.barrages.push(
+        new Barrage({
+          player: this.miniPlayer,
+          config: {
+            ...data,
+            time: this.miniPlayer.webPlayerVideoEl.currentTime,
+          },
+        })
+      )
+    })
+    this.barrageClient.addEventListener('allDanmaku', (dans) => {
+      this.miniPlayer.danmakuController.barrages = dans.map(
+        (dan) => new Barrage({ config: dan, player: this.miniPlayer })
+      )
+    })
+  }
+  initBarrageSender() {
+    if (!this.onInitBarrageSender) return
+    const config = this.onInitBarrageSender()
+    this.miniPlayer.initBarrageSender(config)
+  }
+  onInitBarrageSender?(): Omit<BarrageSenderProps, 'textInput'>
 
   async startPIPPlay(options?: StartPIPPlayOptions) {
     if (document.pictureInPictureElement) return

@@ -1,3 +1,4 @@
+import { VideoBarrageClient } from '@root/core/danmaku/BarrageClient'
 import type { DanType } from '..'
 
 export async function getDonghuafengDanmu(id: string): Promise<DanType[]> {
@@ -18,4 +19,15 @@ export async function getDonghuafengDanmu(id: string): Promise<DanType[]> {
         uid: r.sn + '',
       } as DanType)
   )
+}
+
+export class DonghuafengBarrageClient extends VideoBarrageClient {
+  getId() {
+    const id = new URLSearchParams(location.search).get('sn')
+    return id
+  }
+  protected async onInit() {
+    const danmakus = await getDonghuafengDanmu(this.getId())
+    this.emit('allDanmaku', danmakus)
+  }
 }

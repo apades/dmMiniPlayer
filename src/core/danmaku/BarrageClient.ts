@@ -1,10 +1,12 @@
 import type { DanType } from '@root/danmaku'
 import vpConfig from '@root/store/vpConfig'
+import type { OrPromise } from '@root/utils/typeUtils'
 import EventEmitter from 'events'
 import { runInAction } from 'mobx'
 
 export type LiveEvent = {
   danmu: Omit<DanType, 'time'>
+  allDanmaku: DanType[]
 }
 
 export default abstract class BarrageClient extends EventEmitter {
@@ -12,6 +14,7 @@ export default abstract class BarrageClient extends EventEmitter {
     super()
     runInAction(() => {
       vpConfig.showDanmakus = true
+      vpConfig.canShowDanmakus = true
     })
   }
   addEventListener<TType extends keyof LiveEvent>(
@@ -26,5 +29,18 @@ export default abstract class BarrageClient extends EventEmitter {
   ): boolean {
     return super.emit(eventName, args)
   }
-  abstract close(): void
+  async init() {
+    this.onInit()
+  }
+  protected abstract onInit(): void
+  close() {
+    this.onClose()
+    this.removeAllListeners()
+  }
+  protected abstract onClose(): void
+}
+
+export abstract class LiveBarrageClient extends BarrageClient {}
+export abstract class VideoBarrageClient extends BarrageClient {
+  onClose(): void {}
 }

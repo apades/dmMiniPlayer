@@ -1,4 +1,7 @@
-import BarrageClient from '@root/core/danmaku/BarrageClient'
+import BarrageClient, {
+  LiveBarrageClient,
+} from '@root/core/danmaku/BarrageClient'
+import type { OrPromise } from '@root/utils/typeUtils'
 import { LiveWS } from 'bilibili-live-ws'
 
 export const proto = {
@@ -16,15 +19,10 @@ const getRoomid = async (short: number) => {
   return room_id
 }
 
-export default class BilibiliLiveBarrageClient extends BarrageClient {
+export default class BilibiliLiveBarrageClient extends LiveBarrageClient {
   ws: LiveWS
-  constructor(public id: number) {
-    super()
-    this.init(id)
-  }
-
-  async init(id: number) {
-    const realRoomId = await getRoomid(id)
+  async onInit() {
+    const realRoomId = await getRoomid(+this.getId())
     console.log('realRoomId', realRoomId)
     this.ws = new LiveWS(realRoomId)
     this.ws.on('open', () => console.log('Connection is established'))
@@ -49,7 +47,11 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
       })
     })
   }
-  close(): void {
+  protected getId(): OrPromise<string> {
+    return location.pathname.split('/').pop()
+  }
+  onClose(): void {
     this.ws.ws.close()
+    this.ws = null
   }
 }

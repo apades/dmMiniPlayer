@@ -9,8 +9,6 @@ import { observe } from 'mobx'
 
 export type DanmakuProps = {
   player: MiniPlayer
-  /**预载弹幕 */
-  dans?: DanType[]
 }
 
 export type DanMoveType = 'top' | 'right' | 'bottom'
@@ -28,18 +26,12 @@ class DanmakuController {
   options: DanmakuProps
   player: DanmakuProps['player']
 
-  dans: DanType[] = []
   barrages: Barrage[] = []
   maxTunnel = 100
 
   constructor(options: DanmakuProps) {
     this.options = options
     this.player = this.options.player
-
-    this.dans = this.options.dans || []
-    this.barrages = this.dans.map(
-      (d) => new Barrage({ config: d, player: this.player })
-    )
 
     this.maxTunnel = this.calcMaxTunnel()
 
@@ -61,14 +53,6 @@ class DanmakuController {
       case MaxTunnelType['full']:
         return 100
     }
-  }
-
-  initDans(dans: DanType[]) {
-    this.tunnelsMap = { bottom: [], right: [], top: [] }
-    this.dans = dans
-    this.barrages = dans.map(
-      (dan) => new Barrage({ config: dan, player: this.player })
-    )
   }
 
   // 绘制弹幕文本

@@ -65,7 +65,7 @@ export function initSideActionAreaRender(
 
     async function updateRecommendVideos() {
       const relateVideos = await API_bilibili.getRelateVideos(
-        await webProvider.getAid()
+        await webProvider.barrageClient.getAid()
       )
       const recommendElList = dq('.video-page-card-small')
 

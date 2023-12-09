@@ -1,20 +1,23 @@
-import { Ex_WebSocket_UnLogin } from './websokect'
-import { getRealRid, getStrMiddle, getTransColor } from './utils'
+import { LiveBarrageClient } from '@root/core/danmaku/BarrageClient'
 import { STT } from './STT'
-import BarrageClient from '@root/core/danmaku/BarrageClient'
+import { getRealRid, getStrMiddle, getTransColor } from './utils'
+import { Ex_WebSocket_UnLogin } from './websokect'
 
-export default class DouyuLiveBarrageClient extends BarrageClient {
+export default class DouyuLiveBarrageClient extends LiveBarrageClient {
+  getId() {
+    let locationId = location.pathname.split('/').pop()
+    if (+locationId + '' == locationId) return locationId
+    return new URLSearchParams(location.search).get('rid')
+  }
+  protected onInit(): void {
+    throw new Error('Method not implemented.')
+  }
   ws: Ex_WebSocket_UnLogin
   stt = new STT()
-  constructor(public id: string | number) {
-    super()
-    this.initWs()
-  }
-
   isClose = false
   async initWs() {
     this.ws = new Ex_WebSocket_UnLogin(
-      await getRealRid(this.id + ''),
+      await getRealRid(this.getId()),
       this.handleMsg.bind(this),
       () => {
         if (this.isClose) return
@@ -62,8 +65,9 @@ export default class DouyuLiveBarrageClient extends BarrageClient {
     }
   }
 
-  close(): void {
+  onClose(): void {
     this.isClose = true
     this.ws.close()
+    this.ws = null
   }
 }

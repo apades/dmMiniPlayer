@@ -347,7 +347,7 @@ export default class MiniPlayer {
     this.startRenderAsCanvas()
     this.bindOnClosePlayer()
     this.startPIPPlay()
-    const disObserver = observe(vpConfig, 'showBarrage', () => {
+    const disObserver = observe(vpConfig, 'showDanmakus', () => {
       console.log('showBarrage update')
       this.canvasUpdate(true)
     })
