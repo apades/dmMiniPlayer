@@ -57,6 +57,10 @@ export default abstract class WebProvider {
   // 弹幕相关
   initBarrageClient() {
     if (!this.barrageClient) return
+    runInAction(() => {
+      vpConfig.showDanmakus = true
+      vpConfig.canShowDanmakus = true
+    })
     // if (!(this.miniPlayer instanceof DocMiniPlayer)) return
     this.miniPlayer.on('PIPClose', () => {
       this.barrageClient.close()
@@ -72,11 +76,17 @@ export default abstract class WebProvider {
           },
         })
       )
+      runInAction(() => {
+        vpConfig.danmakuLength += 1
+      })
     })
     this.barrageClient.addEventListener('allDanmaku', (dans) => {
       this.miniPlayer.danmakuController.barrages = dans.map(
         (dan) => new Barrage({ config: dan, player: this.miniPlayer })
       )
+      runInAction(() => {
+        vpConfig.danmakuLength == dans.length
+      })
     })
   }
   initBarrageSender() {

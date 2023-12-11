@@ -12,10 +12,6 @@ export type LiveEvent = {
 export default abstract class BarrageClient extends EventEmitter {
   constructor() {
     super()
-    runInAction(() => {
-      vpConfig.showDanmakus = true
-      vpConfig.canShowDanmakus = true
-    })
   }
   addEventListener<TType extends keyof LiveEvent>(
     e: TType,

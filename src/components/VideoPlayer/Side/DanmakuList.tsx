@@ -1,19 +1,31 @@
+import SnapLastItemList from '@root/components/SnapLastItemList'
 import type { Barrage } from '@root/danmaku'
 import vpConfig from '@root/store/vpConfig'
+import type WebProvider from '@root/web-provider/webProvider'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import type { FC } from 'react'
 
-const SideDanmakuListPanel: FC = (props) => {
+type Props = {
+  webProvider: WebProvider
+}
+const SideDanmakuListPanel: FC<Props> = (props) => {
+  const barrages = props.webProvider.miniPlayer.danmakuController.barrages
   return (
-    <div>
-      {vpConfig.inactiveDanmakus.map((danmaku, i) => {
-        return <DanmakuListItem danmaku={danmaku} inactive key={danmaku.id} />
+    <SnapLastItemList>
+      {/* 取巧的办法让组件更新 */}
+      <div className="hidden">{vpConfig.danmakuLength}</div>
+
+      {barrages.map((danmaku) => {
+        return (
+          <DanmakuListItem
+            danmaku={danmaku}
+            key={danmaku.id}
+            inactive={!vpConfig.activeDanmakusMap.has(danmaku.id)}
+          />
+        )
       })}
-      {vpConfig.activeDanmakus.map((danmaku, i) => {
-        return <DanmakuListItem danmaku={danmaku} key={danmaku.id} />
-      })}
-    </div>
+    </SnapLastItemList>
   )
 }
 
@@ -22,9 +34,14 @@ const DanmakuListItem: FC<{ danmaku: Barrage; inactive?: boolean }> = (
 ) => {
   const { danmaku, inactive } = props
   return (
-    <div className={classNames('danmaku', inactive && 'inactive')}>
-      <div className="user">{danmaku.uname}:</div>
-      <div className="text" style={{ color: danmaku.color }}>
+    <div
+      className={classNames(
+        'danmaku text-xs',
+        inactive && 'inactive opacity-60'
+      )}
+    >
+      <div className="user inline-block mr-1">{danmaku.uname}:</div>
+      <div className="text inline" style={{ color: danmaku.color }}>
         {danmaku.text}
       </div>
     </div>

@@ -7,14 +7,16 @@ class VpConfig {
   canSendDanmaku = false
   canShowSubtitle = false
 
-  inactiveDanmakusMap = new Map<string, Barrage>()
+  // inactiveDanmakusMap = new Map<string, Barrage>()
+  danmakuLength = 0
+  // TODO 视频的情况卡顿很严重，一直js重复执行不是个事
   activeDanmakusMap = new Map<string, Barrage>()
   get activeDanmakus() {
     return [...this.activeDanmakusMap.values()]
   }
-  get inactiveDanmakus() {
-    return [...this.inactiveDanmakusMap.values()]
-  }
+  // get inactiveDanmakus() {
+  //   return [...this.inactiveDanmakusMap.values()]
+  // }
   pushActiveDanmaku(danmaku: Barrage) {
     runInAction(() => {
       this.activeDanmakusMap.set(danmaku.id, danmaku)
@@ -35,6 +37,7 @@ class VpConfig {
       this.canShowSubtitle = false
       this.canShowDanmakus = false
       this.showDanmakus = true
+      this.danmakuLength = 0
     })
   }
 }

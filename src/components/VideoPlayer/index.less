@@ -447,6 +447,7 @@
         .f-center();
 
         padding: 2px;
+        line-height: 1;
         border-radius: 4px;
         cursor: pointer;
         transition: all .2s;
@@ -465,6 +466,8 @@
       height: 100%;
     }
     .side-inner-container{
+      display: flex;
+      flex-direction: column;
       width: var(--side-width);
       height: 100%;
       margin-left: auto;
@@ -473,26 +476,38 @@
       color: #fff;
       background-color: #0007;
       border-left: 1px solid #fff7;
-      &::-webkit-scrollbar{
-        width: 10px;
-        height: 10px;
-      }
-      &::-webkit-scrollbar-corner{
-        background: transparent;
-      }
-      &::-webkit-scrollbar-thumb{
-        background: #fff7;
-        background-clip: content-box;
-        border: 2px solid transparent;
-        border-radius: 16px;
-      
-        &:hover {
-          background-color: #fffa;
+
+      .main-panel{
+        position: relative;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow: hidden;
+        *::-webkit-scrollbar{
+          width: 10px;
+          height: 10px;
         }
-      }
+        *::-webkit-scrollbar-corner{
+          background: transparent;
+        }
+        *::-webkit-scrollbar-thumb{
+          background: #fff7;
+          background-clip: content-box;
+          border: 2px solid transparent;
+          border-radius: 16px;
       
-      &::-webkit-scrollbar-track{
-        display: none;
+          &:hover {
+            background-color: #fffa;
+          }
+        }
+      
+        *::-webkit-scrollbar-track{
+          display: none;
+        }
+        .snap-container{
+          width: 100%;
+          min-height: 100%;
+        }
       }
   
       .select-list{

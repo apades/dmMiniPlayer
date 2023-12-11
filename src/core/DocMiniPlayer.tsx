@@ -6,20 +6,26 @@ import {
   onVideoPlayerLoad,
 } from '@root/components/VideoPlayer/events'
 import configStore, { DocPIPRenderType } from '@root/store/config'
+import vpConfig from '@root/store/vpConfig'
 import { createElement, throttle } from '@root/utils'
-import { makeAutoObservable } from 'mobx'
+import { observeVideoEl } from '@root/utils/observeVideoEl'
+import { getPIPWindowConfig, setPIPWindowConfig } from '@root/utils/storage'
+import { runInAction } from 'mobx'
+import { type ReactElement } from 'react'
 import { createRoot } from 'react-dom/client'
-import styleUrl from 'url:./DocMiniPlayer.less'
 import BarrageSender, {
   type Props as BarrageSenderProps,
 } from './danmaku/BarrageSender'
 import MiniPlayer from './miniPlayer'
-import { observeVideoEl } from '@root/utils/observeVideoEl'
-import { type ReactElement } from 'react'
-import { runInAction } from 'mobx'
-import vpConfig from '@root/store/vpConfig'
-import { getPIPWindowConfig, setPIPWindowConfig } from '@root/utils/storage'
 
+// style
+import tailWind from 'data-text:../style/tailwind.css'
+import tailWindBase from 'data-text:../style/tailwindBase.css'
+import styleText from 'data-text:./DocMiniPlayer.less'
+
+const styleUrl = URL.createObjectURL(
+  new Blob([styleText, tailWindBase, tailWind])
+)
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
 

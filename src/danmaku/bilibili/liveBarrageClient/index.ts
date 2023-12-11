@@ -2,7 +2,8 @@ import BarrageClient, {
   LiveBarrageClient,
 } from '@root/core/danmaku/BarrageClient'
 import type { OrPromise } from '@root/utils/typeUtils'
-import { LiveWS } from 'bilibili-live-ws'
+import { KeepLiveWS as LiveWS } from 'bilibili-live-ws'
+import cookie from 'js-cookie'
 
 export const proto = {
   nested: {
@@ -10,7 +11,7 @@ export const proto = {
   },
 }
 
-const getRoomid = async (short: number) => {
+const getRealRoomid = async (short: number) => {
   const {
     data: { room_id },
   } = await fetch(
@@ -19,12 +20,42 @@ const getRoomid = async (short: number) => {
   return room_id
 }
 
+const getWsTokenAndHost = async (roomid: number) => {
+  const data = await fetch(
+    `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomid}&type=0`,
+    {
+      credentials: 'include',
+    }
+  ).then((r) => r.json())
+
+  if (data.code !== 0) {
+    console.error(data)
+    throw new Error('bili live接口返回错误，具体返回看console')
+  }
+  return { token: data.data.token, host: data.data.host_list[0].host }
+}
+
 export default class BilibiliLiveBarrageClient extends LiveBarrageClient {
   ws: LiveWS
   async onInit() {
-    const realRoomId = await getRoomid(+this.getId())
+    const realRoomId = await getRealRoomid(+this.getId())
     console.log('realRoomId', realRoomId)
-    this.ws = new LiveWS(realRoomId)
+    const { token, host } = await getWsTokenAndHost(realRoomId)
+    const buvid = cookie.get('buvid3'),
+      uid = cookie.get('DedeUserID')
+
+    this.ws = new LiveWS(realRoomId, {
+      address: `wss://${host}/sub`,
+      authBody: {
+        uid: +uid,
+        roomid: realRoomId,
+        protover: 3,
+        buvid,
+        platform: 'web',
+        type: 2,
+        key: token,
+      },
+    })
     this.ws.on('open', () => console.log('Connection is established'))
     // Connection is established
     this.ws.on('live', () => {
@@ -51,7 +82,7 @@ export default class BilibiliLiveBarrageClient extends LiveBarrageClient {
     return location.pathname.split('/').pop()
   }
   onClose(): void {
-    this.ws.ws.close()
+    this.ws.close()
     this.ws = null
   }
 }

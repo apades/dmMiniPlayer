@@ -49,7 +49,11 @@ const VideoPlayerSide: FC<Props> = (props) => {
 
   console.log('hasVideoList', hasVideoList)
 
-  const [tab, setTab] = useState(hasVideoList ? VIDEO_LIST : '')
+  const [tab, setTab] = useState(DANMAKU_LIST)
+
+  useEffect(() => {
+    if (!hasVideoList) setTab(DANMAKU_LIST)
+  }, [hasDanmakuList])
 
   return (
     <div className="side-outer-container">
@@ -89,13 +93,20 @@ const VideoPlayerSide: FC<Props> = (props) => {
           </div>
         </div>
         {hasVideoList && (
-          <div className={classNames(tab != VIDEO_LIST && 'hidden')}>
+          <div
+            className={classNames(tab != VIDEO_LIST && 'hidden', 'main-panel')}
+          >
             <SideVideoListPanel {...props} />
           </div>
         )}
         {hasDanmakuList && (
-          <div className={classNames(tab != DANMAKU_LIST && 'hidden')}>
-            <SideDanmakuListPanel />
+          <div
+            className={classNames(
+              tab != DANMAKU_LIST && 'hidden',
+              'main-panel'
+            )}
+          >
+            <SideDanmakuListPanel webProvider={props.webProvider} />
           </div>
         )}
       </div>

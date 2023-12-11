@@ -366,18 +366,13 @@ export class Barrage {
   pushToActiveDanmakus() {
     if (this.hasActiveAction) return
     this.hasActiveAction = true
-    runInAction(() => {
-      vpConfig.activeDanmakusMap.set(this.id, this)
-    })
+    vpConfig.pushActiveDanmaku(this)
   }
   private hasInactiveAction = false
   pushToInactiveDanmakus() {
     if (this.hasInactiveAction) return
     this.hasInactiveAction = true
-    runInAction(() => {
-      vpConfig.inactiveDanmakusMap.set(this.id, this)
-      vpConfig.activeDanmakusMap.delete(this.id)
-    })
+    vpConfig.removeActiveDanmaku(this.id)
   }
 
   // 根据此时x位置绘制文本
