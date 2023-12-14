@@ -58,6 +58,7 @@ export function observeVideoEl(
 
   ;(async () => {
     while (!stop) {
+      _disconnects.forEach((fn) => fn())
       const newParent = await observe(videoEl)
       t++
       clearTimeout(timer)
