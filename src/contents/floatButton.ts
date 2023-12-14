@@ -17,6 +17,7 @@ function initVideoFloatBtn(
   fixedPos?: boolean
 ): void {
   let timmer: NodeJS.Timeout = null
+  const videoIsContainer = vel == container
 
   const floatBtn = createElement('div', {
     className: 'rc-float-btn f-i-center',
@@ -82,6 +83,8 @@ function initVideoFloatBtn(
   }
   container.setAttribute(INIT_ATTR, 'true')
 
+  // fixed会受到 transform、perspective、filter 或 backdrop-filter 影响上下文
+  // @see https://developer.mozilla.org/zh-CN/docs/Web/CSS/position#fixed
   const setFixedPosIn = () => {
     const { left, top } = container.getBoundingClientRect()
     ;(floatBtn as any).style = `left:${left + 5}px !important;top:${
@@ -91,10 +94,14 @@ function initVideoFloatBtn(
   const setFixedPosInMove = throttle(setFixedPosIn, 1000)
 
   if (fixedPos) {
-    setFixedPosIn()
+    if (!videoIsContainer) {
+      container.style.position = 'relative'
+    } else {
+      setFixedPosIn()
+    }
   }
   container.addEventListener('mousemove', () => {
-    if (fixedPos) {
+    if (fixedPos && videoIsContainer) {
       setFixedPosInMove()
     }
     floatBtn.classList.remove('hidden')
