@@ -26,3 +26,12 @@ declare module 'ass-parser' {
   const assParser: (text: string, option?: any) => any[]
   export default assParser
 }
+
+type ExtMediaSessionAction = MediaSessionAction | 'enterpictureinpicture'
+
+interface MediaSession {
+  setActionHandler(
+    action: ExtMediaSessionAction,
+    handler: MediaSessionActionHandler | null
+  ): void
+}

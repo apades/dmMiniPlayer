@@ -77,4 +77,12 @@ onMessage('start-PIP', (data) => {
   provider().startPIPPlay({ videoEl: data.videoEl })
 })
 
+try {
+  navigator.mediaSession.setActionHandler('enterpictureinpicture', () => {
+    provider().startPIPPlay()
+  })
+} catch (error) {
+  console.log('🟡 No support mediaSession action enterpictureinpicture')
+}
+
 window.getWebProvider = getWebProvider
