@@ -64,6 +64,7 @@ window.videoRender = videoRender
 // })
 
 autorun(() => {
+  if (!configStore.adjustFontsizeByPIPWidthResize) return
   const tarSize =
     (configStore.fontSize / configStore.adjustFontsizeStartWidth) *
     videoRender.containerWidth *
