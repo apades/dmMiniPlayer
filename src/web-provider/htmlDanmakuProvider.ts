@@ -70,6 +70,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     text: string
     isDanmu?: (child: HTMLElement) => boolean
   }) {
+    if (!props.container) return
     this.htmlDanmakuObserver = new MutationObserver((list) => {
       const nodes = list.map((l) => [...l.addedNodes]).flat()
       console.log('nodes', list.length, nodes)
@@ -104,6 +105,6 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
   }
 
   stopObserveHtmlDanmaku() {
-    this.htmlDanmakuObserver.disconnect()
+    this.htmlDanmakuObserver?.disconnect?.()
   }
 }
