@@ -1,4 +1,6 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { minmax } from '@root/utils'
+import { autorun, makeAutoObservable, runInAction } from 'mobx'
+import configStore from './config'
 
 class VideoRender {
   containerWidth = 0
@@ -8,6 +10,8 @@ class VideoRender {
   x = 0
   y = 0
 
+  /**实际的fontSize，因为有自动调整大小的影响所以放在独立于config之外的config上了 */
+  fontSize = 0
   constructor() {
     makeAutoObservable(this)
   }
@@ -58,5 +62,19 @@ window.videoRender = videoRender
 // observe(videoRender.videoEl, () => {
 //   videoRender.setContainerSize()
 // })
+
+autorun(() => {
+  const tarSize =
+    (configStore.fontSize / configStore.adjustFontsizeStartWidth) *
+    videoRender.containerWidth *
+    configStore.adjustFontsizeScaleRate
+  const clampSize = minmax(
+    tarSize,
+    configStore.fontSize,
+    configStore.adjustFontsizeMaxSize
+  )
+
+  videoRender.fontSize = clampSize
+})
 
 export default videoRender

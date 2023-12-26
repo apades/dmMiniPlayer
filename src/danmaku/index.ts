@@ -4,7 +4,7 @@ import { MaxTunnelType } from '@root/store/config/danmaku'
 import videoRender from '@root/store/videoRender'
 import vpConfig from '@root/store/vpConfig'
 import { clamp, filterList, getTextWidth, minmax } from '@root/utils'
-import { observe } from 'mobx'
+import { autorun, observe } from 'mobx'
 
 export type DanmakuProps = {
   player: MiniPlayer
@@ -137,7 +137,7 @@ class DanmakuController {
       }
       barrage.tunnel = toTunnel
       barrage.y =
-        (barrage.tunnel + 1) * configStore.fontSize +
+        (barrage.tunnel + 1) * videoRender.fontSize +
         barrage.tunnel * configStore.gap
       barrage.draw(videoCTime)
     }
@@ -156,7 +156,7 @@ class DanmakuController {
       top[topTunnel] = true
       barrage.tunnel = topTunnel
       barrage.y =
-        (barrage.tunnel + 1) * configStore.fontSize +
+        (barrage.tunnel + 1) * videoRender.fontSize +
         barrage.tunnel * configStore.gap
       barrage.draw(videoCTime)
       topTunnel++
@@ -177,7 +177,7 @@ class DanmakuController {
     let find = this.tunnelsMap[type].findIndex((v) => v)
     if (find != -1) {
       this.tunnelsMap[type][find] = false
-      return find
+      return find > this.maxTunnel ? -1 : find
     }
 
     this.tunnelsMap[type].push(false)
@@ -234,7 +234,6 @@ export class Barrage {
 
   player: MiniPlayer
   props: DanType
-  coverFontsize: number
 
   observer: any[] = []
   constructor(props: { player: MiniPlayer; config: DanType }) {
@@ -267,7 +266,6 @@ export class Barrage {
       // ! 加个保底的time，不然跳到后段时需要计算太多的前面的弹幕位置了
       this.endTime = this.startTime + 30
     }
-    let fontSize = configStore.fontSize ?? 12
     this.speed = configStore.danSpeed / 10
     _observer(configStore, 'danSpeed', () => {
       this.speed = configStore.danSpeed / 10
@@ -275,7 +273,7 @@ export class Barrage {
 
     // 求得文字内容宽度
     this.width = getTextWidth(props.text, {
-      fontSize: fontSize + 'px',
+      fontSize: videoRender.fontSize + 'px',
       fontFamily: configStore.fontFamily,
     })
 
@@ -303,50 +301,31 @@ export class Barrage {
     }
 
     this.initd = true
-
     this.tunnel = this.player.danmakuController.getTunnel(this.props.type)
 
-    this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
+    this.y =
+      (this.tunnel + 1) * videoRender.fontSize + this.tunnel * configStore.gap
     _observer(configStore, 'gap', () => {
-      console.log('gap')
-      this.y = (this.tunnel + 1) * fontSize + this.tunnel * configStore.gap
+      this.y =
+        (this.tunnel + 1) * videoRender.fontSize + this.tunnel * configStore.gap
     })
 
     this.color = props.color || 'white'
 
-    const fontResizeEvents: (keyof typeof configStore)[] = [
-      'adjustFontsizeByPIPWidthResize',
-      'adjustFontsizeStartWidth',
-      'adjustFontsizeScaleRate',
-      'adjustFontsizeMaxSize',
-      'fontSize',
-    ]
-    const handleOnFontResize = () => {
-      if (!configStore.adjustFontsizeByPIPWidthResize) return
-      const tarSize =
-        (configStore.fontSize / configStore.adjustFontsizeStartWidth) *
-        videoRender.containerWidth *
-        configStore.adjustFontsizeScaleRate
-      const clampSize = minmax(
-        tarSize,
-        configStore.fontSize,
-        configStore.adjustFontsizeMaxSize
-      )
-      this.coverFontsize = clampSize
+    _observer(videoRender, 'fontSize', () => {
       this.width = getTextWidth(this.text, {
-        fontSize: clampSize + 'px',
+        fontSize: videoRender.fontSize + 'px',
         fontFamily: configStore.fontFamily,
       })
-      this.y = (this.tunnel + 1) * clampSize + this.tunnel * configStore.gap
-    }
-    handleOnFontResize()
-    fontResizeEvents.forEach((e) =>
-      _observer(configStore, e, handleOnFontResize)
-    )
-    _observer(videoRender, 'containerWidth', handleOnFontResize)
-    this.hasObserve = true
+      if (props.type != 'right') {
+        this.x = (canvas.width - this.width) / 2
+      }
+    })
 
-    if (this.tunnel == -1) this.disabled = true
+    this.hasObserve = true
+    if (this.tunnel == -1) {
+      this.disabled = true
+    }
   }
 
   clearAllObserve() {
@@ -406,7 +385,7 @@ export class Barrage {
 
     let context = this.player.ctx,
       opacity = vpConfig.showBarrage ? configStore.opacity : 0,
-      fontSize = this.coverFontsize ?? configStore.fontSize
+      fontSize = videoRender.fontSize
 
     context.shadowColor = 'rgba(0,0,0,0.5)'
     context.globalAlpha = opacity
