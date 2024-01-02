@@ -37,3 +37,4 @@
 - [douyu-monitor](https://github.com/qianjiachun/douyu-monitor)
 - [real-url](https://github.com/wbt5/real-url/blob/master/danmu/danmaku/cc.py)
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
+- [rc-slider](http://github.com/react-component/slider)
