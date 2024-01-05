@@ -5,6 +5,7 @@
 console.log('💀 event hacker running')
 import { dq1, type noop } from '@root/utils'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
+import equal from 'fast-deep-equal'
 
 let disableMap: Record<string, string[]> = {}
 function injectEventListener<
@@ -22,7 +23,7 @@ function injectEventListener<
   tar.addEventListener = function (...val: any) {
     this.eventMap = this.eventMap || {}
     this.eventMap[val[0]] = this.eventMap[val[0]] || []
-    let eventList = this.eventMap[val[0]]
+    let eventList = this.eventMap[val[0]] as any[]
     let event = val[0]
     try {
       // 判断监听触发事件
@@ -43,10 +44,13 @@ function injectEventListener<
       if (disableMatch && disableMatch[1].includes(event)) {
         console.log('匹配到禁用query', disableMap, this)
       } else var rs = originalAdd.call(this, ...val)
-      eventList.push({
+      const addEvent = {
         fn: val[1],
         state: val[2],
-      })
+      }
+      // 重复挂载事件的情况
+      if (eventList.find((ev) => equal(ev, addEvent))) return
+      eventList.push(addEvent)
     } catch (error) {
       console.error(error)
     }
