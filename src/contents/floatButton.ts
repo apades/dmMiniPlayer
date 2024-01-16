@@ -76,7 +76,7 @@ function initVideoFloatBtn(
   floatBtn.appendChild(settingBtn)
   floatBtnContainer.shadowRoot.appendChild(floatBtn)
   const styleLink = createElement('style', {
-    innerText: floatBtnStyleText,
+    innerHTML: floatBtnStyleText,
   })
   floatBtnContainer.shadowRoot.appendChild(styleLink)
 
