@@ -99,8 +99,9 @@ export default class MiniPlayer {
 
   updateCanvasSize(option?: { width: number; height: number }) {
     videoRender.updateSize(this.webPlayerVideoEl, option)
-    this.canvas.width = videoRender.containerWidth
-    this.canvas.height = videoRender.containerHeight
+    this.canvas.width = videoRender.containerWidth * window.devicePixelRatio
+    this.canvas.height = videoRender.containerHeight * window.devicePixelRatio
+    this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
   }
 
   // 在video play时使用，减少性能消耗

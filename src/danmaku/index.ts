@@ -281,11 +281,11 @@ export class Barrage {
 
     // 初始水平位置和垂直位置
     if (props.type != 'right') {
-      this.x = (canvas.width - this.width) / 2
+      this.x = (canvas.width - this.width) / 2 / window.devicePixelRatio
       // 这里observe config的width，然后改top type弹幕的位置，不然resize pip窗口会出现top弹幕错位
 
       _observer(videoRender, 'containerWidth', () => {
-        this.x = (canvas.width - this.width) / 2
+        this.x = (canvas.width - this.width) / 2 / window.devicePixelRatio
       })
     } else {
       this.x = canvas.width
