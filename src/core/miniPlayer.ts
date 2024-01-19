@@ -80,14 +80,7 @@ export default class MiniPlayer {
         this.canvasPlayerVideoEl.play()
       })
       videoEl.addEventListener('seeked', () => {
-        this.danmakuController.tunnelsMap = {
-          bottom: [],
-          right: [],
-          top: [],
-        }
-        this.danmakuController.barrages.forEach((b) => {
-          b.reset()
-        })
+        this.danmakuController.reset()
       })
       videoEl.addEventListener('loadedmetadata', () => {
         this.updateCanvasSize()

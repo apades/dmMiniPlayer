@@ -68,14 +68,32 @@ class DanmakuController {
     )
   }
 
+  private runningBarrages: Barrage[] = []
+  private nowPos = 0
   // 绘制弹幕文本
   draw() {
     let videoCTime = this.player.webPlayerVideoEl.currentTime
-    for (let barrage of this.barrages) {
-      if (!barrage.disabled) {
-        barrage.draw(videoCTime)
+
+    while (this.nowPos < this.barrages.length) {
+      const barrage = this.barrages[this.nowPos]
+      const startTime = barrage.startTime
+      if (startTime >= videoCTime) {
+        break
+      }
+      this.runningBarrages.push(barrage)
+      ++this.nowPos
+    }
+    const disableKeys: number[] = []
+    for (const key in this.runningBarrages) {
+      const barrage = this.runningBarrages[key]
+      barrage.draw(videoCTime)
+      if (barrage.disabled) {
+        disableKeys.unshift(+key)
       }
     }
+    disableKeys.forEach((key) => {
+      this.runningBarrages.splice(key, 1)
+    })
   }
   // 绘制第一帧的弹幕，在时间变动时需要用的
   drawInSeek() {
@@ -202,6 +220,15 @@ class DanmakuController {
       right: [],
       top: [],
     }
+  }
+
+  reset() {
+    this.initTunnelMap()
+    this.barrages.forEach((b) => {
+      b.reset()
+    })
+    this.nowPos = 0
+    this.runningBarrages = []
   }
 }
 
