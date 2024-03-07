@@ -58,7 +58,7 @@
   "manifest": {
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
-    "version": "0.3.16",
+    "version": "0.3.17",
     "host_permissions": [
       "<all_urls>"
     ],
