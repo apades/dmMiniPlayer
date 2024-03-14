@@ -1,6 +1,6 @@
 import { Barrage } from '@root/danmaku'
 import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
-import configStore, { temporarySetConfigStore } from '@root/store/config'
+import configStore from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import { getMiniPlayer } from '@root/core'

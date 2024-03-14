@@ -5,6 +5,8 @@ class VpConfig {
   showBarrage = true
   canSendBarrage = false
   canShowSubtitle = false
+
+  showSubtitle = false
   constructor() {
     makeAutoObservable(this)
   }

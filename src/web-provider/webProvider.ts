@@ -1,6 +1,7 @@
 import { sendToBackground } from '@plasmohq/messaging'
 import { listen } from '@plasmohq/messaging/message'
 import { getMiniPlayer } from '@root/core'
+import type SubtitleManager from '@root/core/SubtitleManager'
 import VideoChanger from '@root/core/VideoChanger'
 import MiniPlayer from '@root/core/miniPlayer'
 import configStore from '@root/store/config'
@@ -23,6 +24,7 @@ export type StartPIPPlayOptions = Partial<{ videoEl: HTMLVideoElement }>
 export default abstract class WebProvider {
   miniPlayer?: MiniPlayer
   videoChanger?: VideoChanger
+  subtitleManager?: SubtitleManager
   // barrageClient: BarrageClient
   // abstract isWs: boolean
 

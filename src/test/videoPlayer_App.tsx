@@ -9,7 +9,9 @@ import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
+import parser from '@root/core/SubtitleManager/subtitleParser/srt'
 
+window.parser = parser
 window.listSelector = listSelector
 const Side: FC = () => {
   return (

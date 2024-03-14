@@ -1,4 +1,5 @@
-import { config, initSetting } from '@apad/setting-panel'
+import { config } from '@apad/setting-panel'
+import { initSetting } from '../../../../apad/packages/setting-panel/lib/index'
 import { extStorage } from '@root/utils/storage'
 import * as mobx from 'mobx'
 import { docPIPConfig } from './docPIP'
@@ -6,14 +7,16 @@ import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
 import config_bilibili from './bilibili'
+import config_subtitle from './subtitle'
 import { isEn, t } from '@root/utils/i18n'
+import { observer } from 'mobx-react'
 
 export { DocPIPRenderType } from './docPIP'
 
 export const baseConfigMap = {
   ...config_danmaku,
   ...config_bilibili,
-
+  ...config_subtitle,
   // fps限制相关
   renderFPS: config({
     defaultValue: 60,
@@ -117,6 +120,7 @@ const settingProps = {
   saveInLocal: !isPluginEnv,
   mobx,
   i18n: isEn ? en : zh,
+  mobxObserver: observer,
 }
 
 if (isPluginEnv) {
@@ -142,13 +146,8 @@ if (isPluginEnv) {
   })
 }
 
-export const {
-  configStore,
-  openSettingPanel,
-  closeSettingPanel,
-  observe,
-  temporarySetConfigStore,
-} = initSetting({ ...settingProps })
+export const { configStore, openSettingPanel, closeSettingPanel, observe } =
+  initSetting({ ...settingProps })
 
 window.configStore = configStore
 window.openSettingPanel = openSettingPanel

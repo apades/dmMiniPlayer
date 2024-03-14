@@ -1,4 +1,4 @@
-import { config as _config, initSetting } from '@apad/setting-panel'
+import { config as _config } from '@apad/setting-panel'
 import { t } from '@root/utils/i18n'
 
 const category = t('settingPanel.danmaku')

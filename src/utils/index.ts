@@ -329,3 +329,15 @@ export function filterList<T>(
   })
   return [left, right]
 }
+
+export function getClientRect<T extends HTMLElement>(
+  dom: T
+): DOMRect | undefined {
+  let rect: DOMRect | undefined
+  try {
+    rect = dom?.getClientRects()[0]
+  } catch (error) {
+    console.error('some error', error)
+  }
+  return rect
+}
