@@ -52,7 +52,7 @@ export const baseConfigMap = {
     defaultValue: 300,
     label: t('settingPanel.sideWidth'),
   }),
-  // TODO
+  // TODO canvas增加视频信息
   // showInfoInBackOrForward: config({
   //   defaultValue: true,
   //   desc: '直播下无效',

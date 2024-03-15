@@ -63,7 +63,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
         break
       }
       case 'ass': {
-        // TODO
+        // TODO ass解析
         break
       }
       default: {

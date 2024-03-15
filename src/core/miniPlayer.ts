@@ -208,7 +208,6 @@ export default class MiniPlayer {
     })
   }
 
-  // FIXME 限制的FPS跟实际显示FPS对不上
   private lastUpdateTime = Date.now()
   /**设置FPS限制canvasUpdate的requestAnimationFrame下的draw update触发间隔 */
   animaFPS = 0
@@ -231,7 +230,6 @@ export default class MiniPlayer {
   }
 
   // TODO 检测视频FPS
-  // TODO video seek时lastTime = 0
   private lastTime = 0
   private lastVideo = ''
   /**video的渲染间隔时间计算出的FPS */

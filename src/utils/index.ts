@@ -58,7 +58,7 @@ type WaitLoop = {
     cb: () => boolean /* | Promise<boolean> */,
     limitTime?: number
   ): Promise<boolean>
-  // TODO
+  // TODO waitLoopCallback高级option
   (
     cb: () => boolean /* | Promise<boolean> */,
     option?: Partial<{

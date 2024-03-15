@@ -161,7 +161,6 @@ class DanmakuController {
     }
     let topTunnel = 0
     const top: boolean[] = []
-    // FIXME 这些渲染的top会和接下来渲染的重叠
     for (const barrage of topDans) {
       if (
         barrage.endTime &&

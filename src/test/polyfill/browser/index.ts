@@ -49,7 +49,6 @@ const BrowserPolyfill = {
     executeScript: () => 1,
   },
   tabs: {
-    // TODO tabs打开url
     create: (createProperties: Tabs.CreateCreatePropertiesType) => {
       const url = createProperties.url
       console.log('打开页面', url)
@@ -65,7 +64,6 @@ const BrowserPolyfill = {
       if (url?.includes('options.html')) {
         // 设置页面
       }
-      // TODO 非bg打开页面
       sendMessage('browser-API', {
         type: 'tabs-create',
         data: {
