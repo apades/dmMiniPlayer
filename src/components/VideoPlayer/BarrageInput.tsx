@@ -37,6 +37,7 @@ const BarrageInput: FC<{
         onKeyDown={(e) => {
           if (e.code == 'Escape') barrageInputRef.current.blur()
         }}
+        className="text-black"
       />
     </div>
   )
