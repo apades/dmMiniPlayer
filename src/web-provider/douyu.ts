@@ -5,6 +5,7 @@ import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import { getMiniPlayer } from '@root/core'
 import { sendMessage } from '@root/inject/contentSender'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 window.DouyuLiveBarrageClient = DouyuLiveBarrageClient
 export default class DouyuLiveProvider extends WebProvider {
@@ -15,9 +16,7 @@ export default class DouyuLiveProvider extends WebProvider {
     super()
   }
 
-  protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ) {
+  protected async initMiniPlayer(options?: MiniPlayerProps) {
     const miniPlayer = await super.initMiniPlayer(options)
 
     // 弹幕相关

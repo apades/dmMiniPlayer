@@ -9,16 +9,16 @@ import { addEventListener, createElement, throttle } from '@root/utils'
 import { observe } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import { checkIsLive } from '@root/utils/video'
+import type SubtitleManager from './SubtitleManager'
 
 export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
   danmu?: Omit<DanmakuProps, 'player'>
+  subtitleManager?: SubtitleManager
 }
 
 type EventHandler = Emitter<PlayerEvents>
 export default class MiniPlayer {
-  props: Required<MiniPlayerProps>
-  //
   webPlayerVideoEl: HTMLVideoElement
 
   // 弹幕器
@@ -45,10 +45,9 @@ export default class MiniPlayer {
   isLive = false
 
   private fpsInterval = 0
-  constructor(props: MiniPlayerProps) {
-    let { danmu = {}, ...otherProps } = props
+  constructor(public props: MiniPlayerProps) {
+    let { danmu = {} } = props
 
-    this.props = { ...otherProps, danmu }
     this.webPlayerVideoEl = props.videoEl
 
     this.danmakuController = new DanmakuController({

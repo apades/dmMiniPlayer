@@ -5,6 +5,7 @@ import WebProvider from './webProvider'
 import CCLiveBarrageClient from '@root/danmaku/cc/liveBarrageClient'
 import { getMiniPlayer } from '@root/core'
 import type { OrPromise } from '@root/utils/typeUtils'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 window.CCLiveBarrageClient = CCLiveBarrageClient
 export default class CCLiveProvider extends WebProvider {
@@ -15,9 +16,7 @@ export default class CCLiveProvider extends WebProvider {
     super()
   }
 
-  protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ) {
+  protected async initMiniPlayer(options?: MiniPlayerProps) {
     const miniPlayer = await super.initMiniPlayer(options)
 
     // 弹幕相关

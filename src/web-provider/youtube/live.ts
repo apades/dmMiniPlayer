@@ -1,13 +1,12 @@
 import { dq1 } from '@root/utils'
 import HtmlDanmakuProvider from '../htmlDanmakuProvider'
 import type MiniPlayer from '@root/core/miniPlayer'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 export default class YoutubeLiveProvider extends HtmlDanmakuProvider {
   iframe: HTMLIFrameElement
 
-  protected initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ): Promise<MiniPlayer> {
+  protected initMiniPlayer(options?: MiniPlayerProps): Promise<MiniPlayer> {
     this.iframe = dq1('.ytd-live-chat-frame')
     return super.initMiniPlayer(options)
   }

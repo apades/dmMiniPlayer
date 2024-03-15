@@ -5,6 +5,7 @@ import { createElement, dq, dq1 } from '@root/utils'
 import classNames from 'classnames'
 import { useRef, useState } from 'react'
 import WebProvider from '../webProvider'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 // TODO agemys用的**iframe + 非同源url**作为播放器网页，docPIP只能在top请求，且top和iframe互相隔离，canvasPIP会黑屏，目前就只能用原生画中画功能
 // 目前可能的就是通过tabs权限开一个iframe url的tab，后续操作都在这个tab里
@@ -15,7 +16,7 @@ export default class AgemysProvider extends WebProvider {
     style: `position:fixed;width:${window.innerWidth}px;height:${window.innerHeight}px;top:0;left:0;visibility: hidden;`,
   })
   protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
+    options?: MiniPlayerProps
   ): Promise<MiniPlayer> {
     const miniPlayer = await super.initMiniPlayer(options)
 

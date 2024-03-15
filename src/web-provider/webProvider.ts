@@ -3,7 +3,7 @@ import { listen } from '@plasmohq/messaging/message'
 import { getMiniPlayer } from '@root/core'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import VideoChanger from '@root/core/VideoChanger'
-import MiniPlayer from '@root/core/miniPlayer'
+import MiniPlayer, { type MiniPlayerProps } from '@root/core/miniPlayer'
 import configStore from '@root/store/config'
 import vpConfig from '@root/store/vpConfig'
 import { dq } from '@root/utils'
@@ -20,7 +20,7 @@ window.addEventListener('click', () => {
 })
 
 window.VideoChanger = VideoChanger
-export type StartPIPPlayOptions = Partial<{ videoEl: HTMLVideoElement }>
+export type StartPIPPlayOptions = MiniPlayerProps
 export default abstract class WebProvider {
   miniPlayer?: MiniPlayer
   videoChanger?: VideoChanger
@@ -45,6 +45,7 @@ export default abstract class WebProvider {
     this.miniPlayer = await this.initMiniPlayer({
       ...(options ?? {}),
       videoEl: options?.videoEl ?? this.getVideoEl(),
+      subtitleManager: this.subtitleManager,
     })
     this.miniPlayer.openPlayer()
     this.miniPlayer.on('PIPClose', () => {

@@ -12,6 +12,7 @@ import VideoPlayerSide, {
 import { useRef, useState } from 'react'
 import { useOnce } from '@root/hook'
 import API_bilibili from '@root/api/bilibili'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 window.BilibiliLiveBarrageClient = BilibiliLiveBarrageClient
 export default class BilibiliLiveProvider extends WebProvider {
@@ -23,9 +24,7 @@ export default class BilibiliLiveProvider extends WebProvider {
   }
 
   private oldDocPIP_renderType: DocPIPRenderType
-  protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ) {
+  protected async initMiniPlayer(options?: MiniPlayerProps) {
     // b站的iframe video会锁住，需要换模式
     if (options.videoEl.ownerDocument != document) {
       console.warn(

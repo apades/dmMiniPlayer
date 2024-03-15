@@ -5,6 +5,7 @@ import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
 import { getDonghuafengDanmu } from '@root/danmaku/donghuafeng'
 import type { DanType } from '@root/danmaku'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 export default class DonghuafengProvider extends WebProvider {
   constructor() {
@@ -12,7 +13,7 @@ export default class DonghuafengProvider extends WebProvider {
   }
 
   protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
+    options?: MiniPlayerProps
   ): Promise<MiniPlayer> {
     const miniPlayer = await super.initMiniPlayer(options)
 

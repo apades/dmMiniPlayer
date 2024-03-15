@@ -3,11 +3,10 @@ import { dq1 } from '@root/utils'
 import { windowsOnceCall } from '@root/utils/decorator'
 import WebProvider from './webProvider'
 import { Barrage } from '@root/danmaku'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 export default abstract class HtmlDanmakuProvider extends WebProvider {
-  protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ) {
+  protected async initMiniPlayer(options?: MiniPlayerProps) {
     const miniPlayer = await super.initMiniPlayer(options)
 
     this.miniPlayer.on('PIPClose', () => {

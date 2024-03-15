@@ -12,7 +12,15 @@ import srtParser from './subtitleParser/srt'
 import vpConfig from '@root/store/vpConfig'
 
 abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
-  subtitleItems: SubtitleItem[] = []
+  private _subtitleItems: SubtitleItem[] = []
+  get subtitleItems() {
+    return this._subtitleItems
+  }
+  set subtitleItems(value: SubtitleItem[]) {
+    this._subtitleItems.length = 0
+    this.subtitleItems.push(...value)
+  }
+
   video: HTMLVideoElement
   private subtitleCache = new Map<string, { rows: SubtitleRow[] }>()
   /**正在使用的字幕rows */

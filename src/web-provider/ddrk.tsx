@@ -8,6 +8,7 @@ import { dq, dq1, wait } from '@root/utils'
 import { windowsOnceCall } from '@root/utils/decorator'
 import { useState } from 'react'
 import WebProvider from './webProvider'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 export default class DdrkProvider extends WebProvider {
   inPIPPlayMode = false
@@ -15,9 +16,7 @@ export default class DdrkProvider extends WebProvider {
     super()
     this.injectHistoryChange()
   }
-  protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
-  ) {
+  protected async initMiniPlayer(options?: MiniPlayerProps) {
     const miniPlayer = await super.initMiniPlayer(options)
 
     this.miniPlayer = miniPlayer

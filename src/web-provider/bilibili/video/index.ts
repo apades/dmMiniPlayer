@@ -20,9 +20,15 @@ import { initSideActionAreaRender } from './sider'
 import AsyncLock from '@root/utils/AsyncLock'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
+import { getBv, getPid } from '../utils'
+import BilibiliSubtitleManager from './SubtitleManager'
+import onRouteChange from '@root/inject/csUtils/onRouteChange'
+import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
+  declare subtitleManager: BilibiliSubtitleManager
+
   constructor() {
     super()
     this.bindPIPActions()
@@ -45,27 +51,23 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
   @windowsOnceCall('bili_history')
   injectHistoryChange() {
-    sendMessage('inject-api:run', {
-      origin: 'history',
-      keys: ['pushState', 'forward', 'replaceState'],
-      onTriggerEvent: 'history',
-    })
-    onMessage('inject-api:onTrigger', (data) => {
-      if (data.event != 'history') return null
-      console.log('切换了路由 history')
-      if (this.miniPlayer) this.initDans()
-    })
-    window.addEventListener('popstate', () => {
-      console.log('切换了路由 popstate')
-      if (this.miniPlayer) this.initDans()
+    onRouteChange(() => {
+      this.initDans()
+      if (this.subtitleManager) {
+        this.subtitleManager.initSubtitles()
+      }
     })
   }
 
   protected async initMiniPlayer(
-    options?: Partial<{ videoEl: HTMLVideoElement }>
+    options?: MiniPlayerProps
   ): Promise<MiniPlayer> {
     const miniPlayer = await super.initMiniPlayer(options)
     this.videoEl = this.miniPlayer.webPlayerVideoEl
+    const subtitleManager = new BilibiliSubtitleManager()
+    subtitleManager.init(this.videoEl)
+    subtitleManager.initSubtitles()
+    this.subtitleManager = subtitleManager
 
     if (miniPlayer instanceof DocMiniPlayer) {
       initSideActionAreaRender(miniPlayer, this)
@@ -144,11 +146,8 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
 
   async getDans(): Promise<DanType[]> {
-    let bv = location.pathname
-        .split('/')
-        .find((p) => /b/i.test(p[0]) && /v/i.test(p[1]))
-        .replace(/bv/i, ''),
-      pid = +new URLSearchParams(location.search).get('p') || 1
+    let bv = getBv(),
+      pid = getPid()
     console.log('视频bv+ pid', bv, pid)
 
     const { aid, cid } = await this.getVideoInfo(bv, pid)

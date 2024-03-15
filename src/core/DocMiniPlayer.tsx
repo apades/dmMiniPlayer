@@ -143,6 +143,7 @@ export default class DocMiniPlayer extends MiniPlayer {
       re.render(
         <VideoPlayer
           index={1}
+          subtitleManager={this.props.subtitleManager}
           srcObject={this.webPlayerVideoStream}
           webVideo={this.webPlayerVideoEl}
           keydownWindow={pipWindow}
@@ -190,6 +191,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     re.render(
       <VideoPlayer
         index={1}
+        subtitleManager={this.props.subtitleManager}
         srcObject={this.canvasVideoStream}
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
@@ -254,6 +256,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     re.render(
       <VideoPlayer
         index={1}
+        subtitleManager={this.props.subtitleManager}
         webVideo={this.webPlayerVideoEl}
         keydownWindow={pipWindow}
         useWebVideo
