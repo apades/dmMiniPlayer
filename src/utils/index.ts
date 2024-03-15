@@ -341,3 +341,17 @@ export function getClientRect<T extends HTMLElement>(
   }
   return rect
 }
+
+export function inputFile(accept = '*') {
+  return new Promise<File>((resolve, reject) => {
+    const input = createElement<HTMLInputElement>('input', {
+      type: 'file',
+      accept,
+      onchange: (e) => {
+        resolve(input.files[0])
+      },
+    })
+
+    input.click()
+  })
+}

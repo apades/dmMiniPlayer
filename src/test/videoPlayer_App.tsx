@@ -3,7 +3,6 @@ import BarrageSender from '@root/core/danmaku/BarrageSender'
 import { useOnce } from '@root/hook'
 import configStore, { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
-import { Input } from 'antd'
 import { useRef, useState, type FC } from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
@@ -75,7 +74,7 @@ const App = () => {
       <div>
         <p>input 测试</p>
         <input className="input-o" />
-        <Input
+        <input
           className="input1"
           onChange={(e) => {
             console.log('change')

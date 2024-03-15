@@ -24,7 +24,6 @@ import { checkJumpInBufferArea } from './utls'
 import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
 import { checkIsLive } from '@root/utils/video'
-import { StyleProvider, createCache } from '@ant-design/cssinjs'
 import FileDropper from '../FileDropper'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import SubtitleSelection from './subtitle/SubtitleSelection'
@@ -656,13 +655,15 @@ const VideoPlayer = observer(
             ])}
         </div>
 
-        <SubtitleText subtitleManager={subtitleManager} />
         {/* 底部操作栏 */}
         <div
           className="video-action-area"
           onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
           onMouseLeave={handleResetActionAreaShow}
         >
+          <div className="absolute dp:bottom-[calc(100%)] bottom-[calc(100%+8px)] w-full">
+            <SubtitleText subtitleManager={subtitleManager} />
+          </div>
           <div className="mask"></div>
           <div className={cls('actions', isInputMode && 'is-input')}>
             {getIsLive() ? (
@@ -796,15 +797,4 @@ const RenderVideoNoti = (
   )
 }
 
-const App = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
-  const cache = useMemo(() => createCache(), [])
-  const tarWindow = props.keydownWindow ?? window
-  const head = tarWindow.document.head
-  return (
-    <StyleProvider cache={cache} container={head}>
-      <VideoPlayer {...props} ref={ref} />
-    </StyleProvider>
-  )
-})
-
-export default App
+export default VideoPlayer

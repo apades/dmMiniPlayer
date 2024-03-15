@@ -1,5 +1,4 @@
 import { minmax, formatTime } from '@root/utils'
-import { Input } from 'antd'
 import React, { type CSSProperties, type FC, useState } from 'react'
 
 type Props = {
@@ -72,7 +71,7 @@ let VideoPreviewPannel: FC<Props> = (props) => {
             </span>
           ))}
         </div>
-        <Input
+        <input
           value={comment}
           onKeyDown={(e) => {
             let a = e.target as any

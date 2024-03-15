@@ -22,6 +22,18 @@ module.exports = {
   },
   plugins: [
     function ({ addUtilities, matchVariant, matchUtilities }) {
+      addUtilities({
+        '.f-center': {
+          display: 'flex',
+          'justify-content': 'center',
+          'align-items': 'center',
+        },
+        '.f-i-center': {
+          display: 'flex',
+          'align-items': 'center',
+        },
+      })
+
       matchUtilities({
         'min-font': (value) => {
           const [size, lh] = value.split(',')

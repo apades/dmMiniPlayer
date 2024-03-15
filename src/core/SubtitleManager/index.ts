@@ -73,7 +73,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
 
     this.subtitleItems.push({ label, value: label })
     this.subtitleCache.set(label, { rows })
-    vpConfig.showSubtitle = true
+    this.useSubtitle(label)
   }
 
   private listenVideoEvents(video = this.video) {
