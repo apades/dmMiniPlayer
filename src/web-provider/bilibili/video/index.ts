@@ -9,7 +9,7 @@ import {
   type DanmakuDownloadType,
 } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
 import { onMessage, sendMessage } from '@root/inject/contentSender'
-import configStore, { temporarySetConfigStore } from '@root/store/config'
+import configStore from '@root/store/config'
 import { dq1 } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 import { windowsOnceCall } from '@root/utils/decorator'

@@ -1,5 +1,5 @@
 import { Barrage } from '@root/danmaku'
-import configStore, { temporarySetConfigStore } from '@root/store/config'
+import configStore from '@root/store/config'
 import { dq1, onWindowLoad } from '@root/utils'
 import WebProvider from './webProvider'
 import CCLiveBarrageClient from '@root/danmaku/cc/liveBarrageClient'

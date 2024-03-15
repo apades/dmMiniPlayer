@@ -1,9 +1,6 @@
 import { Barrage } from '@root/danmaku'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
-import configStore, {
-  DocPIPRenderType,
-  temporarySetConfigStore,
-} from '@root/store/config'
+import configStore, { DocPIPRenderType } from '@root/store/config'
 import { dq, dq1, onWindowLoad } from '@root/utils'
 import WebProvider from '../webProvider'
 import { getMiniPlayer } from '@root/core'
@@ -25,6 +22,7 @@ export default class BilibiliLiveProvider extends WebProvider {
     super()
   }
 
+  private oldDocPIP_renderType: DocPIPRenderType
   protected async initMiniPlayer(
     options?: Partial<{ videoEl: HTMLVideoElement }>
   ) {
@@ -33,10 +31,8 @@ export default class BilibiliLiveProvider extends WebProvider {
       console.warn(
         'b站的iframe videoEl有自己的监听守护，没法把videoEl提取出来，临时切换reactVP_canvasCs模式'
       )
-      temporarySetConfigStore(
-        'docPIP_renderType',
-        DocPIPRenderType.reactVP_canvasCs
-      )
+      this.oldDocPIP_renderType = configStore.docPIP_renderType
+      configStore.docPIP_renderType = DocPIPRenderType.reactVP_canvasCs
     }
     const miniPlayer = await super.initMiniPlayer(options)
 
@@ -47,6 +43,10 @@ export default class BilibiliLiveProvider extends WebProvider {
     // 弹幕相关
     this.miniPlayer.on('PIPClose', () => {
       this.stopObserveWs()
+      if (this.oldDocPIP_renderType) {
+        configStore.docPIP_renderType = this.oldDocPIP_renderType
+        this.oldDocPIP_renderType = null
+      }
     })
     this.startObserverWs()
     function dq1Adv(q: string) {

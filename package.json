@@ -34,12 +34,14 @@
     "vite": "^4.4.9"
   },
   "dependencies": {
+    "@ant-design/cssinjs": "^1.18.4",
     "@ant-design/icons": "^4.3.0",
-    "@apad/setting-panel": "^0.1.1",
+    "@apad/setting-panel": "^0.1.6",
     "@plasmohq/messaging": "^0.3.3",
     "@plasmohq/storage": "^1.5.0",
+    "@qgustavor/srt-parser": "^2.0.0",
     "ahooks": "^3.7.8",
-    "antd": "4.16.6",
+    "antd": "^5.15.2",
     "ass-parser": "^0.2.0",
     "bilibili-live-ws": "^6.3.1",
     "classnames": "^2.3.2",
@@ -52,6 +54,7 @@
     "plasmo": "0.83.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "simple-subtitle-parser": "^2.0.0",
     "uuid": "^9.0.0",
     "webextension-polyfill": "^0.10.0"
   },

@@ -6,6 +6,7 @@ import { formatTime, minmax, wait } from '@root/utils'
 import { default as classNames, default as cls } from 'classnames'
 import { observer } from 'mobx-react'
 import {
+  useMemo,
   forwardRef,
   memo,
   useEffect,
@@ -23,6 +24,12 @@ import { checkJumpInBufferArea } from './utls'
 import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
 import { checkIsLive } from '@root/utils/video'
+import { StyleProvider, createCache } from '@ant-design/cssinjs'
+import FileDropper from '../FileDropper'
+import type SubtitleManager from '@root/core/SubtitleManager'
+import SubtitleSelection from './subtitle/SubtitleSelection'
+import SubtitleText from './subtitle/SubtitleText'
+import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 
 type EventBase = Omit<
   {
@@ -69,6 +76,7 @@ export type Props = EventBase & {
   >
 
   renderSideActionArea?: ReactElement
+  subtitleManager?: SubtitleManager
 }
 
 export type VideoPlayerHandle = {
@@ -119,6 +127,11 @@ const VideoPlayer = observer(
         event: HTMLMediaElementEventMap[k]
       ) => void)[]
     }>({})
+
+    const subtitleManager = useMemo(() => {
+      if (props.subtitleManager) return props.subtitleManager
+      else return new CommonSubtitleManager()
+    }, [props.subtitleManager])
 
     const getIsLive = () => checkIsLive(videoRef.current)
 
@@ -478,6 +491,7 @@ const VideoPlayer = observer(
         HTMLVideoElement
       > = {}
 
+      subtitleManager.init(videoRef.current)
       const eventBase: EventBase = {
         onLoadedMetadata: (e) => {},
         onSeeked: () => {},
@@ -554,6 +568,7 @@ const VideoPlayer = observer(
         entries.forEach(([key, fn]) => {
           oldVideoEl.removeEventListener(key, fn)
         })
+        subtitleManager.reset()
       }
     }, [videoRef.current])
 
@@ -641,6 +656,7 @@ const VideoPlayer = observer(
             ])}
         </div>
 
+        <SubtitleText subtitleManager={subtitleManager} />
         {/* 底部操作栏 */}
         <div
           className="video-action-area"
@@ -666,6 +682,7 @@ const VideoPlayer = observer(
               {!getIsLive() && ` / ${formatTime(duration)} `}
             </span>
 
+            <SubtitleSelection subtitleManager={subtitleManager} />
             {vpConfig.canShowBarrage && (
               <Iconfont
                 onClick={() => {
@@ -779,4 +796,15 @@ const RenderVideoNoti = (
   )
 }
 
-export default memo(VideoPlayer)
+const App = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
+  const cache = useMemo(() => createCache(), [])
+  const styleRef = useRef<HTMLDivElement>()
+  return (
+    <StyleProvider cache={cache} container={styleRef.current}>
+      <div ref={styleRef}></div>
+      <VideoPlayer {...props} ref={ref} />
+    </StyleProvider>
+  )
+})
+
+export default App
