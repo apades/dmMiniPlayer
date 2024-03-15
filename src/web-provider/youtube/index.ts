@@ -1,12 +1,12 @@
 import { dq1 } from '@root/utils'
 import WebProvider from '../webProvider'
 import YoutubeLiveProvider from './live'
-import CommonProvider from '../common'
+import YoutubeVideoProvider from './video'
 
 export default class YoutubeProvider extends WebProvider {
   constructor(...props: ConstructorParameters<typeof WebProvider>) {
-    if (dq1('.ytd-live-chat-frame')) return new YoutubeLiveProvider(...props)
     super()
-    return new CommonProvider(...props)
+    if (dq1('.ytd-live-chat-frame')) return new YoutubeLiveProvider(...props)
+    return new YoutubeVideoProvider(...props)
   }
 }
