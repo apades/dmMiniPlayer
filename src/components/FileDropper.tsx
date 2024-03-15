@@ -36,7 +36,6 @@ const FileDropper: FC<Props> = (props) => {
   const isGlobal = props.global
   const dBody = childRef.current?.ownerDocument?.body ?? document.body
   const target = props.global ? dBody : childRef.current
-  console.log('target', dBody)
 
   useEffect(() => {
     if (!childRef.current /* || !props.global */) return
@@ -65,7 +64,7 @@ const FileDropper: FC<Props> = (props) => {
         setDragover(false)
       }, 50)
     },
-    { target: coverRef.current }
+    { target }
   )
   useEventListener(
     'dragover',
@@ -74,7 +73,7 @@ const FileDropper: FC<Props> = (props) => {
       e.preventDefault()
       clearTimeout(leaveTimer.current)
     },
-    { target: coverRef.current }
+    { target }
   )
 
   useEventListener(
@@ -95,7 +94,7 @@ const FileDropper: FC<Props> = (props) => {
       // }
       props.handleDrop(e.dataTransfer, e)
     },
-    { target: coverRef.current }
+    { target }
   )
 
   if (isArray(props.children)) throw new Error('不要传数组children给该组件')
@@ -105,7 +104,7 @@ const FileDropper: FC<Props> = (props) => {
         isDragover &&
         createPortal(
           <div
-            className="dragover-cover fixed left-0 top-0 w-full h-full z-10"
+            className="dragover-cover fixed left-0 top-0 w-full h-full z-10 pointer-events-none"
             style={
               isGlobal
                 ? {}
@@ -125,6 +124,7 @@ const FileDropper: FC<Props> = (props) => {
       {Children.map(props.children, (child, index) =>
         cloneElement(child as any, {
           ref: (ref: any) => {
+            if (!ref) return
             childRef.current = ref
           },
         })

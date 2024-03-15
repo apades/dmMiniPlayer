@@ -661,7 +661,7 @@ const VideoPlayer = observer(
           onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
           onMouseLeave={handleResetActionAreaShow}
         >
-          <div className="absolute dp:bottom-[calc(100%)] bottom-[calc(100%+8px)] w-full">
+          <div className="absolute bottom-[calc(100%+12px)] w-full">
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
           <div className="mask"></div>

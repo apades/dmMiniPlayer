@@ -101,7 +101,9 @@ const SubtitleSelection: FC<Props> = memo((props) => {
         props.subtitleManager.addFileSubtitle(file)
       }}
     >
-      <SubtitleSelectionInner {...props} />
+      <div>
+        <SubtitleSelectionInner {...props} />
+      </div>
     </FileDropper>
   )
 })
