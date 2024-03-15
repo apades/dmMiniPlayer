@@ -35,7 +35,10 @@ export default abstract class WebProvider {
   protected initMiniPlayer(
     options?: StartPIPPlayOptions
   ): OrPromise<MiniPlayer> {
-    const miniPlayer = getMiniPlayer({ videoEl: options.videoEl })
+    const miniPlayer = getMiniPlayer({
+      subtitleManager: this.subtitleManager,
+      ...options,
+    })
     this.miniPlayer = miniPlayer
     return miniPlayer
   }
@@ -45,7 +48,9 @@ export default abstract class WebProvider {
     this.miniPlayer = await this.initMiniPlayer({
       ...(options ?? {}),
       videoEl: options?.videoEl ?? this.getVideoEl(),
-      subtitleManager: this.subtitleManager,
+      ...(this.subtitleManager
+        ? { subtitleManager: this.subtitleManager }
+        : {}),
     })
     this.miniPlayer.openPlayer()
     this.miniPlayer.on('PIPClose', () => {

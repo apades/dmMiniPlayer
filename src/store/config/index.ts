@@ -1,5 +1,5 @@
 import { config } from '@apad/setting-panel'
-import { initSetting } from '../../../../apad/packages/setting-panel/lib/index'
+import { initSetting } from '@apad/setting-panel'
 import { extStorage } from '@root/utils/storage'
 import * as mobx from 'mobx'
 import { docPIPConfig } from './docPIP'

@@ -4,6 +4,7 @@ import {
   observable,
   ObservableMap,
   ObservableSet,
+  computed,
 } from 'mobx'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
 import Events2 from '@root/utils/Events2'
@@ -12,14 +13,7 @@ import srtParser from './subtitleParser/srt'
 import vpConfig from '@root/store/vpConfig'
 
 abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
-  private _subtitleItems: SubtitleItem[] = []
-  get subtitleItems() {
-    return this._subtitleItems
-  }
-  set subtitleItems(value: SubtitleItem[]) {
-    this._subtitleItems.length = 0
-    this.subtitleItems.push(...value)
-  }
+  subtitleItems: SubtitleItem[] = []
 
   video: HTMLVideoElement
   private subtitleCache = new Map<string, { rows: SubtitleRow[] }>()
@@ -27,7 +21,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
   rows: SubtitleRow[] = []
   rowIndex = 0
   activeRows = new Set<SubtitleRow>()
-  activeSubtitleLabel: string
+  activeSubtitleLabel: string = null
 
   /**停止监听所有video事件 */
   private videoUnListen = () => {}
@@ -154,6 +148,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
     }
     this.rows = subtitleData.rows
     this.listenVideoEvents()
+    vpConfig.showSubtitle = true
   }
 
   abstract loadSubtitle(value: string): Promise<SubtitleRow[]>
@@ -161,7 +156,6 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
   reset() {
     this.videoUnListen()
     this.subtitleItems.length = 0
-    this.video = null
     this.subtitleCache.clear()
     this.resetSubtitleState()
   }

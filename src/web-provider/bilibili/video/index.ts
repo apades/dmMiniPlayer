@@ -62,12 +62,16 @@ export default class BilibiliVideoProvider extends WebProvider {
   protected async initMiniPlayer(
     options?: MiniPlayerProps
   ): Promise<MiniPlayer> {
-    const miniPlayer = await super.initMiniPlayer(options)
-    this.videoEl = this.miniPlayer.webPlayerVideoEl
     const subtitleManager = new BilibiliSubtitleManager()
-    subtitleManager.init(this.videoEl)
+    subtitleManager.init(options?.videoEl ?? this.getVideoEl())
     subtitleManager.initSubtitles()
     this.subtitleManager = subtitleManager
+
+    const miniPlayer = await super.initMiniPlayer({
+      ...options,
+      subtitleManager,
+    })
+    this.videoEl = this.miniPlayer.webPlayerVideoEl
 
     if (miniPlayer instanceof DocMiniPlayer) {
       initSideActionAreaRender(miniPlayer, this)

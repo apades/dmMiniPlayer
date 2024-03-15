@@ -798,10 +798,10 @@ const RenderVideoNoti = (
 
 const App = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
   const cache = useMemo(() => createCache(), [])
-  const styleRef = useRef<HTMLDivElement>()
+  const tarWindow = props.keydownWindow ?? window
+  const head = tarWindow.document.head
   return (
-    <StyleProvider cache={cache} container={styleRef.current}>
-      <div ref={styleRef}></div>
+    <StyleProvider cache={cache} container={head}>
       <VideoPlayer {...props} ref={ref} />
     </StyleProvider>
   )

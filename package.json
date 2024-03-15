@@ -36,7 +36,7 @@
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.4",
     "@ant-design/icons": "^4.3.0",
-    "@apad/setting-panel": "^0.1.6",
+    "@apad/setting-panel": "^0.1.8",
     "@plasmohq/messaging": "^0.3.3",
     "@plasmohq/storage": "^1.5.0",
     "@qgustavor/srt-parser": "^2.0.0",

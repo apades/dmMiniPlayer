@@ -35,13 +35,13 @@ const SubtitleText: FC<Props> = (props) => {
   })
   return (
     <div
-      className="vp-subtitle absolute w-full pointer-events-none f-center gap-[4px] left-0 bottom-[12px]"
+      className="vp-subtitle absolute w-full pointer-events-none flex justify-center items-center gap-[4px] left-0 bottom-[12px]"
       style={{
         opacity: !vpConfig.showSubtitle ? 0 : configStore.subtitle_opacity,
       }}
     >
       {Array.from(activeRows.values()).map((row, i) => (
-        <div key={i} className="relative px-[4px] py-[2px]">
+        <div key={i} className="relative w-fit">
           <div
             className="absolute w-full h-full"
             style={{
@@ -50,7 +50,7 @@ const SubtitleText: FC<Props> = (props) => {
             }}
           ></div>
           <div
-            className="relative z-[2]"
+            className="relative z-[2] px-[4px] py-[2px]"
             style={{
               color: configStore.subtitle_fontColor,
               opacity: configStore.subtitle_fontOpacity,

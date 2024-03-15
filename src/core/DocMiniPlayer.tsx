@@ -19,6 +19,8 @@ import { type ReactElement } from 'react'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import { getPIPWindowConfig, setPIPWindowConfig } from '@root/utils/storage'
+import tailwindBase from 'data-text:@root/style/tailwindBase.css'
+import tailwind from 'data-text:@root/style/tailwind.css'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
@@ -28,6 +30,9 @@ export default class DocMiniPlayer extends MiniPlayer {
   styleEl = createElement('link', {
     rel: 'stylesheet',
     href: styleUrl,
+  })
+  tailwindStyleEl = createElement('style', {
+    innerHTML: `${tailwindBase} ${tailwind}`,
   })
 
   videoPlayer: HTMLElement
@@ -122,6 +127,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     ;(this.canvas as any).style = ''
     pipWindow.document.body.appendChild(this.canvas)
     pipWindow.document.head.appendChild(this.styleEl)
+    pipWindow.document.head.appendChild(this.tailwindStyleEl)
     pipWindow.document.body.appendChild(this.videoPlayer)
     pipWindow.addEventListener('pagehide', () => {
       // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
@@ -160,6 +166,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     ;(this.canvas as any).style = ''
     pipWindow.document.body.appendChild(this.canvas)
     pipWindow.document.head.appendChild(this.styleEl)
+    pipWindow.document.head.appendChild(this.tailwindStyleEl)
     pipWindow.document.body.appendChild(this.videoPlayer)
     pipWindow.addEventListener('pagehide', () => {
       // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
@@ -218,6 +225,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     await onVideoPlayerLoad()
     ;(this.canvas as any).style = ''
     pipWindow.document.head.appendChild(this.styleEl)
+    pipWindow.document.head.appendChild(this.tailwindStyleEl)
     pipWindow.document.body.appendChild(this.videoPlayer)
     pipWindow.addEventListener('pagehide', () => {
       // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
@@ -284,6 +292,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     await onVideoPlayerLoad()
     ;(this.canvas as any).style = ''
     pipWindow.document.head.appendChild(this.styleEl)
+    pipWindow.document.head.appendChild(this.tailwindStyleEl)
     pipWindow.document.body.appendChild(this.canvas)
     pipWindow.document.body.appendChild(this.videoPlayer)
     pipWindow.addEventListener('pagehide', () => {

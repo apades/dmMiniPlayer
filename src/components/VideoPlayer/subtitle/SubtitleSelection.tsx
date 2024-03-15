@@ -1,7 +1,7 @@
 import Iconfont from '@root/components/Iconfont'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import { observer } from 'mobx-react'
-import { type FC, memo } from 'react'
+import { type FC, memo, useState } from 'react'
 import { Dropdown } from 'antd'
 import classNames from 'classnames'
 import vpConfig from '@root/store/vpConfig'
@@ -14,6 +14,7 @@ type Props = {
 const SubtitleSelectionInner: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
+  const [isOpen, setOpen] = useState(false)
 
   return (
     <Dropdown
@@ -40,18 +41,35 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
         ],
       }}
       trigger={['hover']}
-      placement="topLeft"
+      getPopupContainer={(node) => node.parentElement}
+      open={isOpen}
     >
-      <Iconfont
-        type="subtitle"
-        size={18}
-        className={classNames(!vpConfig.showSubtitle && 'opacity-50')}
-        onClick={() => {
-          runInAction(() => {
-            vpConfig.showSubtitle = !vpConfig.showSubtitle
-          })
-        }}
-      />
+      <div
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+      >
+        <Iconfont
+          type="subtitle"
+          size={18}
+          className={classNames(!vpConfig.showSubtitle && 'opacity-50')}
+          onClick={() => {
+            runInAction(() => {
+              if (!subtitleManager.activeSubtitleLabel) {
+                if (subtitleManager.subtitleItems.length) {
+                  subtitleManager.useSubtitle(
+                    subtitleManager.subtitleItems[0].label
+                  )
+                  vpConfig.showSubtitle = true
+                } else {
+                  return console.log('No subtitle')
+                }
+              } else {
+                vpConfig.showSubtitle = !vpConfig.showSubtitle
+              }
+            })
+          }}
+        />
+      </div>
     </Dropdown>
   )
 })
