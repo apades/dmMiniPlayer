@@ -86,7 +86,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
       })
     }
     const mainUnListen = addEventListener(video, (video) => {
-      video.addEventListener('timeupdate', () => {
+      const handleOnTimeUpdate = () => {
         const cTime = video.currentTime
         while (this.rowIndex < this.rows.length) {
           const row = this.rows[this.rowIndex]
@@ -118,6 +118,9 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
           })
           rowUnListenMap.set(row, rowUnListen)
         }
+      }
+      video.addEventListener('timeupdate', () => {
+        handleOnTimeUpdate()
       })
 
       // 跳进度条就重置所有字幕
@@ -125,6 +128,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
         unListenRows()
         rowUnListenMap.clear()
         this.rowIndex = 0
+        handleOnTimeUpdate()
       })
     })
 
