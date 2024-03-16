@@ -110,6 +110,10 @@ const SubtitleSelection: FC<Props> = memo((props) => {
         const file = dataTransfer.files[0]
         props.subtitleManager.addFileSubtitle(file)
       }}
+      getPopupContainer={() =>
+        window?.documentPictureInPicture?.window?.document?.body ??
+        document.body
+      }
     >
       <div>
         <SubtitleSelectionInner {...props} />

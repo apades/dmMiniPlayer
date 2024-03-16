@@ -14,6 +14,7 @@ import { createPortal } from 'react-dom'
 
 type Props = {
   children: ReactNode
+  getPopupContainer?: (node: HTMLElement) => HTMLElement
   /**dragoverRender和drop事件挂载在body上 */
   global?: boolean
   /**处理drop事件 */
@@ -34,7 +35,8 @@ const FileDropper: FC<Props> = (props) => {
   const leaveTimer = useRef<NodeJS.Timeout>()
 
   const isGlobal = props.global
-  const dBody = childRef.current?.ownerDocument?.body ?? document.body
+  let dBody = childRef.current?.ownerDocument?.body ?? document.body
+  dBody = props.getPopupContainer?.(dBody) ?? dBody
   const target = props.global ? dBody : childRef.current
 
   useEffect(() => {
