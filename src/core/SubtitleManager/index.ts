@@ -8,9 +8,10 @@ import {
 } from 'mobx'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
 import Events2 from '@root/utils/Events2'
-import { addEventListener } from '@root/utils'
+import { addEventListener, readTextFromFile } from '@root/utils'
 import srtParser from './subtitleParser/srt'
 import vpConfig from '@root/store/vpConfig'
+import assParser from './subtitleParser/ass'
 
 abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
   subtitleItems: SubtitleItem[] = []
@@ -48,28 +49,27 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
 
   async addFileSubtitle(file: File) {
     const label = file.name
+    if (this.subtitleCache.has(label)) {
+      throw Error('Already add this file')
+    }
     const fileType = label.split('.').pop().toLowerCase()
     let rows: SubtitleRow[] = []
     switch (fileType) {
       case 'srt': {
-        const fileReader = new FileReader()
-        fileReader.readAsText(file)
-        const text = await new Promise<string>((resolve, reject) => {
-          fileReader.onload = () => {
-            resolve(fileReader.result as string)
-          }
-        })
+        const text = await readTextFromFile(file)
         rows = srtParser(text)
         break
       }
       case 'ass': {
-        // TODO ass解析
+        const text = await readTextFromFile(file)
+        rows = assParser(text)
         break
       }
       default: {
         throw Error('Unsupported subtitle file. Only support .srt .ass')
       }
     }
+    console.log('解析后的rows', rows)
 
     this.subtitleItems.push({ label, value: label })
     this.subtitleCache.set(label, { rows })
@@ -84,7 +84,6 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
         unListen()
       })
     }
-
     const mainUnListen = addEventListener(video, (video) => {
       video.addEventListener('timeupdate', () => {
         const cTime = video.currentTime
@@ -146,7 +145,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
       const subtitleRows = await this.loadSubtitle(subtitleItemsValue)
       subtitleData = { rows: subtitleRows }
     }
-    this.rows = subtitleData.rows
+    this.rows = [...subtitleData.rows]
     this.listenVideoEvents()
     vpConfig.showSubtitle = true
   }
@@ -154,13 +153,14 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
   abstract loadSubtitle(value: string): Promise<SubtitleRow[]>
 
   reset() {
-    this.videoUnListen()
     this.subtitleItems.length = 0
     this.subtitleCache.clear()
     this.resetSubtitleState()
   }
 
   resetSubtitleState() {
+    // this.unListenRows()
+    this.videoUnListen()
     this.rows.length = 0
     this.rowIndex = 0
     this.activeRows.clear()

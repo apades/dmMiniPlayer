@@ -75,7 +75,11 @@ export default function srtParser(content: string): SubtitleRow[] {
     id: '0',
     text: '',
   }
-  let index = 0
+  const firstLine = srtLines[0].trim()
+  if (+firstLine + '' != firstLine) {
+    throw Error('Error parser in line 1, not a standard number in start line')
+  }
+  let index = +firstLine
 
   for (let i = 0; i < srtLines.length; i++) {
     const line = srtLines[i].trim()
@@ -101,15 +105,20 @@ export default function srtParser(content: string): SubtitleRow[] {
 
       const parser = domParser.parseFromString(htmlText, 'text/xml')
       const root = parser.children[0]
-      const hasMultiChild = root.children.length > 1
-      const text = Array.from(root.children)
-        .map((node) => node.textContent)
-        .join('\n')
+      const hasMultiChild = !!root.children.length
+      const text = hasMultiChild
+        ? Array.from(root.children)
+            .map((node) => node.textContent)
+            .join('\n')
+        : root.textContent
       subtitle.text = text
 
       subtitles.push(subtitle)
     } else {
-      subtitle.text += line + ' '
+      if (subtitle.text) {
+        subtitle.text += '\n'
+      }
+      subtitle.text += line
     }
   }
 

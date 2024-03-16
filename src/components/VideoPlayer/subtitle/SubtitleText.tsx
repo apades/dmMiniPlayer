@@ -50,7 +50,7 @@ const SubtitleText: FC<Props> = (props) => {
             }}
           ></div>
           <div
-            className="relative z-[2] px-[8px] py-[2px] text-center"
+            className="relative z-[2] px-[8px] py-[2px] text-center whitespace-pre-line"
             style={{
               color: configStore.subtitle_fontColor,
               opacity: configStore.subtitle_fontOpacity,

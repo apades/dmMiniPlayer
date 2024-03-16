@@ -355,3 +355,14 @@ export function inputFile(accept = '*') {
     input.click()
   })
 }
+
+export async function readTextFromFile(file: File) {
+  const fileReader = new FileReader()
+  fileReader.readAsText(file)
+  const text = await new Promise<string>((resolve, reject) => {
+    fileReader.onload = () => {
+      resolve(fileReader.result as string)
+    }
+  })
+  return text
+}
