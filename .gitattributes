@@ -1,6 +1,7 @@
 public/* linguist-vendored
 
 *.js text eol=lf
+*.mjs text eol=lf
 *.css text eol=lf
 *.less text eol=lf
 *.scss text eol=lf
