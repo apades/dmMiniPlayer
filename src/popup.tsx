@@ -2,6 +2,7 @@ import { type FC, useState } from 'react'
 import { useOnce } from './hook'
 import { sendToContentScript } from '@plasmohq/messaging'
 import Browser from 'webextension-polyfill'
+import { t } from './utils/i18n'
 
 const Page_popup: FC = (props) => {
   let [isClickError, setClickError] = useState(false)
@@ -23,9 +24,7 @@ const Page_popup: FC = (props) => {
   })
   return (
     isClickError && (
-      <div style={{ width: 100, padding: 6 }}>
-        需要点击下页面才能触发画中画播放
-      </div>
+      <div style={{ width: 100, padding: 6 }}>{t('popup.tips')}</div>
     )
   )
 }

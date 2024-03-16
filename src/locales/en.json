@@ -75,5 +75,13 @@
     "subtitleFontWeight": "Font weight",
     "subtitleFontOpacity": "Font opacity",
     "subtitleFontFamily": "Font"
+  },
+  "popup": {
+    "tips": "Click on the web page to trigger picture-in-picture"
+  },
+  "vp": {
+    "speed": "Speed >>",
+    "addNewSubtitle": "Add new subtitle",
+    "subtitleSupport": "Support .srt .ass"
   }
 }

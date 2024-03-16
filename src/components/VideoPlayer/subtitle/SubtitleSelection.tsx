@@ -8,6 +8,7 @@ import { runInAction } from 'mobx'
 import FileDropper from '@root/components/FileDropper'
 import Dropdown from '@root/components/Dropdown'
 import { createElement, inputFile } from '@root/utils'
+import { t } from '@root/utils/i18n'
 
 type Props = {
   subtitleManager: SubtitleManager
@@ -51,12 +52,21 @@ const Menu: FC<Props> = observer((props) => {
       {[
         {
           key: 'add',
-          label: 'add new subtitle',
-          onClick: async () => {
-            const file = await inputFile('.srt, .ass')
-            if (!file) return
-            subtitleManager.addFileSubtitle(file)
-          },
+          label: (
+            <div className="relative w-full h-full f-center cursor-pointer">
+              {t('vp.addNewSubtitle')}
+              <input
+                className="absolute w-full left-0 top-0 h-full opacity-0 cursor-pointer"
+                type="file"
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  subtitleManager.addFileSubtitle(file)
+                }}
+                accept=".srt, .ass"
+              />
+            </div>
+          ),
+          onClick: async () => {},
           isActive: false,
         },
         ...subtitleManager.subtitleItems.map((subtitleItem) => {
@@ -93,7 +103,7 @@ const SubtitleSelection: FC<Props> = memo((props) => {
       dragoverRender={
         <div className="f-center w-full h-full gap-[24px] bg-[#fff3]">
           <Iconfont type="file" size={30} />
-          <p className="font-medium">Support .srt .ass</p>
+          <p className="font-medium">{t('vp.subtitleSupport')}</p>
         </div>
       }
       handleDrop={async (dataTransfer) => {

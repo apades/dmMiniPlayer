@@ -29,6 +29,7 @@ import type SubtitleManager from '@root/core/SubtitleManager'
 import SubtitleSelection from './subtitle/SubtitleSelection'
 import SubtitleText from './subtitle/SubtitleText'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
+import { t } from '@root/utils/i18n'
 
 type EventBase = Omit<
   {
@@ -640,7 +641,7 @@ const VideoPlayer = observer(
               {
                 state: isVolumeNotiShow,
                 el: (
-                  <div>
+                  <div className="f-i-center">
                     <Iconfont type="iconicon_player_volume" />
                     <span style={{ marginLeft: 10 }}>{volume}%</span>
                   </div>
@@ -648,7 +649,13 @@ const VideoPlayer = observer(
               },
               {
                 state: isSpeedMode,
-                el: <div>{configStore.playbackRate}倍速中&gt;&gt;</div>,
+                el: (
+                  <div>
+                    {configStore.playbackRate}
+                    {'x '}
+                    {t('vp.speed')}
+                  </div>
+                ),
                 className: 'speed-mode-noti',
               },
               ...(props.notifiChild || []),
@@ -661,7 +668,7 @@ const VideoPlayer = observer(
           onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
           onMouseLeave={handleResetActionAreaShow}
         >
-          <div className="absolute bottom-[calc(100%+12px)] w-full">
+          <div className="absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
           <div className="mask"></div>

@@ -35,7 +35,7 @@ const SubtitleText: FC<Props> = (props) => {
   })
   return (
     <div
-      className="vp-subtitle w-full pointer-events-none flex-col justify-center items-center left-0 bottom-[12px] px-[24px]"
+      className="vp-subtitle w-full flex flex-col justify-center items-center left-0 bottom-[12px] px-[24px]"
       style={{
         opacity: !vpConfig.showSubtitle ? 0 : configStore.subtitle_opacity,
       }}

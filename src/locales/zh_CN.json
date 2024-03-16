@@ -75,5 +75,13 @@
     "subtitleFontWeight": "字体宽度",
     "subtitleFontOpacity": "字体透明度",
     "subtitleFontFamily": "字体"
+  },
+  "popup": {
+    "tips": "需要点击下页面才能触发画中画播放"
+  },
+  "vp": {
+    "speed": "倍速中 >>",
+    "addNewSubtitle": "添加新的字幕",
+    "subtitleSupport": "支持 .srt .ass"
   }
 }
