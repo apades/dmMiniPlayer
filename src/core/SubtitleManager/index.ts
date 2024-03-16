@@ -32,7 +32,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
     makeObservable(this, {
       subtitleItems: observable,
       rowIndex: observable,
-      activeRows: observable,
+      // activeRows: observable,
       activeSubtitleLabel: observable,
     })
   }
@@ -81,6 +81,7 @@ abstract class SubtitleManager extends Events2<SubtitleManagerEvents> {
     const unListenRows = () => {
       ;[...rowUnListenMap.entries()].forEach(([row, unListen]) => {
         this.emit('row-leave', row)
+        this.activeRows.delete(row)
         unListen()
       })
     }

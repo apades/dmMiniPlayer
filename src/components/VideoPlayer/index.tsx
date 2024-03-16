@@ -804,4 +804,4 @@ const RenderVideoNoti = (
   )
 }
 
-export default VideoPlayer
+export default memo(VideoPlayer)

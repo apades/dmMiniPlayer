@@ -5,27 +5,35 @@ import configStore from '@root/store/config'
 import vpConfig from '@root/store/vpConfig'
 import { useSet } from 'ahooks'
 import { observer } from 'mobx-react'
-import { type FC } from 'react'
+import { useState, type FC } from 'react'
 
 type Props = {
   subtitleManager: SubtitleManager
 }
 const SubtitleText: FC<Props> = (props) => {
   const { subtitleManager } = props
-  const [activeRows, activeRowsManager] = useSet<SubtitleRow>()
+  const [activeRows, setActiveRows] = useState<Record<string, SubtitleRow>>({})
 
   window.subtitleManager = subtitleManager
   useOnce(() => {
-    const activeRows = subtitleManager.activeRows
-    activeRows.forEach((row) => activeRowsManager.add(row))
+    const enterActiveRows = subtitleManager.activeRows
+    const activeRows: Record<string, SubtitleRow> = {}
+    enterActiveRows.forEach((row) => (activeRows[row.id] = row))
+    setActiveRows(activeRows)
 
     const unListenEnter = subtitleManager.on2('row-enter', (row) => {
       console.log('row-enter', row)
-      activeRowsManager.add(row)
+      // activeRowsManager.add(row)
+      setActiveRows((activeRows) => ({ ...activeRows, [row.id]: row }))
     })
     const unListenLeave = subtitleManager.on2('row-leave', (row) => {
       console.log('row-leave', row)
-      activeRowsManager.remove(row)
+      // activeRowsManager.remove(row)
+      // console.log('activeRows', activeRows)
+      setActiveRows((activeRows) => {
+        delete activeRows[row.id]
+        return { ...activeRows }
+      })
     })
 
     return () => {
@@ -33,6 +41,7 @@ const SubtitleText: FC<Props> = (props) => {
       unListenLeave()
     }
   })
+
   return (
     <div
       className="vp-subtitle w-full flex flex-col justify-center items-center left-0 bottom-[12px] px-[24px]"
@@ -40,8 +49,8 @@ const SubtitleText: FC<Props> = (props) => {
         opacity: !vpConfig.showSubtitle ? 0 : configStore.subtitle_opacity,
       }}
     >
-      {Array.from(activeRows.values()).map((row, i) => (
-        <div key={i} className="relative w-fit">
+      {Object.values(activeRows).map((row, i) => (
+        <div key={row.id} className="relative w-fit">
           <div
             className="absolute w-full h-full"
             style={{
