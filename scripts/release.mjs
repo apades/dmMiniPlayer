@@ -26,7 +26,7 @@ enquirer
     await spawn('npm', ['run', 'build'])
     // git
     await spawn('git', ['add', '.'])
-    await spawn('git', ['commit', '-m', `release: ${version}`])
+    await spawn('git', ['commit', '-m', `"release: ${version}"`])
     await spawn('git', ['tag', `v${version}`])
     await spawn('git', ['push'])
     await spawn('git', ['push', '--tags'])
