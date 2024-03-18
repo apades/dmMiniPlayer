@@ -22,7 +22,9 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
       <Iconfont
         type="subtitle"
         size={18}
-        className={classNames(!vpConfig.showSubtitle && 'opacity-50')}
+        className={classNames(
+          !(vpConfig.showSubtitle && activeLabel) && 'opacity-50'
+        )}
         onClick={() => {
           runInAction(() => {
             if (!subtitleManager.activeSubtitleLabel) {
@@ -115,7 +117,7 @@ const SubtitleSelection: FC<Props> = memo((props) => {
         document.body
       }
     >
-      <div>
+      <div className="relative" style={{ zIndex: 10 }}>
         <SubtitleSelectionInner {...props} />
       </div>
     </FileDropper>
