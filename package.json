@@ -5,7 +5,7 @@
   "author": "apades",
   "packageManager": "pnpm@7.29.1",
   "scripts": {
-    "dev": "vite build",
+    "dev": "vite",
     "build": "node ./scripts/build.mjs && plasmo package",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs"
@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
+    "@apad/rc-slider": "^10.5.0",
     "@apad/setting-panel": "^0.1.8",
     "ahooks": "^3.7.8",
     "ass-parser": "^0.2.0",

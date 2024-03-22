@@ -1,7 +1,6 @@
-import Slider from '@root/lib/slider'
-import { type SliderProps } from '@root/lib/slider'
+import Slider from '@apad/rc-slider'
+import { type SliderProps } from '@apad/rc-slider'
 import classNames from 'classnames'
-import type { Property } from 'csstype'
 import {
   type CSSProperties,
   type FC,
@@ -18,8 +17,8 @@ type Props = {
   onClick?: (percent: number) => void
   direction?: 'v' | 'h'
   percent?: number
-  loadColor?: Property.BackgroundColor
-  bgColor?: Property.BackgroundColor
+  loadColor?: CSSProperties['backgroundColor']
+  bgColor?: CSSProperties['backgroundColor']
   disableHoverStyle?: boolean
   children?: ReactElement
 } & SliderProps
