@@ -1,4 +1,4 @@
-import { sendToBackground } from '@plasmohq/messaging'
+// import { sendToBackground } from '@plasmohq/messaging'
 const bgFetch = (
   url: string,
   options?: RequestInit & {
@@ -6,13 +6,14 @@ const bgFetch = (
     type?: 'json' | 'text' | 'blob'
   }
 ) => {
-  return sendToBackground({
-    name: 'bgFetch',
-    body: {
-      url,
-      options,
-    },
-  }) as Promise<any>
+  return fetch(url, options)
+  // return sendToBackground({
+  //   name: 'bgFetch',
+  //   body: {
+  //     url,
+  //     options,
+  //   },
+  // }) as Promise<any>
 }
 
 export default bgFetch

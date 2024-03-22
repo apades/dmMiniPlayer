@@ -9,7 +9,7 @@ import configStore, { DocPIPRenderType } from '@root/store/config'
 import { createElement, throttle } from '@root/utils'
 import { makeAutoObservable } from 'mobx'
 import { createRoot } from 'react-dom/client'
-import styleUrl from 'url:./DocMiniPlayer.less'
+import styleUrl from './DocMiniPlayer.less?url'
 import BarrageSender, {
   type Props as BarrageSenderProps,
 } from './danmaku/BarrageSender'
@@ -19,8 +19,8 @@ import { type ReactElement } from 'react'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import { getPIPWindowConfig, setPIPWindowConfig } from '@root/utils/storage'
-import tailwindBase from 'data-text:@root/style/tailwindBase.css'
-import tailwind from 'data-text:@root/style/tailwind.css'
+import tailwindBase from '@root/style/tailwindBase.css?raw'
+import tailwind from '@root/style/tailwind.css?raw'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window

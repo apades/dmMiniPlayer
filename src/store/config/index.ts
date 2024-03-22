@@ -77,7 +77,7 @@ export const baseConfigMap = {
   }),
   // debug
   performanceInfo: config({
-    defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',
+    defaultValue: false,
     label: t('settingPanel.performanceInfo'),
   }),
   performanceUpdateFrame: config({

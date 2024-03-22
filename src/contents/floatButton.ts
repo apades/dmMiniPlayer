@@ -1,15 +1,15 @@
 import { createElement, throttle } from '@root/utils'
-import type { PlasmoCSConfig } from 'plasmo'
+// import type { PlasmoCSConfig } from 'plasmo'
 import Browser from 'webextension-polyfill'
-import floatBtnStyleText from 'data-text:./floatButton.less'
+import floatBtnStyleText from './floatButton.less?raw'
 
 import { getTopParentsWithSameRect } from '@root/utils/dom'
 
-export const config: PlasmoCSConfig = {
-  matches: ['<all_urls>'],
-  run_at: 'document_end',
-  all_frames: true,
-}
+// export const config: PlasmoCSConfig = {
+//   matches: ['<all_urls>'],
+//   run_at: 'document_end',
+//   all_frames: true,
+// }
 const INIT_ATTR = 'rc-f-init'
 function initVideoFloatBtn(
   container: HTMLElement,
