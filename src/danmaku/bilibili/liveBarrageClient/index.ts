@@ -40,7 +40,7 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
 
   async init(id: number) {
     const realRoomId = await getRoomid(id)
-    const conf = await getConf(545318)
+    const conf = await getConf(realRoomId)
     const address = `wss://${conf.host}:${conf.port}/sub`
 
     console.log('realRoomId', realRoomId, conf)
