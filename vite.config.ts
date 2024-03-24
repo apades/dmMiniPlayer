@@ -1,13 +1,17 @@
-import { defineConfig } from 'vite'
+import { defineConfig, normalizePath } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import { crx } from '@crxjs/vite-plugin'
+import { crx } from '@apad/vite-plugin'
 import path from 'path'
 import packageData from './package.json'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { plasmoDataTextReplace, plasmoUrlReplace } from './src/utils/vite'
 import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 
 const pr = (...p) => path.resolve(__dirname, ...p)
+
+const outDir = pr('./dist')
+
+fs.copySync(pr('./locales'), pr(outDir, './_locales'))
 
 export default defineConfig({
   plugins: [
@@ -23,13 +27,5 @@ export default defineConfig({
   },
   define: {
     ...getDefinesObject('dev'),
-  },
-  optimizeDeps: {
-    include: ['lib'],
-  },
-  build: {
-    commonjsOptions: {
-      include: [/lib/, /node_modules/],
-    },
   },
 })

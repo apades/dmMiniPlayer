@@ -35,3 +35,10 @@ export type Rec<T = any> = {
 }
 
 export type ValueOf<T> = T[keyof T]
+
+export type TransStringValToAny<
+  T extends Record<string, any>,
+  val = string | number
+> = {
+  [K in keyof T]: T[K] extends string ? val : T[K]
+}

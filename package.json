@@ -6,21 +6,22 @@
   "packageManager": "pnpm@7.29.1",
   "scripts": {
     "dev": "vite",
-    "build": "node ./scripts/build.mjs && plasmo package",
+    "build": "vite build",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs"
   },
   "devDependencies": {
     "@apad/env-tools": "^1.0.5",
+    "@apad/vite-plugin": "2.0.1",
     "@babel/plugin-proposal-decorators": "^7.22.10",
-    "@crxjs/vite-plugin": "^1.0.14",
     "@types/chrome": "^0.0.231",
     "@types/color": "^3.0.3",
+    "@types/fs-extra": "^11.0.4",
     "@types/lodash-es": "^4.17.11",
     "@types/node": "18.15.11",
     "@types/pako": "^2.0.0",
-    "@types/react": "18.2.21",
-    "@types/react-dom": "18.0.11",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0",
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
     "@vitejs/plugin-react": "^4.0.4",
@@ -45,6 +46,7 @@
     "bilibili-live-ws": "^6.3.1",
     "classnames": "^2.3.2",
     "color": "^4.2.3",
+    "events": "^3.3.0",
     "fast-deep-equal": "^3.1.3",
     "mitt": "^3.0.1",
     "mobx": "^6.9.0",
@@ -55,6 +57,7 @@
     "react-dom": "18.2.0",
     "simple-subtitle-parser": "^2.0.0",
     "uuid": "^9.0.0",
+    "webext-bridge": "^6.0.1",
     "webextension-polyfill": "^0.10.0"
   },
   "manifest": {

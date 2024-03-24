@@ -1,7 +1,7 @@
 import { createElement, throttle } from '@root/utils'
 // import type { PlasmoCSConfig } from 'plasmo'
 import Browser from 'webextension-polyfill'
-import floatBtnStyleText from './floatButton.less?raw'
+import floatBtnStyleUrl from './floatButton.less?url'
 
 import { getTopParentsWithSameRect } from '@root/utils/dom'
 
@@ -75,8 +75,9 @@ function initVideoFloatBtn(
   })
   floatBtn.appendChild(settingBtn)
   floatBtnContainer.shadowRoot.appendChild(floatBtn)
-  const styleLink = createElement('style', {
-    innerHTML: floatBtnStyleText,
+  const styleLink = createElement('link', {
+    rel: 'stylesheet',
+    href: Browser.runtime.getURL(floatBtnStyleUrl),
   })
   floatBtnContainer.shadowRoot.appendChild(styleLink)
 

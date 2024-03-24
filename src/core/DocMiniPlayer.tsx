@@ -19,8 +19,9 @@ import { type ReactElement } from 'react'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import { getPIPWindowConfig, setPIPWindowConfig } from '@root/utils/storage'
-import tailwindBase from '@root/style/tailwindBase.css?raw'
-import tailwind from '@root/style/tailwind.css?raw'
+import tailwindBase from '@root/style/tailwindBase.css?url'
+import tailwind from '@root/style/tailwind.css?url'
+import Browser from 'webextension-polyfill'
 
 export default class DocMiniPlayer extends MiniPlayer {
   pipWindow: Window
@@ -29,10 +30,19 @@ export default class DocMiniPlayer extends MiniPlayer {
 
   styleEl = createElement('link', {
     rel: 'stylesheet',
-    href: styleUrl,
+    href: Browser.runtime.getURL(styleUrl),
   })
-  tailwindStyleEl = createElement('style', {
-    innerHTML: `${tailwindBase} ${tailwind}`,
+  tailwindStyleEl = createElement('div', {
+    children: [
+      createElement('link', {
+        rel: 'stylesheet',
+        href: Browser.runtime.getURL(tailwind),
+      }),
+      createElement('link', {
+        rel: 'stylesheet',
+        href: Browser.runtime.getURL(tailwindBase),
+      }),
+    ],
   })
 
   videoPlayer: HTMLElement

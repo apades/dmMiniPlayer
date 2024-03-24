@@ -1,4 +1,5 @@
-// import { sendToBackground } from '@plasmohq/messaging'
+import { sendMessage } from 'webext-bridge/content-script'
+
 const bgFetch = (
   url: string,
   options?: RequestInit & {
@@ -6,14 +7,13 @@ const bgFetch = (
     type?: 'json' | 'text' | 'blob'
   }
 ) => {
-  return fetch(url, options)
-  // return sendToBackground({
-  //   name: 'bgFetch',
-  //   body: {
-  //     url,
-  //     options,
-  //   },
-  // }) as Promise<any>
+  return sendMessage('bgFetch', {
+    name: 'bgFetch',
+    body: {
+      url,
+      options,
+    } as any,
+  }) as Promise<any>
 }
 
 export default bgFetch
