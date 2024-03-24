@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@ant-design/icons':
-    specifier: ^4.3.0
-    version: 4.8.2(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^4.8.3
+    version: 4.8.3(react-dom@18.2.0)(react@18.2.0)
   '@apad/rc-slider':
     specifier: ^10.5.0
     version: 10.5.0(react-dom@18.2.0)(react@18.2.0)
@@ -15,7 +15,7 @@ dependencies:
     specifier: ^0.1.8
     version: 0.1.8(react-dom@18.2.0)(react@18.2.0)
   ahooks:
-    specifier: ^3.7.8
+    specifier: ^3.7.10
     version: 3.7.10(react@18.2.0)
   ass-parser:
     specifier: ^0.2.0
@@ -24,7 +24,7 @@ dependencies:
     specifier: ^6.3.1
     version: 6.3.1(buffer@6.0.3)(events@3.3.0)(pako@2.1.0)
   classnames:
-    specifier: ^2.3.2
+    specifier: ^2.5.1
     version: 2.5.1
   color:
     specifier: ^4.2.3
@@ -39,11 +39,11 @@ dependencies:
     specifier: ^3.0.1
     version: 3.0.1
   mobx:
-    specifier: ^6.9.0
-    version: 6.12.0
+    specifier: ^6.12.1
+    version: 6.12.1
   mobx-react:
     specifier: ^7.6.0
-    version: 7.6.0(mobx@6.12.0)(react-dom@18.2.0)(react@18.2.0)
+    version: 7.6.0(mobx@6.12.1)(react-dom@18.2.0)(react@18.2.0)
   pako:
     specifier: ^2.1.0
     version: 2.1.0
@@ -60,7 +60,7 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0
   uuid:
-    specifier: ^9.0.0
+    specifier: ^9.0.1
     version: 9.0.1
   webext-bridge:
     specifier: ^6.0.1
@@ -77,25 +77,25 @@ devDependencies:
     specifier: 2.0.1
     version: 2.0.1
   '@babel/plugin-proposal-decorators':
-    specifier: ^7.22.10
+    specifier: ^7.24.1
     version: 7.24.1(@babel/core@7.24.3)
   '@types/chrome':
     specifier: ^0.0.231
     version: 0.0.231
   '@types/color':
-    specifier: ^3.0.3
+    specifier: ^3.0.6
     version: 3.0.6
   '@types/fs-extra':
     specifier: ^11.0.4
     version: 11.0.4
   '@types/lodash-es':
-    specifier: ^4.17.11
+    specifier: ^4.17.12
     version: 4.17.12
   '@types/node':
     specifier: 18.15.11
     version: 18.15.11
   '@types/pako':
-    specifier: ^2.0.0
+    specifier: ^2.0.3
     version: 2.0.3
   '@types/react':
     specifier: 18.2.0
@@ -104,17 +104,17 @@ devDependencies:
     specifier: 18.2.0
     version: 18.2.0
   '@types/uuid':
-    specifier: ^9.0.1
+    specifier: ^9.0.8
     version: 9.0.8
   '@types/webextension-polyfill':
-    specifier: ^0.10.0
+    specifier: ^0.10.7
     version: 0.10.7
   '@vitejs/plugin-react':
-    specifier: ^4.0.4
-    version: 4.2.1(vite@5.2.2)
+    specifier: ^4.2.1
+    version: 4.2.1(vite@5.2.4)
   '@vitejs/plugin-react-swc':
     specifier: ^3.6.0
-    version: 3.6.0(vite@5.2.2)
+    version: 3.6.0(vite@5.2.4)
   cross-env:
     specifier: ^7.0.3
     version: 7.0.3
@@ -122,7 +122,7 @@ devDependencies:
     specifier: ^2.4.1
     version: 2.4.1
   fs-extra:
-    specifier: ^11.1.1
+    specifier: ^11.2.0
     version: 11.2.0
   less:
     specifier: ^4.2.0
@@ -134,17 +134,17 @@ devDependencies:
     specifier: 2.8.7
     version: 2.8.7
   protobufjs:
-    specifier: ^7.2.3
+    specifier: ^7.2.6
     version: 7.2.6
   tailwindcss:
-    specifier: ^3.3.5
+    specifier: ^3.4.1
     version: 3.4.1
   typescript:
     specifier: 5.1.6
     version: 5.1.6
   vite:
-    specifier: ^5.2.2
-    version: 5.2.2(@types/node@18.15.11)(less@4.2.0)
+    specifier: ^5.2.4
+    version: 5.2.4(@types/node@18.15.11)(less@4.2.0)
 
 packages:
 
@@ -171,8 +171,8 @@ packages:
     resolution: {integrity: sha512-vHbT+zJEVzllwP+CM+ul7reTEfBR0vgxFe7+lREAsAA7YGsYpboiq2sQNeQeRvh09GfQgs/GyFEvZpJ9cLXpXA==}
     dev: false
 
-  /@ant-design/icons@4.8.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-I8J+xJMoPHWe+C50mCNkBp5s2EAEyuINeKCySyH9b5GMkBChDv3+nlqONhhwqhx6m+8BCW8J61zrcBf05x4r1A==}
+  /@ant-design/icons@4.8.3(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-HGlIQZzrEbAhpJR6+IGdzfbPym94Owr6JZkJ2QCCnOkPVIWMO2xgIVcOKnl8YcpijIo39V7l2qQL5fmtw56cMw==}
     engines: {node: '>=8'}
     peerDependencies:
       react: '>=16.0.0'
@@ -1210,8 +1210,8 @@ packages:
     resolution: {integrity: sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==}
     dev: true
 
-  /@types/prop-types@15.7.11:
-    resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==}
+  /@types/prop-types@15.7.12:
+    resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
     dev: true
 
   /@types/react-dom@18.2.0:
@@ -1223,7 +1223,7 @@ packages:
   /@types/react@18.2.0:
     resolution: {integrity: sha512-0FLj93y5USLHdnhIhABk83rm8XEGA7kH3cr+YUlvxoUGp1xNt/DINUMvqPxLyOQMzLmZe8i4RTHbvb8MC7NmrA==}
     dependencies:
-      '@types/prop-types': 15.7.11
+      '@types/prop-types': 15.7.12
       '@types/scheduler': 0.16.8
       csstype: 3.1.3
     dev: true
@@ -1244,18 +1244,18 @@ packages:
     resolution: {integrity: sha512-GN+Hjzy9mXjWoXKmaicTegv3FJ0WFZ3aYz77Wk8TMp1IY3vEzvzj1vnsa0ggV7vMI1i+PUxe4qqnIJKCzf9aTg==}
     dev: false
 
-  /@vitejs/plugin-react-swc@3.6.0(vite@5.2.2):
+  /@vitejs/plugin-react-swc@3.6.0(vite@5.2.4):
     resolution: {integrity: sha512-XFRbsGgpGxGzEV5i5+vRiro1bwcIaZDIdBRP16qwm+jP68ue/S8FJTBEgOeojtVDYrbSua3XFp71kC8VJE6v+g==}
     peerDependencies:
       vite: ^4 || ^5
     dependencies:
       '@swc/core': 1.4.8
-      vite: 5.2.2(@types/node@18.15.11)(less@4.2.0)
+      vite: 5.2.4(@types/node@18.15.11)(less@4.2.0)
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
 
-  /@vitejs/plugin-react@4.2.1(vite@5.2.2):
+  /@vitejs/plugin-react@4.2.1(vite@5.2.4):
     resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -1266,7 +1266,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.3)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.2.2(@types/node@18.15.11)(less@4.2.0)
+      vite: 5.2.4(@types/node@18.15.11)(less@4.2.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1414,8 +1414,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001599
-      electron-to-chromium: 1.4.714
+      caniuse-lite: 1.0.30001600
+      electron-to-chromium: 1.4.715
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
     dev: true
@@ -1432,8 +1432,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001599:
-    resolution: {integrity: sha512-LRAQHZ4yT1+f9LemSMeqdMpMxZcc4RMWdj4tiFe3G8tNkWK+E58g+/tzotb5cU6TbcVJLr4fySiAW7XmxQvZQA==}
+  /caniuse-lite@1.0.30001600:
+    resolution: {integrity: sha512-+2S9/2JFhYmYaDpZvo0lKkfvuKIglrx68MwOBqMGHhQsNkLjB5xtc/TGoEPs+MxjSyN/72qer2g97nzR641mOQ==}
     dev: true
 
   /chalk@2.4.2:
@@ -1666,8 +1666,8 @@ packages:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: true
 
-  /electron-to-chromium@1.4.714:
-    resolution: {integrity: sha512-OfnVHt+nMRH9Ua5koH/2gKlCAXbG+u1yXwLKyBVqNboBV34ZTwb846RUe8K5mtE1uhz0BXoMarZ13JCQr+sBtQ==}
+  /electron-to-chromium@1.4.715:
+    resolution: {integrity: sha512-XzWNH4ZSa9BwVUQSDorPWAUQ5WGuYz7zJUNpNif40zFCiCl20t8zgylmreNmn26h5kiyw2lg7RfTmeMBsDklqg==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -2361,7 +2361,7 @@ packages:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
     dev: false
 
-  /mobx-react-lite@3.4.3(mobx@6.12.0)(react-dom@18.2.0)(react@18.2.0):
+  /mobx-react-lite@3.4.3(mobx@6.12.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-NkJREyFTSUXR772Qaai51BnE1voWx56LOL80xG7qkZr6vo8vEaLF3sz1JNUVh+rxmUzxYaqOhfuxTfqUh0FXUg==}
     peerDependencies:
       mobx: ^6.1.0
@@ -2374,12 +2374,12 @@ packages:
       react-native:
         optional: true
     dependencies:
-      mobx: 6.12.0
+      mobx: 6.12.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /mobx-react@7.6.0(mobx@6.12.0)(react-dom@18.2.0)(react@18.2.0):
+  /mobx-react@7.6.0(mobx@6.12.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-+HQUNuh7AoQ9ZnU6c4rvbiVVl+wEkb9WqYsVDzGLng+Dqj1XntHu79PvEWKtSMoMj67vFp/ZPXcElosuJO8ckA==}
     peerDependencies:
       mobx: ^6.1.0
@@ -2392,14 +2392,14 @@ packages:
       react-native:
         optional: true
     dependencies:
-      mobx: 6.12.0
-      mobx-react-lite: 3.4.3(mobx@6.12.0)(react-dom@18.2.0)(react@18.2.0)
+      mobx: 6.12.1
+      mobx-react-lite: 3.4.3(mobx@6.12.1)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /mobx@6.12.0:
-    resolution: {integrity: sha512-Mn6CN6meXEnMa0a5u6a5+RKrqRedHBhZGd15AWLk9O6uFY4KYHzImdt8JI8WODo1bjTSRnwXhJox+FCUZhCKCQ==}
+  /mobx@6.12.1:
+    resolution: {integrity: sha512-HN5/fmWCnePVI4u3Y487x3G0LIQ+qnQjowylhVxXPvBmbwottKm8R7GrsYAqljzekZUj+LoBcAUp3l8/3EPCGQ==}
     dev: false
 
   /ms@2.0.0:
@@ -3021,8 +3021,8 @@ packages:
     hasBin: true
     dev: false
 
-  /vite@5.2.2(@types/node@18.15.11)(less@4.2.0):
-    resolution: {integrity: sha512-FWZbz0oSdLq5snUI0b6sULbz58iXFXdvkZfZWR/F0ZJuKTSPO7v72QPXt6KqYeMFb0yytNp6kZosxJ96Nr/wDQ==}
+  /vite@5.2.4(@types/node@18.15.11)(less@4.2.0):
+    resolution: {integrity: sha512-vjFghvHWidBTinu5TCymJk/lRHlR5ljqB83yugr0HA1xspUPdOZHqbqDLnZ8f9/jINrtFHTCYYyIUi+o+Q5iyg==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
