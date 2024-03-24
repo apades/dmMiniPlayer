@@ -1,6 +1,6 @@
 import isEqual from 'fast-deep-equal'
 import type { CSSProperties } from 'react'
-import type { Rec, ValueOf } from './typeUtils'
+import type { Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
 let el: HTMLSpanElement = null
 
@@ -200,17 +200,52 @@ export function oncePromise<T extends noop>(fn: T): T {
   }) as T
 }
 
-export function createElement<T extends HTMLElement>(
-  tag: keyof HTMLElementTagNameMap,
-  op?: // | Partial<T>
-  Partial<Omit<T, 'style'>> & {
-    style?: CSSStyleDeclaration | string
+export function createElement<
+  T extends HTMLElement,
+  TAG extends keyof HTMLElementTagNameMap
+>(
+  tag: TAG,
+  op?: Partial<Omit<T, 'style' | 'dataset' | 'children'>> & {
+    /**支持传入number，自动转化成px */
+    style?: Partial<TransStringValToAny<CSSStyleDeclaration>> | string
+    /**不支持驼峰写法，请传`a-bc`这样，但取的时候是dataset['aBc'] */
+    dataset?: Record<string, string | number>
+    /**传入子DOM */
+    children?: HTMLElement[]
     [k: string]: any
   }
-): T {
-  let el = document.createElement(tag)
+): HTMLElementTagNameMap[typeof tag] {
+  op = { ...op }
+  const el = document.createElement(tag)
+  const style = op.style
+  if (style && isObject(style)) {
+    delete op.style
+    Object.entries(style).forEach(([k, v]) => {
+      if (isNumber(v)) {
+        v = v + 'px'
+      }
+      if (isUndefined(v) || isNull(v)) return
+      el.style[k as any] = v as any
+    })
+  }
+  // dataset
+  const dataset = op.dataset
+  if (dataset) {
+    delete (op as any).dataset
+    Object.entries(dataset).forEach(([key, val]) => {
+      el.setAttribute(`data-${key}`, val + '')
+    })
+  }
+  // children
+  const children = op.children
+  if (children) {
+    delete (op as any).children
+    children.forEach((c) => {
+      el.appendChild(c)
+    })
+  }
   Object.assign(el, op)
-  return el as T
+  return el
 }
 
 export let minmax = (v: number, min = v, max = v): number =>
@@ -344,7 +379,7 @@ export function getClientRect<T extends HTMLElement>(
 
 export function inputFile(accept = '*') {
   return new Promise<File>((resolve, reject) => {
-    const input = createElement<HTMLInputElement>('input', {
+    const input = createElement('input', {
       type: 'file',
       accept,
       onchange: (e) => {

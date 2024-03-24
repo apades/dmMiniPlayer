@@ -1,12 +1,4 @@
-import {
-  memo,
-  type CSSProperties,
-  type FC,
-  useEffect,
-  useState,
-  forwardRef,
-} from 'react'
-import { createPortal } from 'react-dom'
+import { type CSSProperties, type FC } from 'react'
 
 let div = document.createElement('div')
 document.body.appendChild(div)
@@ -65,18 +57,6 @@ const svgMap = {
   ),
 } as const
 
-function withPortal<T>(
-  Components: React.FC<T>
-): React.FC<T & { container: Element }> {
-  Components = memo(Components) as any
-  return (props: T & { container: Element }) => {
-    if (props.container) {
-      return createPortal(<Components {...props} />, props.container)
-    }
-
-    return <Components {...props} />
-  }
-}
 type Type = keyof typeof svgMap
 type Props = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLSpanElement>,
@@ -86,10 +66,9 @@ type Props = React.DetailedHTMLProps<
   size?: CSSProperties['fontSize']
 }
 
-const Iconfont: FC<Props> = forwardRef((props, ref) => {
+const Iconfont: FC<Props> = (props) => {
   return (
     <span
-      ref={ref}
       {...props}
       className={`component-icon ${props.className ?? ''} ${props.type}`}
       style={{
@@ -111,6 +90,6 @@ const Iconfont: FC<Props> = forwardRef((props, ref) => {
       </svg>
     </span>
   )
-})
+}
 
 export default Iconfont

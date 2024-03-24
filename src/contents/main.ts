@@ -1,10 +1,9 @@
 // import { type PlasmoCSConfig } from 'plasmo'
 import getWebProvider from '../web-provider/getWebProvider'
-// import { listen } from '@plasmohq/messaging/message'
+import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import AsyncLock from '@root/utils/AsyncLock'
 import { onMessage } from '@root/inject/contentSender'
 import { onceCall } from '@root/utils'
-// import {} from '@plasmohq/messaging/port'
 
 // export const config: PlasmoCSConfig = {
 //   matches: ['<all_urls>'],
@@ -28,38 +27,31 @@ window.addEventListener('click', () => {
   hasClickPage = true
   clickLock.ok()
 })
-// listen(async (req, res) => {
-//   switch (req.name) {
-//     case 'player-startPIPPlay': {
-//       if (!hasClickPage) {
-//         res.send({ state: 'error', type: 'click-page' })
-//         const coverEl = document.createElement('div')
-//         ;(coverEl as any).style =
-//           'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
-//         document.body.appendChild(coverEl)
-//         coverEl.addEventListener('click', () =>
-//           document.body.removeChild(coverEl)
-//         )
-//       }
-//       console.log('hasClickPage', hasClickPage)
-//       if (isWaiting) return
-//       isWaiting = true
-//       await clickLock.waiting()
-//       isWaiting = false
-//       provider().startPIPPlay()
-//       res.send({ state: 'ok' })
+onBgMessage('player-startPIPPlay', async (req) => {
+  if (!hasClickPage) {
+    const coverEl = document.createElement('div')
+    ;(coverEl as any).style =
+      'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
+    document.body.appendChild(coverEl)
+    coverEl.addEventListener('click', () => document.body.removeChild(coverEl))
+    return { state: 'error', type: 'click-page' }
+  }
+  console.log('hasClickPage', hasClickPage)
+  if (isWaiting) return
+  isWaiting = true
+  await clickLock.waiting()
+  isWaiting = false
+  provider().startPIPPlay()
 
-//       function handleBlur() {
-//         console.log('blur')
-//         hasClickPage = false
-//         clickLock.reWaiting()
-//         window.removeEventListener('blur', handleBlur)
-//       }
-//       window.addEventListener('blur', handleBlur)
-//       return
-//     }
-//   }
-// })
+  function handleBlur() {
+    console.log('blur')
+    hasClickPage = false
+    clickLock.reWaiting()
+    window.removeEventListener('blur', handleBlur)
+  }
+  window.addEventListener('blur', handleBlur)
+  return { state: 'ok' }
+})
 
 onMessage('start-PIP', (data) => {
   provider().startPIPPlay({ videoEl: data.videoEl })

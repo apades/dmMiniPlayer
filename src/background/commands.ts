@@ -1,6 +1,5 @@
 import browser from 'webextension-polyfill'
-// import { sendToContentScript } from '@plasmohq/messaging'
-// import { listen } from '@plasmohq/messaging/message'
+import { onMessage, sendMessage } from 'webext-bridge/background'
 // import { activeTabId } from './messages/pip-active'
 
 browser.commands.onCommand.addListener(async (command, tab) => {
@@ -12,6 +11,11 @@ browser.commands.onCommand.addListener(async (command, tab) => {
       //   highlighted: true,
       // })
     }
+    sendMessage('PIP-action', {
+      name: 'PIP-action',
+      body: command,
+      tabId: activeTabId,
+    })
     // sendToContentScript({
     //   name: 'PIP-action',
     //   body: command,
@@ -21,6 +25,9 @@ browser.commands.onCommand.addListener(async (command, tab) => {
 })
 
 let activeTabId: number, activeTabIndex: number
+onMessage('PIP-active', (req) => {
+  activeTabId = req.sender.tabId
+})
 // listen((req, res) => {
 //   console.log('active', req)
 //   if (req.name != 'PIP-active') return

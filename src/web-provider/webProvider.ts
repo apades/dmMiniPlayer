@@ -1,5 +1,4 @@
-// import { sendToBackground } from '@plasmohq/messaging'
-// import { listen } from '@plasmohq/messaging/message'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import { getMiniPlayer } from '@root/core'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import VideoChanger from '@root/core/VideoChanger'
@@ -60,7 +59,7 @@ export default abstract class WebProvider {
         vpConfig.reset()
       })
     })
-    // sendToBackground({ name: 'PIP-active' })
+    sendMessage('PIP-active', { name: 'PIP-active' })
   }
 
   /**获取视频 */
@@ -94,47 +93,46 @@ export default abstract class WebProvider {
   // protected abstract initBarrageSender(): OrPromise<void>
 
   bindCommandsEvent() {
-    // listen(async (req, res) => {
-    //   if (req.name != 'PIP-action') return
-    //   if (!this.miniPlayer || !this.miniPlayer.webPlayerVideoEl) return
-    //   const { webPlayerVideoEl: videoEl } = this.miniPlayer
-    //   switch (req?.body) {
-    //     case 'back': {
-    //       videoEl.currentTime -= 5
-    //       break
-    //     }
-    //     case 'forward': {
-    //       videoEl.currentTime += 5
-    //       break
-    //     }
-    //     case 'pause/play': {
-    //       videoEl.paused ? videoEl.play() : videoEl.pause()
-    //       break
-    //     }
-    //     case 'hide': {
-    //       document.body.click()
-    //       if (document.pictureInPictureElement) document.exitPictureInPicture()
-    //       if (window.documentPictureInPicture?.window) {
-    //         window.documentPictureInPicture.window.close()
-    //       }
-    //       // TODO 显示的提示
-    //       // TODO
-    //       // document.pictureInPictureElement
-    //       //   ? document.exitPictureInPicture()
-    //       //   : this.startPIPPlay({
-    //       //       onNeedUserClick: () => {
-    //       //         sendToBackground({ name: 'PIP-need-click-notifications' })
-    //       //       },
-    //       //     })
-    //       break
-    //     }
-    //     case 'playbackRate': {
-    //       videoEl.playbackRate == 1
-    //         ? (videoEl.playbackRate = configStore.playbackRate)
-    //         : (videoEl.playbackRate = 1)
-    //       break
-    //     }
-    //   }
-    // })
+    onMessage('PIP-action', (req) => {
+      if (!this.miniPlayer || !this.miniPlayer.webPlayerVideoEl) return
+      const { webPlayerVideoEl: videoEl } = this.miniPlayer
+      switch ((req?.data as any)?.body) {
+        case 'back': {
+          videoEl.currentTime -= 5
+          break
+        }
+        case 'forward': {
+          videoEl.currentTime += 5
+          break
+        }
+        case 'pause/play': {
+          videoEl.paused ? videoEl.play() : videoEl.pause()
+          break
+        }
+        case 'hide': {
+          document.body.click()
+          if (document.pictureInPictureElement) document.exitPictureInPicture()
+          if (window.documentPictureInPicture?.window) {
+            window.documentPictureInPicture.window.close()
+          }
+          // TODO 显示的提示
+          // TODO
+          // document.pictureInPictureElement
+          //   ? document.exitPictureInPicture()
+          //   : this.startPIPPlay({
+          //       onNeedUserClick: () => {
+          //         sendToBackground({ name: 'PIP-need-click-notifications' })
+          //       },
+          //     })
+          break
+        }
+        case 'playbackRate': {
+          videoEl.playbackRate == 1
+            ? (videoEl.playbackRate = configStore.playbackRate)
+            : (videoEl.playbackRate = 1)
+          break
+        }
+      }
+    })
   }
 }
