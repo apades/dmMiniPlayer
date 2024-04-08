@@ -61,6 +61,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     const width = pipWindowConfig?.width ?? this.canvas.width,
       height = pipWindowConfig?.height ?? this.canvas.height
 
+    console.log('pipWindowConfig', pipWindowConfig)
     const pipWindow = await window.documentPictureInPicture.requestWindow({
       width,
       height,
@@ -104,9 +105,8 @@ export default class DocMiniPlayer extends MiniPlayer {
     this.on('PIPClose', () => {
       loadLock.reWaiting()
       setPIPWindowConfig({
-        width: pipWindow.outerWidth + configStore.saveWidthOnDocPIPCloseOffset,
-        height:
-          pipWindow.outerHeight + configStore.saveHeightOnDocPIPCloseOffset,
+        width: pipWindow.innerWidth,
+        height: pipWindow.innerHeight,
       })
     })
   }

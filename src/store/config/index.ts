@@ -97,13 +97,13 @@ export const baseConfigMap = {
     defaultValue: false,
   }),
   saveHeightOnDocPIPCloseOffset: config({
-    defaultValue: 8,
+    defaultValue: 0,
     label: t('settingPanel.saveHeightOnDocPIPCloseOffset'),
     desc: t('settingPanel.saveHeightOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
   }),
   saveWidthOnDocPIPCloseOffset: config({
-    defaultValue: 16,
+    defaultValue: 0,
     label: t('settingPanel.saveWidthOnDocPIPCloseOffset'),
     desc: t('settingPanel.saveWidthOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
