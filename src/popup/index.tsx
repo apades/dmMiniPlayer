@@ -1,18 +1,25 @@
 import { type FC, useState } from 'react'
-import { useOnce } from './hook'
-import { sendToContentScript } from '@plasmohq/messaging'
+import { useOnce } from '../hook'
+import { sendMessage } from 'webext-bridge/popup'
 import Browser from 'webextension-polyfill'
-import { t } from './utils/i18n'
+import { t } from '../utils/i18n'
+import { createRoot } from 'react-dom/client'
 
-const Page_popup: FC = (props) => {
+const Page_popup: FC = () => {
   let [isClickError, setClickError] = useState(false)
   useOnce(async () => {
     const tabs = await Browser.tabs.query({ active: true, currentWindow: true })
     if (!tabs.length) return
-    sendToContentScript({
-      name: 'player-startPIPPlay',
-      tabId: tabs[0].id,
-    }).then((res) => {
+    sendMessage(
+      'player-startPIPPlay',
+      {
+        name: 'player-startPIPPlay',
+      },
+      {
+        tabId: tabs[0].id,
+        context: 'content-script',
+      }
+    ).then((res: any) => {
       if (res.state == 'ok') return window.close()
       switch (res.type) {
         case 'click-page': {
@@ -29,4 +36,4 @@ const Page_popup: FC = (props) => {
   )
 }
 
-export default Page_popup
+createRoot(document.getElementById('app')).render(<Page_popup />)

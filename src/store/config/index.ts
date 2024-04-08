@@ -10,6 +10,7 @@ import config_bilibili from './bilibili'
 import config_subtitle from './subtitle'
 import { isEn, t } from '@root/utils/i18n'
 import { observer } from 'mobx-react'
+import isDev from '@root/utils/isDev'
 
 export { DocPIPRenderType } from './docPIP'
 
@@ -77,7 +78,7 @@ export const baseConfigMap = {
   }),
   // debug
   performanceInfo: config({
-    defaultValue: process.env.PLASMO_PUBLIC_IS_DEV == 'true',
+    defaultValue: false,
     label: t('settingPanel.performanceInfo'),
   }),
   performanceUpdateFrame: config({
@@ -142,8 +143,12 @@ if (isPluginEnv) {
 
       return { ...config, ...savedConfig }
     },
-    useShadowDom: true,
+    useShadowDom: !isDev,
   })
+}
+
+if (isDev) {
+  import('@apad/setting-panel/lib/index.css')
 }
 
 export const { configStore, openSettingPanel, closeSettingPanel, observe } =

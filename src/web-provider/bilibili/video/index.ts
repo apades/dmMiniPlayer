@@ -34,7 +34,7 @@ export default class BilibiliVideoProvider extends WebProvider {
     this.bindPIPActions()
     this.injectHistoryChange()
   }
-  @windowsOnceCall('bili_PIPActions')
+  // @windowsOnceCall('bili_PIPActions')
   bindPIPActions() {
     console.log('bindPIPActions')
     // 这个pip的action按钮在频繁关闭开启中（多数1次）会全部消失，即使是默认b站自己注册的setActionHandler到后面也只剩播放暂停，可能是浏览器问题
@@ -49,7 +49,7 @@ export default class BilibiliVideoProvider extends WebProvider {
       // navigator.mediaSession.playbackState = 'playing'
     })
   }
-  @windowsOnceCall('bili_history')
+  // @windowsOnceCall('bili_history')
   injectHistoryChange() {
     onRouteChange(() => {
       this.initDans()

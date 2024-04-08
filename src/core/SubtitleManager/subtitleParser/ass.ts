@@ -1,5 +1,5 @@
 import type { SubtitleRow } from '../types'
-import libAssParser from 'ass-parser'
+import { parse } from 'ass-compiler'
 
 function resolveDialogueTime(dialogueTime: string): number {
   let [hours, min, sec] = dialogueTime.split(':')
@@ -26,13 +26,13 @@ function resolveText(inputText: string) {
 }
 
 export default function assParser(content: string): SubtitleRow[] {
-  const parser = libAssParser(content)
-  const eventsBody = parser.find((p: any) => p.section == 'Events').body
+  const parser = parse(content)
+  // const eventsBody = parser.find((p: any) => p.section == 'Events').body
   const subtitleRows: SubtitleRow[] = []
 
   let idIndex = 0
-  for (let dialogue of eventsBody) {
-    if (dialogue.key != 'Dialogue') continue
+  for (let dialogue of parser.events.dialogue) {
+    // if (dialogue.key != 'Dialogue') continue
     const subtitleRow: SubtitleRow = {
       endTime: 0,
       htmlText: '',
@@ -40,21 +40,21 @@ export default function assParser(content: string): SubtitleRow[] {
       startTime: 0,
       text: '',
     }
-    Object.keys(dialogue.value).forEach((key) => {
-      const value = dialogue.value[key]
+    Object.keys(dialogue).forEach((key) => {
+      const value = (dialogue as any)[key]
 
       key = key.toLowerCase()
       switch (key) {
         case 'end': {
-          subtitleRow.endTime = resolveDialogueTime(value)
+          subtitleRow.endTime = value
           break
         }
         case 'start': {
-          subtitleRow.startTime = resolveDialogueTime(value)
+          subtitleRow.startTime = value
           break
         }
         case 'text': {
-          const text = resolveText(value)
+          const text = resolveText(dialogue.Text.combined)
           subtitleRow.text = text
           subtitleRow.htmlText = text
         }

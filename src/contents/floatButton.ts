@@ -1,15 +1,9 @@
 import { createElement, throttle } from '@root/utils'
-import type { PlasmoCSConfig } from 'plasmo'
 import Browser from 'webextension-polyfill'
-import floatBtnStyleText from 'data-text:./floatButton.less'
+import floatBtnStyle from './floatButton.less?inline'
 
 import { getTopParentsWithSameRect } from '@root/utils/dom'
 
-export const config: PlasmoCSConfig = {
-  matches: ['<all_urls>'],
-  run_at: 'document_end',
-  all_frames: true,
-}
 const INIT_ATTR = 'rc-f-init'
 function initVideoFloatBtn(
   container: HTMLElement,
@@ -75,10 +69,10 @@ function initVideoFloatBtn(
   })
   floatBtn.appendChild(settingBtn)
   floatBtnContainer.shadowRoot.appendChild(floatBtn)
-  const styleLink = createElement('style', {
-    innerHTML: floatBtnStyleText,
+  const styleEl = createElement('style', {
+    innerHTML: floatBtnStyle,
   })
-  floatBtnContainer.shadowRoot.appendChild(styleLink)
+  floatBtnContainer.shadowRoot.appendChild(styleEl)
 
   try {
     if (container == vel) container = container.parentElement

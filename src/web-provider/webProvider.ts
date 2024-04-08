@@ -1,5 +1,4 @@
-import { sendToBackground } from '@plasmohq/messaging'
-import { listen } from '@plasmohq/messaging/message'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import { getMiniPlayer } from '@root/core'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import VideoChanger from '@root/core/VideoChanger'
@@ -60,7 +59,7 @@ export default abstract class WebProvider {
         vpConfig.reset()
       })
     })
-    sendToBackground({ name: 'PIP-active' })
+    sendMessage('PIP-active', { name: 'PIP-active' })
   }
 
   /**获取视频 */
@@ -94,11 +93,11 @@ export default abstract class WebProvider {
   // protected abstract initBarrageSender(): OrPromise<void>
 
   bindCommandsEvent() {
-    listen(async (req, res) => {
-      if (req.name != 'PIP-action') return
+    onMessage('PIP-action', (req) => {
+      console.log('PIP-action', req)
       if (!this.miniPlayer || !this.miniPlayer.webPlayerVideoEl) return
       const { webPlayerVideoEl: videoEl } = this.miniPlayer
-      switch (req?.body) {
+      switch ((req?.data as any)?.body) {
         case 'back': {
           videoEl.currentTime -= 5
           break

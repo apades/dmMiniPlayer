@@ -48,7 +48,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     (typeof this)['miniPlayer']['initBarrageSender']
   >[0]
 
-  @windowsOnceCall('visibilityState')
+  // @windowsOnceCall('visibilityState')
   injectVisibilityState() {
     // 抖音好像是通过interval一直获取document.visibilityState来判断是否要继续在弹幕区里加载弹幕
     function fn() {

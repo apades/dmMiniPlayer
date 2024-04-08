@@ -1,7 +1,16 @@
-import { Storage } from '@plasmohq/storage'
+import Browser from 'webextension-polyfill'
 
 export const PIP_WINDOW_CONFIG = 'PIP_WINDOW_CONFIG'
-export const extStorage = new Storage()
+const _extStorage = Browser.storage.sync
+
+export const extStorage = {
+  get<T = Record<any, any>>(key: string) {
+    return Browser.storage.sync.get(key) as T
+  },
+  set(key: string, value: any) {
+    return Browser.storage.sync.set({ [key]: value })
+  },
+}
 
 export type PIPWindowConfig = {
   width: number

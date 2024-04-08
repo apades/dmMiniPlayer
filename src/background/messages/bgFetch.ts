@@ -1,7 +1,7 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging'
+import { onMessage } from 'webext-bridge/background'
 
-const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  const data = req.body
+onMessage('bgFetch', async (req) => {
+  const data = (req.data as any).body
   const type = data.options?.type ?? 'json'
   const fetchRes = await fetch(data.url, data.options).then(async (res) => {
     switch (type) {
@@ -15,7 +15,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
       }
     }
   })
-  res.send(fetchRes)
-}
 
-export default handler
+  return fetchRes
+})

@@ -1,5 +1,5 @@
 import type { DanMoveType, DanType } from '@root/danmaku'
-import assParser from 'ass-parser'
+import { parse } from 'ass-compiler'
 import Color from 'color'
 import { splitArray } from '.'
 
@@ -44,23 +44,22 @@ export default class AssParser {
   }
 
   resolveParser() {
-    this.parsers = assParser(this.assContent)
-
-    let eventsBody = this.parsers.find((p) => p.section == 'Events').body
+    const parsers = parse(this.assContent).events.dialogue
+    this.parsers = parsers
 
     // let dialogues: Dialogue[] = []
-    for (let _dialogue of eventsBody) {
-      if (_dialogue.key != 'Dialogue') continue
-
-      let dialogueEntries = Object.entries(_dialogue.value)
+    for (let dialogue of parsers) {
+      let dialogueEntries = Object.entries(dialogue)
       for (let index in dialogueEntries) {
         let [key, value] = dialogueEntries[index]
 
         key = key.toLowerCase()
         if (key == 'start' || key == 'end') {
-          value = this.resolveDialogueTime(value as string)
+          // value = this.resolveDialogueTime(value as string)
         } else if (key == 'text') {
-          let { color, danMoveType, text } = this.resolveText(value as string)
+          let { color, danMoveType, text } = this.resolveText(
+            dialogue.Text.raw as string
+          )
           value = text
 
           dialogueEntries.push(['type', danMoveType])
