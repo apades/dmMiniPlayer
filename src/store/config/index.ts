@@ -37,6 +37,11 @@ export const baseConfigMap = {
     notRecommended: true,
   }),
 
+  videoNoJudgeDurInLive: config({
+    desc: t('settingPanel.videoNoJudgeDurationInLiveDesc'),
+    defaultValue: false,
+    notRecommended: true,
+  }),
   videoNoBorder: config<videoBorderType>({
     type: 'group',
     label: t('settingPanel.videoNoBorder'),

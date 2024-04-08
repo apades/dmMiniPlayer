@@ -14,6 +14,7 @@
     "videoProgress_showDesc": "非直播视频底下增加进度条显示",
     "videoProgress_color": "进度条颜色",
     "videoProgress_height": "进度条高度",
+    "videoNoJudgeDurationInLiveDesc": "视频超过60x60x5s就判断是直播，为了适配youtube、twitch直播加的。这个设置未来可能就不需要了",
     "sideWidth": "侧边栏宽度",
     "playbackRate": "快捷键/长按右键的倍速播放速率",
     "playbackRateDesc": "直播下无效",
