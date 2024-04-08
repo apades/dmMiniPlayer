@@ -17,7 +17,9 @@ export default defineConfig({
   plugins: [
     plasmoDataTextReplace(),
     plasmoUrlReplace(),
-    react(),
+    react({
+      tsDecorators: true,
+    }),
     crx({ manifest: packageData.manifest }),
   ],
   resolve: {

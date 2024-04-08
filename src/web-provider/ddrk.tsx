@@ -34,7 +34,7 @@ export default class DdrkProvider extends WebProvider {
     return miniPlayer
   }
 
-  // @windowsOnceCall('ddrk_history')
+  @windowsOnceCall('ddrk_history')
   injectHistoryChange() {
     sendMessage('inject-api:run', {
       origin: 'history',
