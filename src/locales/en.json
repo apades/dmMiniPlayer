@@ -5,6 +5,11 @@
     "FPS_limitOffsetAccurate": "FPS limiting algorithm uses precise now time",
     "FPS_limitOffsetAccurateDesc": "The default recorded last update time is now - (offset % renderFPS)",
 
+    "videoNoBorder": "Adaptive size",
+    "videoNoBorderDesc": "When opening PIP, the video without black borders is automatically adjusted according to the previously saved window size.",
+    "videoNoBorder_default": "Not adjusted by default",
+    "videoNoBorder_width": "Based on width",
+    "videoNoBorder_height": "Based on height",
     "videoProgress_show": "Show progress in video",
     "videoProgress_showDesc": "Add a progress bar display under the non-live video",
     "videoProgress_color": "Progress color",

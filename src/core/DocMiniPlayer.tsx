@@ -5,7 +5,10 @@ import {
   loadLock,
   onVideoPlayerLoad,
 } from '@root/components/VideoPlayer/events'
-import configStore, { DocPIPRenderType } from '@root/store/config'
+import configStore, {
+  DocPIPRenderType,
+  videoBorderType,
+} from '@root/store/config'
 import { createElement, throttle } from '@root/utils'
 import { makeAutoObservable } from 'mobx'
 import { createRoot } from 'react-dom/client'
@@ -58,10 +61,27 @@ export default class DocMiniPlayer extends MiniPlayer {
 
   async startPIPPlay() {
     const pipWindowConfig = await getPIPWindowConfig()
-    const width = pipWindowConfig?.width ?? this.canvas.width,
+    let width = pipWindowConfig?.width ?? this.canvas.width,
       height = pipWindowConfig?.height ?? this.canvas.height
 
     console.log('pipWindowConfig', pipWindowConfig)
+    // cw / ch = vw / vh
+    const vw = this.webPlayerVideoEl.videoWidth,
+      vh = this.webPlayerVideoEl.videoHeight
+
+    switch (configStore.videoNoBorder) {
+      // cw = vw / vh * ch
+      case videoBorderType.height: {
+        width = (vw / vh) * height
+        break
+      }
+      // ch = vh / vw * cw
+      case videoBorderType.width: {
+        height = (vh / vw) * width
+        break
+      }
+    }
+
     const pipWindow = await window.documentPictureInPicture.requestWindow({
       width,
       height,

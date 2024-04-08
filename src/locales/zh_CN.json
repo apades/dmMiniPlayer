@@ -5,6 +5,11 @@
     "FPS_limitOffsetAccurate": "FPS限制算法使用精准now时间",
     "FPS_limitOffsetAccurateDesc": "默认记录的上一次更新时间是now - (offset % renderFPS)",
 
+    "videoNoBorder": "自适应边框",
+    "videoNoBorderDesc": "打开画中画时，根据之前保存的窗口大小自动调整成没黑边的视频",
+    "videoNoBorder_default": "默认不调整",
+    "videoNoBorder_width": "以宽度为准",
+    "videoNoBorder_height": "以高度为准",
     "videoProgress_show": "显示进度条",
     "videoProgress_showDesc": "非直播视频底下增加进度条显示",
     "videoProgress_color": "进度条颜色",

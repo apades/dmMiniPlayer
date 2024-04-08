@@ -14,6 +14,12 @@ import isDev from '@root/utils/isDev'
 
 export { DocPIPRenderType } from './docPIP'
 
+export enum videoBorderType {
+  default = 'default',
+  width = 'width',
+  height = 'height',
+}
+
 export const baseConfigMap = {
   ...config_danmaku,
   ...config_bilibili,
@@ -31,6 +37,26 @@ export const baseConfigMap = {
     notRecommended: true,
   }),
 
+  videoNoBorder: config<videoBorderType>({
+    type: 'group',
+    label: t('settingPanel.videoNoBorder'),
+    desc: t('settingPanel.videoNoBorderDesc'),
+    defaultValue: videoBorderType.default,
+    group: [
+      {
+        label: t('settingPanel.videoNoBorder_default'),
+        value: videoBorderType.default,
+      },
+      {
+        label: t('settingPanel.videoNoBorder_width'),
+        value: videoBorderType.width,
+      },
+      {
+        label: t('settingPanel.videoNoBorder_height'),
+        value: videoBorderType.height,
+      },
+    ],
+  }),
   videoProgress_show: config({
     defaultValue: true,
     label: t('settingPanel.videoProgress_show'),
