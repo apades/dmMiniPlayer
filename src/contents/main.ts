@@ -19,29 +19,36 @@ window.addEventListener('click', () => {
   hasClickPage = true
   clickLock.ok()
 })
-onBgMessage('player-startPIPPlay', async (req) => {
-  if (!hasClickPage) {
-    const coverEl = document.createElement('div')
-    ;(coverEl as any).style =
-      'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
-    document.body.appendChild(coverEl)
-    coverEl.addEventListener('click', () => document.body.removeChild(coverEl))
-    return { state: 'error', type: 'click-page' }
-  }
-  console.log('hasClickPage', hasClickPage)
+
+const handleBlur = () => {
+  console.log('blur')
+  hasClickPage = false
+  clickLock.reWaiting()
+  window.removeEventListener('blur', handleBlur)
+}
+
+const openPIP = async () => {
   if (isWaiting) return
   isWaiting = true
   await clickLock.waiting()
   isWaiting = false
   provider().startPIPPlay()
 
-  function handleBlur() {
-    console.log('blur')
-    hasClickPage = false
-    clickLock.reWaiting()
-    window.removeEventListener('blur', handleBlur)
-  }
   window.addEventListener('blur', handleBlur)
+}
+onBgMessage('player-startPIPPlay', async (req) => {
+  if (!hasClickPage) {
+    const coverEl = document.createElement('div')
+    ;(coverEl as any).style =
+      'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
+    document.body.appendChild(coverEl)
+    coverEl.addEventListener('click', () => {
+      document.body.removeChild(coverEl)
+      openPIP()
+    })
+    return { state: 'error', type: 'click-page' }
+  }
+  openPIP()
   return { state: 'ok' }
 })
 

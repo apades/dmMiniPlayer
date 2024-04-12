@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "license": "MIT",
   "author": "apades",
-  "packageManager": "pnpm@7.29.1",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cp -r ./locales ./dist/_locales",
