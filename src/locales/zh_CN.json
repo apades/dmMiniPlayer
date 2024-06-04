@@ -39,7 +39,7 @@
     "fontWeight": "弹幕字体宽度",
     "fontFamily": "弹幕字体",
     "fontShadow": "弹幕阴影加深",
-    "fontShadowDesc": "额外渲染了一次字体，可能会加大性能消耗",
+    "fontShadowDesc": "更好的字体渲染，但在大量弹幕情况中存在严重的性能问题",
     "gap": "上下弹幕之间的间距",
     "maxTunnel": "弹幕最大渲染行数",
 

@@ -39,7 +39,7 @@
     "fontWeight": "Danmaku font weight",
     "fontFamily": "Danmaku font",
     "fontShadow": "Stronger danmaku shadow",
-    "fontShadowDesc": "Rendered text twice, which may increase performance consumption.",
+    "fontShadowDesc": "Better font render, but have serious performance issues in a large number of danmakus",
     "gap": "Gap in vertical danmakus",
     "maxTunnel": "Max render danmaku rows",
     

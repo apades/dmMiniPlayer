@@ -38,7 +38,7 @@ const config_danmaku = {
     label: t('settingPanel.fontFamily'),
   }),
   fontShadow: config({
-    defaultValue: true,
+    defaultValue: false,
     label: t('settingPanel.fontShadow'),
     desc: t('settingPanel.fontShadowDesc'),
   }),
