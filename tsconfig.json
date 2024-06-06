@@ -1,33 +1,14 @@
 {
+  "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "allowImportingTsExtensions": true,
+    "experimentalDecorators": true,
+    "jsx": "react-jsx",
     "paths": {
       "@root/*": [
         "src/*"
       ]
-    },
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": true,
-    "lib": [
-      "DOM",
-      "ESNext",
-      "DOM.Iterable"
-    ],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "jsx": "react-jsx",
-    "allowJs": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true,
-    "resolveJsonModule": true
-  },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    }
+  }
 }

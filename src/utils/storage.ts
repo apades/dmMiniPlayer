@@ -1,7 +1,7 @@
 import Browser from 'webextension-polyfill'
 
 export const PIP_WINDOW_CONFIG = 'PIP_WINDOW_CONFIG'
-const _extStorage = Browser.storage.sync
+// const _extStorage = Browser.storage.sync
 
 export const extStorage = {
   async get<T = Record<any, any>>(key: string) {

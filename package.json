@@ -1,10 +1,10 @@
 {
-  "name": "share-gpt",
+  "name": "dmMiniPlayer",
   "version": "1.0.0",
   "license": "MIT",
   "author": "apades",
   "scripts": {
-    "dev": "vite",
+    "dev": "wxt",
     "build": "node ./scripts/build.mjs",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs"
@@ -24,7 +24,7 @@
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
     "@vitejs/plugin-react": "^4.0.4",
-    "@vitejs/plugin-react-swc": "^3.6.0",
+    "@vitejs/plugin-react-swc": "^3.7.0",
     "archiver": "^7.0.1",
     "cross-env": "^7.0.3",
     "enquirer": "^2.4.1",
@@ -56,7 +56,8 @@
     "react-dom": "18.2.0",
     "uuid": "^9.0.0",
     "webext-bridge": "^6.0.1",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.10.0",
+    "wxt": "^0.18.4"
   },
   "manifest": {
     "name": "__MSG_appName__",
