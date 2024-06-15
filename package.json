@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "author": "apades",
+  "engines": {
+    "pnpm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "node ./scripts/build.mjs",
