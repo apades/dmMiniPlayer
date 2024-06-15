@@ -30,6 +30,7 @@ import SubtitleSelection from './subtitle/SubtitleSelection'
 import SubtitleText from './subtitle/SubtitleText'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import { t } from '@root/utils/i18n'
+import PlayerProgressBar from './PlayerProgressBar'
 
 type EventBase = Omit<
   {
@@ -711,38 +712,24 @@ const VideoPlayer = observer(
               setInputMode={setInputMode}
             />
 
-            <div className="played-progress-bar">
-              <ProgressBar
-                percent={playedPercent}
-                onClick={(percent) => {
-                  if (!canPlay) return
-                  if (isFirstPlay) {
-                    playerOpause()
-                  }
-                  setPlayedPercent(percent)
+            <PlayerProgressBar
+              duration={duration}
+              loaded={loaded}
+              onClick={(percent) => {
+                if (!canPlay) return
+                if (isFirstPlay) {
+                  playerOpause()
+                }
+                setPlayedPercent(percent)
 
-                  setTimeout(() => {
-                    percent = percent / 100
-                    videoRef.current.currentTime = duration * percent
-                    setCurrentTime(duration * percent)
-                  }, 0)
-                }}
-                loadColor="#0669ff"
-              >
-                <div className="bar-loaded">
-                  {loaded.map(({ s, e }) => (
-                    <span
-                      key={s}
-                      style={{
-                        left: `${(s / duration) * 100}%`,
-                        width: `${((e - s) / duration) * 100}%`,
-                        top: 0,
-                      }}
-                    ></span>
-                  ))}
-                </div>
-              </ProgressBar>
-            </div>
+                setTimeout(() => {
+                  percent = percent / 100
+                  videoRef.current.currentTime = duration * percent
+                  setCurrentTime(duration * percent)
+                }, 0)
+              }}
+              playedPercent={playedPercent}
+            />
 
             <div className="func">
               <VolumeBar
