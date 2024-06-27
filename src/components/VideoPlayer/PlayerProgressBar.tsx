@@ -51,6 +51,7 @@ const HandleWithToolTips: FC<
   useEventListener(
     'mouseleave',
     () => {
+      if (!handleRef.current) return
       setVisible(false)
     },
     { target: handleRef.current }
@@ -58,6 +59,7 @@ const HandleWithToolTips: FC<
   useEventListener(
     'mouseenter',
     () => {
+      if (!handleRef.current) return
       setVisible(true)
     },
     { target: handleRef.current }
@@ -96,6 +98,7 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
   useEventListener(
     'mousemove',
     (e) => {
+      if (!containerRef.current) return
       const target = e.target as HTMLElement
       if (target.classList.contains('rc-slider-handle')) {
         return setVisible(false)
@@ -114,6 +117,7 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
   useEventListener(
     'mousedown',
     () => {
+      if (!containerRef.current) return
       setVisible(false)
     },
     { target: containerRef.current }
