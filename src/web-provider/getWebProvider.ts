@@ -17,6 +17,10 @@ const providerList = [
     provider: BilibiliVideoProvider,
   },
   {
+    reg: /https:\/\/www.bilibili.com\/list\/.*/,
+    provider: BilibiliVideoProvider,
+  },
+  {
     reg: /https:\/\/www.bilibili.com\/bangumi\/.*/,
     provider: BiliBiliBangumiProvider,
   },

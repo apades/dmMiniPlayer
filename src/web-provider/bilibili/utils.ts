@@ -91,28 +91,37 @@ export async function getDanmakus(aid: string, cid: string) {
   }
 }
 
+const getBidAndAidFromURL = (url: URL) => {
+  // /list/* 列表播放模式的bvid在query里
+  if (url.searchParams.get('bvid')) {
+    return { bid: url.searchParams.get('bvid'), aid: '' }
+  }
+
+  const urlPathnameArr = url.pathname.split('/')
+
+  // bid 模式
+  const bidParam = urlPathnameArr.find((p) => /^bv/i.test(p[0] + p[1]))
+  if (bidParam) {
+    return { bid: bidParam.replace(/bv/i, ''), aid: '' }
+  }
+
+  // aid 模式
+  const aidParam = urlPathnameArr.find((p) => /^av/i.test(p[0] + p[1]))
+  if (aidParam) {
+    return { bid: '', aid: aidParam.replace(/av/i, '') }
+  }
+
+  return { bid: '', aid: '' }
+}
+
 /**
  * 传入url，自动分析获取弹幕列表
  */
 export async function getVideoInfoFromUrl(_url: string) {
   const url = new URL(_url)
-  let cid = '',
-    aid = '',
-    bid = ''
+  let cid = ''
 
-  const urlPathnameArr = url.pathname.split('/')
-
-  const bidParam = urlPathnameArr.find((p) => /^bv/i.test(p[0] + p[1]))
-  // bid 模式
-  if (bidParam) {
-    bid = bidParam.replace(/bv/i, '')
-  } else {
-    const aidParam = urlPathnameArr.find((p) => /^av/i.test(p[0] + p[1]))
-    // aid 模式
-    if (aidParam) {
-      aid = aidParam.replace(/av/i, '')
-    }
-  }
+  let { aid, bid } = getBidAndAidFromURL(url)
 
   // 电影、动画，单独的弹幕接口
   if (/\/bangumi\//.test(url.pathname)) {
