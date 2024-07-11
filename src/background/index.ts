@@ -1,3 +1,4 @@
+import './core'
 import 'webext-bridge/background'
 import './commands'
 import './messages/bgFetch'

@@ -178,9 +178,9 @@ if (isPluginEnv) {
   })
 }
 
-if (isDev) {
-  import('@apad/setting-panel/lib/index.css')
-}
+// if (isDev) {
+//   import('@apad/setting-panel/lib/index.css')
+// }
 
 export const { configStore, openSettingPanel, closeSettingPanel, observe } =
   initSetting({ ...settingProps })

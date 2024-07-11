@@ -7,8 +7,8 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "node ./scripts/build.mjs",
+    "dev": "tsup --config scripts/tsup.dev.ts",
+    "build": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.ts",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs"
   },
@@ -16,9 +16,10 @@
     "@apad/env-tools": "^1.0.5",
     "@apad/vite-plugin": "2.0.1",
     "@babel/plugin-proposal-decorators": "^7.22.10",
-    "@types/chrome": "^0.0.231",
+    "@types/chrome": "0.0.268",
     "@types/color": "^3.0.3",
     "@types/fs-extra": "^11.0.4",
+    "@types/less": "^3.0.6",
     "@types/lodash-es": "^4.17.11",
     "@types/node": "18.15.11",
     "@types/pako": "^2.0.0",
@@ -34,9 +35,12 @@
     "fs-extra": "^11.1.1",
     "less": "^4.2.0",
     "lodash-es": "^4.17.21",
+    "postcss": "^8.4.39",
+    "postcss-load-config": "^6.0.1",
     "prettier": "2.8.7",
     "protobufjs": "^7.2.3",
     "tailwindcss": "^3.3.5",
+    "tsup": "^8.1.0",
     "typescript": "5.1.6",
     "vite": "^5.2.2"
   },

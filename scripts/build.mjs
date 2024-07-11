@@ -11,7 +11,7 @@ fs.removeSync(outputDir)
 async function main() {
   await spawn('npx', ['vite', 'build'])
   // 莫名其妙的build不会触发脚本里面的cp
-  fs.copySync(pr('../locales'), pr(buildOutputDist, './_locales'))
+  // fs.copySync(pr('../locales'), pr(buildOutputDist, './_locales'))
 
   const viteConfigSrc = pr(buildOutputDist, '.vite/manifest.json')
   const viteConfig = fs.readJSONSync(viteConfigSrc)
