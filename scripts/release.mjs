@@ -2,8 +2,13 @@ import enquirer from 'enquirer'
 import packageData from '../package.json' assert { type: 'json' }
 import fs from 'fs-extra'
 import { spawn, pr } from './utils.mjs'
+import archiver from 'archiver'
 
-const version = packageData.manifest.version
+const version = packageData.version
+
+const getBuildName = (ver) => `chrome-mv3-prod-${ver}.zip`
+const codeBuildOutDir = pr('../dist')
+const zipOutDir = pr('../build')
 
 const verSplit = version.split('.')
 let toVersion =
@@ -21,9 +26,19 @@ enquirer
   ])
   .then(async (val) => {
     const version = val.version
-    packageData.manifest.version = version
+    packageData.version = version
     await fs.writeJSON(pr('../package.json'), packageData, { spaces: 2 })
     await spawn('npm', ['run', 'build'])
+
+    // 打包zip
+    const archive = archiver('zip', {
+      zlib: { level: 9 },
+    })
+    archive.pipe(fs.createWriteStream(pr(zipOutDir, getBuildName(version))))
+    archive.directory(codeBuildOutDir, false)
+
+    await archive.finalize()
+
     // git
     await spawn('git', ['add', '.'])
     await spawn('git', ['commit', '-m', `"release: ${version}"`])

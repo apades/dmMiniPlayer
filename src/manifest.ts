@@ -1,9 +1,13 @@
+import packageJson from '../package.json'
+
+const version = packageJson.version
+
 export const manifest: chrome.runtime.ManifestV3 = {
   name: '__MSG_appName__',
   description: '__MSG_appDesc__',
   author: 'apades',
   manifest_version: 3,
-  version: '0.4.6',
+  version,
   icons: {
     '16': 'assets/icon16.png',
     '32': 'assets/icon32.png',
