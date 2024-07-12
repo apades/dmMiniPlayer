@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "@apad/env-tools": "^1.0.5",
-    "@apad/vite-plugin": "2.0.1",
     "@babel/plugin-proposal-decorators": "^7.22.10",
     "@chialab/esbuild-plugin-meta-url": "^0.18.2",
     "@types/chrome": "0.0.268",
@@ -29,7 +28,6 @@
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
     "@vitejs/plugin-react": "^4.0.4",
-    "@vitejs/plugin-react-swc": "^3.6.0",
     "archiver": "^7.0.1",
     "cross-env": "^7.0.3",
     "enquirer": "^2.4.1",
