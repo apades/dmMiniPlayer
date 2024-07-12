@@ -1,7 +1,7 @@
 # dmMiniPlayer
 
 <p align="center" style="margin-bottom: 0px !important;">
-<img width="800" alt="BewlyBewly icon" src="./docs/assets/view.png"><br/>
+<img width="800" src="./docs/assets/view.png"><br/>
 </p>
 
 
