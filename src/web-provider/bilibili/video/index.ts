@@ -4,15 +4,16 @@ import type { MiniPlayerProps } from '@root/core/miniPlayer'
 import type { DanType } from '@root/danmaku'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import vpConfig from '@root/store/vpConfig'
-import { dq1 } from '@root/utils'
+import { dq1, onceCall } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
 import { windowsOnceCall } from '@root/utils/decorator'
 import { runInAction } from 'mobx'
 import WebProvider from '../../webProvider'
-import { getDanmakus, getVideoInfoFromUrl } from '../utils'
+import { getDanmakus as _getDanmakus, getVideoInfoFromUrl } from '../utils'
 import BilibiliSubtitleManager from './SubtitleManager'
 import { initSideActionAreaRender } from './sider'
 
+const getDanmakus = onceCall(_getDanmakus)
 export default class BilibiliVideoProvider extends WebProvider {
   videoEl: HTMLVideoElement
   declare subtitleManager: BilibiliSubtitleManager

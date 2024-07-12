@@ -61,11 +61,14 @@ class DanmakuController {
   }
 
   initDans(dans: DanType[]) {
-    this.tunnelsMap = { bottom: [], right: [], top: [] }
     this.dans = dans
     this.barrages = dans.map(
       (dan) => new Barrage({ config: dan, player: this.player })
     )
+
+    this.initTunnelMap()
+    this.nowPos = 0
+    this.runningBarrages = []
   }
 
   private runningBarrages: Barrage[] = []
