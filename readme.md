@@ -1,35 +1,47 @@
 # dmMiniPlayer
 
-可以带弹幕的画中画播放器，且可以在播放器中发送弹幕，狠狠的摸！
+<p align="center" style="margin-bottom: 0px !important;">
+<img width="800" alt="BewlyBewly icon" src="./docs/assets/view.png"><br/>
+</p>
+
+
+支持最新的画中画API功能，可以播放、发送弹幕，支持字幕，键盘控制进度，更好的画中画播放体验的浏览器插件
 
 - [chrome商店](https://chrome.google.com/webstore/detail/%E5%BC%B9%E5%B9%95%E7%94%BB%E4%B8%AD%E7%94%BB%E6%92%AD%E6%94%BE%E5%99%A8/nahbabjlllhocabmecfjmcblchhpoclj)
 - [edge商店](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
 
-目前已支持:
-- [x] bilibili 视频 + 直播
-- [x] 斗鱼直播
-- [x] CC直播
-- [x] 动画疯
-- [x] youtube直播 *
-- [x] twitch直播 *
-- [x] 抖音直播 *
+## 🚀 功能
+- 在画中画窗口中拖动、键盘控制进度，调整音量
+- 弹幕播放和发送
+  - bilibili视频 + 直播
+  - 斗鱼直播
+  - CC直播
+  - 动画疯
+  - youtube直播 *
+  - twitch直播 *
+  - 抖音直播 *
+- 支持bilibili、youtube的视频字幕播放
+- 支持外挂.srt .ass字幕
+- 与bilibili一样的长按右键快进功能
+- 所有https网站下的视频画中画模式
 
+> [!NOTE]
 > *标记为目前只有html弹幕模式，可能会有意料之外的问题
 
-## 主要实现方法
+## 📚 主要实现方法
 ### 旧版本canvas版本
 用一个单独canvas画video + 弹幕，再把canvas的stream附加到一个单独的video上，最后开启画中画功能
 
 ### 新版本docPIP
 使用了[documentPictureInPicture](https://developer.chrome.com/docs/web-platform/document-picture-in-picture/)该API
 
-目前该API是[非w3c草案功能](https://wicg.github.io/document-picture-in-picture/)，从chrome 116开始已经强推到stable上了，[非chromium](https://caniuse.com/?search=document-picture-in-picture)目前还没看到能用的（如果你是360 qq浏览器这种且没有该API，地址栏到 chrome://flags/#document-picture-in-picture-api 查看是否支持开启）
+> [!NOTE]
+> 该API是[非w3c草案功能](https://wicg.github.io/document-picture-in-picture/)，从chrome 116开始已经强推到stable上了，[非chromium](https://caniuse.com/?search=document-picture-in-picture)目前还没看到能用的
+> 
+> 如果你是360 qq浏览器这种套壳Chromium的且没有该API，地址栏到`chrome://flags/#document-picture-in-picture-api`查看是否支持开启
 
-*edge目前发现有红色tab是没法改的，chrome默认则是黑色的，且edge更容易崩溃卡顿*
 
-*目前看到issue提的mac 13.6没有关闭按钮，windows是完全支持的，可能该API兼容并不是很好*
-
-## 引用代码
+## 💖 引用代码
 非常感谢这些项目的开源省了不少时间
 
 - [bilibili-live-ws](https://www.npmjs.com/package/bilibili-live-ws)
@@ -38,3 +50,8 @@
 - [real-url](https://github.com/wbt5/real-url/blob/master/danmu/danmaku/cc.py)
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 - [rc-slider](http://github.com/react-component/slider)
+
+## 🍔 投喂
+如果您很喜欢这个项目, 欢迎打赏, 金额随意. 您的支持是我们的动力(=・ω・=)
+
+[爱发电](https://afdian.net/a/apades)
