@@ -1,7 +1,7 @@
 // 用来加载world: MAIN的module type脚本
 chrome.scripting.registerContentScripts([
   {
-    id: 'before-init-main',
+    id: 'beforeInitMain',
     js: ['assets/lib/before-init-main.mjs'],
     runAt: 'document_start',
     matches: ['<all_urls>'],

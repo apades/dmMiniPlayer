@@ -28,7 +28,7 @@ export const inlineImport = (props: Props): EsbuildPlugin => {
           return result
         } catch (error: any) {
           if (error.message.includes('No PostCSS Config found in')) {
-            const result = { plugins: [], options: {} }
+            const result = { plugins: [] as any[], options: {} }
             return result
           }
           throw error

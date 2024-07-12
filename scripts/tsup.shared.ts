@@ -3,6 +3,7 @@ import path from 'path'
 import { inlineImport } from './plugin/inlineImport'
 import fs from 'fs-extra'
 import { manifest } from '../src/manifest'
+import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
 
 export const pr = (...p: any) => path.resolve(__dirname, ...p)
 
@@ -11,7 +12,7 @@ export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
 
 export const shareConfig: Parameters<typeof defineConfig>[0] = {
-  esbuildPlugins: [inlineImport({})],
+  esbuildPlugins: [inlineImport({}), esbuildMetaUrl({})],
   esbuildOptions(options, ctx) {
     options.alias ??= {}
     Object.assign(options.alias, {
