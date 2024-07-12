@@ -40,6 +40,9 @@
 > 
 > 如果你是360 qq浏览器这种套壳Chromium的且没有该API，地址栏到`chrome://flags/#document-picture-in-picture-api`查看是否支持开启
 
+> [!WARNING]
+> 如果你使用edge打开有红色tab栏，建议升级到`126.0.2592.102`版本以上
+
 
 ## 💖 引用代码
 非常感谢这些项目的开源省了不少时间
