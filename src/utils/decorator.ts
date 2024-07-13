@@ -47,3 +47,17 @@ export function windowsOnceCall(key: string) {
     return descriptor
   }
 }
+
+export function logFn(
+  target: any,
+  propertyName: string,
+  descriptor: TypedPropertyDescriptor<Function>
+) {
+  let method = descriptor.value!
+
+  descriptor.value = function () {
+    console.log(`run ${propertyName}`, this)
+    // eslint-disable-next-line prefer-rest-params
+    return method.apply(this, arguments)
+  }
+}

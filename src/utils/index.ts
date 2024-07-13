@@ -205,7 +205,7 @@ export function createElement<
   TAG extends keyof HTMLElementTagNameMap
 >(
   tag: TAG,
-  op?: Partial<Omit<T, 'style' | 'dataset' | 'children'>> & {
+  option?: Partial<Omit<T, 'style' | 'dataset' | 'children'>> & {
     /**支持传入number，自动转化成px */
     style?: Partial<TransStringValToAny<CSSStyleDeclaration>> | string
     /**不支持驼峰写法，请传`a-bc`这样，但取的时候是dataset['aBc'] */
@@ -215,9 +215,9 @@ export function createElement<
     [k: string]: any
   }
 ): HTMLElementTagNameMap[typeof tag] {
-  op = { ...op }
+  const { children, dataset, style, ...op } = { ...option }
   const el = document.createElement(tag)
-  const style = op.style
+  Object.assign(el, op)
   if (style && isObject(style)) {
     delete op.style
     Object.entries(style).forEach(([k, v]) => {
@@ -228,23 +228,18 @@ export function createElement<
       el.style[k as any] = v as any
     })
   }
-  // dataset
-  const dataset = op.dataset
   if (dataset) {
     delete (op as any).dataset
     Object.entries(dataset).forEach(([key, val]) => {
       el.setAttribute(`data-${key}`, val + '')
     })
   }
-  // children
-  const children = op.children
   if (children) {
     delete (op as any).children
     children.forEach((c) => {
       el.appendChild(c)
     })
   }
-  Object.assign(el, op)
   return el
 }
 

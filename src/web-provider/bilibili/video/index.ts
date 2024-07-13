@@ -78,7 +78,7 @@ export default class BilibiliVideoProvider extends WebProvider {
       vpConfig.canShowBarrage = true
     })
     this.getDans().then((dans) =>
-      this.miniPlayer.danmakuController.initDans(dans)
+      this.miniPlayer.danmakuController.addDanmakus(dans)
     )
   }
 

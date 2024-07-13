@@ -1,0 +1,86 @@
+.danmaku-container{
+  --gap: 4px;
+  --opacity: 1;
+  --color: #fff;
+  --font-weight: 600;
+  --font-family: 'Segoe UI Emoji, SimHei, "microsoft yahei", sans-serif';
+
+  position: relative;
+  pointer-events: none;
+  &.paused{
+    .danmaku-item{
+      animation-play-state: paused !important;
+    }
+  }
+  .danmaku-item{
+    // 初始位置，视频的容器宽度
+    --offset: 0;
+    // 弹幕的宽度
+    --width: 0;
+    // (弹幕的宽度 + 视频的容器宽度) * -1
+    --translateX: 0;
+    --tunnel: 0;
+    // 与danSpeed translateX一起计算出来的
+    --duration: 0;
+    --font-size: 14px;
+    // --offsetY: 0;
+    --offsetY: calc(var(--tunnel) * var(--gap) + var(--font-size) * var(--tunnel));
+
+    position: absolute;
+    color: var(--color);
+    font-weight: var(--font-weight);
+    font-size: var(--font-size);
+    font-family: var(--font-family);
+    white-space: nowrap;
+    text-align: center;
+    text-shadow: 1px 0 1px #000,0 1px 1px #000,0 -1px 1px #000,-1px 0 1px #000;
+    transform: translateZ(0);
+    perspective: 500px;
+    opacity: var(--opacity);
+    // will-change: transform;
+
+    // top和bottom用的
+    @keyframes danmaku-unmoving {
+      0%{
+        opacity: 1;
+      }
+      99%{
+        opacity: 1;
+      }
+      100%{
+        opacity: 0;
+      }
+    }
+
+    @keyframes danmaku-move {
+      0%{
+        transform: translateX(0) translateZ(0);
+      }
+      100%{
+        transform: translateX(var(--translateX)) translateZ(0);
+      }
+    }
+
+    &.right{
+      top: var(--offsetY);
+      left: var(--offset);
+      animation: danmaku-move var(--duration) linear;
+    }
+    &.top{
+      top: var(--offsetY);
+      left: 50%;
+      text-align: center;
+      transform: translateX(-50%) translateZ(0);
+      opacity: 0;
+      animation: danmaku-unmoving var(--duration) linear;
+    }
+    &.bottom{
+      bottom: var(--offsetY);
+      left: 50%;
+      text-align: center;
+      transform: translateX(-50%) translateZ(0);
+      opacity: 0;
+      animation: danmaku-unmoving var(--duration) linear;
+    }
+  }
+}

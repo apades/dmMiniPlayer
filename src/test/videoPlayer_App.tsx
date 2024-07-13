@@ -3,12 +3,17 @@ import BarrageSender from '@root/core/danmaku/BarrageSender'
 import { useOnce } from '@root/hook'
 import configStore, { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
-import { useRef, useState, type FC } from 'react'
+import { CSSProperties, useRef, useState, type FC } from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import parser from '@root/core/SubtitleManager/subtitleParser/srt'
+import '@root/core/danmaku/DanmakuManager/htmlDanmaku/index.less'
+import DanmakuManager from '@root/core/danmaku/DanmakuManager'
+import { dans } from './data/dans'
+import CanvasVideo from '@root/core/CanvasVideo'
+import chalk from 'chalk'
 
 window.parser = parser
 window.listSelector = listSelector
@@ -35,6 +40,34 @@ const App = () => {
   const videoRef = useRef<HTMLVideoElement>(dq1('.video'))
   let [input, setInput] = useState('')
   const [editInput, setEditInput] = useState('edit')
+  const danmakuContainerRef = useRef<HTMLDivElement>()
+  const video2ref = useRef<HTMLVideoElement>(null)
+
+  useOnce(async () => {
+    console.log('dm')
+    const dm = new DanmakuManager()
+    window.dm = dm
+    dm.init({ media: videoRef.current, container: danmakuContainerRef.current })
+    dm.addDanmakus(dans)
+
+    dm.on('danmaku-leave', (danmaku) => {
+      console.log(chalk.red('danmaku-leave'), danmaku)
+    })
+    dm.on('danmaku-enter', (danmaku) => {
+      console.log(chalk.green('danmaku-enter'), danmaku)
+    })
+    dm.on('danmaku-leaveTunnel', (danmaku) => {
+      console.log(chalk.yellow('danmaku-leaveTunnel'), danmaku)
+    })
+
+    // captureStream() 需要用户信任操作才能用
+    await new Promise((res) => (window.onclick = res))
+    const canvasVideo = new CanvasVideo({ videoEl: videoRef.current })
+    window.canvasVideo = canvasVideo
+    video2ref.current.srcObject = canvasVideo.canvasVideoStream
+    video2ref.current.play()
+    document.body.appendChild(canvasVideo.canvas)
+  })
 
   useOnce(() => {
     const sender = new BarrageSender({
@@ -62,6 +95,11 @@ const App = () => {
 
   return (
     <div ref={ref}>
+      <video ref={video2ref} />
+      <div
+        ref={danmakuContainerRef}
+        className="!fixed w-full h-full left-0 top-0 pointer-events-none"
+      ></div>
       <div style={{ height: 200 }}>
         <VideoPlayer
           index={1}

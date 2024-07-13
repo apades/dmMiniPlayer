@@ -11,6 +11,10 @@ export enum MaxTunnelType {
 }
 
 const config_danmaku = {
+  useHtmlDanmaku: config({
+    defaultValue: false,
+    desc: 'Reopen PIP in config changed',
+  }),
   danSpeed: config({
     defaultValue: 20,
     label: t('settingPanel.danSpeed'),

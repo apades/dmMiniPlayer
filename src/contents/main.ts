@@ -3,6 +3,7 @@ import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import AsyncLock from '@root/utils/AsyncLock'
 import { onMessage } from '@root/inject/contentSender'
 import { onceCall } from '@root/utils'
+import NewBilibiliVideoProvider from '@root/web-provider/bilibili/video/newIndex'
 
 console.log('run content')
 
@@ -55,7 +56,11 @@ onBgMessage('player-startPIPPlay', async (req) => {
 })
 
 onMessage('start-PIP', (data) => {
-  provider().startPIPPlay({ videoEl: data.videoEl })
+  // provider().startPIPPlay({ videoEl: data.videoEl })
+  const provider = new NewBilibiliVideoProvider()
+  window.provider = provider
+
+  provider.openPlayer({ videoEl: data.videoEl })
 })
 
 try {

@@ -90,23 +90,37 @@ export default class DocMiniPlayer extends MiniPlayer {
 
     console.log('docPIP渲染模式', configStore.docPIP_renderType)
     switch (configStore.docPIP_renderType) {
-      case DocPIPRenderType.reactVP_canvasCs: {
-        await this.render_reactVP_canvasCs()
-        break
-      }
+      /**只使用最简单的canvas 弹幕 + video标签 */
       case DocPIPRenderType.oVP_cs: {
         await this.render_oVP_cs()
         break
       }
-      case DocPIPRenderType.reactVP_cs: {
-        await this.render_reactVP_cs()
-        break
-      }
+      /**使用canvas画的videoStream */
+      case DocPIPRenderType.reactVP_canvasCs:
+      /**使用react的videoPlayer，目前可以看到视频帧率明显不高，比canvas还低 */
+      case DocPIPRenderType.reactVP_cs:
+      /**把web的video插到pip中 */
       case DocPIPRenderType.reactVP_webVideo: {
-        await this.render_reactVP_webVideo()
+        await this.renderReactVideoPlayer()
         break
       }
     }
+
+    const danmakuContainer = createElement('div', {
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+      },
+    })
+    this.videoPlayer.appendChild(danmakuContainer)
+    this.danmakuController.init({
+      media: this.webPlayerVideoEl,
+      container: danmakuContainer,
+    })
 
     this.updateCanvasSize({
       height: pipWindow.innerHeight,
@@ -128,6 +142,93 @@ export default class DocMiniPlayer extends MiniPlayer {
         width: pipWindow.innerWidth,
         height: pipWindow.innerHeight,
       })
+    })
+  }
+
+  async renderReactVideoPlayer() {
+    const pipWindow = this.pipWindow
+    const isWebVideoMode =
+        configStore.docPIP_renderType == DocPIPRenderType.reactVP_webVideo,
+      isCanvasVideoMode =
+        configStore.docPIP_renderType == DocPIPRenderType.reactVP_canvasCs
+
+    let vpRef: VideoPlayerHandle
+    this.videoPlayer = createElement('div')
+    let re = createRoot(this.videoPlayer)
+    re.render(
+      <VideoPlayer
+        index={1}
+        subtitleManager={this.props.subtitleManager}
+        webVideo={this.webPlayerVideoEl}
+        keydownWindow={pipWindow}
+        renderSideActionArea={this.renderSideActionArea()}
+        // 差异化传参
+        {...((isWebVideoMode && { useWebVideo: true }) ||
+          (isCanvasVideoMode && { srcObject: this.canvasVideoStream }) || {
+            srcObject: this.webPlayerVideoStream,
+          })}
+        ref={(ref) => {
+          if (!ref) return
+          vpRef = ref
+          window.vpRef = vpRef
+        }}
+        // emit事件
+        onSeeked={() => this.emit('seek')}
+        onPlay={() => this.emit('play')}
+        onPause={() => this.emit('pause')}
+      />
+    )
+    const unobserveVideoElChange = observeVideoEl(
+      this.webPlayerVideoEl,
+      (newVideoEl) => {
+        // 只给reactVP_webVideo模式监听
+        if (isWebVideoMode) {
+          console.log('observeVideoElChange', newVideoEl)
+          this.updateWebVideoPlayerEl(newVideoEl)
+        }
+      }
+    )
+
+    // 用来把video元素还原回原本位置的方法
+    let restoreWebVideoPlayerElState = () => null as void
+    if (isWebVideoMode) {
+      restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
+        this.webPlayerVideoEl
+      )
+    }
+
+    // video标签切换时
+    this.updateWebVideoPlayerEl = (videoEl) => {
+      super.updateWebVideoPlayerEl(videoEl)
+      this.webPlayerVideoEl = videoEl
+      console.log('updateWebVideoPlayerEl', videoEl)
+      vpRef.updateVideo(videoEl)
+      if (isWebVideoMode) {
+        // 控制要不要把上一个还原
+        restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
+      }
+    }
+
+    await onVideoPlayerLoad()
+    ;(this.canvas as any).style = ''
+    //
+    if (!isCanvasVideoMode) {
+      pipWindow.document.body.appendChild(this.canvas)
+    }
+    pipWindow.document.head.appendChild(this.styleEl)
+    pipWindow.document.head.appendChild(this.tailwindStyleEl)
+    pipWindow.document.body.appendChild(this.videoPlayer)
+    pipWindow.addEventListener('pagehide', () => {
+      // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
+      // ! 而且还有个很严重的问题，不能重复关闭打开(大概2次以上)，否则会出现tab崩溃的情况
+      this.appendCanvasToBody()
+      this.emit('PIPClose')
+      re.unmount()
+      this.videoPlayer = null
+      this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
+
+      restoreWebVideoPlayerElState()
+      unobserveVideoElChange()
     })
   }
 
@@ -163,176 +264,6 @@ export default class DocMiniPlayer extends MiniPlayer {
       this.emit('PIPClose')
       this.videoPlayer = null
       //   this.pipWindow = null
-    })
-  }
-
-  /**使用react的videoPlayer，目前可以看到视频帧率明显不高，比canvas还低 */
-  async render_reactVP_cs() {
-    let pipWindow = this.pipWindow
-    let re: ReturnType<typeof createRoot>
-    if (!this.videoPlayer) {
-      this.videoPlayer = createElement('div')
-      re = createRoot(this.videoPlayer)
-      re.render(
-        <VideoPlayer
-          index={1}
-          subtitleManager={this.props.subtitleManager}
-          srcObject={this.webPlayerVideoStream}
-          webVideo={this.webPlayerVideoEl}
-          keydownWindow={pipWindow}
-          renderSideActionArea={this.renderSideActionArea()}
-          // emit事件
-          onSeeked={() => this.emit('seek')}
-          onPlay={() => this.emit('play')}
-          onPause={() => this.emit('pause')}
-        />
-      )
-    }
-
-    await onVideoPlayerLoad()
-    ;(this.canvas as any).style = ''
-    pipWindow.document.body.appendChild(this.canvas)
-    pipWindow.document.head.appendChild(this.styleEl)
-    pipWindow.document.head.appendChild(this.tailwindStyleEl)
-    pipWindow.document.body.appendChild(this.videoPlayer)
-    pipWindow.addEventListener('pagehide', () => {
-      // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
-      // ! 而且还有个很严重的问题，不能重复关闭打开(大概2次以上)，否则会出现tab崩溃的情况
-      this.appendCanvasToBody()
-      this.emit('PIPClose')
-      re.unmount()
-      this.videoPlayer = null
-      //   this.pipWindow = null
-    })
-  }
-
-  /**使用canvas画的videoStream */
-  async render_reactVP_canvasCs() {
-    let pipWindow = this.pipWindow
-    let re: ReturnType<typeof createRoot>
-    let unobserveVideoElChange = observeVideoEl(
-      this.webPlayerVideoEl,
-      (newVideoEl) => {
-        console.log('change', newVideoEl)
-        // this.updateWebVideoPlayerEl(newVideoEl)
-        // restoreWebVideoPlayerElState = () => {}
-      }
-    )
-
-    let vpRef: VideoPlayerHandle
-    this.videoPlayer = createElement('div')
-    re = createRoot(this.videoPlayer)
-    re.render(
-      <VideoPlayer
-        index={1}
-        subtitleManager={this.props.subtitleManager}
-        srcObject={this.canvasVideoStream}
-        webVideo={this.webPlayerVideoEl}
-        keydownWindow={pipWindow}
-        renderSideActionArea={this.renderSideActionArea()}
-        ref={(ref) => {
-          if (!ref) return
-          vpRef = ref
-          window.vpRef = vpRef
-        }}
-        // emit事件
-        onSeeked={() => this.emit('seek')}
-        onPlay={() => this.emit('play')}
-        onPause={() => this.emit('pause')}
-      />
-    )
-    this.updateWebVideoPlayerEl = (videoEl) => {
-      super.updateWebVideoPlayerEl(videoEl)
-      this.webPlayerVideoEl = videoEl
-      console.log('new videoEl', videoEl)
-      vpRef.updateVideo(videoEl)
-      // 控制要不要把上一个还原
-    }
-
-    await onVideoPlayerLoad()
-    ;(this.canvas as any).style = ''
-    pipWindow.document.head.appendChild(this.styleEl)
-    pipWindow.document.head.appendChild(this.tailwindStyleEl)
-    pipWindow.document.body.appendChild(this.videoPlayer)
-    pipWindow.addEventListener('pagehide', () => {
-      // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
-      // ! 而且还有个很严重的问题，不能重复关闭打开(大概2次以上)，否则会出现tab崩溃的情况
-      this.appendCanvasToBody()
-      this.emit('PIPClose')
-      re.unmount()
-      this.videoPlayer = null
-
-      this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
-
-      unobserveVideoElChange()
-    })
-  }
-
-  /**把web的video插到pip中 */
-  async render_reactVP_webVideo() {
-    let pipWindow = this.pipWindow
-    let re: ReturnType<typeof createRoot>
-    let unobserveVideoElChange = observeVideoEl(
-      this.webPlayerVideoEl,
-      (newVideoEl) => {
-        console.log('change', newVideoEl)
-        this.updateWebVideoPlayerEl(newVideoEl)
-      }
-    )
-    // let unobserveVideoElChange = () => 0
-    let restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
-      this.webPlayerVideoEl
-    )
-
-    let vpRef: VideoPlayerHandle
-    // this.webPlayerVideoEl.setAttribute('style', '')
-    this.videoPlayer = createElement('div')
-    re = createRoot(this.videoPlayer)
-    re.render(
-      <VideoPlayer
-        index={1}
-        subtitleManager={this.props.subtitleManager}
-        webVideo={this.webPlayerVideoEl}
-        keydownWindow={pipWindow}
-        useWebVideo
-        renderSideActionArea={this.renderSideActionArea()}
-        ref={(ref) => {
-          if (!ref) return
-          vpRef = ref
-          window.vpRef = vpRef
-        }}
-        // emit事件
-        onSeeked={() => this.emit('seek')}
-        onPlay={() => this.emit('play')}
-        onPause={() => this.emit('pause')}
-      />
-    )
-    this.updateWebVideoPlayerEl = (videoEl) => {
-      super.updateWebVideoPlayerEl(videoEl)
-      // restoreWebVideoPlayerElState()
-      console.log('new videoEl', videoEl)
-      vpRef.updateVideo(videoEl)
-      // 控制要不要把上一个还原
-      restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
-    }
-
-    await onVideoPlayerLoad()
-    ;(this.canvas as any).style = ''
-    pipWindow.document.head.appendChild(this.styleEl)
-    pipWindow.document.head.appendChild(this.tailwindStyleEl)
-    pipWindow.document.body.appendChild(this.canvas)
-    pipWindow.document.body.appendChild(this.videoPlayer)
-    pipWindow.addEventListener('pagehide', () => {
-      // ! 这里可能是chrome内部bug，如果不把canvas放到主doc里就关闭PIP，会导致canvas直接出错没法update了
-      // ! 而且还有个很严重的问题，不能重复关闭打开(大概2次以上)，否则会出现tab崩溃的情况
-      this.appendCanvasToBody()
-      this.emit('PIPClose')
-      re.unmount()
-      this.videoPlayer = null
-      this.updateWebVideoPlayerEl = super.updateWebVideoPlayerEl
-
-      restoreWebVideoPlayerElState()
-      unobserveVideoElChange()
     })
   }
 

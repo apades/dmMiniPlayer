@@ -6,10 +6,12 @@ import type { Props as BarrageSenderProps } from './danmaku/BarrageSender'
 import { onceCallGet } from '@root/utils/decorator'
 import videoRender from '@root/store/videoRender'
 import { addEventListener, createElement, throttle } from '@root/utils'
-import { observe } from 'mobx'
+import { autorun, observe } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import { checkIsLive } from '@root/utils/video'
 import type SubtitleManager from './SubtitleManager'
+import DanmakuManager from './danmaku/DanmakuManager'
+import { MaxTunnelType } from '@root/store/config/danmaku'
 
 export type MiniPlayerProps = {
   videoEl: HTMLVideoElement
@@ -22,7 +24,7 @@ export default class MiniPlayer {
   webPlayerVideoEl: HTMLVideoElement
 
   // 弹幕器
-  danmakuController: DanmakuController
+  danmakuController: DanmakuManager
 
   // canvas相关
   canvas = document.createElement('canvas')
@@ -50,10 +52,7 @@ export default class MiniPlayer {
 
     this.webPlayerVideoEl = props.videoEl
 
-    this.danmakuController = new DanmakuController({
-      player: this,
-      ...danmu,
-    })
+    this.danmakuController = new DanmakuManager()
 
     this.bindVideoElEvents()
     this.updateCanvasSize()
@@ -61,6 +60,30 @@ export default class MiniPlayer {
     this.fpsInterval = 1000 / configStore.renderFPS
     observe(configStore, 'renderFPS', () => {
       this.fpsInterval = 1000 / configStore.renderFPS
+    })
+
+    // 设置maxTunnel
+    // autorun(() => {
+    //   const { maxTunnel, gap, fontSize } = configStore
+    //   const { containerHeight: renderHeight } = videoRender
+
+    //   this.danmakuController.tunnelManager.maxTunnel = (() => {
+    //     switch (maxTunnel) {
+    //       case MaxTunnelType['1/2']:
+    //         return renderHeight / 2 / (+fontSize + +gap)
+    //       case MaxTunnelType['1/4']:
+    //         return renderHeight / 4 / (+fontSize + +gap)
+    //       case MaxTunnelType['full']:
+    //         return 100
+    //     }
+    //   })()
+    // })
+
+    autorun(() => {
+      this.danmakuController.fontSize = configStore.fontSize
+      this.danmakuController.fontFamily = configStore.fontFamily
+      this.danmakuController.fontWeight = configStore.fontWeight
+      this.danmakuController.gap = configStore.gap
     })
   }
 
@@ -78,9 +101,9 @@ export default class MiniPlayer {
         this.isPause = false
         this.canvasPlayerVideoEl.play()
       })
-      videoEl.addEventListener('seeked', () => {
-        this.danmakuController.reset()
-      })
+      // videoEl.addEventListener('seeked', () => {
+      //   this.danmakuController.reset()
+      // })
       videoEl.addEventListener('loadedmetadata', () => {
         this.updateCanvasSize()
       })
@@ -167,13 +190,13 @@ export default class MiniPlayer {
     this.hasSeek = true
   }
   renderDanmu() {
-    if (!this.danmakuController.barrages.length) return
-    if (this.hasSeek) {
-      this.danmakuController.drawInSeek()
-      this.hasSeek = false
-      return
-    }
-    this.danmakuController.draw()
+    // if (!this.danmakuController.barrages.length) return
+    // if (this.hasSeek) {
+    //   this.danmakuController.drawInSeek()
+    //   this.hasSeek = false
+    //   return
+    // }
+    // this.danmakuController.draw()
   }
 
   startPIPPlay() {

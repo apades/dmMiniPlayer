@@ -1,12 +1,12 @@
 import vpConfig from '@root/store/vpConfig'
-import EventEmitter from 'events'
+import Events2 from '@root/utils/Events2'
 import { runInAction } from 'mobx'
 
 export type LiveEvent = {
   danmu: { color: string; text: string }
 }
 
-export default abstract class BarrageClient extends EventEmitter {
+export default abstract class BarrageClient extends Events2<LiveEvent> {
   constructor() {
     super()
     runInAction(() => {
@@ -17,13 +17,7 @@ export default abstract class BarrageClient extends EventEmitter {
     e: TType,
     cb: (data: LiveEvent[TType]) => void
   ) {
-    return super.addListener(e as string, cb)
-  }
-  emit<TType extends keyof LiveEvent>(
-    eventName: TType,
-    args: LiveEvent[TType]
-  ): boolean {
-    return super.emit(eventName, args)
+    return this.on(e, cb)
   }
   abstract close(): void
 }
