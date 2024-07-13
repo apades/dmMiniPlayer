@@ -1,12 +1,11 @@
 import { PlayerComponent } from '@root/core/types'
 import { v1 as uuid } from 'uuid'
-import { DanmakuInitData, DanmakuManager, DanmakuMoveType } from './'
+import { DanmakuInitData, DanmakuEngine, DanmakuMoveType } from '.'
 
-IntersectionObserver
 export type DanmakuInitProps = {
   initTime?: number
 }
-export default class Danmaku implements DanmakuInitData, PlayerComponent {
+export default class DanmakuBase implements DanmakuInitData, PlayerComponent {
   id: string
   color: string
   text: string
@@ -23,11 +22,11 @@ export default class Danmaku implements DanmakuInitData, PlayerComponent {
   disabled = false
 
   get speed() {
-    return this.danmakuManager.speed
+    return this.danmakuEngine.speed
   }
 
   get container() {
-    return this.danmakuManager.container
+    return this.danmakuEngine.container
   }
   // 弹幕el: text_<s></s>
   // 通过用IntersectionObserver监听<s>是否enter或leave，占领/释放弹幕tunnel
@@ -36,20 +35,20 @@ export default class Danmaku implements DanmakuInitData, PlayerComponent {
   /**给tunnelManager监听 */
   outTunnelObserveEl: HTMLSpanElement
 
-  danmakuManager: DanmakuManager
+  danmakuEngine: DanmakuEngine
 
   constructor(
     props: DanmakuInitData & {
-      danmakuManager: DanmakuManager
+      danmakuEngine: DanmakuEngine
     }
   ) {
     props.id = props.id || uuid()
     Object.assign(this, props)
-    if (this instanceof props.danmakuManager.Danmaku) {
+    if (this instanceof props.danmakuEngine.Danmaku) {
       return this
     }
 
-    return new props.danmakuManager.Danmaku(props)
+    return new props.danmakuEngine.Danmaku(props)
   }
   onInit(props: DanmakuInitProps) {}
   onUnload() {}

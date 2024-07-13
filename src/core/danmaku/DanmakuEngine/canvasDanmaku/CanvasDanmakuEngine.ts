@@ -1,12 +1,10 @@
-import { addEventListener, createElement, noop } from '@root/utils'
-import { DanmakuManager } from '../'
+import { noop } from '@root/utils'
+import { DanmakuEngine } from '..'
+import { DanmakuEngineInitProps } from '../DanmakuEngine'
 import Danmaku from './CanvasDanmaku'
-import { DanmakuManagerInitProps } from '../DanmakuManager'
-import { onceCallGet } from '@root/utils/decorator'
-import { autorun } from 'mobx'
 import CanvasDanmakuVideo from './CanvasDanmakuVideo'
 
-export default class CanvasDanmakuManager extends DanmakuManager {
+export default class CanvasDanmakuEngine extends DanmakuEngine {
   Danmaku = Danmaku
   declare danmakus: Danmaku[]
   declare runningDanmakus: Danmaku[]
@@ -25,7 +23,7 @@ export default class CanvasDanmakuManager extends DanmakuManager {
     return this.canvasDanmakuVideo.ctx
   }
 
-  onInit(props: DanmakuManagerInitProps): void {
+  onInit(props: DanmakuEngineInitProps): void {
     this.canvasDanmakuVideo = new CanvasDanmakuVideo({
       danmakuManager: this,
       videoEl: props.media as HTMLVideoElement,

@@ -1,7 +1,7 @@
 import { WebProvider } from '.'
 import SubtitleManager from '../SubtitleManager'
 import VideoChanger from '../VideoChanger'
-import DanmakuManager from '../danmaku/DanmakuManager'
+import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DocMiniPlayer from '../MiniPlayer/DocMiniPlayer'
 import { getPIPWindowConfig } from '@root/utils/storage'
 import configStore, { videoBorderType } from '@root/store/config'
@@ -12,7 +12,7 @@ export default class DocWebProvider extends WebProvider {
   onInit(): Partial<{
     videoChanger: VideoChanger
     subtitleManager: SubtitleManager
-    danmakuManager: DanmakuManager
+    danmakuEngine: DanmakuEngine
   }> {
     throw new Error('Method not implemented.')
   }
@@ -25,7 +25,7 @@ export default class DocWebProvider extends WebProvider {
     super.openPlayer()
     this.miniPlayer = new DocMiniPlayer({
       webVideoEl: this.webVideo,
-      danmakuManager: this.danmakuManager,
+      danmakuManager: this.danmakuEngine,
       subtitleManager: this.subtitleManager,
       videoChanger: this.videoChanger,
     })
@@ -87,7 +87,7 @@ export default class DocWebProvider extends WebProvider {
       },
     })
     playerEl.appendChild(danmakuContainer)
-    this.danmakuManager.init({
+    this.danmakuEngine.init({
       media: this.webVideo,
       container: danmakuContainer,
     })

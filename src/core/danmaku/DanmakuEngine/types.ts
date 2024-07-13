@@ -1,4 +1,4 @@
-import { Danmaku } from './'
+import { DanmakuBase } from './'
 
 export type DanmakuMoveType = 'top' | 'right' | 'bottom'
 
@@ -9,8 +9,8 @@ export type DanmakuInitData = {
   color: string
   type: DanmakuMoveType
 }
-export type DanmakuManagerEvents = {
-  'danmaku-enter': Danmaku
-  'danmaku-leaveTunnel': Danmaku
-  'danmaku-leave': Danmaku
+export type DanmakuEngineEvents = {
+  'danmaku-enter': DanmakuBase
+  'danmaku-leaveTunnel': DanmakuBase
+  'danmaku-leave': DanmakuBase
 }

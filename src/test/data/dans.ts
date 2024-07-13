@@ -1,4 +1,4 @@
-import { DanmakuInitData } from '@root/core/danmaku/DanmakuManager/types'
+import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
 
 export const dans: DanmakuInitData[] = [
   {

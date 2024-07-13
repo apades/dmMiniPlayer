@@ -1,11 +1,11 @@
 import { autorun } from 'mobx'
-import { Danmaku } from '../'
-import type { DanmakuInitProps } from '../Danmaku'
+import { DanmakuBase } from '../'
+import type { DanmakuInitProps } from '../DanmakuBase'
 import { getTextWidth, noop } from '@root/utils'
-import CanvasDanmakuManager from './CanvasDanmakuManager'
+import CanvasDanmakuEngine from './CanvasDanmakuEngine'
 
-export default class CanvasDanmaku extends Danmaku {
-  declare danmakuManager: CanvasDanmakuManager
+export default class CanvasDanmaku extends DanmakuBase {
+  declare danmakuEngine: CanvasDanmakuEngine
 
   // 渲染的x,y
   x = 0
@@ -25,13 +25,13 @@ export default class CanvasDanmaku extends Danmaku {
     return super.speed / 10
   }
 
-  constructor(props: ConstructorParameters<typeof Danmaku>[0]) {
+  constructor(props: ConstructorParameters<typeof DanmakuBase>[0]) {
     super(props)
     this.startTime = this.time
   }
   onInit(props: DanmakuInitProps): void {
     if (this.initd) return
-    this.tunnel = this.danmakuManager.tunnelManager.getTunnel(this)
+    this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
     if (this.tunnel == -1) {
       this.disabled = true
       return
@@ -40,20 +40,20 @@ export default class CanvasDanmaku extends Danmaku {
     if (this.type != 'right') {
       this.autorun(() => {
         this.endTime =
-          this.startTime + this.danmakuManager.unmovingDanmakuSaveTime
+          this.startTime + this.danmakuEngine.unmovingDanmakuSaveTime
       })
     } else {
       // ! 加个保底的time，不然跳到后段时需要计算太多的前面的弹幕位置了
       this.endTime = this.startTime + 30
     }
 
-    const canvas = this.danmakuManager.canvas
+    const canvas = this.danmakuEngine.canvas
 
     this.autorun(() => {
       this.width = getTextWidth(this.text, {
-        fontSize: this.danmakuManager.fontSize + 'px',
-        fontFamily: this.danmakuManager.fontFamily,
-        fontWeight: this.danmakuManager.fontWeight,
+        fontSize: this.danmakuEngine.fontSize + 'px',
+        fontFamily: this.danmakuEngine.fontFamily,
+        fontWeight: this.danmakuEngine.fontWeight,
       })
       if (this.type != 'right') {
         this.x = (canvas.width - this.width) / 2
@@ -71,8 +71,8 @@ export default class CanvasDanmaku extends Danmaku {
         const offsetTime = time - this.startTime
         this.moveX =
           offsetTime *
-          (this.danmakuManager.renderFPS ||
-            this.danmakuManager.withoutLimitAnimaFPS ||
+          (this.danmakuEngine.renderFPS ||
+            this.danmakuEngine.withoutLimitAnimaFPS ||
             60) *
           this.speed
       } else {
@@ -83,8 +83,8 @@ export default class CanvasDanmaku extends Danmaku {
     this.initd = true
     this.autorun(() => {
       this.y =
-        (this.tunnel + 1) * this.danmakuManager.fontSize +
-        this.tunnel * this.danmakuManager.gap
+        (this.tunnel + 1) * this.danmakuEngine.fontSize +
+        this.tunnel * this.danmakuEngine.gap
     })
   }
 
@@ -95,18 +95,18 @@ export default class CanvasDanmaku extends Danmaku {
 
   onUnload(): void {
     if (this.initd && this.drawSuccess) {
-      this.danmakuManager.emit('danmaku-leave', this)
+      this.danmakuEngine.emit('danmaku-leave', this)
     }
     this.unlistens.forEach((unlisten) => unlisten())
     this.unlistens.length = 0
     this.reset()
 
     if (this.type != 'right') {
-      this.danmakuManager.tunnelManager.popTunnel(this)
+      this.danmakuEngine.tunnelManager.popTunnel(this)
     } else if (
-      this.danmakuManager.tunnelManager.tunnelsMap['right'][this.tunnel] == this
+      this.danmakuEngine.tunnelManager.tunnelsMap['right'][this.tunnel] == this
     ) {
-      this.danmakuManager.tunnelManager.popTunnel(this)
+      this.danmakuEngine.tunnelManager.popTunnel(this)
     }
   }
 
@@ -140,8 +140,8 @@ export default class CanvasDanmaku extends Danmaku {
         // 如果弹幕全部进入canvas，释放占位tunnel
         if (this.moveX >= this.width && !this.tunnelOuted) {
           this.tunnelOuted = true
-          this.danmakuManager.tunnelManager.popTunnel(this)
-          this.danmakuManager.emit('danmaku-leaveTunnel', this)
+          this.danmakuEngine.tunnelManager.popTunnel(this)
+          this.danmakuEngine.emit('danmaku-leaveTunnel', this)
         }
         if (this.x + this.width <= 0) {
           this.disabled = true
@@ -152,7 +152,7 @@ export default class CanvasDanmaku extends Danmaku {
       case 'top': {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
           this.tunnelOuted = true
-          this.danmakuManager.tunnelManager.popTunnel(this)
+          this.danmakuEngine.tunnelManager.popTunnel(this)
         }
         break
       }
@@ -160,19 +160,19 @@ export default class CanvasDanmaku extends Danmaku {
 
     if (!this.drawSuccess && !this.disabled) {
       this.drawSuccess = true
-      this.danmakuManager.emit('danmaku-enter', this)
+      this.danmakuEngine.emit('danmaku-enter', this)
     }
 
     this.renderDanmaku()
   }
 
   protected renderDanmaku() {
-    const context = this.danmakuManager.ctx,
-      opacity = this.danmakuManager.opacity,
-      fontSize = this.danmakuManager.fontSize,
-      fontWeight = this.danmakuManager.fontWeight,
-      fontFamily = this.danmakuManager.fontFamily,
-      fontShadow = this.danmakuManager.fontShadow
+    const context = this.danmakuEngine.ctx,
+      opacity = this.danmakuEngine.opacity,
+      fontSize = this.danmakuEngine.fontSize,
+      fontWeight = this.danmakuEngine.fontWeight,
+      fontFamily = this.danmakuEngine.fontFamily,
+      fontShadow = this.danmakuEngine.fontShadow
 
     context.shadowColor = 'rgba(0,0,0,0.5)'
     context.globalAlpha = opacity

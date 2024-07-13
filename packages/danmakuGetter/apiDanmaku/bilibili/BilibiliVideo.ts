@@ -1,4 +1,4 @@
-import type { DanmakuInitData } from '@root/core/danmaku/DanmakuManager/types'
+import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
 import { DanmakuGetter } from '../..'
 
 const getBv = (url: URL) =>

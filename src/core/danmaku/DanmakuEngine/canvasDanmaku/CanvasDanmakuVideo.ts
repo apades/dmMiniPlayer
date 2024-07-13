@@ -1,8 +1,8 @@
 import CanvasVideo from '@root/core/CanvasVideo'
-import CanvasDanmakuManager from './CanvasDanmakuManager'
+import CanvasDanmakuEngine from './CanvasDanmakuEngine'
 
 export default class CanvasDanmakuVideo extends CanvasVideo {
-  danmakuManager: CanvasDanmakuManager
+  danmakuManager: CanvasDanmakuEngine
 
   resizeObserver = new ResizeObserver(([entry]) => {
     const el = entry?.target as HTMLElement
@@ -14,7 +14,7 @@ export default class CanvasDanmakuVideo extends CanvasVideo {
   })
   constructor(
     props: ConstructorParameters<typeof CanvasVideo>[0] & {
-      danmakuManager: CanvasDanmakuManager
+      danmakuManager: CanvasDanmakuEngine
     }
   ) {
     super(props)

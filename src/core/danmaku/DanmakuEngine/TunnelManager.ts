@@ -1,14 +1,14 @@
-import { DanmakuManager, Danmaku, DanmakuMoveType } from '.'
+import { DanmakuEngine, DanmakuBase, DanmakuMoveType } from '.'
 
 export default class TunnelManager {
-  tunnelsMap: { [key in DanmakuMoveType]: Danmaku[] }
+  tunnelsMap: { [key in DanmakuMoveType]: DanmakuBase[] }
   maxTunnel = 100
 
-  constructor(public danmakuManager: DanmakuManager) {
+  constructor(public danmakuEngine: DanmakuEngine) {
     this.resetTunnelsMap()
   }
 
-  private _getTunnel(danmaku: Danmaku) {
+  private _getTunnel(danmaku: DanmakuBase) {
     const type = danmaku.type
     // 先找有没有空位
     const emptyIndex = this.tunnelsMap[type].findIndex((v) => !v)
@@ -24,13 +24,13 @@ export default class TunnelManager {
     this.tunnelsMap[type].push(danmaku)
     return this.tunnelsMap[type].length - 1
   }
-  getTunnel(danmaku: Danmaku) {
+  getTunnel(danmaku: DanmakuBase) {
     const type = danmaku.type
     const rsTunnel = this._getTunnel(danmaku)
     return rsTunnel
   }
   /**@deprecated */
-  pushTunnel(danmaku: Danmaku) {
+  pushTunnel(danmaku: DanmakuBase) {
     const type = danmaku.type
     const emptyIndex = this.tunnelsMap[type].findIndex((v) => !v)
     if (emptyIndex != -1) {
@@ -39,7 +39,7 @@ export default class TunnelManager {
     }
     this.tunnelsMap[type].push(danmaku)
   }
-  popTunnel(danmaku: Danmaku) {
+  popTunnel(danmaku: DanmakuBase) {
     const { type, tunnel } = danmaku
     // 解决resize时的问题
     // ! 可能容易出问题这里

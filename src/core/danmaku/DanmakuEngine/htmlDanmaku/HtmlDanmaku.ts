@@ -1,10 +1,10 @@
 import { addEventListener, createElement, getTextWidth } from '@root/utils'
-import { Danmaku } from '../'
-import type { DanmakuInitProps } from '../Danmaku'
+import { DanmakuBase } from '../'
+import type { DanmakuInitProps } from '../DanmakuBase'
 
-export default class HtmlDanmaku extends Danmaku {
+export default class HtmlDanmaku extends DanmakuBase {
   onInit(props: DanmakuInitProps): void {
-    this.tunnel = this.danmakuManager.tunnelManager.getTunnel(this)
+    this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
     if (this.tunnel == -1) {
       this.disabled = true
       return
@@ -22,7 +22,7 @@ export default class HtmlDanmaku extends Danmaku {
     this.updateState()
     this.container.appendChild(this.el)
 
-    this.danmakuManager.emit('danmaku-enter', this)
+    this.danmakuEngine.emit('danmaku-enter', this)
     this.bindEvent()
     this.initd = true
   }
@@ -33,7 +33,7 @@ export default class HtmlDanmaku extends Danmaku {
       case 'right': {
         const unbind1 = addEventListener(this.el, (el) => {
           el.addEventListener('animationend', () => {
-            this.danmakuManager.emit('danmaku-leave', this)
+            this.danmakuEngine.emit('danmaku-leave', this)
             this.onLeave()
           })
         })
@@ -50,9 +50,9 @@ export default class HtmlDanmaku extends Danmaku {
           el.addEventListener('animationend', () => {
             this.outTunnel = true
             // console.log('outTunnel', this)
-            this.danmakuManager.emit('danmaku-leaveTunnel', this)
-            this.danmakuManager.tunnelManager.popTunnel(this)
-            this.danmakuManager.emit('danmaku-leave', this)
+            this.danmakuEngine.emit('danmaku-leaveTunnel', this)
+            this.danmakuEngine.tunnelManager.popTunnel(this)
+            this.danmakuEngine.emit('danmaku-leave', this)
             this.onLeave()
           })
         })
@@ -65,16 +65,16 @@ export default class HtmlDanmaku extends Danmaku {
 
   updateState() {
     const w = getTextWidth(this.text, {
-      fontSize: this.danmakuManager.fontSize + 'px',
-      fontFamily: this.danmakuManager.fontFamily,
-      fontWeight: this.danmakuManager.fontWeight,
+      fontSize: this.danmakuEngine.fontSize + 'px',
+      fontFamily: this.danmakuEngine.fontFamily,
+      fontWeight: this.danmakuEngine.fontWeight,
     })
     this.width = w
 
     const cw = this.container.clientWidth
     const initTimeOffset = this.initTime - this.time
 
-    let duration = this.danmakuManager.unmovingDanmakuSaveTime - initTimeOffset,
+    let duration = this.danmakuEngine.unmovingDanmakuSaveTime - initTimeOffset,
       offset = cw - initTimeOffset * this.speed,
       translateX = 0
     if (this.type == 'right') {
@@ -91,7 +91,7 @@ export default class HtmlDanmaku extends Danmaku {
       translateX: translateX + 'px',
       tunnel: this.tunnel,
       duration: duration + 's',
-      'font-size': this.danmakuManager.fontSize + 'px',
+      'font-size': this.danmakuEngine.fontSize + 'px',
       // offsetY:
       //   this.tunnel * this.danmakuManager.fontSize +
       //   this.tunnel * this.danmakuManager.gap,
@@ -102,7 +102,7 @@ export default class HtmlDanmaku extends Danmaku {
   }
 
   onLeave() {
-    this.danmakuManager.emit('danmaku-leave', this)
+    this.danmakuEngine.emit('danmaku-leave', this)
     this.reset()
     this.unload()
   }

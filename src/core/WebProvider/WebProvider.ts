@@ -1,7 +1,11 @@
 import configStore from '@root/store/config'
 import SubtitleManager from '../SubtitleManager'
 import VideoChanger from '../VideoChanger'
-import DanmakuManager from '../danmaku/DanmakuManager'
+import {
+  DanmakuEngine,
+  HtmlDanmakuEngine,
+  CanvasDanmakuEngine,
+} from '../danmaku/DanmakuEngine'
 import MiniPlayer from '../MiniPlayer/MiniPlayer'
 import { dq } from '@root/utils'
 import { CanvasWebProvider, DocWebProvider } from '.'
@@ -9,7 +13,7 @@ import { CanvasWebProvider, DocWebProvider } from '.'
 export default abstract class WebProvider {
   videoChanger: VideoChanger
   subtitleManager: SubtitleManager
-  danmakuManager: DanmakuManager
+  danmakuEngine: DanmakuEngine
 
   webVideo: HTMLVideoElement
   protected abstract miniPlayer: MiniPlayer
@@ -31,8 +35,12 @@ export default abstract class WebProvider {
   }
 
   init() {
-    this.danmakuManager = new DanmakuManager()
+    this.danmakuEngine = configStore.useHtmlDanmaku
+      ? new HtmlDanmakuEngine()
+      : new CanvasDanmakuEngine()
+
     this.subtitleManager = new SubtitleManager()
+
     this.onInit()
   }
   onInit(): void {}

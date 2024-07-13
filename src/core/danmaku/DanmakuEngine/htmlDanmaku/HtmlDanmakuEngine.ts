@@ -1,21 +1,23 @@
 import { addEventListener, createElement, noop } from '@root/utils'
 import { autorun } from 'mobx'
-import { DanmakuManager } from '../'
-import type { DanmakuManagerInitProps } from '../DanmakuManager'
+import { DanmakuEngine } from '..'
+import type { DanmakuEngineInitProps } from '../DanmakuEngine'
 import Danmaku from './HtmlDanmaku'
 import style from './index.less?inline'
 
-export default class HtmlDanmakuManager extends DanmakuManager {
+export default class HtmlDanmakuManager extends DanmakuEngine {
   Danmaku = Danmaku
   declare danmakus: Danmaku[]
   declare runningDanmakus: Danmaku[]
 
-  container: HTMLElement = createElement('div', {
-    className: 'danmaku-container',
-  })
   style = createElement('style', {
     innerHTML: style,
   })
+
+  /**canvas的速度受fps影响，要想dom的速度和canvas一样需要乘上fps值 */
+  override get speed() {
+    return (super.speed * this.fps) / 10
+  }
 
   // html弹幕通过监听每个弹幕后面的span的进入页面来触发onDanmakuOutTunnel
   observerMap = new Map<HTMLSpanElement, Danmaku>()
@@ -23,6 +25,9 @@ export default class HtmlDanmakuManager extends DanmakuManager {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return
       const target = entry.target as HTMLSpanElement
+      // 莫名其妙的会监听到这个container
+      if (target == this.container) return
+
       const danmaku = this.observerMap.get(target)
       if (danmaku) {
         this.onMovingDanmakuOutTunnel(danmaku)
@@ -44,11 +49,11 @@ export default class HtmlDanmakuManager extends DanmakuManager {
     danmaku.outTunnel = true
     if (this.tunnelManager.popTunnel(danmaku)) {
       // ? 这里要不要从穿个参数表示是旧的observer的
-      danmaku.danmakuManager.emit('danmaku-leaveTunnel', danmaku)
+      danmaku.danmakuEngine.emit('danmaku-leaveTunnel', danmaku)
     }
   }
 
-  onInit(props: DanmakuManagerInitProps): void {
+  onInit(props: DanmakuEngineInitProps): void {
     this.reset()
     this.container.classList.add('danmaku-container')
     this.container.appendChild(this.style)
@@ -56,6 +61,7 @@ export default class HtmlDanmakuManager extends DanmakuManager {
     const confUnlisten = autorun(() => {
       this.updateState()
     })
+
     this.bindEvent(props.media)
     this.unlistens = [confUnlisten]
   }

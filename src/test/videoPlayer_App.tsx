@@ -9,8 +9,8 @@ import { listSelector } from '@root/utils/listSelector'
 import { runInAction } from 'mobx'
 import vpConfig from '@root/store/vpConfig'
 import parser from '@root/core/SubtitleManager/subtitleParser/srt'
-import '@root/core/danmaku/DanmakuManager/htmlDanmaku/index.less'
-import DanmakuManager from '@root/core/danmaku/DanmakuManager'
+import '@root/core/danmaku/DanmakuEngine/htmlDanmaku/index.less'
+import { HtmlDanmakuEngine as DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 import { dans } from './data/dans'
 import CanvasVideo from '@root/core/CanvasVideo'
 import chalk from 'chalk'
@@ -45,7 +45,7 @@ const App = () => {
 
   useOnce(async () => {
     console.log('dm')
-    const dm = new DanmakuManager()
+    const dm = new DanmakuEngine()
     window.dm = dm
     dm.init({ media: videoRef.current, container: danmakuContainerRef.current })
     dm.addDanmakus(dans)
