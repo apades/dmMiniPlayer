@@ -23,6 +23,11 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     return this.canvasDanmakuVideo.ctx
   }
 
+  get opacity() {
+    if (!this.visible) return 0
+    return super.opacity
+  }
+
   onInit(props: DanmakuEngineInitProps): void {
     this.canvasDanmakuVideo = new CanvasDanmakuVideo({
       danmakuManager: this,
@@ -169,17 +174,5 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     }
     this.tunnelManager.tunnelsMap = { ...this.tunnelManager.tunnelsMap, top }
     this.runningDanmakus.push(...dansToDraw)
-  }
-
-  private _opacity = 1
-  changeVisible(visible?: boolean): void {
-    super.changeVisible(visible)
-
-    if (this.visible) {
-      this.opacity = this._opacity
-    } else {
-      this._opacity = this.opacity
-      this.opacity = 0
-    }
   }
 }

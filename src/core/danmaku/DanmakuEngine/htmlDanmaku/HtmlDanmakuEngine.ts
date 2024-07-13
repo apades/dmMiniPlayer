@@ -15,7 +15,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
   })
 
   /**canvas的速度受fps影响，要想dom的速度和canvas一样需要乘上fps值 */
-  override get speed() {
+  get speed() {
     return (super.speed * this.fps) / 10
   }
 

@@ -167,6 +167,7 @@ export default class CanvasDanmaku extends DanmakuBase {
   }
 
   protected renderDanmaku() {
+    if (!this.danmakuEngine.opacity) return
     const context = this.danmakuEngine.ctx,
       opacity = this.danmakuEngine.opacity,
       fontSize = this.danmakuEngine.fontSize,

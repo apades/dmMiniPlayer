@@ -1,11 +1,34 @@
-import { DanmakuEngine, DanmakuBase, DanmakuMoveType } from '.'
+import configStore from '@root/store/config'
+import { MaxTunnelType } from '@root/store/config/danmaku'
+import { autorun } from 'mobx'
+import { DanmakuBase, DanmakuEngine, DanmakuMoveType } from '.'
 
 export default class TunnelManager {
   tunnelsMap: { [key in DanmakuMoveType]: DanmakuBase[] }
   maxTunnel = 100
 
+  private listens: (() => void)[] = []
   constructor(public danmakuEngine: DanmakuEngine) {
     this.resetTunnelsMap()
+    this.listens = [
+      // 设置最大行数
+      autorun(() => {
+        const { maxTunnel, gap } = configStore
+        const renderHeight = this.danmakuEngine.containerHeight
+        const fontSize = this.danmakuEngine.fontSize
+
+        this.maxTunnel = (() => {
+          switch (maxTunnel) {
+            case MaxTunnelType['1/2']:
+              return renderHeight / 2 / (+fontSize + +gap)
+            case MaxTunnelType['1/4']:
+              return renderHeight / 4 / (+fontSize + +gap)
+            case MaxTunnelType['full']:
+              return 100
+          }
+        })()
+      }),
+    ]
   }
 
   private _getTunnel(danmaku: DanmakuBase) {
@@ -58,5 +81,6 @@ export default class TunnelManager {
 
   unload() {
     this.resetTunnelsMap()
+    this.listens.forEach((v) => v())
   }
 }

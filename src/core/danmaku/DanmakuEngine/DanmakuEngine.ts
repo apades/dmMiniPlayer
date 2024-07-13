@@ -1,14 +1,14 @@
 import { PlayerComponent } from '@root/core/types'
 import configStore from '@root/store/config'
+import { minmax } from '@root/utils'
 import Events2 from '@root/utils/Events2'
+import { autorun, makeObservable } from 'mobx'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
   DanmakuInitData,
   TunnelManager,
 } from '.'
-import { minmax } from '@root/utils'
-import { autorun, makeObservable } from 'mobx'
 
 type DanmakuConfig = {
   speed: number
@@ -111,10 +111,11 @@ export default class DanmakuEngine
 
   unload() {
     this.onUnload()
+    this.tunnelManager.unload()
   }
 
   // 监听container大小变化
-  observer = new ResizeObserver(([{ target }]) => {
+  private resizeObserver = new ResizeObserver(([{ target }]) => {
     autorun(() => {
       this.containerWidth = target.clientWidth
       this.containerHeight = target.clientHeight
@@ -123,13 +124,13 @@ export default class DanmakuEngine
 
   init(props: DanmakuEngineInitProps) {
     if (this.container) {
-      this.observer.unobserve(this.container)
+      this.resizeObserver.unobserve(this.container)
     }
 
     Object.assign(this, props)
     this.onInit(props)
 
-    this.observer.observe(this.container)
+    this.resizeObserver.observe(this.container)
   }
 
   runningDanmakus: DanmakuBase[] = []
