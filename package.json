@@ -16,6 +16,7 @@
     "@apad/env-tools": "^1.0.5",
     "@babel/plugin-proposal-decorators": "^7.22.10",
     "@chialab/esbuild-plugin-meta-url": "^0.18.2",
+    "@playwright/test": "^1.45.1",
     "@types/chrome": "0.0.268",
     "@types/color": "^3.0.3",
     "@types/fs-extra": "^11.0.4",

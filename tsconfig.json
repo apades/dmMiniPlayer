@@ -26,7 +26,8 @@
   },
   "include": [
     "./src/**/*",
-    "./scripts/**/*"
+    "./scripts/**/*",
+    "./e2e/**/*"
   ],
   "exclude": [
     "node_modules"
