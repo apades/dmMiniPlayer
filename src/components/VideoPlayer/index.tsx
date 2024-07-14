@@ -49,7 +49,7 @@ export type Props = EventBase & {
   srcObject?: MediaProvider
   duration?: number
   /** 关乎多个播放器之前的键盘操作 */
-  index: number | string
+  index?: number | string
   className?: string
 
   /** 进度条的child */

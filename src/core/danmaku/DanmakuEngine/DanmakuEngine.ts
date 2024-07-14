@@ -112,6 +112,7 @@ export default class DanmakuEngine
   unload() {
     this.onUnload()
     this.tunnelManager.unload()
+    this.resizeObserver.disconnect()
   }
 
   // 监听container大小变化
@@ -145,7 +146,13 @@ export default class DanmakuEngine
     )
   }
 
+  setDanmakus(danmakus: DanmakuInitData[]) {
+    this.resetState()
+    this.addDanmakus(danmakus)
+  }
+
   resetState() {
+    this.danmakus.length = 0
     this.tunnelManager.resetTunnelsMap()
   }
 }

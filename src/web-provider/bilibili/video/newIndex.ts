@@ -1,16 +1,28 @@
-import MiniPlayer from '@root/core/MiniPlayer/MiniPlayer'
 import { WebProvider } from '@root/core/WebProvider'
-import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-api'
-import { getBv, getPid, getVideoInfo } from '../utils'
+import { getDanmakus, getVideoInfoFromUrl } from '../utils'
+import BilibiliSubtitleManager from './SubtitleManager'
+import onRouteChange from '@root/inject/csUtils/onRouteChange'
 
 export default class NewBilibiliVideoProvider extends WebProvider {
-  protected miniPlayer: MiniPlayer
+  onInit(): void {
+    this.subtitleManager = new BilibiliSubtitleManager()
+  }
 
-  onInit() {
-    ;(async () => {
-      const { aid, cid } = await getVideoInfo(getBv(), getPid())
-      const danmakus = await getBiliBiliVideoDanmu(cid)
-      this.danmakuEngine.addDanmakus(danmakus)
-    })()
+  async onPlayerInitd() {
+    this.initDanmakus()
+
+    this.addOnUnloadFn(
+      onRouteChange(() => {
+        this.initDanmakus()
+        this.subtitleManager.init(this.webVideo)
+      })
+    )
+  }
+
+  async initDanmakus() {
+    const { aid, cid } = await getVideoInfoFromUrl(location.href)
+    const danmakus = await getDanmakus(aid, cid)
+
+    this.danmakuEngine.setDanmakus(danmakus)
   }
 }

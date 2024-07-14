@@ -16,10 +16,14 @@ window.addEventListener('popstate', () => {
 })
 
 const callbacks: (() => void)[] = []
+/**
+ * @returns {Function} 取消监听onRouteChange
+ */
 export default function onRouteChange(callback: () => void) {
   callbacks.push(callback)
-  const unListen = () =>
+  const unListen = () => {
     callbacks.slice(callbacks.findIndex((c) => c == callback))
+  }
 
   return unListen
 }

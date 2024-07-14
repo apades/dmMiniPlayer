@@ -1,17 +1,15 @@
-import { createElement, dq1 } from '@root/utils'
-import MiniPlayer from './MiniPlayer'
-
-import style from './DocMiniPlayer.less?inline'
-import tailwindBase from '@root/style/tailwindBase.css?inline'
-import tailwind from '@root/style/tailwind.css?inline'
-import { createRoot } from 'react-dom/client'
 import VideoPlayer, { VideoPlayerHandle } from '@root/components/VideoPlayer'
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import CanvasVideo from '../CanvasVideo'
-import { observeVideoEl } from '@root/utils/observeVideoEl'
-import { onVideoPlayerLoad } from '@root/components/VideoPlayer/events'
-import { PlayerEvent } from '../event'
+import { createElement } from '@root/utils'
 import { ComponentProps } from 'react'
+import { createRoot } from 'react-dom/client'
+import CanvasVideo from '../CanvasVideo'
+import { PlayerEvent } from '../event'
+import VideoPlayerBase from './VideoPlayerBase'
+// style
+import tailwind from '@root/style/tailwind.css?inline'
+import tailwindBase from '@root/style/tailwindBase.css?inline'
+import style from '@root/components/VideoPlayer/index.less?inline'
 
 const styleEl = createElement('div', {
   className: 'style-list',
@@ -19,7 +17,6 @@ const styleEl = createElement('div', {
     createElement('style', { innerHTML: style })
   ),
 })
-
 const vpMode = {
   get isWebVideoMode() {
     return configStore.docPIP_renderType == DocPIPRenderType.reactVP_webVideo
@@ -29,10 +26,13 @@ const vpMode = {
   },
 }
 
-export default class DocMiniPlayer extends MiniPlayer {
+export class HtmlVideoPlayer extends VideoPlayerBase {
   playerRootEl: HTMLElement
 
-  onInit() {}
+  onInit(): void {
+    this.renderReactVideoPlayer()
+    this.on(PlayerEvent.close, () => {})
+  }
 
   get canvasVideoStream() {
     const canvasVideo = new CanvasVideo({ videoEl: this.webVideoEl })
@@ -42,7 +42,7 @@ export default class DocMiniPlayer extends MiniPlayer {
     return (this.webVideoEl as any).captureStream() as MediaStream
   }
 
-  protected async renderReactVideoPlayer() {
+  protected renderReactVideoPlayer() {
     const pipWindow = window.documentPictureInPicture.window
 
     const { isCanvasVideoMode, isWebVideoMode } = vpMode
@@ -88,16 +88,16 @@ export default class DocMiniPlayer extends MiniPlayer {
       />
     )
 
-    const unobserveVideoElChange = observeVideoEl(
-      this.webVideoEl,
-      (newVideoEl) => {
-        // 只给reactVP_webVideo模式监听
-        if (isWebVideoMode) {
-          console.log('observeVideoElChange', newVideoEl)
-          this.updateWebVideoPlayerEl(newVideoEl)
-        }
+    this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
+      // 只给reactVP_webVideo模式监听
+      if (isWebVideoMode) {
+        console.log('observeVideoElChange', newVideoEl)
+        vpRef.updateVideo(newVideoEl)
+        // 控制要不要把上一个还原
+        restoreWebVideoPlayerElState =
+          this.initWebVideoPlayerElState(newVideoEl)
       }
-    )
+    })
 
     // 用来把video元素还原回原本位置的方法
     let restoreWebVideoPlayerElState = () => null as void
@@ -107,58 +107,10 @@ export default class DocMiniPlayer extends MiniPlayer {
       )
     }
 
-    // video标签切换时
-    this.updateWebVideoPlayerEl = (videoEl) => {
-      this.webVideoEl = videoEl
-      console.log('updateWebVideoPlayerEl', videoEl)
-      vpRef.updateVideo(videoEl)
-      if (isWebVideoMode) {
-        // 控制要不要把上一个还原
-        restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(videoEl)
-      }
-    }
-
-    await onVideoPlayerLoad()
     this.on(PlayerEvent.close, () => {
       reactRoot.unmount()
       this.playerRootEl = null
       restoreWebVideoPlayerElState()
-      unobserveVideoElChange()
     })
-  }
-
-  protected updateWebVideoPlayerEl(videoEl: HTMLVideoElement) {}
-
-  /**return的函数运行是还原videoEl位置和状态 */
-  protected initWebVideoPlayerElState(videoEl: HTMLVideoElement) {
-    const originParent = videoEl.parentElement,
-      originInParentIndex = [...videoEl.parentElement.children].findIndex(
-        (child) => child == videoEl
-      ),
-      hasController = videoEl.controls,
-      originStyle = videoEl.getAttribute('style')
-    videoEl.controls = false
-
-    return () => {
-      videoEl.controls = hasController
-      if (!originParent.childNodes[originInParentIndex]) {
-        originParent.appendChild(videoEl)
-      } else {
-        originParent.insertBefore(
-          videoEl,
-          originParent.childNodes[originInParentIndex]
-        )
-      }
-    }
-  }
-
-  async getPlayerEl() {
-    await this.renderReactVideoPlayer()
-    return this.playerRootEl
-  }
-  async getMediaStream() {
-    const videoEl = dq1('video', this.playerRootEl)
-
-    return (videoEl as any).captureStream() as MediaStream
   }
 }

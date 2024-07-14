@@ -2,6 +2,8 @@ export enum PlayerEvent {
   close = 'close',
   open = 'open',
   resize = 'resize',
+  /**web的video dom被替换成别的video dom时 */
+  webVideoChanged = 'webVideoChanged',
 }
 
 export type NativeCustomEvent = {
@@ -9,7 +11,8 @@ export type NativeCustomEvent = {
   play: void
   pause: void
   seek: void
-  aaa: void
+  /**web的video dom被替换成别的video dom时 */
+  webVideoChanged: HTMLVideoElement
 } & {
   // - 新的事件
   [key in PlayerEvent]: void

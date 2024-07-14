@@ -8,6 +8,7 @@ import {
   getTextByType,
 } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
 import configStore from '@root/store/config'
+import { onceCall } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 
 const videoInfoReqCache = new Map<string, any>()
@@ -63,7 +64,7 @@ export function getSubtitle(url: string): Promise<BiliBiliSubtitleRes> {
   return fetch(url).then((res) => res.json())
 }
 
-export async function getDanmakus(aid: string, cid: string) {
+export const getDanmakus = onceCall(async (aid: string, cid: string) => {
   if (!configStore.biliVideoDansFromBiliEvaolved) {
     return getBiliBiliVideoDanmu(cid)
   } else {
@@ -89,7 +90,7 @@ export async function getDanmakus(aid: string, cid: string) {
       })
     }
   }
-}
+})
 
 const getBidAndAidFromURL = (url: URL) => {
   // /list/* 列表播放模式的bvid在query里

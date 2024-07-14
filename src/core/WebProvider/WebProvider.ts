@@ -1,32 +1,36 @@
 import configStore from '@root/store/config'
-import SubtitleManager from '../SubtitleManager'
-import VideoChanger from '../VideoChanger'
+import { dq } from '@root/utils'
+import { CanvasPIPWebProvider, DocPIPWebProvider } from '.'
 import {
+  CanvasDanmakuEngine,
   DanmakuEngine,
   HtmlDanmakuEngine,
-  CanvasDanmakuEngine,
 } from '../danmaku/DanmakuEngine'
-import MiniPlayer from '../MiniPlayer/MiniPlayer'
-import { dq } from '@root/utils'
-import { CanvasWebProvider, DocWebProvider } from '.'
+import SubtitleManager from '../SubtitleManager'
+import VideoPlayerBase from '../VideoPlayer/VideoPlayerBase'
+import BarrageSender from '../danmaku/BarrageSender'
+import { PlayerEvent } from '../event'
 
 export default abstract class WebProvider {
-  videoChanger: VideoChanger
+  // videoChanger: VideoChanger
   subtitleManager: SubtitleManager
   danmakuEngine: DanmakuEngine
+  danmakuSender?: BarrageSender
 
   webVideo: HTMLVideoElement
-  protected abstract miniPlayer: MiniPlayer
+  protected miniPlayer: VideoPlayerBase
 
   constructor() {
-    if ([DocWebProvider, CanvasWebProvider].find((v) => this instanceof v))
+    if (
+      [DocPIPWebProvider, CanvasPIPWebProvider].find((v) => this instanceof v)
+    )
       return this
 
     const provider = (() => {
       if (configStore.useDocPIP) {
-        return new DocWebProvider()
+        return new DocPIPWebProvider()
       } else {
-        return new CanvasWebProvider()
+        return new CanvasPIPWebProvider()
       }
     })()
 
@@ -45,6 +49,17 @@ export default abstract class WebProvider {
   }
   onInit(): void {}
 
+  /**播放器初始化完毕后触发 */
+  onPlayerInitd(): void {}
+
+  protected onUnloadFn: (() => void)[] = []
+  protected addOnUnloadFn(fn: () => void) {
+    this.onUnloadFn.push(fn)
+  }
+  unload() {
+    this.onUnloadFn.forEach((fn) => fn())
+  }
+
   private initd?: boolean
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
@@ -52,6 +67,12 @@ export default abstract class WebProvider {
     this.webVideo = props?.videoEl ?? this.getVideoEl()
 
     await this.onOpenPlayer()
+    await this.onPlayerInitd()
+
+    const unListenOnClose = this.miniPlayer.on2(PlayerEvent.close, () => {
+      this.unload()
+      unListenOnClose()
+    })
   }
 
   /**获取视频 */

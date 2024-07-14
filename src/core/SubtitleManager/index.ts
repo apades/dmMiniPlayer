@@ -1,18 +1,11 @@
-import {
-  makeAutoObservable,
-  makeObservable,
-  observable,
-  ObservableMap,
-  ObservableSet,
-  computed,
-} from 'mobx'
-import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
-import Events2 from '@root/utils/Events2'
-import { addEventListener, readTextFromFile } from '@root/utils'
-import srtParser from './subtitleParser/srt'
 import vpConfig from '@root/store/vpConfig'
-import assParser from './subtitleParser/ass'
+import { addEventListener, readTextFromFile } from '@root/utils'
+import Events2 from '@root/utils/Events2'
+import { makeObservable, observable } from 'mobx'
 import { PlayerComponent } from '../types'
+import assParser from './subtitleParser/ass'
+import srtParser from './subtitleParser/srt'
+import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
 
 class SubtitleManager
   extends Events2<SubtitleManagerEvents>

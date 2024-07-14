@@ -1,33 +1,21 @@
-import { WebProvider } from '.'
-import SubtitleManager from '../SubtitleManager'
-import VideoChanger from '../VideoChanger'
-import { DanmakuEngine } from '../danmaku/DanmakuEngine'
-import DocMiniPlayer from '../MiniPlayer/DocMiniPlayer'
-import { getPIPWindowConfig } from '@root/utils/storage'
 import configStore, { videoBorderType } from '@root/store/config'
 import { createElement } from '@root/utils'
+import { getPIPWindowConfig } from '@root/utils/storage'
+import { WebProvider } from '.'
 import { PlayerEvent } from '../event'
+import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 
-export default class DocWebProvider extends WebProvider {
-  onInit(): Partial<{
-    videoChanger: VideoChanger
-    subtitleManager: SubtitleManager
-    danmakuEngine: DanmakuEngine
-  }> {
-    throw new Error('Method not implemented.')
-  }
-
-  protected miniPlayer: DocMiniPlayer
+export default class DocPIPWebProvider extends WebProvider {
+  protected declare miniPlayer: HtmlVideoPlayer
 
   pipWindow: Window
 
   async openPlayer() {
     super.openPlayer()
-    this.miniPlayer = new DocMiniPlayer({
+    this.miniPlayer = new HtmlVideoPlayer({
       webVideoEl: this.webVideo,
-      danmakuManager: this.danmakuEngine,
+      danmakuEngine: this.danmakuEngine,
       subtitleManager: this.subtitleManager,
-      videoChanger: this.videoChanger,
     })
   }
 
@@ -66,13 +54,33 @@ export default class DocWebProvider extends WebProvider {
       this.miniPlayer.emit(PlayerEvent.close)
     })
     pipWindow.addEventListener('resize', () => {
-      this.miniPlayer.width = pipWindow.innerWidth
-      this.miniPlayer.height = pipWindow.innerHeight
       this.miniPlayer.emit(PlayerEvent.resize)
     })
 
-    const playerEl = await this.miniPlayer.getPlayerEl()
+    this.miniPlayer.init()
+    const playerEl = this.miniPlayer.playerRootEl
     pipWindow.document.body.appendChild(playerEl)
+
+    // docPIP有自带的样式，需要覆盖掉
+    const docPIPRootStyle = createElement('style', {
+      innerHTML: `body{
+  margin: 0;
+  background-color: #000;
+}
+video{
+  width: 100%;
+  height: 100%;
+}
+canvas{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  pointer-events: none;
+}`,
+    })
+    playerEl.appendChild(docPIPRootStyle)
 
     // 弹幕器相关
     const danmakuContainer = createElement('div', {

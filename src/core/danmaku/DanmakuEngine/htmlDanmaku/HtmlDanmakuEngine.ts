@@ -54,7 +54,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
   }
 
   onInit(props: DanmakuEngineInitProps): void {
-    this.reset()
+    this.resetState()
     this.container.classList.add('danmaku-container')
     this.container.appendChild(this.style)
 
@@ -67,7 +67,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
   }
   private unlistens: noop[] = []
   onUnload() {
-    this.reset()
+    this.unbindEvent()
     this.unlistens.forEach((unlisten) => unlisten())
     this.observer.disconnect()
     this.observerMap.clear()
@@ -186,12 +186,6 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
       console.log('unbindEvent')
       mediaUnbind()
     }
-  }
-
-  reset() {
-    this.resetState()
-    this.danmakus.length = 0
-    this.unbindEvent()
   }
 
   changeVisible(visible?: boolean): void {
