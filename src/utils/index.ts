@@ -2,8 +2,6 @@ import isEqual from 'fast-deep-equal'
 import type { CSSProperties } from 'react'
 import type { Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
-let el: HTMLSpanElement = null
-
 import _throttle from './feat/throttle'
 // export * as debounce from './feat/debounce'
 
@@ -27,13 +25,14 @@ export function get<T>(tar: any, key: string, defaultVal?: T): T {
   const keyArr = key.split('.')
   let val = tar
   while (keyArr.length) {
-    const key = keyArr.shift()
-    if (isUndefined(val[key])) return defaultVal
+    const key = keyArr.shift() ?? ''
+    if (isUndefined(val[key])) return defaultVal as T
     val = val[key]
   }
   return val
 }
 
+let el: HTMLSpanElement
 export function getTextWidth(text: string, style: CSSProperties): number {
   if (!el) {
     el = document.createElement('span')
@@ -95,41 +94,42 @@ export const ascendingSort =
   (a: T, b: T) =>
     itemProp(a) - itemProp(b)
 
+type DqTarType =
+  | Document
+  | ValueOf<HTMLElementTagNameMap>
+  | Element
+  | undefined
+  | null
 export const dq: {
   <K extends keyof HTMLElementTagNameMap>(
     selectors: K,
-    tar?: Document | ValueOf<HTMLElementTagNameMap> | Element
+    tar?: DqTarType
   ): HTMLElementTagNameMap[K][]
   <K extends keyof SVGElementTagNameMap>(
     selectors: K,
-    tar?: Document | ValueOf<SVGElementTagNameMap> | Element
+    tar?: DqTarType
   ): SVGElementTagNameMap[K][]
   <K extends keyof MathMLElementTagNameMap>(
     selectors: K,
-    tar?: Document | ValueOf<MathMLElementTagNameMap> | Element
+    tar?: DqTarType
   ): MathMLElementTagNameMap[K][]
-  <E extends Element = HTMLDivElement>(
-    selectors: string,
-    tar?: Document | Element
-  ): E[]
-} = (selector: string, tar = window.document) => {
-  return Array.from(tar.querySelectorAll(selector))
+  <E extends Element = HTMLDivElement>(selectors: string, tar?: DqTarType): E[]
+} = (selector: string, tar = window.document as DqTarType) => {
+  return Array.from(tar?.querySelectorAll(selector) ?? [])
 }
+
 export let dq1: {
-  <K extends keyof HTMLElementTagNameMap>(
-    selectors: K,
-    tar?: Document | ValueOf<HTMLElementTagNameMap> | Element
-  ): HTMLElementTagNameMap[K] | null
-  <K extends keyof SVGElementTagNameMap>(
-    selectors: K,
-    tar?: Document | ValueOf<SVGElementTagNameMap> | Element
-  ): SVGElementTagNameMap[K] | null
-  <E extends Element = HTMLDivElement>(
-    selectors: string,
-    tar?: Document | Element
-  ): E | null
-} = (selector: string, tar = window.document) => {
-  let dom = tar.querySelector(selector)
+  <K extends keyof HTMLElementTagNameMap>(selectors: K, tar?: DqTarType):
+    | HTMLElementTagNameMap[K]
+    | undefined
+  <K extends keyof SVGElementTagNameMap>(selectors: K, tar?: DqTarType):
+    | SVGElementTagNameMap[K]
+    | undefined
+  <E extends Element = HTMLDivElement>(selectors: string, tar?: DqTarType):
+    | E
+    | undefined
+} = (selector: string, tar = window.document as DqTarType) => {
+  let dom = tar?.querySelector(selector) || undefined
   return dom
 }
 
@@ -331,8 +331,9 @@ export function addEventListener<
     Object.entries(fnMap).forEach(([key, fns]) => {
       fns.forEach((fn) => {
         if (typeof fn == 'function')
-          target.removeEventListener.call(target, key, fn)
-        else target.removeEventListener.call(target, key, fn.fn, ...fn.more)
+          target.removeEventListener.call(target, key, fn as any)
+        else
+          target.removeEventListener.call(target, key, fn.fn as any, ...fn.more)
       })
     })
   }
@@ -378,7 +379,9 @@ export function inputFile(accept = '*') {
       type: 'file',
       accept,
       onchange: (e) => {
-        resolve(input.files[0])
+        if (input.files) {
+          resolve(input.files[0])
+        }
       },
     })
 

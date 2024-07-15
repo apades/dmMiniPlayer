@@ -9,17 +9,21 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   declare danmakus: Danmaku[]
   declare runningDanmakus: Danmaku[]
 
-  canvasDanmakuVideo: CanvasDanmakuVideo
+  canvasDanmakuVideo?: CanvasDanmakuVideo
   get canvas() {
+    if (!this.canvasDanmakuVideo) throw Error('需要先调用init()')
     return this.canvasDanmakuVideo.canvas
   }
   get renderFPS() {
+    if (!this.canvasDanmakuVideo) throw Error('需要先调用init()')
     return this.canvasDanmakuVideo.fps
   }
   get withoutLimitAnimaFPS() {
+    if (!this.canvasDanmakuVideo) throw Error('需要先调用init()')
     return this.canvasDanmakuVideo.withoutLimitAnimaFPS
   }
   get ctx() {
+    if (!this.canvasDanmakuVideo) throw Error('需要先调用init()')
     return this.canvasDanmakuVideo.ctx
   }
 
@@ -43,7 +47,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   private unlistens: noop[] = []
   onUnload(): void {
     this.unlistens.forEach((unlisten) => unlisten())
-    this.canvasDanmakuVideo.resizeObserver.disconnect()
+    this.canvasDanmakuVideo?.resizeObserver.disconnect()
   }
 
   bindEvent() {
@@ -60,6 +64,8 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   private nowPos = 0
   // 绘制弹幕文本
   draw() {
+    if (!this.media) throw Error('需要先调用init()')
+
     const videoCTime = this.media.currentTime
 
     while (this.nowPos < this.danmakus.length) {
@@ -87,6 +93,8 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   }
   // 绘制第一帧的弹幕，在时间变动时需要用的
   drawInSeek() {
+    if (!this.media) throw Error('需要先调用init()')
+
     this.tunnelManager.resetTunnelsMap()
     this.nowPos = 0
     this.runningDanmakus.length = 0

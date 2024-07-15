@@ -4,7 +4,11 @@ import { autorun } from 'mobx'
 import { DanmakuBase, DanmakuEngine, DanmakuMoveType } from '.'
 
 export default class TunnelManager {
-  tunnelsMap: { [key in DanmakuMoveType]: DanmakuBase[] }
+  tunnelsMap: { [key in DanmakuMoveType]: (DanmakuBase | null)[] } = {
+    bottom: [],
+    top: [],
+    right: [],
+  }
   maxTunnel = 100
 
   private listens: (() => void)[] = []

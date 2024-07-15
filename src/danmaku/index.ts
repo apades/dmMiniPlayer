@@ -413,7 +413,7 @@ export class Barrage {
     }
 
     let context = this.player.ctx,
-      opacity = vpConfig.showBarrage ? configStore.opacity : 0,
+      opacity = vpConfig.showDanmaku ? configStore.opacity : 0,
       fontSize = videoRender.fontSize
 
     context.shadowColor = 'rgba(0,0,0,0.5)'

@@ -13,7 +13,7 @@ type Props = {
   duration: number
 }
 const PlayerProgressBar: FC<Props> = (props) => {
-  const containerRef = useRef<HTMLDivElement>()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   return (
     <div ref={containerRef} className="played-progress-bar">
@@ -45,7 +45,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
 }
 
 const HandleWithToolTips: FC<
-  Parameters<HandlesProps['handleRender']>[1] & { duration: number }
+  Parameters<Required<HandlesProps>['handleRender']>[1] & { duration: number }
 > = (props) => {
   const [isVisible, setVisible] = useState(false)
   const handleRef = useRef<HTMLDivElement>()
@@ -95,7 +95,7 @@ const HandleWithToolTips: FC<
 }
 
 type ToolTipsProps = {
-  containerRef: React.MutableRefObject<HTMLDivElement>
+  containerRef: React.MutableRefObject<HTMLDivElement | null>
   duration: number
 }
 const ToolTips: FC<ToolTipsProps> = (props) => {

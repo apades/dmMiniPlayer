@@ -120,7 +120,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
 
         for (const key in toRunDanmakus) {
           const danmaku = toRunDanmakus[key]
-          danmaku.init({ initTime: this.hasSeek ? ctime : null })
+          danmaku.init({ initTime: this.hasSeek ? ctime : undefined })
           if (danmaku.initd) {
             disableKeys.unshift(+key)
           } else {
@@ -183,7 +183,6 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     })
 
     this.unbindEvent = () => {
-      console.log('unbindEvent')
       mediaUnbind()
     }
   }
@@ -192,9 +191,9 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     super.changeVisible(visible)
 
     if (this.visible) {
-      this.container.style.display = undefined
+      this.container.style.visibility = ''
     } else {
-      this.container.style.display = 'hidden'
+      this.container.style.visibility = 'hidden'
     }
   }
 }

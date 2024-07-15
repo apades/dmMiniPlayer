@@ -1,5 +1,5 @@
 import configStore from '@root/store/config'
-import { dq } from '@root/utils'
+import { createElement, dq } from '@root/utils'
 import { CanvasPIPWebProvider, DocPIPWebProvider } from '.'
 import {
   CanvasDanmakuEngine,
@@ -8,17 +8,17 @@ import {
 } from '../danmaku/DanmakuEngine'
 import SubtitleManager from '../SubtitleManager'
 import VideoPlayerBase from '../VideoPlayer/VideoPlayerBase'
-import BarrageSender from '../danmaku/BarrageSender'
+import DanmakuSender from '../danmaku/DanmakuSender'
 import { PlayerEvent } from '../event'
 
 export default abstract class WebProvider {
   // videoChanger: VideoChanger
-  subtitleManager: SubtitleManager
-  danmakuEngine: DanmakuEngine
-  danmakuSender?: BarrageSender
+  subtitleManager = new SubtitleManager()
+  danmakuEngine?: DanmakuEngine
+  danmakuSender?: DanmakuSender
 
-  webVideo: HTMLVideoElement
-  protected miniPlayer: VideoPlayerBase
+  webVideo = createElement('video')
+  protected miniPlayer: VideoPlayerBase = null as any
 
   constructor() {
     if (
@@ -60,7 +60,6 @@ export default abstract class WebProvider {
     this.onUnloadFn.forEach((fn) => fn())
   }
 
-  private initd?: boolean
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
     this.init()
@@ -83,7 +82,7 @@ export default abstract class WebProvider {
         .map((iframe) => {
           try {
             return Array.from(
-              iframe.contentWindow?.document.querySelectorAll('video')
+              iframe.contentWindow?.document.querySelectorAll('video') ?? []
             )
           } catch (error) {
             return null

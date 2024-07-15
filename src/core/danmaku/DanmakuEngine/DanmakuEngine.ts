@@ -1,14 +1,15 @@
 import { PlayerComponent } from '@root/core/types'
 import configStore from '@root/store/config'
-import { minmax } from '@root/utils'
+import { createElement, minmax } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import { autorun, makeObservable } from 'mobx'
+import { autorun, makeObservable, runInAction } from 'mobx'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
   DanmakuInitData,
   TunnelManager,
 } from '.'
+import vpConfig from '@root/store/vpConfig'
 
 type DanmakuConfig = {
   speed: number
@@ -35,11 +36,11 @@ export default class DanmakuEngine
 {
   /**弹幕在实例化时会new这个 */
   Danmaku = DanmakuBase
-  container: HTMLElement
+  container: HTMLElement = createElement('div')
   danmakus: DanmakuBase[] = []
 
-  media: HTMLMediaElement
-  tunnelManager = new TunnelManager(this)
+  media?: HTMLMediaElement
+  tunnelManager: TunnelManager
 
   get speed() {
     return configStore.danSpeed
@@ -92,7 +93,9 @@ export default class DanmakuEngine
     return configStore.renderFPS
   }
 
-  visible = true
+  get visible() {
+    return vpConfig.showDanmaku
+  }
 
   constructor() {
     super()
@@ -100,10 +103,13 @@ export default class DanmakuEngine
       containerWidth: true,
       containerHeight: true,
     })
+    this.tunnelManager = new TunnelManager(this)
   }
 
   changeVisible(visible?: boolean) {
-    this.visible = visible ?? !this.visible
+    runInAction(() => {
+      vpConfig.showDanmaku = visible ?? !vpConfig.showDanmaku
+    })
   }
 
   onInit(props: DanmakuEngineInitProps) {}
@@ -117,16 +123,14 @@ export default class DanmakuEngine
 
   // 监听container大小变化
   private resizeObserver = new ResizeObserver(([{ target }]) => {
-    autorun(() => {
+    runInAction(() => {
       this.containerWidth = target.clientWidth
       this.containerHeight = target.clientHeight
     })
   })
 
   init(props: DanmakuEngineInitProps) {
-    if (this.container) {
-      this.resizeObserver.unobserve(this.container)
-    }
+    this.resizeObserver.unobserve(this.container)
 
     Object.assign(this, props)
     this.onInit(props)

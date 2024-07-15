@@ -1,9 +1,9 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 
 class VpConfig {
-  canShowBarrage = false
-  showBarrage = true
-  canSendBarrage = false
+  canShowDanmaku = false
+  showDanmaku = true
+  canSendDanmaku = false
   canShowSubtitle = false
 
   showSubtitle = false
@@ -12,10 +12,10 @@ class VpConfig {
   }
   reset() {
     runInAction(() => {
-      this.canSendBarrage = false
+      this.canSendDanmaku = false
       this.canShowSubtitle = false
-      this.canShowBarrage = false
-      this.showBarrage = true
+      this.canShowDanmaku = false
+      this.showDanmaku = true
     })
   }
 }

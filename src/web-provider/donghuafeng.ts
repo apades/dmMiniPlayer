@@ -27,7 +27,7 @@ export default class DonghuafengProvider extends WebProvider {
 
   initDans() {
     runInAction(() => {
-      vpConfig.canShowBarrage = true
+      vpConfig.canShowDanmaku = true
     })
     this.getDans().then((dans) =>
       this.miniPlayer.danmakuController.initDans(dans)

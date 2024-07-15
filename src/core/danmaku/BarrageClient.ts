@@ -10,7 +10,7 @@ export default abstract class BarrageClient extends Events2<LiveEvent> {
   constructor() {
     super()
     runInAction(() => {
-      vpConfig.showBarrage = true
+      vpConfig.showDanmaku = true
     })
   }
   addEventListener<TType extends keyof LiveEvent>(

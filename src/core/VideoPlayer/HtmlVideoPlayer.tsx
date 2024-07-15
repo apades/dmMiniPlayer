@@ -27,7 +27,7 @@ const vpMode = {
 }
 
 export class HtmlVideoPlayer extends VideoPlayerBase {
-  playerRootEl: HTMLElement
+  playerRootEl?: HTMLElement
 
   onInit(): void {
     this.renderReactVideoPlayer()
@@ -72,7 +72,11 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     reactRoot.render(
       <VideoPlayer
         index={1}
+        // 外挂插件
         subtitleManager={this.subtitleManager}
+        danmakuSender={this.danmakuSender}
+        danmakuEngine={this.danmakuEngine}
+        // ----
         webVideo={this.webVideoEl}
         keydownWindow={pipWindow}
         ref={(ref) => {
@@ -100,7 +104,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     })
 
     // 用来把video元素还原回原本位置的方法
-    let restoreWebVideoPlayerElState = () => null as void
+    let restoreWebVideoPlayerElState = () => {}
     if (isWebVideoMode) {
       restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
         this.webVideoEl
@@ -109,7 +113,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     this.on(PlayerEvent.close, () => {
       reactRoot.unmount()
-      this.playerRootEl = null
+      this.playerRootEl = undefined
       restoreWebVideoPlayerElState()
     })
   }

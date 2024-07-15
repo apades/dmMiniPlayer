@@ -8,7 +8,7 @@ import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 export default class DocPIPWebProvider extends WebProvider {
   protected declare miniPlayer: HtmlVideoPlayer
 
-  pipWindow: Window
+  pipWindow?: Window
 
   async openPlayer() {
     super.openPlayer()
@@ -16,6 +16,7 @@ export default class DocPIPWebProvider extends WebProvider {
       webVideoEl: this.webVideo,
       danmakuEngine: this.danmakuEngine,
       subtitleManager: this.subtitleManager,
+      danmakuSender: this.danmakuSender,
     })
   }
 
@@ -59,6 +60,11 @@ export default class DocPIPWebProvider extends WebProvider {
 
     this.miniPlayer.init()
     const playerEl = this.miniPlayer.playerRootEl
+    if (!playerEl) {
+      console.error('不正常的miniPlayer.init()，没有 playerEl', this.miniPlayer)
+      throw Error('不正常的miniPlayer.init()')
+    }
+
     pipWindow.document.body.appendChild(playerEl)
 
     // docPIP有自带的样式，需要覆盖掉
@@ -83,21 +89,23 @@ canvas{
     playerEl.appendChild(docPIPRootStyle)
 
     // 弹幕器相关
-    const danmakuContainer = createElement('div', {
-      style: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        pointerEvents: 'none',
-      },
-    })
-    playerEl.appendChild(danmakuContainer)
-    this.danmakuEngine.init({
-      media: this.webVideo,
-      container: danmakuContainer,
-    })
+    if (this.danmakuEngine) {
+      const danmakuContainer = createElement('div', {
+        style: {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        },
+      })
+      playerEl.appendChild(danmakuContainer)
+      this.danmakuEngine.init({
+        media: this.webVideo,
+        container: danmakuContainer,
+      })
+    }
   }
 }

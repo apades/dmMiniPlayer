@@ -87,8 +87,8 @@ const App: FC = (props) => {
     )
     runInAction(() => {
       configStore.vpActionAreaLock = true
-      vpConfig.canShowBarrage = true
-      vpConfig.canSendBarrage = true
+      vpConfig.canShowDanmaku = true
+      vpConfig.canSendDanmaku = true
     })
   })
 

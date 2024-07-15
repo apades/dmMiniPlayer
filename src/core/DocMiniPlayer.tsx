@@ -13,9 +13,9 @@ import { createElement, throttle } from '@root/utils'
 import { makeAutoObservable } from 'mobx'
 import { createRoot } from 'react-dom/client'
 import styleUrl from './DocMiniPlayer.less?inline'
-import BarrageSender, {
+import DanmakuSender, {
   type Props as BarrageSenderProps,
-} from './danmaku/BarrageSender'
+} from './danmaku/DanmakuSender'
 import MiniPlayer from './miniPlayer'
 import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { type ReactElement } from 'react'
@@ -46,7 +46,7 @@ export default class DocMiniPlayer extends MiniPlayer {
   })
 
   videoPlayer: HTMLElement
-  sender: BarrageSender
+  sender: DanmakuSender
   renderSideActionArea = () => null as ReactElement
 
   /**canvas的captureStream */
@@ -336,7 +336,7 @@ export default class DocMiniPlayer extends MiniPlayer {
       const playerInput = this.videoPlayer.querySelector<HTMLInputElement>(
         '.barrage-input input'
       )
-      this.sender = new BarrageSender({
+      this.sender = new DanmakuSender({
         ...props,
         textInput: playerInput,
       })
@@ -348,7 +348,7 @@ export default class DocMiniPlayer extends MiniPlayer {
       })
 
       runInAction(() => {
-        vpConfig.canSendBarrage = true
+        vpConfig.canSendDanmaku = true
       })
     } catch (error) {
       console.error('初始化BarrageSender错误', error)

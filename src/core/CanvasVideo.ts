@@ -14,13 +14,13 @@ export default class CanvasVideo implements Required<Props> {
   fps = 60
   FPS_limitOffsetAccurate = false
   /**容器高度 */
-  height: number
+  height: number = 0
   /**容器宽度 */
-  width: number
+  width: number = 0
 
   canvas = document.createElement('canvas')
-  ctx = this.canvas.getContext('2d')
-  private animationFrameSignal: number
+  ctx = this.canvas.getContext('2d')!
+  private animationFrameSignal: number = 0
   isPause = true
   hasSeek = true
 
@@ -31,7 +31,12 @@ export default class CanvasVideo implements Required<Props> {
     return this.canvas.captureStream()
   }
   constructor(props: Props) {
-    Object.assign(this, props, {})
+    this.videoEl = props.videoEl
+    this.fps = props.fps ?? this.fps
+    this.FPS_limitOffsetAccurate =
+      props.FPS_limitOffsetAccurate ?? this.FPS_limitOffsetAccurate
+    this.width = props.width ?? this.width
+    this.height = props.height ?? this.height
 
     // 没有metadata前的video元素宽高是不正常的
     if (this.videoEl.readyState >= 1) {
@@ -137,7 +142,7 @@ export default class CanvasVideo implements Required<Props> {
   // 在video loading,pause时使用，减少性能消耗
   stopRenderAsCanvas() {
     cancelAnimationFrame(this.animationFrameSignal)
-    this.animationFrameSignal = null
+    this.animationFrameSignal = 0
   }
 
   protected withoutLimitLastUpdateTime = Date.now()

@@ -1,5 +1,4 @@
 import { LoadingOutlined } from '@ant-design/icons'
-import ProgressBar from '@root/components/ProgressBar'
 import { useOnce } from '@root/hook'
 import _env, { configStore } from '@root/store/config'
 import { formatTime, minmax, wait } from '@root/utils'
@@ -15,22 +14,24 @@ import {
   useState,
   type CSSProperties,
   type ReactElement,
+  FC,
 } from 'react'
 import Iconfont from '../Iconfont'
-import BarrageInput from './BarrageInput'
+import DanmakuInput from './DanmakuInput'
 import VolumeBar from './VolumeBar'
 import { VideoPlayerLoadEvent } from './events'
 import { checkJumpInBufferArea } from './utls'
 import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
 import { checkIsLive } from '@root/utils/video'
-import FileDropper from '../FileDropper'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import SubtitleSelection from './subtitle/SubtitleSelection'
 import SubtitleText from './subtitle/SubtitleText'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import { t } from '@root/utils/i18n'
 import PlayerProgressBar from './PlayerProgressBar'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 
 type EventBase = Omit<
   {
@@ -77,7 +78,10 @@ export type Props = EventBase & {
   >
 
   renderSideActionArea?: ReactElement
+
   subtitleManager?: SubtitleManager
+  danmakuSender?: DanmakuSender
+  danmakuEngine?: DanmakuEngine
 }
 
 export type VideoPlayerHandle = {
@@ -95,8 +99,8 @@ const VideoPlayer = observer(
       isRenderNotifiChild = true,
       keydownWindow = window,
     } = props
-    const videoRef = useRef<HTMLVideoElement>(props.webVideo)
-    const compVideoRef = useRef<HTMLVideoElement>(props.webVideo)
+    const videoRef = useRef<HTMLVideoElement>(props.webVideo!)
+    const compVideoRef = useRef<HTMLVideoElement>(props.webVideo!)
     const player = useRef<HTMLDivElement>(null)
     const playBtnEl = useRef<HTMLSpanElement>(null)
 
@@ -115,7 +119,7 @@ const VideoPlayer = observer(
     const [isFirstPlay, setIsFirstPlay] = useState(false)
     const [isSpeedMode, setSpeedMode] = useState(false)
 
-    const [volume, setVolume] = useState(props?.webVideo?.volume * 100)
+    const [volume, setVolume] = useState((props.webVideo?.volume ?? 0) * 100)
     const [isMute, setMute] = useState(props?.webVideo?.muted)
 
     const [playedPercent, setPlayedPercent] = useState(0)
@@ -261,7 +265,7 @@ const VideoPlayer = observer(
     }, [isFocus])
 
     useEffect(() => {
-      let speedModeTimer: NodeJS.Timeout,
+      let speedModeTimer: NodeJS.Timeout | undefined,
         isSpeedMode = false
       const handleKeyDown = (e: KeyboardEvent) => {
         // if (window.videoPlayers.focusIndex !== index) return
@@ -338,7 +342,7 @@ const VideoPlayer = observer(
             if (getIsLive()) return
             e.preventDefault()
             clearTimeout(speedModeTimer)
-            speedModeTimer = null
+            speedModeTimer = undefined
             setSpeedMode(false)
 
             if (isSpeedMode) {
@@ -607,9 +611,9 @@ const VideoPlayer = observer(
           {!props.useWebVideo && (
             <video
               ref={(ref) => {
-                if (!props.webVideo) videoRef.current = ref
+                if (!props.webVideo) videoRef.current = ref!
 
-                compVideoRef.current = ref
+                compVideoRef.current = ref!
               }}
               src={props.uri}
               controls={_env.vpBufferTest}
@@ -692,25 +696,20 @@ const VideoPlayer = observer(
             </span>
 
             <SubtitleSelection subtitleManager={subtitleManager} />
-            {vpConfig.canShowBarrage && (
-              <Iconfont
-                onClick={() => {
-                  runInAction(() => {
-                    vpConfig.showBarrage = !vpConfig.showBarrage
-                  })
+
+            <DanmakuVisibleToggleBtn danmakuEngine={props.danmakuEngine} />
+
+            {props.danmakuSender && (
+              <DanmakuInput
+                danmakuSender={props.danmakuSender}
+                setActionAreaLock={(v) => {
+                  if (configStore.vpActionAreaLock) return
+                  setActionAreaLock(v)
+                  if (!v) setVisibleActionAreaInFC(false)
                 }}
-                size={18}
-                type={vpConfig.showBarrage ? 'danmaku_open' : 'danmaku_close'}
+                setInputMode={setInputMode}
               />
             )}
-            <BarrageInput
-              setActionAreaLock={(v) => {
-                if (configStore.vpActionAreaLock) return
-                setActionAreaLock(v)
-                if (!v) setVisibleActionAreaInFC(false)
-              }}
-              setInputMode={setInputMode}
-            />
 
             <PlayerProgressBar
               duration={duration}
@@ -790,5 +789,21 @@ const RenderVideoNoti = (
     </div>
   )
 }
+
+const DanmakuVisibleToggleBtn: FC<{ danmakuEngine?: DanmakuEngine }> = observer(
+  (props) => {
+    return (
+      props.danmakuEngine && (
+        <Iconfont
+          onClick={() => {
+            props.danmakuEngine?.changeVisible()
+          }}
+          size={18}
+          type={props.danmakuEngine.visible ? 'danmaku_open' : 'danmaku_close'}
+        />
+      )
+    )
+  }
+)
 
 export default memo(VideoPlayer)

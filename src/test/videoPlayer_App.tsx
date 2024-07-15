@@ -83,8 +83,8 @@ const App = () => {
     })
 
     runInAction(() => {
-      vpConfig.canSendBarrage = true
-      vpConfig.showBarrage = true
+      vpConfig.canSendDanmaku = true
+      vpConfig.showDanmaku = true
       configStore.vpActionAreaLock = true
     })
 

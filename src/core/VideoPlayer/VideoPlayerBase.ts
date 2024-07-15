@@ -4,10 +4,14 @@ import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import { PlayerEvent, PlayerEvents } from '../event'
 import { PlayerComponent } from '../types'
 import { observeVideoEl } from '@root/utils/observeVideoEl'
+import DanmakuSender from '../danmaku/DanmakuSender'
+import vpConfig from '@root/store/vpConfig'
+import { runInAction } from 'mobx'
 
 export type ExtendComponent = {
   subtitleManager: SubtitleManager
-  danmakuEngine: DanmakuEngine
+  danmakuEngine?: DanmakuEngine
+  danmakuSender?: DanmakuSender
 }
 export type BaseComponent = {
   /**网站的video dom */
@@ -22,16 +26,21 @@ export default abstract class VideoPlayerBase
 {
   webVideoEl: HTMLVideoElement
   subtitleManager: SubtitleManager
-  danmakuEngine: DanmakuEngine
+  danmakuEngine?: DanmakuEngine
+  danmakuSender?: DanmakuSender
 
   constructor(props: MiniPlayerProps) {
     super()
-    Object.assign(this, props)
+    this.webVideoEl = props.webVideoEl
+    this.subtitleManager = props.subtitleManager
+    this.danmakuEngine = props.danmakuEngine
+    this.danmakuSender = props.danmakuSender
 
     this.on(PlayerEvent.close, () => {
       this.unload()
-      this.danmakuEngine.unload()
+      this.danmakuEngine?.unload()
       this.unobserveVideoElChange()
+      vpConfig.reset()
     })
   }
 
@@ -46,6 +55,16 @@ export default abstract class VideoPlayerBase
         this.emit(PlayerEvent.webVideoChanged, newVideoEl as any)
       }
     )
+
+    runInAction(() => {
+      if (this.danmakuSender) {
+        vpConfig.canSendDanmaku = true
+      }
+
+      if (this.danmakuEngine) {
+        vpConfig.canShowDanmaku = true
+      }
+    })
   }
   unload() {
     this.onUnload()
@@ -55,8 +74,13 @@ export default abstract class VideoPlayerBase
 
   /**return的函数运行是还原videoEl位置和状态 */
   protected initWebVideoPlayerElState(videoEl: HTMLVideoElement) {
-    const originParent = videoEl.parentElement,
-      originInParentIndex = [...videoEl.parentElement.children].findIndex(
+    const originParent = videoEl.parentElement
+    if (!originParent) {
+      console.error('不正常的video标签，没有父元素', videoEl)
+      throw Error('不正常的video标签')
+    }
+
+    const originInParentIndex = [...videoEl.parentElement.children].findIndex(
         (child) => child == videoEl
       ),
       hasController = videoEl.controls,
