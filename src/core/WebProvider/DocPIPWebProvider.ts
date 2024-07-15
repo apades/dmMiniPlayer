@@ -6,7 +6,7 @@ import { PlayerEvent } from '../event'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 
 export default class DocPIPWebProvider extends WebProvider {
-  protected declare miniPlayer: HtmlVideoPlayer
+  declare miniPlayer: HtmlVideoPlayer
 
   pipWindow?: Window
 
@@ -17,6 +17,7 @@ export default class DocPIPWebProvider extends WebProvider {
       danmakuEngine: this.danmakuEngine,
       subtitleManager: this.subtitleManager,
       danmakuSender: this.danmakuSender,
+      sideSwitcher: this.sideSwitcher,
     })
   }
 

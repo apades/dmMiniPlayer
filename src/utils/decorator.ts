@@ -4,7 +4,7 @@ export function onceCallGet(
   descriptor: PropertyDescriptor
 ): PropertyDescriptor {
   let val: any
-  const oGet = descriptor.get
+  const oGet = descriptor.get!
   descriptor.get = function () {
     if (!val) val = oGet.bind(this)()
     return val
@@ -59,5 +59,22 @@ export function logFn(
     console.log(`run ${propertyName}`, this)
     // eslint-disable-next-line prefer-rest-params
     return method.apply(this, arguments)
+  }
+}
+
+export function useGetSet(props: Partial<{ emptyMsg?: string }>) {
+  return function (target: Object, propertyKey: string) {
+    let value = (target as any)[propertyKey]
+    const getter = function () {
+      if (!value) throw Error(props.emptyMsg || `${propertyKey} is not initd`)
+      return value
+    }
+    const setter = function (newVal: string) {
+      value = newVal
+    }
+    Object.defineProperty(target, propertyKey, {
+      get: getter,
+      set: setter,
+    })
   }
 }

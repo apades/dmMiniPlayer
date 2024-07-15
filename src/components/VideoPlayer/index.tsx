@@ -1,37 +1,35 @@
 import { LoadingOutlined } from '@ant-design/icons'
+import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
+import { CommonSubtitleManager } from '@root/core/SubtitleManager'
+import { ExtendComponent } from '@root/core/VideoPlayer/VideoPlayerBase'
 import { useOnce } from '@root/hook'
 import _env, { configStore } from '@root/store/config'
 import { formatTime, minmax, wait } from '@root/utils'
+import { t } from '@root/utils/i18n'
+import { checkIsLive } from '@root/utils/video'
 import { default as classNames, default as cls } from 'classnames'
 import { observer } from 'mobx-react'
 import {
-  useMemo,
+  FC,
   forwardRef,
   memo,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
   type ReactElement,
-  FC,
 } from 'react'
 import Iconfont from '../Iconfont'
 import DanmakuInput from './DanmakuInput'
-import VolumeBar from './VolumeBar'
 import { VideoPlayerLoadEvent } from './events'
-import { checkJumpInBufferArea } from './utls'
-import vpConfig from '@root/store/vpConfig'
-import { runInAction } from 'mobx'
-import { checkIsLive } from '@root/utils/video'
-import type SubtitleManager from '@root/core/SubtitleManager'
+import PlayerProgressBar from './PlayerProgressBar'
 import SubtitleSelection from './subtitle/SubtitleSelection'
 import SubtitleText from './subtitle/SubtitleText'
-import { CommonSubtitleManager } from '@root/core/SubtitleManager'
-import { t } from '@root/utils/i18n'
-import PlayerProgressBar from './PlayerProgressBar'
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
+import { checkJumpInBufferArea } from './utls'
+import VolumeBar from './VolumeBar'
+import VideoPlayerSide from './Side'
 
 type EventBase = Omit<
   {
@@ -78,11 +76,7 @@ export type Props = EventBase & {
   >
 
   renderSideActionArea?: ReactElement
-
-  subtitleManager?: SubtitleManager
-  danmakuSender?: DanmakuSender
-  danmakuEngine?: DanmakuEngine
-}
+} & ExtendComponent
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, isPause?: boolean) => void
@@ -120,7 +114,7 @@ const VideoPlayer = observer(
     const [isSpeedMode, setSpeedMode] = useState(false)
 
     const [volume, setVolume] = useState((props.webVideo?.volume ?? 0) * 100)
-    const [isMute, setMute] = useState(props?.webVideo?.muted)
+    const [isMute, setMute] = useState(props?.webVideo?.muted ?? false)
 
     const [playedPercent, setPlayedPercent] = useState(0)
     const [isPlayEnd, setPlayEnd] = useState(false)
@@ -742,13 +736,13 @@ const VideoPlayer = observer(
         </div>
 
         {/* 侧边操作栏 */}
-        {props.renderSideActionArea && (
+        {props.sideSwitcher && (
           <div
             className="side-action-area"
             // onMouseEnter={(e) => handleFullscreenShowActionArea(true)}
             // onMouseLeave={handleResetActionAreaShow}
           >
-            {props.renderSideActionArea}
+            <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
             <div className="side-dragger"></div>
           </div>
         )}

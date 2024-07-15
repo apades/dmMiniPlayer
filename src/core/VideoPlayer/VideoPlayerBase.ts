@@ -7,11 +7,13 @@ import { observeVideoEl } from '@root/utils/observeVideoEl'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import vpConfig from '@root/store/vpConfig'
 import { runInAction } from 'mobx'
+import { SideSwitcher } from '../SideSwitcher'
 
 export type ExtendComponent = {
-  subtitleManager: SubtitleManager
+  subtitleManager?: SubtitleManager
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
+  sideSwitcher?: SideSwitcher
 }
 export type BaseComponent = {
   /**网站的video dom */
@@ -25,9 +27,10 @@ export default abstract class VideoPlayerBase
   implements BaseComponent, ExtendComponent, PlayerComponent
 {
   webVideoEl: HTMLVideoElement
-  subtitleManager: SubtitleManager
+  subtitleManager?: SubtitleManager
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
+  sideSwitcher?: SideSwitcher
 
   constructor(props: MiniPlayerProps) {
     super()
@@ -35,6 +38,7 @@ export default abstract class VideoPlayerBase
     this.subtitleManager = props.subtitleManager
     this.danmakuEngine = props.danmakuEngine
     this.danmakuSender = props.danmakuSender
+    this.sideSwitcher = props.sideSwitcher
 
     this.on(PlayerEvent.close, () => {
       this.unload()

@@ -1,10 +1,11 @@
+import { SideSwitcher } from '@root/core/SideSwitcher'
 import VideoChanger from '@root/core/VideoChanger'
-import { useOnce } from '@root/hook'
+import { WebProvider } from '@root/core/WebProvider'
 import { formatTime, formatView } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
-import type WebProvider from '@root/web-provider/webProvider'
 import classNames from 'classnames'
-import { useRef, type FC, useState, useEffect } from 'react'
+import { observer } from 'mobx-react'
+import { useEffect, useRef, useState, type FC } from 'react'
 
 export type VideoItem = {
   /**spa点击切换路由的link元素 */
@@ -23,45 +24,44 @@ export type VideoItem = {
 }
 export type VideoList = {
   category: string
-  /**默认为true */
+  /**
+   * @deprecated 暂时不要用iframe打开
+   * 默认为true
+   *  */
   isSpa?: boolean
   items: VideoItem[]
 }
 export type Props = {
-  videoList: VideoList[]
-  webProvider: WebProvider
+  // videoList: VideoList[]
+  // webProvider: WebProvider
+  sideSwitcher: SideSwitcher
   onClick?: (videoItem: VideoItem) => void
   onChange?: (videoItem: VideoItem) => void
 }
 
 const VideoPlayerSide: FC<Props> = (props) => {
-  const videoChanger = useRef<VideoChanger>(null)
+  // const videoChanger = useRef(new VideoChanger(props.webProvider))
   const [activeMap, setActiveMap] = useState<Rec<number>>({})
-
-  useOnce(() => {
-    videoChanger.current = new VideoChanger(props.webProvider)
-    props.webProvider.videoChanger = videoChanger.current
-  })
 
   // 更新active数据
   useEffect(() => {
     const activeMap: Rec<number> = {}
 
-    props.videoList.forEach((list, i) => {
+    props.sideSwitcher.videoList.forEach((list, i) => {
       const activeIndex = list.items.findIndex((v) => v.isActive)
       if (activeIndex == -1) return
       activeMap[i] = activeIndex
     })
 
-    console.log('侧边栏传入数据', activeMap, props.videoList)
+    console.log('侧边栏传入数据', activeMap, props.sideSwitcher.videoList)
 
     setActiveMap(activeMap)
-  }, [props.videoList])
+  }, [props.sideSwitcher.videoList])
 
   return (
     <div className="side-outer-container">
       <div className="side-inner-container">
-        {props.videoList.map((list, vi) => {
+        {props.sideSwitcher.videoList.map((list, vi) => {
           const isCoverTitle = !!list.items?.[0]?.cover
           return (
             <div key={vi}>
@@ -80,11 +80,11 @@ const VideoPlayerSide: FC<Props> = (props) => {
                       onClick={() => {
                         props.onClick?.(item)
                         if (list.isSpa === false) {
-                          videoChanger.current
-                            .changeVideo(item.link)
-                            .then(() => {
-                              props.onChange?.(item)
-                            })
+                          // videoChanger.current
+                          //   .changeVideo(item.link)
+                          //   .then(() => {
+                          //     props.onChange?.(item)
+                          //   })
                         } else {
                           item.linkEl.click()
                           props.onChange?.(item)
@@ -125,4 +125,4 @@ const CoverTitleItem: FC<VideoItem> = (data) => {
   )
 }
 
-export default VideoPlayerSide
+export default observer(VideoPlayerSide)

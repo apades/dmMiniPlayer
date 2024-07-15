@@ -7,18 +7,31 @@ import {
   HtmlDanmakuEngine,
 } from '../danmaku/DanmakuEngine'
 import SubtitleManager from '../SubtitleManager'
-import VideoPlayerBase from '../VideoPlayer/VideoPlayerBase'
+import VideoPlayerBase, {
+  ExtendComponent,
+} from '../VideoPlayer/VideoPlayerBase'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { PlayerEvent } from '../event'
+import { SideSwitcher } from '../SideSwitcher'
 
-export default abstract class WebProvider {
+export default abstract class WebProvider implements ExtendComponent {
   // videoChanger: VideoChanger
-  subtitleManager = new SubtitleManager()
+  subtitleManager!: SubtitleManager
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
+  sideSwitcher?: SideSwitcher
 
-  webVideo = createElement('video')
-  protected miniPlayer: VideoPlayerBase = null as any
+  private _webVideo?: HTMLVideoElement
+  get webVideo() {
+    if (!this._webVideo)
+      throw new Error('webVideo还没初始化，请用openPlayer()后再调用')
+    return this._webVideo
+  }
+  set webVideo(v: HTMLVideoElement) {
+    this._webVideo = v
+  }
+
+  miniPlayer!: VideoPlayerBase
 
   constructor() {
     if (

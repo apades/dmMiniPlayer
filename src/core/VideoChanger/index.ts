@@ -1,21 +1,13 @@
 import { createElement, waitLoopCallback } from '@root/utils'
-import type WebProvider from '@root/web-provider/webProvider'
+import type WebProvider from '@root/core/WebProvider/WebProvider'
 import { PlayerComponent } from '../types'
 
 // 好像不能从iframe里把videoEl扣出来，youtube抠出来也会play error，不止b站的问题...
 export default class VideoChanger implements PlayerComponent {
-  onInit() {
-    console.log('onInit')
-  }
-  onUnload() {
-    console.log('onUnload')
-  }
-  init() {
-    console.log('init')
-  }
-  unload() {
-    console.log('unload')
-  }
+  onInit() {}
+  onUnload() {}
+  init() {}
+  unload() {}
   iframe = createElement('iframe', {
     style: `position:fixed;width:${window.innerWidth}px;height:${window.innerHeight}px;top:0;left:0;visibility: hidden;`,
   })
@@ -41,17 +33,15 @@ export default class VideoChanger implements PlayerComponent {
   async changeVideo(url: string) {
     if (!this.webProvider.miniPlayer) throw Error('还没有挂载上miniPlayer')
     await this.openUrl(url)
-    let newWebVideoEl: HTMLVideoElement
+    let newWebVideoEl!: HTMLVideoElement
     await waitLoopCallback(() => {
-      newWebVideoEl = this.webProvider.getVideoEl(this.iframe.contentDocument)
+      if (this.iframe.contentDocument) {
+        newWebVideoEl = this.webProvider.getVideoEl(this.iframe.contentDocument)
+      }
       return !!newWebVideoEl
     })
 
     if (!newWebVideoEl) throw Error('找不到新iframe下的webVideo')
-    console.log(
-      'updateWebVideoPlayerEl',
-      this.webProvider.miniPlayer.updateWebVideoPlayerEl.toString()
-    )
-    this.webProvider.miniPlayer.updateWebVideoPlayerEl(newWebVideoEl)
+    // this.webProvider.miniPlayer.updateWebVideoPlayerEl(newWebVideoEl)
   }
 }

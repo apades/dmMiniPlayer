@@ -76,6 +76,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         subtitleManager={this.subtitleManager}
         danmakuSender={this.danmakuSender}
         danmakuEngine={this.danmakuEngine}
+        sideSwitcher={this.sideSwitcher}
         // ----
         webVideo={this.webVideoEl}
         keydownWindow={pipWindow}
