@@ -4,7 +4,7 @@
 
     console.log('⚡ run world script')
     ;(async () => {
-        await import(extBaseUrl + "world.mjs");
+        await import(extBaseUrl + "world.js");
     })().catch(console.error);
 
 })();

@@ -19,6 +19,11 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
       '@root': pr('../src'),
     })
   },
+  outExtension({ format }) {
+    return {
+      js: `.js`,
+    }
+  },
   target: 'esnext',
   tsconfig,
   splitting: true,
@@ -61,7 +66,7 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
       .readFileSync(popupHtmlFile, 'utf-8')
       .replace(
         '<script src="./index.tsx" type="module"></script>',
-        '<script src="./popup.mjs" type="module"></script>'
+        '<script src="./popup.js" type="module"></script>'
       )
     fs.writeFileSync(pr(outDir, './popup.html'), popupHtmlText, 'utf-8')
   },

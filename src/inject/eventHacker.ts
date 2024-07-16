@@ -23,14 +23,18 @@ function main() {
       ((tar as any) == document && key == 'document')
 
     tar.addEventListener = function (...val: any) {
-      this.eventMap = this.eventMap || {}
-      this.eventMap[val[0]] = this.eventMap[val[0]] || []
-      let eventList = this.eventMap[val[0]] as any[]
+      try {
+        tar.eventMap = tar.eventMap || {}
+      } catch (error) {
+        console.error(error, tar)
+      }
+      tar.eventMap[val[0]] = tar.eventMap[val[0]] || []
+      let eventList = tar.eventMap[val[0]] as any[]
       let event = val[0]
       try {
         // 判断监听触发事件
         let onEventMatch = Object.entries(onEventAddMap).find(
-          ([key, val]) => isDocOrWin(key) || this.matches?.(key)
+          ([key, val]) => isDocOrWin(key) || tar.matches?.(key)
         )
         if (onEventMatch && onEventMatch[1].includes(event)) {
           sendMessage_inject('event-hacker:onEventAdd', {
@@ -44,8 +48,10 @@ function main() {
         )
         // 判断是否禁用
         if (disableMatch && disableMatch[1].includes(event)) {
-          console.log('匹配到禁用query', disableMap, this)
-        } else var rs = originalAdd.call(this, ...val)
+          console.log('匹配到禁用query', disableMap, tar)
+        } else {
+          var rs = originalAdd.call(this, ...val)
+        }
         const addEvent = {
           fn: val[1],
           state: val[2],
@@ -62,8 +68,8 @@ function main() {
     let originalRemove = tar.removeEventListener
 
     tar.removeEventListener = function (...val: any) {
-      let eventList = this.eventMap?.[val[0]] ?? []
       try {
+        let eventList = tar.eventMap?.[val[0]] ?? []
         var rs = originalRemove.call(this, ...val)
         let index = eventList.findIndex(
           (ev: any) => ev.fn === val[1] && ev.state == val[2]

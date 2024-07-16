@@ -3,7 +3,10 @@ export function createMessager<
 >(props: { sendType: string; listenType: string }) {
   window.addEventListener(props.listenType, (e: any) => {
     const data = e.detail
-
+    if (!data) {
+      console.warn('no detail data', props.listenType, e)
+      return
+    }
     // console.log('res', data)
     eventTarget.dispatchEvent(new CustomEvent(data.type, { detail: data.data }))
   })

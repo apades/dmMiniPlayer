@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "tsup --config scripts/tsup.dev.ts",
-    "build": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.ts",
+    "build": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.ts ",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs"
   },

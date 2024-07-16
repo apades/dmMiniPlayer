@@ -28,19 +28,19 @@ export const manifest: chrome.runtime.ManifestV3 = {
   host_permissions: ['<all_urls>'],
   permissions: ['storage', 'scripting'],
   background: {
-    service_worker: 'background.mjs',
+    service_worker: 'background.js',
     type: 'module',
   },
   content_scripts: [
     {
       matches: ['<all_urls>'],
-      js: ['assets/lib/entry-all-frames.mjs'],
+      js: ['assets/lib/entry-all-frames.js'],
       run_at: 'document_end',
       all_frames: true,
     },
     {
       matches: ['<all_urls>'],
-      js: ['assets/lib/entry-main.mjs'],
+      js: ['assets/lib/entry-main.js'],
       run_at: 'document_end',
     },
   ],
