@@ -1,11 +1,11 @@
-import { createElement, throttle } from '@root/utils'
+import { createElement, dq, onWindowLoad, throttle } from '@root/utils'
 import Browser from 'webextension-polyfill'
 import floatBtnStyle from './floatButton.less?inline'
 
 import { getTopParentsWithSameRect } from '@root/utils/dom'
 
 const INIT_ATTR = 'rc-f-init'
-function initVideoFloatBtn(
+function _initVideoFloatBtn(
   container: HTMLElement,
   vel: HTMLVideoElement,
   fixedPos?: boolean
@@ -13,11 +13,13 @@ function initVideoFloatBtn(
   let timmer: NodeJS.Timeout = null
   const videoIsContainer = vel == container
 
-  const floatBtnContainer = createElement('div')
+  const floatBtnContainer = createElement('div', {
+    style: 'all: initial !important;',
+  })
   floatBtnContainer.attachShadow({ mode: 'open' })
 
   const floatBtn = createElement('div', {
-    className: 'rc-float-btn',
+    className: 'rc-float-btn hidden',
     innerHTML: `<div><img src="${Browser.runtime.getURL(
       '/assets/icon.png'
     )}"/></div>`,
@@ -81,7 +83,7 @@ function initVideoFloatBtn(
     console.log('创建VideoFloatBtn', container, vel, fixedPos)
   } catch (error) {
     console.error('Wrong in append parent', error)
-    return
+    throw Error('Wrong in append parent')
   }
   container.setAttribute(INIT_ATTR, 'true')
 
@@ -118,11 +120,7 @@ function initVideoFloatBtn(
   })
 }
 
-const handleMousemove = throttle((e: MouseEvent) => {
-  const target = e.target as HTMLElement
-  const videoTarget =
-    target instanceof HTMLVideoElement ? target : target.querySelector('video')
-  if (!videoTarget) return
+function initVideoFloatBtn(videoTarget: HTMLVideoElement) {
   // 有些视频播放器移动鼠标的target并不会在video上，而是在另一个覆盖了容器的子dom上
   // 这里是为了选到跟video大小相同的最外层容器，以该容器移动鼠标触发浮动按钮
   const topParents = getTopParentsWithSameRect(videoTarget)
@@ -139,13 +137,30 @@ const handleMousemove = throttle((e: MouseEvent) => {
     // 也有单标签的video的，container就用videoTarget.parentElement
     const container =
       topParents[topParents.length - 1] ?? videoTarget.parentElement
-    return initVideoFloatBtn(container, videoTarget, true)
+    return _initVideoFloatBtn(container, videoTarget, true)
   }
   if (topParentWithPosition instanceof HTMLVideoElement) {
     // console.log('top的', topParentWithPosition)
-    return initVideoFloatBtn(topParentWithPosition, topParentWithPosition)
+    return _initVideoFloatBtn(topParentWithPosition, topParentWithPosition)
   }
-  return initVideoFloatBtn(topParentWithPosition, videoTarget)
+  return _initVideoFloatBtn(topParentWithPosition, videoTarget)
+}
+
+const handleMousemove = throttle((e: MouseEvent) => {
+  const target = e.target as HTMLElement
+  const videoTarget =
+    target instanceof HTMLVideoElement ? target : target.querySelector('video')
+
+  if (!videoTarget) return
+  initVideoFloatBtn(videoTarget)
 }, 1000)
 
 window.addEventListener('mousemove', handleMousemove)
+
+onWindowLoad().then(() => {
+  const videos = dq('video')
+
+  videos.forEach((video) => {
+    initVideoFloatBtn(video)
+  })
+})
