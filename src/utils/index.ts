@@ -401,3 +401,7 @@ export async function readTextFromFile(file: File) {
   })
   return text
 }
+
+export const onceLog = onceCall((...e: any) => {
+  console.log(...e)
+})

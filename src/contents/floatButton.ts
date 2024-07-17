@@ -1,4 +1,4 @@
-import { createElement, dq, onWindowLoad, throttle } from '@root/utils'
+import { createElement, onceLog, throttle } from '@root/utils'
 import Browser from 'webextension-polyfill'
 import floatBtnStyle from './floatButton.less?inline'
 
@@ -147,7 +147,17 @@ function initVideoFloatBtn(videoTarget: HTMLVideoElement) {
 }
 
 const handleMousemove = throttle((e: MouseEvent) => {
-  const target = e.target as HTMLElement
+  const _target = e.target as HTMLElement
+  // twitch有一个很奇怪的coverEl，mousemove时target是coverEl，导致永远query不到videoEl
+  // document
+  //    └─同大小的top container
+  //       ├─videoEl
+  //       └─coverEl
+  const target = getTopParentsWithSameRect(_target).pop()
+
+  onceLog('mousemove TopParentWithSameRect target & e.target', target, _target)
+  if (!target) return
+
   const videoTarget =
     target instanceof HTMLVideoElement ? target : target.querySelector('video')
 
@@ -157,10 +167,11 @@ const handleMousemove = throttle((e: MouseEvent) => {
 
 window.addEventListener('mousemove', handleMousemove)
 
-onWindowLoad().then(() => {
-  const videos = dq('video')
+// 有时候不会触发，不知道为什么
+// onWindowLoad().then(() => {
+//   const videos = dq('video')
 
-  videos.forEach((video) => {
-    initVideoFloatBtn(video)
-  })
-})
+//   videos.forEach((video) => {
+//     initVideoFloatBtn(video)
+//   })
+// })
