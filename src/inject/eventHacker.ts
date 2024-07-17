@@ -22,14 +22,27 @@ function main() {
       ((tar as any) == window && key == 'window') ||
       ((tar as any) == document && key == 'document')
 
+    const isWindow = (tar as any) == window
+
     tar.addEventListener = function (...val: any) {
+      const getEventMap = () => {
+        if (isWindow) return window.eventMap
+        return this.eventMap
+      }
+
       try {
-        tar.eventMap = tar.eventMap || {}
+        if (isWindow) {
+          window.eventMap = getEventMap() || {}
+          window.eventMap[val[0]] = getEventMap()[val[0]] || []
+        } else {
+          this.eventMap = getEventMap() || {}
+          this.eventMap[val[0]] = getEventMap()[val[0]] || []
+        }
       } catch (error) {
         console.error(error, tar)
       }
-      tar.eventMap[val[0]] = tar.eventMap[val[0]] || []
-      let eventList = tar.eventMap[val[0]] as any[]
+
+      let eventList = getEventMap()?.[val[0]] as any[]
       let event = val[0]
       try {
         // 判断监听触发事件
@@ -68,8 +81,13 @@ function main() {
     let originalRemove = tar.removeEventListener
 
     tar.removeEventListener = function (...val: any) {
+      const getEventMap = () => {
+        if (isWindow) return window.eventMap
+        return this.eventMap
+      }
+
       try {
-        let eventList = tar.eventMap?.[val[0]] ?? []
+        let eventList = getEventMap()?.[val[0]] ?? []
         var rs = originalRemove.call(this, ...val)
         let index = eventList.findIndex(
           (ev: any) => ev.fn === val[1] && ev.state == val[2]
