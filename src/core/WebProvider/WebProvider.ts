@@ -1,5 +1,6 @@
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import configStore from '@root/store/config'
-import { createElement, dq } from '@root/utils'
+import { createElement, dq, getDeepPrototype } from '@root/utils'
 import { CanvasPIPWebProvider, DocPIPWebProvider } from '.'
 import {
   CanvasDanmakuEngine,
@@ -47,7 +48,8 @@ export default abstract class WebProvider implements ExtendComponent {
       }
     })()
 
-    Object.setPrototypeOf(Object.getPrototypeOf(this), provider)
+    const rootPrototype = getDeepPrototype(this, WebProvider)
+    Object.setPrototypeOf(rootPrototype, provider)
     return this
   }
 
@@ -70,16 +72,23 @@ export default abstract class WebProvider implements ExtendComponent {
     this.onUnloadFn.push(fn)
   }
   unload() {
+    console.log('WebProvider unload')
+    this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
+    this.onUnloadFn.length = 0
   }
+  onUnload() {}
 
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
+    this.bindCommandsEvent()
 
     await this.onOpenPlayer()
     await this.onPlayerInitd()
+
+    sendMessage('PIP-active', { name: 'PIP-active' })
 
     const unListenOnClose = this.miniPlayer.on2(PlayerEvent.close, () => {
       this.unload()
@@ -116,4 +125,51 @@ export default abstract class WebProvider implements ExtendComponent {
   }
 
   onOpenPlayer(): Promise<void> | void {}
+
+  bindCommandsEvent() {
+    this.addOnUnloadFn(
+      onMessage('PIP-action', (req) => {
+        console.log('PIP-action', req)
+        if (!this.miniPlayer || !this.webVideo) return
+        const videoEl = this.webVideo
+        switch ((req?.data as any)?.body) {
+          case 'back': {
+            videoEl.currentTime -= 5
+            break
+          }
+          case 'forward': {
+            videoEl.currentTime += 5
+            break
+          }
+          case 'pause/play': {
+            videoEl.paused ? videoEl.play() : videoEl.pause()
+            break
+          }
+          case 'hide': {
+            document.body.click()
+            if (document.pictureInPictureElement)
+              document.exitPictureInPicture()
+            if (window.documentPictureInPicture?.window) {
+              window.documentPictureInPicture.window.close()
+            }
+            // TODO 显示的提示
+            // document.pictureInPictureElement
+            //   ? document.exitPictureInPicture()
+            //   : this.startPIPPlay({
+            //       onNeedUserClick: () => {
+            //         sendToBackground({ name: 'PIP-need-click-notifications' })
+            //       },
+            //     })
+            break
+          }
+          case 'playbackRate': {
+            videoEl.playbackRate == 1
+              ? (videoEl.playbackRate = configStore.playbackRate)
+              : (videoEl.playbackRate = 1)
+            break
+          }
+        }
+      })
+    )
+  }
 }

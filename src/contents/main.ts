@@ -3,7 +3,6 @@ import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import AsyncLock from '@root/utils/AsyncLock'
 import { onMessage } from '@root/inject/contentSender'
 import { onceCall } from '@root/utils'
-import NewBilibiliVideoProvider from '@root/web-provider/bilibili/video/newIndex'
 
 console.log('run content')
 
@@ -34,7 +33,7 @@ const openPIP = async () => {
   isWaiting = true
   await clickLock.waiting()
   isWaiting = false
-  provider().startPIPPlay()
+  provider()?.openPlayer()
 
   window.addEventListener('blur', handleBlur)
 }
@@ -57,7 +56,9 @@ onBgMessage('player-startPIPPlay', async (req) => {
 
 onMessage('start-PIP', (data) => {
   // provider().startPIPPlay({ videoEl: data.videoEl })
-  const provider = new NewBilibiliVideoProvider()
+  // const provider = new NewBilibiliVideoProvider()
+  const provider = getWebProvider()
+  if (!provider) throw new Error('找不到对应的provider')
   window.provider = provider
 
   provider.openPlayer({ videoEl: data.videoEl })
@@ -65,7 +66,7 @@ onMessage('start-PIP', (data) => {
 
 try {
   navigator.mediaSession.setActionHandler('enterpictureinpicture', () => {
-    provider().startPIPPlay()
+    provider()?.openPlayer()
   })
 } catch (error) {
   console.log('🟡 No support mediaSession action enterpictureinpicture')

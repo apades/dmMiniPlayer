@@ -1,5 +1,5 @@
+import { HtmlDanmakuProvider } from '@root/core/WebProvider'
 import { dq1 } from '@root/utils'
-import HtmlDanmakuProvider from './htmlDanmakuProvider'
 
 /**
  * ? 还需要解决页面最小化时，视频开始掉帧问题(还需要观测，下面的视窗监听在另一台电脑没有复现)
@@ -35,21 +35,21 @@ import HtmlDanmakuProvider from './htmlDanmakuProvider'
   content是弹幕内容
  */
 export default class DouyinProvider extends HtmlDanmakuProvider {
-  getObserveHtmlDanmakuConfig(): Parameters<
-    this['startObserveHtmlDanmaku']
-  >[0] {
+  getObserveHtmlDanmakuConfig() {
     return {
-      container: dq1('.webcast-chatroom___items>div:first-child'),
+      container: dq1<HTMLDivElement>(
+        '.webcast-chatroom___items>div:first-child'
+      )!,
       child: '.webcast-chatroom___item',
       text: '.webcast-chatroom___content-with-emoji-text',
     }
   }
-  getBarrageSenderConfig(): Parameters<
-    this['miniPlayer']['initBarrageSender']
-  >[0] {
+  getDanmakuSenderConfig() {
     return {
-      webTextInput: dq1('.webcast-chatroom___input-container textarea'),
-      webSendButton: dq1('.webcast-chatroom___send-btn'),
+      webTextInput: dq1<HTMLInputElement>(
+        '.webcast-chatroom___input-container textarea'
+      )!,
+      webSendButton: '.webcast-chatroom___send-btn',
     }
   }
 }

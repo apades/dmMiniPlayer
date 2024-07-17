@@ -1,39 +1,60 @@
-import { Barrage } from '@root/danmaku'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import { WebProvider } from '@root/core/WebProvider'
 import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
-import configStore from '@root/store/config'
-import { dq, dq1, onWindowLoad } from '@root/utils'
-import WebProvider from './webProvider'
-import { getMiniPlayer } from '@root/core'
 import { sendMessage } from '@root/inject/contentSender'
-import type { MiniPlayerProps } from '@root/core/miniPlayer'
+import { dq1Adv } from '@root/utils'
 
-window.DouyuLiveBarrageClient = DouyuLiveBarrageClient
 export default class DouyuLiveProvider extends WebProvider {
-  observer: MutationObserver
-  barrageClient: DouyuLiveBarrageClient
+  onInit(): void {
+    sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
+    sendMessage('event-hacker:enable', { qs: 'document', event: 'pagehide' })
+    sendMessage('event-hacker:enable', {
+      qs: 'window',
+      event: 'visibilitychange',
+    })
+    sendMessage('event-hacker:enable', {
+      qs: 'document',
+      event: 'visibilitychange',
+    })
 
-  constructor() {
-    super()
+    this.danmakuSender = new DanmakuSender()
+    this.danmakuSender.setData({
+      webSendButton: dq1Adv<HTMLElement>('.ChatSend-button'),
+      webTextInput: dq1Adv<HTMLInputElement>('.ChatSend-txt'),
+    })
   }
 
-  protected async initMiniPlayer(options?: MiniPlayerProps) {
-    const miniPlayer = await super.initMiniPlayer(options)
+  async onPlayerInitd() {
+    this.connectDanmakuWs()
+  }
 
-    // 弹幕相关
-    this.miniPlayer.on('PIPClose', () => {
-      this.stopObserveWs()
-      sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
-      sendMessage('event-hacker:enable', { qs: 'document', event: 'pagehide' })
-      sendMessage('event-hacker:enable', {
-        qs: 'window',
-        event: 'visibilitychange',
+  getRoomId() {
+    let locationId = location.pathname.split('/').pop() ?? ''
+    if (+locationId + '' == locationId) return locationId
+    return new URLSearchParams(location.search).get('rid') ?? ''
+  }
+
+  danmakuWs?: DouyuLiveBarrageClient
+  connectDanmakuWs() {
+    this.danmakuWs = new DouyuLiveBarrageClient(this.getRoomId())
+
+    this.addOnUnloadFn(
+      this.danmakuWs.on2('danmu', (danmaku) => {
+        // console.log('danmu', danmaku)
+        this.danmakuEngine?.addDanmakus([
+          {
+            ...danmaku,
+            type: 'right',
+            // TODO 让add里面自己加
+            time: this.webVideo.currentTime,
+          },
+        ])
       })
-      sendMessage('event-hacker:enable', {
-        qs: 'document',
-        event: 'visibilitychange',
-      })
-    })
-    this.startObserverWs()
+    )
+  }
+
+  onUnload(): void {
+    this.danmakuWs?.close()
     sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
     sendMessage('event-hacker:disable', { qs: 'document', event: 'pagehide' })
     sendMessage('event-hacker:disable', {
@@ -44,57 +65,5 @@ export default class DouyuLiveProvider extends WebProvider {
       qs: 'document',
       event: 'visibilitychange',
     })
-
-    function dq1Adv(q: string) {
-      const top = dq1(q)
-      if (top) {
-        return top
-      }
-      for (const iframe of dq('iframe')) {
-        try {
-          const child = iframe.contentWindow.document.querySelector(q)
-          if (child) return child as HTMLElement
-        } catch (error) {}
-      }
-    }
-
-    this.miniPlayer.initBarrageSender({
-      webSendButton: dq1Adv('.ChatSend-button'),
-      webTextInput: dq1Adv('.ChatSend-txt') as HTMLInputElement,
-    })
-
-    return miniPlayer
-  }
-
-  private fn: (data: { color: string; text: string }) => void = () => 1
-
-  getRoomId() {
-    let locationId = location.pathname.split('/').pop()
-    if (+locationId + '' == locationId) return locationId
-    return new URLSearchParams(location.search).get('rid')
-  }
-  startObserverWs() {
-    this.barrageClient = new DouyuLiveBarrageClient(this.getRoomId())
-
-    this.fn = (data: { color: string; text: string }) => {
-      this.miniPlayer.danmakuController.barrages.push(
-        new Barrage({
-          player: this.miniPlayer,
-          config: {
-            // TODO
-            color: data.color,
-            text: data.text,
-            time: this.miniPlayer.webPlayerVideoEl.currentTime,
-            // TODO
-            type: 'right',
-          },
-        })
-      )
-    }
-    this.barrageClient.addEventListener('danmu', this.fn)
-  }
-  stopObserveWs() {
-    this.barrageClient.removeListener('danmu', this.fn)
-    this.barrageClient.close()
   }
 }

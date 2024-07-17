@@ -1,100 +1,146 @@
-import DocMiniPlayer from '@root/core/DocMiniPlayer'
-import type MiniPlayer from '@root/core/miniPlayer'
-import type { MiniPlayerProps } from '@root/core/miniPlayer'
-import type { DanType } from '@root/danmaku'
-import onRouteChange from '@root/inject/csUtils/onRouteChange'
-import vpConfig from '@root/store/vpConfig'
-import { dq1, onceCall } from '@root/utils'
-import AsyncLock from '@root/utils/AsyncLock'
-import { windowsOnceCall } from '@root/utils/decorator'
-import { runInAction } from 'mobx'
-import WebProvider from '../../webProvider'
-import { getDanmakus as _getDanmakus, getVideoInfoFromUrl } from '../utils'
+import { WebProvider } from '@root/core/WebProvider'
+import { getDanmakus, getVideoInfoFromUrl } from '../utils'
 import BilibiliSubtitleManager from './SubtitleManager'
-import { initSideActionAreaRender } from './sider'
+import onRouteChange from '@root/inject/csUtils/onRouteChange'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import { dq, dq1 } from '@root/utils'
+import { SideSwitcher } from '@root/core/SideSwitcher'
+import { VideoItem } from '@root/components/VideoPlayer/Side'
+import API_bilibili from '@root/api/bilibili'
 
-const getDanmakus = onceCall(_getDanmakus)
+type RecommendVideo = {
+  el: HTMLElement
+  linkEl: HTMLElement
+  link: string
+  cover: string
+  title: string
+  user: string
+  played: number
+  duration: number
+  bvid: string
+  danmaku: number
+}
+
 export default class BilibiliVideoProvider extends WebProvider {
-  videoEl: HTMLVideoElement
-  declare subtitleManager: BilibiliSubtitleManager
-
-  constructor() {
-    super()
-    this.bindPIPActions()
-    this.injectHistoryChange()
-  }
-  @windowsOnceCall('bili_PIPActions')
-  bindPIPActions() {
-    console.log('bindPIPActions')
-    // 这个pip的action按钮在频繁关闭开启中（多数1次）会全部消失，即使是默认b站自己注册的setActionHandler到后面也只剩播放暂停，可能是浏览器问题
-    navigator.mediaSession.setActionHandler('pause', (e) => {
-      this.videoEl.pause()
-      this.miniPlayer.canvasPlayerVideoEl.pause()
-      // navigator.mediaSession.playbackState = 'paused'
+  onInit(): void {
+    this.subtitleManager = new BilibiliSubtitleManager()
+    // danmakuSender
+    this.danmakuSender = new DanmakuSender()
+    this.danmakuSender.setData({
+      webTextInput: dq1<HTMLInputElement>('.bpx-player-dm-input'),
+      webSendButton: dq1<HTMLElement>('.bpx-player-dm-btn-send'),
     })
-    navigator.mediaSession.setActionHandler('play', () => {
-      this.videoEl.play()
-      this.miniPlayer.canvasPlayerVideoEl.play()
-      // navigator.mediaSession.playbackState = 'playing'
-    })
-  }
-  @windowsOnceCall('bili_history')
-  injectHistoryChange() {
-    onRouteChange(() => {
-      this.initDans()
-      if (this.subtitleManager) {
-        this.subtitleManager.initSubtitles()
-      }
-    })
+    // sideSwitcher
+    this.sideSwitcher = new SideSwitcher()
   }
 
-  protected async initMiniPlayer(
-    options?: MiniPlayerProps
-  ): Promise<MiniPlayer> {
-    const subtitleManager = new BilibiliSubtitleManager()
-    subtitleManager.init(options?.videoEl ?? this.getVideoEl())
-    subtitleManager.initSubtitles()
-    this.subtitleManager = subtitleManager
+  async onPlayerInitd() {
+    this.initDanmakus()
+    this.initSideSwitcherData()
 
-    const miniPlayer = await super.initMiniPlayer({
-      ...options,
-      subtitleManager,
-    })
-    this.videoEl = this.miniPlayer.webPlayerVideoEl
-
-    if (miniPlayer instanceof DocMiniPlayer) {
-      initSideActionAreaRender(miniPlayer, this)
-    }
-    this.initDans()
-    miniPlayer.initBarrageSender({
-      webTextInput: dq1('.bpx-player-dm-input'),
-      webSendButton: dq1('.bpx-player-dm-btn-send'),
-    })
-    return miniPlayer
-  }
-
-  initDans() {
-    runInAction(() => {
-      vpConfig.canShowDanmaku = true
-    })
-    this.getDans().then((dans) =>
-      this.miniPlayer.danmakuController.addDanmakus(dans)
+    this.addOnUnloadFn(
+      onRouteChange(() => {
+        this.initDanmakus()
+        this.subtitleManager.init(this.webVideo)
+        this.initSideSwitcherData()
+      })
     )
   }
 
-  private aidLock = new AsyncLock()
-  private aid = ''
-  /**获取当前视频的aid */
-  async getAid() {
-    await this.aidLock.waiting()
-    return this.aid
+  async initDanmakus() {
+    const { aid, cid } = await getVideoInfoFromUrl(location.href)
+    const danmakus = await getDanmakus(aid, cid)
+
+    this.danmakuEngine?.setDanmakus(danmakus)
   }
 
-  async getDans(): Promise<DanType[]> {
-    this.aidLock.reWaiting()
-    const { aid, cid } = await getVideoInfoFromUrl(location.href)
-    this.aid = aid
-    const danmakus = await getDanmakus(aid, cid)
-    return danmakus
+  // ! 已知他用的top，目前没有iframe跳转方案了；需要切换成video url方案了https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md
+  async initSideSwitcherData() {
+    if (!this.sideSwitcher) {
+      console.error('已经被unload了', this)
+      throw Error('已经被unload了')
+    }
+
+    const getCtxDocument = () => document
+    /**获取视频分p列表 */
+    const getVideoPElList = () => {
+      const l1 = dq('.video-episode-card', getCtxDocument())
+      if (l1.length) return l1
+      // 目前看到瓦的比赛视频分p用的这个
+      return dq('.list-box li a', getCtxDocument())
+    }
+    /**分p视频active */
+    const isVideoPActive = (el: HTMLElement) =>
+      !!(
+        el.querySelector('.video-episode-card__info-playing') ||
+        el.querySelector('.video-episode-card__info-title-playing') ||
+        el.classList.contains('on')
+      )
+
+    // 视频分p
+    const videoPElList = getVideoPElList()
+    const videoPItems: VideoItem[] = videoPElList.map((el) => {
+      return {
+        el,
+        link: '',
+        linkEl: el,
+        title:
+          el.querySelector('.video-episode-card__info-title')?.textContent ??
+          el.textContent?.trim() ??
+          '',
+        isActive: isVideoPActive(el),
+      }
+    })
+
+    async function getRecommendVideos() {
+      const relateVideos = await API_bilibili.getRelateVideos(
+        (
+          await getVideoInfoFromUrl(location.href)
+        ).aid
+      )
+      const recommendElList = dq('.video-page-card-small')
+
+      if (!relateVideos) throw Error('没法获取关联视频')
+      const recommendVideos: RecommendVideo[] = []
+      recommendElList.forEach((el) => {
+        const elAEl = el.querySelector<HTMLAnchorElement>('.info a')
+        if (!elAEl) return
+
+        const linkEl = elAEl.children[0] as HTMLElement,
+          elBvid = elAEl.href.match(/\/video\/(BV.*)\//)?.[1]
+
+        if (!linkEl || !elBvid) return
+
+        const i = relateVideos.findIndex((v: any) => v.bvid == elBvid)
+        const relate = relateVideos.splice(i, 1)[0]
+
+        recommendVideos.push({
+          cover: relate.pic,
+          duration: relate.duration,
+          // 下面3个对应在网站上的
+          el,
+          link: `/video/${elBvid}`,
+          linkEl,
+          played: relate.stat.view,
+          title: relate.title,
+          user: relate.owner.name,
+          bvid: elBvid,
+          danmaku: relate.stat.danmaku,
+        })
+      })
+
+      return recommendVideos
+    }
+
+    this.sideSwitcher.init([
+      {
+        category: '视频分P',
+        items: videoPItems,
+      },
+      {
+        category: '推荐视频',
+        items: (await getRecommendVideos()).map((v) => ({ ...v, id: v.bvid })),
+      },
+    ])
   }
 }

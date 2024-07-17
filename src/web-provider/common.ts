@@ -1,4 +1,3 @@
-import { getMiniPlayer } from '@root/core'
-import WebProvider, { type StartPIPPlayOptions } from './webProvider'
+import { WebProvider } from '@root/core/WebProvider'
 
 export default class CommonProvider extends WebProvider {}

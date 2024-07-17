@@ -25,10 +25,12 @@ export function injectFunction<
   keys.map((k) => origin[k])
 
   keys.map((key, i) => {
-    ;(origin as any)[key] = (...args: any) => {
+    const fn = (...args: any) => {
       cb(...args)
       return (originKeysValue[key] as Function).apply(origin, args)
     }
+    fn.toString = (origin as any)[key].toString
+    ;(origin as any)[key] = fn
   })
   // TODO set value的proxy
   // let proxy = new Proxy(origin, {

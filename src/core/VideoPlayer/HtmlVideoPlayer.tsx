@@ -17,14 +17,6 @@ const styleEl = createElement('div', {
     createElement('style', { innerHTML: style })
   ),
 })
-const vpMode = {
-  get isWebVideoMode() {
-    return configStore.docPIP_renderType == DocPIPRenderType.reactVP_webVideo
-  },
-  get isCanvasVideoMode() {
-    return configStore.docPIP_renderType == DocPIPRenderType.reactVP_canvasCs
-  },
-}
 
 export class HtmlVideoPlayer extends VideoPlayerBase {
   playerRootEl?: HTMLElement
@@ -36,6 +28,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
   get canvasVideoStream() {
     const canvasVideo = new CanvasVideo({ videoEl: this.webVideoEl })
+    window.canvasVideo = canvasVideo
     return canvasVideo.canvasVideoStream
   }
   get webPlayerVideoStream() {
@@ -45,7 +38,18 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
   protected renderReactVideoPlayer() {
     const pipWindow = window.documentPictureInPicture.window
 
-    const { isCanvasVideoMode, isWebVideoMode } = vpMode
+    let isCanvasVideoMode =
+        configStore.docPIP_renderType == DocPIPRenderType.reactVP_canvasCs,
+      isWebVideoMode =
+        configStore.docPIP_renderType == DocPIPRenderType.reactVP_webVideo
+
+    // bilibili直播有一些页面是套同源iframe的，例如瓦洛兰特比赛什么的
+    // 需要强制使用canvasVideoMode
+    if (this.webVideoEl.ownerDocument !== document) {
+      console.log('强制canvasVideoMode')
+      isCanvasVideoMode = true
+      isWebVideoMode = false
+    }
 
     let vpRef: VideoPlayerHandle
     const root = createElement('div')
@@ -68,6 +72,8 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         srcObject: this.webPlayerVideoStream,
       }
     })()
+
+    console.log('vpProps', vpProps)
 
     reactRoot.render(
       <VideoPlayer

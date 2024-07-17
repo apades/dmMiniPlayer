@@ -118,7 +118,7 @@ export const dq: {
   return Array.from(tar?.querySelectorAll(selector) ?? [])
 }
 
-export let dq1: {
+export const dq1: {
   <K extends keyof HTMLElementTagNameMap>(selectors: K, tar?: DqTarType):
     | HTMLElementTagNameMap[K]
     | undefined
@@ -131,6 +131,25 @@ export let dq1: {
 } = (selector: string, tar = window.document as DqTarType) => {
   let dom = tar?.querySelector(selector) || undefined
   return dom
+}
+
+/**包含iframe内部查找 */
+export const dq1Adv: typeof dq1 = (
+  selector: string,
+  tar = window.document as DqTarType
+) => {
+  const top = dq1(selector, tar)
+  if (top) {
+    return top
+  }
+  for (const iframe of dq('iframe')) {
+    try {
+      const child = iframe.contentWindow?.document.querySelector(selector)
+      if (child) return child as HTMLElement
+    } catch (error) {
+      //
+    }
+  }
 }
 
 export const onWindowLoad = () => {
@@ -403,3 +422,8 @@ export async function readTextFromFile(file: File) {
 export const onceLog = onceCall((...e: any) => {
   console.log(...e)
 })
+export function getDeepPrototype<T = any>(from: any, equal: T): T {
+  const root = Object.getPrototypeOf(from)
+  if (root.constructor === equal) return from
+  return getDeepPrototype(root, equal)
+}

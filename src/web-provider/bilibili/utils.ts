@@ -152,7 +152,7 @@ export async function getVideoInfoFromUrl(_url: string) {
     }
   }
 
-  const pid = +url.searchParams.get('p') || 1
+  const pid = +(url.searchParams.get('p') ?? 1)
 
   const videoInfo = new URL('https://api.bilibili.com/x/web-interface/view')
   if (bid) {

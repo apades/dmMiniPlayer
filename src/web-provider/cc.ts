@@ -1,62 +1,31 @@
-import { Barrage } from '@root/danmaku'
-import configStore from '@root/store/config'
-import { dq1, onWindowLoad } from '@root/utils'
-import WebProvider from './webProvider'
+import { WebProvider } from '@root/core/WebProvider'
 import CCLiveBarrageClient from '@root/danmaku/cc/liveBarrageClient'
-import { getMiniPlayer } from '@root/core'
-import type { OrPromise } from '@root/utils/typeUtils'
-import type { MiniPlayerProps } from '@root/core/miniPlayer'
 
-window.CCLiveBarrageClient = CCLiveBarrageClient
 export default class CCLiveProvider extends WebProvider {
-  observer: MutationObserver
-  barrageClient: CCLiveBarrageClient
+  onInit(): void {}
 
-  constructor() {
-    super()
-  }
-
-  protected async initMiniPlayer(options?: MiniPlayerProps) {
-    const miniPlayer = await super.initMiniPlayer(options)
-
-    // 弹幕相关
-    this.miniPlayer.on('PIPClose', () => {
-      this.stopObserveWs()
-    })
-    this.startObserverWs()
-    miniPlayer.initBarrageSender({
-      webTextInput: dq1('.chat-input'),
-      webSendButton: dq1('.send-msg'),
-    })
-
-    return miniPlayer
-  }
-
-  private fn: (data: { color: string; text: string }) => void = () => 1
-  startObserverWs() {
+  danmakuWs?: CCLiveBarrageClient
+  connectDanmakuWs() {
     const pathArr = location.pathname.split('/')
     pathArr.pop()
-    this.barrageClient = new CCLiveBarrageClient(+pathArr.pop())
 
-    this.fn = (data: { color: string; text: string }) => {
-      this.miniPlayer.danmakuController.barrages.push(
-        new Barrage({
-          player: this.miniPlayer,
-          config: {
-            // TODO
-            color: data.color,
-            text: data.text,
-            time: this.miniPlayer.webPlayerVideoEl.currentTime,
-            // TODO
+    this.danmakuWs = new CCLiveBarrageClient(+(pathArr.pop() ?? ''))
+    this.addOnUnloadFn(
+      this.danmakuWs.on2('danmu', (danmaku) => {
+        // console.log('danmu', danmaku)
+        this.danmakuEngine?.addDanmakus([
+          {
+            ...danmaku,
             type: 'right',
+            // TODO 让add里面自己加
+            time: this.webVideo.currentTime,
           },
-        })
-      )
-    }
-    this.barrageClient.addEventListener('danmu', this.fn)
+        ])
+      })
+    )
   }
-  stopObserveWs() {
-    this.barrageClient.removeListener('danmu', this.fn)
-    this.barrageClient.close()
+
+  onUnload(): void {
+    this.danmakuWs?.close()
   }
 }

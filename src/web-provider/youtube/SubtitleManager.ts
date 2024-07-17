@@ -4,8 +4,7 @@ import { runInAction } from 'mobx'
 import { getSubtitles, getSubtitle } from './utils'
 
 export default class YoutubeSubtitleManager extends SubtitleManager {
-  initSubtitles() {
-    this.reset()
+  onInit() {
     runInAction(async () => {
       this.subtitleItems.length = 0
       this.subtitleItems.push(...(await getSubtitles()))

@@ -8,7 +8,7 @@ export async function getVideoInfo(url = location.href) {
   const htmlText = await fetch(url).then((res) => res.text())
 
   return JSON.parse(
-    '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};/)[1] + '}'
+    '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};/)?.[1] + '}'
   )
 }
 
@@ -20,6 +20,7 @@ export async function getSubtitles(
   const subtitles =
     videoInfo?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
 
+  console.log('subtitles', subtitles)
   return subtitles.map((s: any) => ({
     label: s.name.simpleText,
     value: s.baseUrl,
@@ -34,9 +35,9 @@ export async function getSubtitle(subtitleUrl: string): Promise<SubtitleRow[]> {
   const textEls = dq('text', document)
 
   return textEls.map((el, i) => {
-    const startTime = +el.getAttribute('start'),
-      duration = +el.getAttribute('dur'),
-      text = el.textContent
+    const startTime = +(el.getAttribute('start') ?? 0),
+      duration = +(el.getAttribute('dur') ?? 0),
+      text = el.textContent ?? ''
 
     return {
       startTime,

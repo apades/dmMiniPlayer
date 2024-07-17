@@ -35,13 +35,13 @@ export default class CanvasVideo implements Required<Props> {
     this.fps = props.fps ?? this.fps
     this.FPS_limitOffsetAccurate =
       props.FPS_limitOffsetAccurate ?? this.FPS_limitOffsetAccurate
-    this.width = props.width ?? this.width
-    this.height = props.height ?? this.height
+    this.width = props.width || props.videoEl.clientWidth
+    this.height = props.height || props.videoEl.clientHeight
 
     // 没有metadata前的video元素宽高是不正常的
     if (this.videoEl.readyState >= 1) {
-      this.width ??= this.videoEl.clientWidth
-      this.height ??= this.videoEl.clientHeight
+      this.width = this.videoEl.clientWidth
+      this.height = this.videoEl.clientHeight
       this.updateSize()
     }
 
@@ -72,8 +72,8 @@ export default class CanvasVideo implements Required<Props> {
         this.startRenderAsCanvas()
       })
       videoEl.addEventListener('loadedmetadata', () => {
-        this.width ??= this.videoEl.clientWidth
-        this.height ??= this.videoEl.clientHeight
+        this.width = this.videoEl.clientWidth
+        this.height = this.videoEl.clientHeight
 
         this.updateSize()
       })

@@ -4,5 +4,11 @@
 import WebProvider from './WebProvider'
 import DocPIPWebProvider from './DocPIPWebProvider'
 import CanvasPIPWebProvider from './CanvasPIPWebProvider'
+import HtmlDanmakuProvider from './htmlDanmakuProvider'
 
-export { WebProvider, DocPIPWebProvider, CanvasPIPWebProvider }
+export {
+  WebProvider,
+  DocPIPWebProvider,
+  CanvasPIPWebProvider,
+  HtmlDanmakuProvider,
+}

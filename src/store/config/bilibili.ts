@@ -24,11 +24,11 @@ const config_bilibili = {
     relateByValue: true,
   }),
 
-  biliLiveSide: config({
-    defaultValue: false,
-    label: t('settingPanel.biliLiveSide'),
-    desc: t('settingPanel.biliLiveSideDesc'),
-  }),
+  // biliLiveSide: config({
+  //   defaultValue: false,
+  //   label: t('settingPanel.biliLiveSide'),
+  //   desc: t('settingPanel.biliLiveSideDesc'),
+  // }),
 }
 
 export default config_bilibili

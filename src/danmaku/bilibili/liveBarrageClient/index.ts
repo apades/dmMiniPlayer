@@ -32,7 +32,7 @@ export const getConf = async (roomid: number) => {
 }
 
 export default class BilibiliLiveBarrageClient extends BarrageClient {
-  ws: LiveWS
+  ws?: LiveWS
   constructor(public id: number) {
     super()
     this.init(id)
@@ -53,7 +53,7 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
     this.ws.on('close', () => console.log('弹幕ws断开'))
     // Connection is established
     this.ws.on('live', () => {
-      this.ws.on('heartbeat', console.log)
+      this.ws?.on('heartbeat', console.log)
       // 13928
     })
 
@@ -66,6 +66,6 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
     })
   }
   close(): void {
-    this.ws.ws.close()
+    this.ws?.ws.close()
   }
 }

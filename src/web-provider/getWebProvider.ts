@@ -1,4 +1,3 @@
-import BiliBiliBangumiProvider from './bilibili/bangumi'
 import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
 import CCLiveProvider from './cc'
@@ -7,9 +6,9 @@ import DdrkProvider from './ddrk'
 import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
-import WebProvider from './webProvider'
 import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
+import { WebProvider } from '@root/core/WebProvider'
 
 const providerList = [
   {
@@ -22,7 +21,7 @@ const providerList = [
   },
   {
     reg: /https:\/\/www.bilibili.com\/bangumi\/.*/,
-    provider: BiliBiliBangumiProvider,
+    provider: BilibiliVideoProvider,
   },
   {
     reg: /https:\/\/live.bilibili.com\/.*/,
@@ -62,7 +61,7 @@ const providerList = [
   },
 ]
 
-export default function getWebProvider<T extends WebProvider>(): T {
+export default function getWebProvider<T extends WebProvider>(): T | null {
   let provider = providerList.find(({ provider, reg }) => {
     if (reg.test(location.href)) return provider
   })
