@@ -15,7 +15,8 @@ let provider = onceCall(() => {
 let hasClickPage = false,
   isWaiting = false
 let clickLock = new AsyncLock()
-window.addEventListener('click', () => {
+window.addEventListener('click', (e) => {
+  if (!e.isTrusted) return
   hasClickPage = true
   clickLock.ok()
 })
@@ -42,7 +43,8 @@ onBgMessage('player-startPIPPlay', async (req) => {
     ;(coverEl as any).style =
       'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
     document.body.appendChild(coverEl)
-    coverEl.addEventListener('click', () => {
+    coverEl.addEventListener('click', (e) => {
+      if (!e.isTrusted) return
       document.body.removeChild(coverEl)
       openPIP()
     })
