@@ -34,7 +34,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
 
   onInit(props: DanmakuEngineInitProps): void {
     this.canvasDanmakuVideo = new CanvasDanmakuVideo({
-      danmakuManager: this,
+      danmakuEngine: this,
       videoEl: props.media as HTMLVideoElement,
       fps: this.fps,
       width: this.container.clientWidth,

@@ -7,19 +7,9 @@ import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
+  protected MiniPlayer = HtmlVideoPlayer
 
   pipWindow?: Window
-
-  async openPlayer() {
-    super.openPlayer()
-    this.miniPlayer = new HtmlVideoPlayer({
-      webVideoEl: this.webVideo,
-      danmakuEngine: this.danmakuEngine,
-      subtitleManager: this.subtitleManager,
-      danmakuSender: this.danmakuSender,
-      sideSwitcher: this.sideSwitcher,
-    })
-  }
 
   async onOpenPlayer() {
     // 获取应该有的docPIP宽高
@@ -53,10 +43,10 @@ export default class DocPIPWebProvider extends WebProvider {
 
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {
-      this.miniPlayer.emit(PlayerEvent.close)
+      this.emit(PlayerEvent.close)
     })
     pipWindow.addEventListener('resize', () => {
-      this.miniPlayer.emit(PlayerEvent.resize)
+      this.emit(PlayerEvent.resize)
     })
 
     this.miniPlayer.init()

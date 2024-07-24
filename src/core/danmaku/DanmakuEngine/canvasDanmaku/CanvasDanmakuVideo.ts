@@ -2,7 +2,7 @@ import CanvasVideo from '@root/core/CanvasVideo'
 import CanvasDanmakuEngine from './CanvasDanmakuEngine'
 
 export default class CanvasDanmakuVideo extends CanvasVideo {
-  danmakuManager: CanvasDanmakuEngine
+  danmakuEngine: CanvasDanmakuEngine
 
   resizeObserver = new ResizeObserver(([entry]) => {
     const el = entry?.target as HTMLElement
@@ -14,21 +14,21 @@ export default class CanvasDanmakuVideo extends CanvasVideo {
   })
   constructor(
     props: ConstructorParameters<typeof CanvasVideo>[0] & {
-      danmakuManager: CanvasDanmakuEngine
+      danmakuEngine: CanvasDanmakuEngine
     }
   ) {
     super(props)
-    this.danmakuManager = props.danmakuManager
+    this.danmakuEngine = props.danmakuEngine
     // TODO 监听container大小变化，然后调用resize
     // this.danmakuManager.container
-    this.resizeObserver.observe(this.danmakuManager.container)
+    this.resizeObserver.observe(this.danmakuEngine.container)
   }
   drawCanvas(): void {
     if (this.hasSeek) {
-      this.danmakuManager.drawInSeek()
+      this.danmakuEngine.drawInSeek()
       this.hasSeek = false
       return
     }
-    this.danmakuManager.draw()
+    this.danmakuEngine.draw()
   }
 }

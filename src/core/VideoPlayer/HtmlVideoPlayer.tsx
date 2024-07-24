@@ -23,7 +23,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
   onInit(): void {
     this.renderReactVideoPlayer()
-    this.on(PlayerEvent.close, () => {})
+    // this.on(PlayerEvent.close, () => {})
   }
 
   get canvasVideoStream() {
@@ -92,9 +92,9 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           window.vpRef = vpRef
         }}
         // emit事件
-        onSeeked={() => this.emit('seek')}
-        onPlay={() => this.emit('play')}
-        onPause={() => this.emit('pause')}
+        onSeeked={() => this.emit(PlayerEvent.seeked)}
+        onPlay={() => this.emit(PlayerEvent.play)}
+        onPause={() => this.emit(PlayerEvent.pause)}
         {...vpProps}
       />
     )

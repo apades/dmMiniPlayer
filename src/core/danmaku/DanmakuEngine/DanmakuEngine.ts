@@ -30,10 +30,8 @@ export type DanmakuEngineInitProps = {
   media: HTMLMediaElement
 }
 
-export default class DanmakuEngine
-  extends Events2<DanmakuEngineEvents>
-  implements DanmakuConfig, PlayerComponent
-{
+export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
+  // implements DanmakuConfig, PlayerComponent
   /**弹幕在实例化时会new这个 */
   Danmaku = DanmakuBase
   container: HTMLElement = createElement('div')

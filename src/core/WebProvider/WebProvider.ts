@@ -12,10 +12,13 @@ import VideoPlayerBase, {
   ExtendComponent,
 } from '../VideoPlayer/VideoPlayerBase'
 import DanmakuSender from '../danmaku/DanmakuSender'
-import { PlayerEvent } from '../event'
+import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 
-export default abstract class WebProvider implements ExtendComponent {
+export default abstract class WebProvider
+  extends EventBus
+  implements ExtendComponent
+{
   // videoChanger: VideoChanger
   subtitleManager!: SubtitleManager
   danmakuEngine?: DanmakuEngine
@@ -33,12 +36,15 @@ export default abstract class WebProvider implements ExtendComponent {
   }
 
   miniPlayer!: VideoPlayerBase
+  protected abstract MiniPlayer: typeof VideoPlayerBase
 
   constructor() {
+    super()
     if (
       [DocPIPWebProvider, CanvasPIPWebProvider].find((v) => this instanceof v)
-    )
+    ) {
       return this
+    }
 
     const provider = (() => {
       if (configStore.useDocPIP) {
@@ -84,6 +90,14 @@ export default abstract class WebProvider implements ExtendComponent {
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.bindCommandsEvent()
+
+    this.miniPlayer = new this.MiniPlayer({
+      webVideoEl: this.webVideo,
+      danmakuEngine: this.danmakuEngine,
+      subtitleManager: this.subtitleManager,
+      danmakuSender: this.danmakuSender,
+      sideSwitcher: this.sideSwitcher,
+    })
 
     await this.onOpenPlayer()
     await this.onPlayerInitd()

@@ -1,13 +1,11 @@
-import Events2 from '@root/utils/Events2'
-import SubtitleManager from '../SubtitleManager'
-import { DanmakuEngine } from '../danmaku/DanmakuEngine'
-import { PlayerEvent, PlayerEvents } from '../event'
-import { PlayerComponent } from '../types'
-import { observeVideoEl } from '@root/utils/observeVideoEl'
-import DanmakuSender from '../danmaku/DanmakuSender'
 import vpConfig from '@root/store/vpConfig'
+import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { runInAction } from 'mobx'
 import { SideSwitcher } from '../SideSwitcher'
+import SubtitleManager from '../SubtitleManager'
+import { DanmakuEngine } from '../danmaku/DanmakuEngine'
+import DanmakuSender from '../danmaku/DanmakuSender'
+import { EventBus, PlayerEvent } from '../event'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
@@ -22,9 +20,9 @@ export type BaseComponent = {
 
 export type MiniPlayerProps = ExtendComponent & BaseComponent
 
-export default abstract class VideoPlayerBase
-  extends Events2<PlayerEvents>
-  implements BaseComponent, ExtendComponent, PlayerComponent
+export default class VideoPlayerBase
+  extends EventBus
+  implements BaseComponent, ExtendComponent
 {
   webVideoEl: HTMLVideoElement
   subtitleManager?: SubtitleManager
@@ -39,19 +37,22 @@ export default abstract class VideoPlayerBase
     this.danmakuEngine = props.danmakuEngine
     this.danmakuSender = props.danmakuSender
     this.sideSwitcher = props.sideSwitcher
+  }
 
-    this.on(PlayerEvent.close, () => {
+  private unobserveVideoElChange = () => {}
+  private unlistenOnClose = () => {}
+  protected onUnload() {}
+  async init() {
+    this.unlistenOnClose = this.on2(PlayerEvent.close, () => {
+      console.log('PlayerEvent.close')
       this.unload()
       this.danmakuEngine?.unload()
       this.unobserveVideoElChange()
       vpConfig.reset()
     })
-  }
+    this.emit(PlayerEvent.videoPlayerBeforeInit)
 
-  private unobserveVideoElChange = () => {}
-  onUnload() {}
-  init() {
-    this.onInit()
+    await this.onInit()
 
     this.unobserveVideoElChange = observeVideoEl(
       this.webVideoEl,
@@ -69,12 +70,17 @@ export default abstract class VideoPlayerBase
         vpConfig.canShowDanmaku = true
       }
     })
+
+    this.emit(PlayerEvent.videoPlayerInitd)
   }
-  unload() {
-    this.onUnload()
+  async unload() {
+    this.emit(PlayerEvent.videoPlayerBeforeUnload)
+    this.unlistenOnClose()
+    await this.onUnload()
+    this.emit(PlayerEvent.videoPlayerUnloaded)
   }
 
-  onInit() {}
+  protected onInit() {}
 
   /**return的函数运行是还原videoEl位置和状态 */
   protected initWebVideoPlayerElState(videoEl: HTMLVideoElement) {
