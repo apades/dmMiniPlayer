@@ -12,4 +12,5 @@ export default defineConfig({
     ...(shareConfig as any).define,
     ...getDefinesObject('dev'),
   },
+  splitting: false,
 })
