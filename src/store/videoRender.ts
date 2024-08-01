@@ -23,11 +23,8 @@ class VideoRender {
     // if (!this.videoEl) throw Error('需要设定videoEl')
     if (!option) {
       runInAction(() => {
-        this.containerWidth =
-          (this.containerWidth || videoEl.clientWidth) * window.devicePixelRatio
-        this.containerHeight =
-          (this.containerHeight || videoEl.clientHeight) *
-          window.devicePixelRatio
+        this.containerWidth = videoEl.clientWidth * window.devicePixelRatio
+        this.containerHeight = videoEl.clientHeight * window.devicePixelRatio
       })
     } else {
       runInAction(() => {
