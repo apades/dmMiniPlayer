@@ -4,6 +4,7 @@ import { useEventListener } from 'ahooks'
 import { dq1, formatTime } from '@root/utils'
 import classNames from 'classnames'
 import { HandlesProps } from '@apad/rc-slider/lib/Handles'
+import { useOnce } from '@root/hook'
 
 type Props = {
   playedPercent: number
@@ -48,9 +49,15 @@ const HandleWithToolTips: FC<
 > = (props) => {
   const [isVisible, setVisible] = useState(false)
   const handleRef = useRef<HTMLDivElement>()
+  const [isInitd, setInitd] = useState(false)
+  useOnce(() => {
+    setInitd(true)
+  })
+
   useEventListener(
     'mouseleave',
     () => {
+      if (!isInitd) return
       if (!handleRef.current) return
       setVisible(false)
     },
@@ -59,6 +66,7 @@ const HandleWithToolTips: FC<
   useEventListener(
     'mouseenter',
     () => {
+      if (!isInitd) return
       if (!handleRef.current) return
       setVisible(true)
     },
@@ -94,10 +102,15 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
   const { containerRef, duration } = props
   const [isVisible, setVisible] = useState(false)
   const [percent, setPercent] = useState(0)
+  const [isInitd, setInitd] = useState(false)
+  useOnce(() => {
+    setInitd(true)
+  })
 
   useEventListener(
     'mousemove',
     (e) => {
+      if (!isInitd) return
       if (!containerRef.current) return
       const target = e.target as HTMLElement
       if (target.classList.contains('rc-slider-handle')) {
@@ -117,6 +130,7 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
   useEventListener(
     'mousedown',
     () => {
+      if (!isInitd) return
       if (!containerRef.current) return
       setVisible(false)
     },
