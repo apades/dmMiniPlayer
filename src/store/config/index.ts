@@ -185,6 +185,20 @@ if (isPluginEnv) {
 export const { configStore, openSettingPanel, closeSettingPanel, observe } =
   initSetting({ ...settingProps })
 
+// 同步多个tab的config
+if (isPluginEnv) {
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState !== 'visible') return
+
+    const config = await extStorage.get(LOCAL_CONFIG)
+    Object.entries(config).forEach(([key, value]) => {
+      if ((configStore as any)[key] !== value) {
+        ;(configStore as any)[key] = value
+      }
+    })
+  })
+}
+
 window.configStore = configStore
 window.openSettingPanel = openSettingPanel
 export default configStore
