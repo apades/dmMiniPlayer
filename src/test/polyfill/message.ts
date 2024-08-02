@@ -53,7 +53,9 @@ function _sendMessage(category: string, _content: any) {
         _env.isBG
           ? opener.postMessage({ title: category, content })
           : window.tarBG.postMessage({ title: category, content })
-      } catch (error) {}
+      } catch (error) {
+        //
+      }
       // const event = new CustomEvent('polyfill-event', { detail: { title: category, content } })
       // window.dispatchEvent(event)
     }

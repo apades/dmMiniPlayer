@@ -1,5 +1,5 @@
 // 这里都是保留process.env来打包chat-gpt cs，用户cs，bg的环境变量区分
-const isBG = process.env.isBG
+const isBG = /* process.env.isBG */ true
 enum TabId {
   bg = 1,
   user = 2,

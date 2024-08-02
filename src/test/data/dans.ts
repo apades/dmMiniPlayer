@@ -1,4 +1,5 @@
 import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
+import { formatTime } from '@root/utils'
 
 export const dans: DanmakuInitData[] = [
   {
@@ -602,3 +603,16 @@ export const dans: DanmakuInitData[] = [
     type: 'right',
   },
 ]
+
+export const randomDans = new Array(255)
+  .fill(1)
+  .map((_, i) => {
+    const time = Math.random() * 120
+    return {
+      color: '#fff',
+      text: `asdfasdfasdfasdfasdfadfs ${formatTime(time)}`,
+      time,
+      type: 'top',
+    } as DanmakuInitData
+  })
+  .sort((a, b) => a.time! - b.time!)
