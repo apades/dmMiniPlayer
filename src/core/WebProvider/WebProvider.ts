@@ -36,7 +36,7 @@ export default abstract class WebProvider
   }
 
   miniPlayer!: VideoPlayerBase
-  protected abstract MiniPlayer: typeof VideoPlayerBase
+  protected MiniPlayer!: typeof VideoPlayerBase
 
   constructor() {
     super()
@@ -91,7 +91,8 @@ export default abstract class WebProvider
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.bindCommandsEvent()
 
-    this.miniPlayer = new this.MiniPlayer({
+    const MiniPlayer = (Object.getPrototypeOf(this) as WebProvider).MiniPlayer
+    this.miniPlayer = new MiniPlayer({
       webVideoEl: this.webVideo,
       danmakuEngine: this.danmakuEngine,
       subtitleManager: this.subtitleManager,
