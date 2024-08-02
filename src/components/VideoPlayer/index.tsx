@@ -171,6 +171,10 @@ const VideoPlayer = observer(
         list: new Map<string | number, any>(),
         focusIndex: '',
       }
+
+      return () => {
+        window.videoPlayers = null as any
+      }
     }, [])
 
     useEffect(() => {
@@ -406,7 +410,7 @@ const VideoPlayer = observer(
       }
       window.videoPlayers.add(index, player)
       return () => {
-        window.videoPlayers.remove(props.index)
+        window.videoPlayers?.remove?.(props.index)
       }
     }, [])
 

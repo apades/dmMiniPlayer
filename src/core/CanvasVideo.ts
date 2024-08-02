@@ -1,5 +1,6 @@
 import { addEventListener } from '@root/utils'
 import { onceCallGet } from '@root/utils/decorator'
+import { EventBus } from './event'
 
 type Props = {
   videoEl: HTMLVideoElement
@@ -9,7 +10,7 @@ type Props = {
   height?: number
 }
 
-export default class CanvasVideo implements Required<Props> {
+export default class CanvasVideo extends EventBus implements Required<Props> {
   videoEl: HTMLVideoElement
   fps = 60
   FPS_limitOffsetAccurate = false
@@ -31,6 +32,7 @@ export default class CanvasVideo implements Required<Props> {
     return this.canvas.captureStream()
   }
   constructor(props: Props) {
+    super()
     this.videoEl = props.videoEl
     this.fps = props.fps ?? this.fps
     this.FPS_limitOffsetAccurate =
@@ -62,7 +64,7 @@ export default class CanvasVideo implements Required<Props> {
 
     this.isPause = videoEl.paused
 
-    this.clearEventListener = addEventListener(videoEl, (videoEl) => {
+    const clearEventListener = addEventListener(videoEl, (videoEl) => {
       videoEl.addEventListener('pause', () => {
         this.isPause = true
         this.stopRenderAsCanvas()
@@ -81,6 +83,8 @@ export default class CanvasVideo implements Required<Props> {
         this.hasSeek = true
       })
     })
+    this.clearEventListener = clearEventListener
+    this.addCallback(clearEventListener)
   }
 
   //   containerWidth = 0

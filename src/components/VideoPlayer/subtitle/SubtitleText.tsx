@@ -14,7 +14,7 @@ const SubtitleText: FC<Props> = (props) => {
   const { subtitleManager } = props
   const [activeRows, setActiveRows] = useState<Record<string, SubtitleRow>>({})
 
-  window.subtitleManager = subtitleManager
+  // window.subtitleManager = subtitleManager
   useOnce(() => {
     const enterActiveRows = subtitleManager.activeRows
     const activeRows: Record<string, SubtitleRow> = {}

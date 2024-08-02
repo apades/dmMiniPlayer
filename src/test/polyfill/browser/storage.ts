@@ -4,7 +4,7 @@ import { sendMessageWaitResp } from '../message'
 import { addCallback, executeCallback, removeCallback } from './'
 
 const storageFnObj = {
-  get: (_keys?: null | string | string[] | Record<string, any>) => {
+  get: async (_keys?: null | string | string[] | Record<string, any>) => {
     let keys: string[] = []
 
     if (isArray(_keys)) keys = _keys
@@ -19,16 +19,20 @@ const storageFnObj = {
     })
   },
   set: async (items: Record<string, any>) => {
-    const oldData = await sendMessageWaitResp('browser-API', {
-      type: 'storage-get',
-      data: [],
-    })
+    const oldData = _env.isBG
+      ? storageFnObj.get()
+      : await sendMessageWaitResp('browser-API', {
+          type: 'storage-get',
+          data: [],
+        })
     const data: Record<string, { oldValue: any; newValue: any }> = {}
     Object.entries(oldData).forEach(([key, val]) => {
+      data[key] ??= { newValue: null, oldValue: null }
       data[key].newValue = val
       data[key].oldValue = val
     })
     Object.entries(items).forEach(([key, val]) => {
+      data[key] ??= { newValue: null, oldValue: null }
       data[key].newValue = val
     })
 

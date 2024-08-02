@@ -4,12 +4,12 @@ const extStorage = Browser.storage.local
 
 const oClog = console.log
 
-window.showLog = process.env.NODE_ENV === 'development'
+window.showLog = false
 
 extStorage.get('showLog').then((res) => {
-  if (typeof res == 'undefined') return
+  if (typeof res?.['showLog'] == 'undefined') return
 
-  window.showLog = res
+  window.showLog = res['showLog']
 })
 
 window.console.log = (...args: any[]) => {

@@ -40,8 +40,20 @@ export type PlayerEvents = Merge<
 >
 
 const getMitt = onceCall(() => mitt())
+const callbacksSet = new Set<() => void>()
 export class EventBus extends Events2<PlayerEvents> {
   mitt = getMitt() as any
+
+  addCallback(callback: () => void) {
+    callbacksSet.add(callback)
+  }
+  removeCallback(callback: () => void) {
+    callbacksSet.delete(callback)
+  }
+  removeAllCallbacks() {
+    ;[...callbacksSet.values()].forEach((fn) => fn())
+    callbacksSet.clear()
+  }
   // static EventBus: EventBus
   // constructor() {
   //   super()
@@ -82,3 +94,5 @@ export class EventBus extends Events2<PlayerEvents> {
   // }
   // offAllThis() {}
 }
+
+export const eventBus = new EventBus()

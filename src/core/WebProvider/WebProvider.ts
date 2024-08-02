@@ -14,6 +14,7 @@ import VideoPlayerBase, {
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
+import { checkIsLive } from '@root/utils/video'
 
 export default abstract class WebProvider
   extends EventBus
@@ -107,6 +108,16 @@ export default abstract class WebProvider
 
     const unListenOnClose = this.miniPlayer.on2(PlayerEvent.close, () => {
       this.unload()
+      if (configStore.pauseInClose_video) {
+        const video = this.webVideo
+        const isLive = checkIsLive(video)
+        if (configStore.pauseInClose_live || !isLive) {
+          video.pause()
+        }
+      }
+
+      this.removeAllCallbacks()
+
       unListenOnClose()
     })
   }

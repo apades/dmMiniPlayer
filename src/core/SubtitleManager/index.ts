@@ -6,6 +6,7 @@ import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
+import { ERROR_MSG } from '@root/shared/errorMsg'
 
 class SubtitleManager
   extends Events2<SubtitleManagerEvents>
@@ -13,13 +14,13 @@ class SubtitleManager
 {
   subtitleItems: SubtitleItem[] = []
 
-  video: HTMLVideoElement
+  video?: HTMLVideoElement
   private subtitleCache = new Map<string, { rows: SubtitleRow[] }>()
   /**正在使用的字幕rows */
   rows: SubtitleRow[] = []
   rowIndex = 0
   activeRows = new Set<SubtitleRow>()
-  activeSubtitleLabel: string = null
+  activeSubtitleLabel: string = ''
 
   /**停止监听所有video事件 */
   private videoUnListen = () => {}
@@ -56,7 +57,7 @@ class SubtitleManager
     if (this.subtitleCache.has(label)) {
       throw Error('Already add this file')
     }
-    const fileType = label.split('.').pop().toLowerCase()
+    const fileType = (label.split('.').pop() ?? '').toLowerCase()
     let rows: SubtitleRow[] = []
     switch (fileType) {
       case 'srt': {
@@ -81,6 +82,7 @@ class SubtitleManager
   }
 
   private listenVideoEvents(video = this.video) {
+    if (!video) throw Error(ERROR_MSG.unInitVideoEl)
     const rowUnListenMap = new Map<SubtitleRow, () => void>()
     const unListenRows = () => {
       ;[...rowUnListenMap.entries()].forEach(([row, unListen]) => {
@@ -148,13 +150,16 @@ class SubtitleManager
     let subtitleData = this.subtitleCache.get(subtitleItemsLabel)
     const subtitleItemsValue = this.subtitleItems.find(
       (item) => item.label === subtitleItemsLabel
-    ).value
+    )?.value
 
-    if (!subtitleData) {
+    if (!subtitleData && subtitleItemsValue) {
       const subtitleRows = await this.loadSubtitle(subtitleItemsValue)
       subtitleData = { rows: subtitleRows }
     }
-    this.rows = [...subtitleData.rows]
+    if (subtitleData) {
+      this.rows = [...subtitleData.rows]
+    }
+
     this.listenVideoEvents()
     vpConfig.showSubtitle = true
   }
@@ -175,7 +180,7 @@ class SubtitleManager
     this.rows.length = 0
     this.rowIndex = 0
     this.activeRows.clear()
-    this.activeSubtitleLabel = null
+    this.activeSubtitleLabel = ''
   }
 }
 
@@ -183,8 +188,8 @@ export class CommonSubtitleManager extends SubtitleManager {
   constructor() {
     super()
   }
-  loadSubtitle(value: string): Promise<SubtitleRow[]> {
-    return
+  async loadSubtitle(value: string): Promise<SubtitleRow[]> {
+    return []
   }
 }
 

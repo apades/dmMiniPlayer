@@ -28,7 +28,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
   get canvasVideoStream() {
     const canvasVideo = new CanvasVideo({ videoEl: this.webVideoEl })
-    window.canvasVideo = canvasVideo
     return canvasVideo.canvasVideoStream
   }
   get webPlayerVideoStream() {
@@ -89,7 +88,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         ref={(ref) => {
           if (!ref) return
           vpRef = ref
-          window.vpRef = vpRef
         }}
         // emit事件
         onSeeked={() => this.emit(PlayerEvent.seeked)}

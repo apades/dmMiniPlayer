@@ -1,5 +1,3 @@
-import '../../src/background'
-import '../../src/content-script/chat.openai.com'
 import _env from '../env'
 import { dispatchMessage } from '../message'
 import './bgBrowserAPIMessageHandler'
