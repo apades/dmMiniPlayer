@@ -44,8 +44,8 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
     if (this.videoEl.readyState >= 1) {
       this.width = this.videoEl.clientWidth
       this.height = this.videoEl.clientHeight
-      this.updateSize()
     }
+    this.updateSize()
 
     // this.width ??= this.videoEl.clientWidth
     // this.height ??= this.videoEl.clientHeight

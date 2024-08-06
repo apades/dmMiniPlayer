@@ -62,9 +62,19 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   }
 
   private nowPos = 0
+
+  // 获取弹幕比drawInSeek触发还晚，导致了第一帧弹幕显示不正常
+  private hasDraw = false
   // 绘制弹幕文本
   draw() {
+    if (!this.initd) return
+    if (!this.danmakus.length) return
     if (!this.media) throw Error('需要先调用init()')
+    if (!this.hasDraw) {
+      return this.drawInSeek()
+    }
+
+    this.hasDraw = true
 
     const videoCTime = this.media.currentTime
 
@@ -93,7 +103,10 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   }
   // 绘制第一帧的弹幕，在时间变动时需要用的
   drawInSeek() {
+    if (!this.initd) return
+    if (!this.danmakus.length) return
     if (!this.media) throw Error('需要先调用init()')
+    this.hasDraw = true
 
     this.tunnelManager.resetTunnelsMap()
     this.nowPos = 0

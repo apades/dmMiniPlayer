@@ -86,6 +86,7 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
   // seek + 第一次进入视频时确定startIndex位置
   hasSeek = true
   offsetStartTime = 10
+  initd = false
 
   get fps() {
     return configStore.renderFPS
@@ -122,8 +123,10 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
   // 监听container大小变化
   private resizeObserver = new ResizeObserver(([{ target }]) => {
     runInAction(() => {
+      if (!target.clientWidth || !target.clientHeight) return
       this.containerWidth = target.clientWidth
       this.containerHeight = target.clientHeight
+      this.initd = true
     })
   })
 
