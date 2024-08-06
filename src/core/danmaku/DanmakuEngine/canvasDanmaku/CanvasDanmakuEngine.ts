@@ -7,7 +7,7 @@ import CanvasDanmakuVideo from './CanvasDanmakuVideo'
 export default class CanvasDanmakuEngine extends DanmakuEngine {
   Danmaku = Danmaku
   declare danmakus: Danmaku[]
-  declare runningDanmakus: Danmaku[]
+  declare runningDanmakus: Set<Danmaku>
 
   canvasDanmakuVideo?: CanvasDanmakuVideo
   get canvas() {
@@ -84,22 +84,17 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
       if (startTime >= videoCTime) {
         break
       }
-      this.runningDanmakus.push(barrage)
+      this.runningDanmakus.add(barrage)
       ++this.nowPos
     }
-    const disableKeys: number[] = []
-    for (const key in this.runningDanmakus) {
-      const barrage = this.runningDanmakus[key]
+    for (const barrage of this.runningDanmakus) {
       barrage.init({})
       barrage.draw(videoCTime)
       if (barrage.disabled) {
-        disableKeys.unshift(+key)
+        this.runningDanmakus.delete(barrage)
         barrage.unload()
       }
     }
-    disableKeys.forEach((key) => {
-      this.runningDanmakus.splice(key, 1)
-    })
   }
   // 绘制第一帧的弹幕，在时间变动时需要用的
   drawInSeek() {
@@ -108,9 +103,10 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     if (!this.media) throw Error('需要先调用init()')
     this.hasDraw = true
 
+    console.log('drawInSeek', this.danmakus)
     this.tunnelManager.resetTunnelsMap()
     this.nowPos = 0
-    this.runningDanmakus.length = 0
+    this.runningDanmakus.clear()
     this.danmakus.forEach((danmaku) => danmaku.unload())
     const offsetStartTime = 10
 
@@ -194,6 +190,12 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
       topTunnel++
     }
     this.tunnelManager.tunnelsMap = { ...this.tunnelManager.tunnelsMap, top }
-    this.runningDanmakus.push(...dansToDraw)
+    dansToDraw.forEach((dan) => this.runningDanmakus.add(dan))
+  }
+
+  resetState() {
+    super.resetState()
+    this.nowPos = 0
+    this.hasDraw = false
   }
 }

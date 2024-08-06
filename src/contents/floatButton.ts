@@ -155,7 +155,7 @@ const handleMousemove = throttle((e: MouseEvent) => {
   //       └─coverEl
   const target = getTopParentsWithSameRect(_target).pop()
 
-  onceLog('mousemove TopParentWithSameRect target & e.target', target, _target)
+  // onceLog('mousemove TopParentWithSameRect target & e.target', target, _target)
   if (!target) return
 
   const videoTarget =

@@ -139,7 +139,7 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
     this.resizeObserver.observe(this.container)
   }
 
-  runningDanmakus: DanmakuBase[] = []
+  runningDanmakus = new Set<DanmakuBase>()
   addDanmakus(danmakus: DanmakuInitData[]) {
     this.danmakus.push(
       ...danmakus.map((dan) => {
@@ -154,6 +154,7 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
   setDanmakus(danmakus: DanmakuInitData[]) {
     this.resetState()
     this.addDanmakus(danmakus)
+    this.hasSeek = true
   }
 
   resetState() {

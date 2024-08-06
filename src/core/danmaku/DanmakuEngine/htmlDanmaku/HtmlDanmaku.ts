@@ -25,6 +25,7 @@ export default class HtmlDanmaku extends DanmakuBase {
     this.danmakuEngine.emit('danmaku-enter', this)
     this.bindEvent()
     this.initd = true
+    this.danmakuEngine.runningDanmakus.add(this)
   }
 
   private unbindEvent = () => {}
@@ -105,6 +106,7 @@ export default class HtmlDanmaku extends DanmakuBase {
     this.danmakuEngine.emit('danmaku-leave', this)
     this.reset()
     this.unload()
+    this.danmakuEngine.runningDanmakus.delete(this)
   }
   reset() {
     if (!this.initd) return

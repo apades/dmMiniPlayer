@@ -34,12 +34,16 @@ export default class BilibiliVideoProvider extends WebProvider {
     this.sideSwitcher = new SideSwitcher()
   }
 
+  private lastAid = ''
+  private lastCid = ''
+
   async onPlayerInitd() {
     this.initDanmakus()
     this.initSideSwitcherData()
 
     this.addOnUnloadFn(
       onRouteChange(() => {
+        this.danmakuEngine?.resetState()
         this.initDanmakus()
         this.subtitleManager.init(this.webVideo)
         this.initSideSwitcherData()
@@ -49,6 +53,10 @@ export default class BilibiliVideoProvider extends WebProvider {
 
   async initDanmakus() {
     const { aid, cid } = await getVideoInfoFromUrl(location.href)
+    if (this.lastAid === aid && this.lastCid === cid) return
+    this.lastAid = aid
+    this.lastCid = cid
+
     const danmakus = await getDanmakus(aid, cid)
 
     this.danmakuEngine?.setDanmakus(danmakus)

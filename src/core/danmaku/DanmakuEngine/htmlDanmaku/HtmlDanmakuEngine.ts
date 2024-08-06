@@ -8,7 +8,7 @@ import style from './index.less?inline'
 export default class HtmlDanmakuManager extends DanmakuEngine {
   Danmaku = Danmaku
   declare danmakus: Danmaku[]
-  declare runningDanmakus: Danmaku[]
+  declare runningDanmakus: Set<Danmaku>
 
   style = createElement('style', {
     innerHTML: style,
@@ -176,7 +176,6 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
             this.observeMovingDanmakuOutTunnel(danmaku)
           }
         }
-        this.runningDanmakus = toRunDanmakus.filter((d) => d.initd)
 
         this.hasSeek = false
       })
@@ -187,6 +186,10 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     }
   }
 
+  resetState() {
+    this.runningDanmakus.forEach((d) => d.reset())
+    super.resetState()
+  }
   changeVisible(visible?: boolean): void {
     super.changeVisible(visible)
 
