@@ -35,6 +35,10 @@ export function initSideActionAreaRender(
   const getVideoPElList = () => {
     const l1 = dq('.video-episode-card', getCtxDocument())
     if (l1.length) return l1
+    // https://www.bilibili.com/video/BV1Yh4y1j7ko 用的这个，是不是瓦比赛那套改了不得而知
+    const l2 = dq('.list-box li .clickitem', getCtxDocument())
+    if (l2.length) return l2
+
     // 目前看到瓦的比赛视频分p用的这个
     return dq('.list-box li a', getCtxDocument())
   }
