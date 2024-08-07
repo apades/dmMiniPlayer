@@ -28,6 +28,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
   get canvasVideoStream() {
     const canvasVideo = new CanvasVideo({ videoEl: this.webVideoEl })
+    console.log('canvasVideo', canvasVideo)
     return canvasVideo.canvasVideoStream
   }
   get webPlayerVideoStream() {

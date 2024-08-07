@@ -42,8 +42,8 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
 
     // 没有metadata前的video元素宽高是不正常的
     if (this.videoEl.readyState >= 1) {
-      this.width = this.videoEl.clientWidth
-      this.height = this.videoEl.clientHeight
+      this.width = this.videoEl.videoWidth
+      this.height = this.videoEl.videoHeight
     }
     this.updateSize()
 
@@ -74,8 +74,8 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
         this.startRenderAsCanvas()
       })
       videoEl.addEventListener('loadedmetadata', () => {
-        this.width = this.videoEl.clientWidth
-        this.height = this.videoEl.clientHeight
+        this.width = this.videoEl.videoWidth
+        this.height = this.videoEl.videoHeight
 
         this.updateSize()
       })
