@@ -188,6 +188,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
 
   resetState() {
     this.runningDanmakus.forEach((d) => d.reset())
+    this.nowPos = 0
     super.resetState()
   }
   changeVisible(visible?: boolean): void {

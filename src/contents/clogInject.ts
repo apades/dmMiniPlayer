@@ -4,7 +4,7 @@ const extStorage = Browser.storage.local
 
 const oClog = console.log
 
-window.showLog = false
+window.showLog = process.env.NODE_ENV === 'development'
 
 extStorage.get('showLog').then((res) => {
   if (typeof res?.['showLog'] == 'undefined') return
