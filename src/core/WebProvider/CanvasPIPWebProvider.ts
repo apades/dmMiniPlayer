@@ -69,6 +69,7 @@ export default class CanvasPIPWebProvider extends WebProvider {
       onResize(pipWindow)
       // 这里关闭了应该会自己回收了吧
       pipWindow.addEventListener('resize', () => {
+        this.emit(PlayerEvent.resize)
         onResize(pipWindow)
       })
     })

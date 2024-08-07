@@ -26,7 +26,10 @@ export async function getBiliBiliVideoDanmu(cid: string): Promise<DanType[]> {
         color: '#' + (+d[3]).toString(16),
         text: xmlDan.textContent,
         time: +d[0],
-        type: (d[1] == '4' && 'bottom') || (d[1] == '5' && 'top') || 'right',
+        type:
+          (d[1] == '4' && /* 'bottom' */ 'top') ||
+          (d[1] == '5' && 'top') ||
+          'right',
       } as DanType
     })
     .sort((a, b) => a.time - b.time)

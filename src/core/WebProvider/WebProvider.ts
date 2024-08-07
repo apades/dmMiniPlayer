@@ -61,9 +61,10 @@ export default abstract class WebProvider
   }
 
   init() {
-    this.danmakuEngine = configStore.useHtmlDanmaku
-      ? new HtmlDanmakuEngine()
-      : new CanvasDanmakuEngine()
+    this.danmakuEngine =
+      configStore.useHtmlDanmaku && configStore.useDocPIP
+        ? new HtmlDanmakuEngine()
+        : new CanvasDanmakuEngine()
 
     this.subtitleManager = new SubtitleManager()
 
