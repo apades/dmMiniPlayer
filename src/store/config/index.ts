@@ -191,11 +191,13 @@ if (isPluginEnv) {
     if (document.visibilityState !== 'visible') return
 
     const config = await extStorage.get(LOCAL_CONFIG)
-    Object.entries(config).forEach(([key, value]) => {
-      if ((configStore as any)[key] !== value) {
-        ;(configStore as any)[key] = value
-      }
-    })
+    if (config) {
+      Object.entries(config).forEach(([key, value]) => {
+        if ((configStore as any)[key] !== value) {
+          ;(configStore as any)[key] = value
+        }
+      })
+    }
   })
 }
 

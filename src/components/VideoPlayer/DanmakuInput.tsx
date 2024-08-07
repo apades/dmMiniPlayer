@@ -1,6 +1,6 @@
 import vpConfig from '@root/store/vpConfig'
 import { wait } from '@root/utils'
-import { useEffect, useRef, type FC } from 'react'
+import { useEffect, useRef, useState, type FC } from 'react'
 import Iconfont from '../Iconfont'
 import configStore from '@root/store/config'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
@@ -11,23 +11,33 @@ const DanmakuInput: FC<{
   danmakuSender: DanmakuSender
 }> = (props) => {
   const danmakuInputRef = useRef<HTMLInputElement>(null)
+  const [isErr, setErr] = useState(false)
   useEffect(() => {
     if (!danmakuInputRef.current) return
     props.danmakuSender.setData({
       textInput: danmakuInputRef.current,
     })
-    props.danmakuSender.init()
+    try {
+      props.danmakuSender.init()
+    } catch (error) {
+      console.error(error)
+      setErr(true)
+    }
 
     return () => {
       props.danmakuSender.unload()
       props.danmakuSender.setData({
         textInput: undefined,
       })
+      setErr(false)
     }
   }, [danmakuInputRef.current])
 
   return (
-    <div className="barrage-input">
+    <div
+      className="barrage-input"
+      style={{ display: isErr ? 'none' : 'block' }}
+    >
       {vpConfig.canSendDanmaku && (
         <Iconfont
           type="input"
