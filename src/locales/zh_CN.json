@@ -30,6 +30,8 @@
     "saveWidthOnDocPIPCloseOffsetDesc": "和[关闭docPIP时保存高度偏移]一样",
 
     "danmaku": "弹幕",
+    "useHtmlDanmaku": "使用html渲染弹幕",
+    "useHtmlDanmakuDesc": "相比起旧版canvas弹幕，性能和显示效果更好，但可能会存在问题，关闭可以切回旧版本",
     "danSpeed": "弹幕速度",
     "danSpeedDesc": "受 canvas渲染的帧数 影响，每次x+={val}/10",
     "danVerticalSafeTime": "垂直弹幕停留时间",

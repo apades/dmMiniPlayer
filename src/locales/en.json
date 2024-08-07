@@ -30,6 +30,8 @@
     "saveWidthOnDocPIPCloseOffsetDesc": "Same as [Save height offset when closing docPIP]",
 
     "danmaku": "Danmaku",
+    "useHtmlDanmaku": "Use HTML render danmakus",
+    "useHtmlDanmakuDesc": "Compared with the old version of canvas danmaku, the performance and display effect are better, but there may be problems. You can switch back to the old version by closing it.",
     "danSpeed": "Danmaku speed",
     "danSpeedDesc": "Affected by [Canvas FPS limit], x+={val}/10 each time",
     "danVerticalSafeTime": "Vertical danmaku alive time",

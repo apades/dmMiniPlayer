@@ -32,6 +32,7 @@ export const docPIPConfig = {
     defaultValue: !!window?.documentPictureInPicture,
     label: t('settingPanel.useDocPIP'),
     desc: t('settingPanel.useDocPIPDesc'),
+    notRecommended: true,
   }),
   docPIP_renderType: config<DocPIPRenderType>({
     // notRecommended: true,
@@ -61,5 +62,6 @@ export const docPIPConfig = {
     ],
     relateBy: 'useDocPIP',
     relateByValue: true,
+    notRecommended: true,
   }),
 }

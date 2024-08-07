@@ -12,8 +12,24 @@ export enum MaxTunnelType {
 
 const config_danmaku = {
   useHtmlDanmaku: config({
+    defaultValue: true,
+    label: t('settingPanel.useHtmlDanmaku'),
+    desc: t('settingPanel.useHtmlDanmakuDesc'),
+  }),
+  fontShadow: config({
     defaultValue: false,
-    desc: 'Reopen PIP in config changed',
+    label: t('settingPanel.fontShadow'),
+    desc: t('settingPanel.fontShadowDesc'),
+    relateBy: 'useHtmlDanmaku',
+    relateByValue: false,
+  }),
+  // fps限制相关
+  renderFPS: config({
+    defaultValue: 60,
+    label: t('settingPanel.renderFPS'),
+    desc: t('settingPanel.renderFPSDesc'),
+    relateBy: 'useHtmlDanmaku',
+    relateByValue: false,
   }),
   danSpeed: config({
     defaultValue: 20,
@@ -40,11 +56,6 @@ const config_danmaku = {
   fontFamily: config({
     defaultValue: 'Segoe UI Emoji, SimHei, "microsoft yahei", sans-serif',
     label: t('settingPanel.fontFamily'),
-  }),
-  fontShadow: config({
-    defaultValue: false,
-    label: t('settingPanel.fontShadow'),
-    desc: t('settingPanel.fontShadowDesc'),
   }),
   gap: config({
     defaultValue: 4,

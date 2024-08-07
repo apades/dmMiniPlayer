@@ -24,12 +24,6 @@ export const baseConfigMap = {
   ...config_danmaku,
   ...config_bilibili,
   ...config_subtitle,
-  // fps限制相关
-  renderFPS: config({
-    defaultValue: 60,
-    label: t('settingPanel.renderFPS'),
-    desc: t('settingPanel.renderFPSDesc'),
-  }),
   FPS_limitOffsetAccurate: config({
     defaultValue: false,
     desc: t('settingPanel.FPS_limitOffsetAccurateDesc'),
@@ -111,6 +105,7 @@ export const baseConfigMap = {
   performanceInfo: config({
     defaultValue: false,
     label: t('settingPanel.performanceInfo'),
+    notRecommended: true,
   }),
   performanceUpdateFrame: config({
     defaultValue: 30,
@@ -118,6 +113,7 @@ export const baseConfigMap = {
     desc: t('settingPanel.performanceUpdateFrameDesc'),
     relateBy: 'performanceInfo',
     relateByValue: true,
+    notRecommended: true,
   }),
   vpActionAreaLock: config({
     notRecommended: true,
