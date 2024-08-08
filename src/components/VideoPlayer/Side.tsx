@@ -1,6 +1,4 @@
 import { SideSwitcher } from '@root/core/SideSwitcher'
-import VideoChanger from '@root/core/VideoChanger'
-import { WebProvider } from '@root/core/WebProvider'
 import { formatTime, formatView } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
