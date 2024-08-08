@@ -3,6 +3,13 @@ import { DanmakuBase } from '../'
 import type { DanmakuInitProps } from '../DanmakuBase'
 
 export default class HtmlDanmaku extends DanmakuBase {
+  // 弹幕el: text_<s></s>
+  // 通过用IntersectionObserver监听<s>是否enter或leave，占领/释放弹幕tunnel
+  // TODO 还需要解决缩放后一个tunnel还有2个以上变化到leave，第一个enter并leave，那第二个会跟新danmakus冲突的情况
+  el?: HTMLElement
+  /**给tunnelManager监听 */
+  outTunnelObserveEl?: HTMLSpanElement
+
   onInit(props: DanmakuInitProps): void {
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
     if (this.tunnel == -1) {
@@ -30,6 +37,8 @@ export default class HtmlDanmaku extends DanmakuBase {
 
   private unbindEvent = () => {}
   private bindEvent() {
+    if (!this.el) return
+
     switch (this.type) {
       case 'right': {
         const unbind1 = addEventListener(this.el, (el) => {
@@ -98,17 +107,22 @@ export default class HtmlDanmaku extends DanmakuBase {
       //   this.tunnel * this.danmakuManager.gap,
     }
     Object.entries(propertyData).forEach(([key, val]) => {
+      if (!this.el) return
       this.el.style.setProperty(`--${key}`, val + '')
     })
   }
 
+  onUnload(): void {
+    this.el = undefined
+    this.outTunnelObserveEl = undefined
+  }
   onLeave() {
-    this.danmakuEngine.emit('danmaku-leave', this)
     this.reset()
     this.unload()
     this.danmakuEngine.runningDanmakus.delete(this)
   }
   reset() {
+    if (!this.el) return
     if (!this.initd) return
     this.initd = false
     this.outTunnel = false

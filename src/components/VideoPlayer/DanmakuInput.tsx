@@ -36,7 +36,7 @@ const DanmakuInput: FC<{
   return (
     <div
       className="barrage-input"
-      style={{ display: isErr ? 'none' : 'block' }}
+      style={{ display: isErr ? 'none' : undefined }}
     >
       {vpConfig.canSendDanmaku && (
         <Iconfont

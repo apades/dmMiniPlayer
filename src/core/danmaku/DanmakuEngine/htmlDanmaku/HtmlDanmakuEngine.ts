@@ -40,10 +40,12 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     if (danmaku.tunnel == -1) return
     // 只监听会动的弹幕，其他不需要
     if (danmaku.type != 'right') return
+    if (!danmaku.outTunnelObserveEl) return
     this.observerMap.set(danmaku.outTunnelObserveEl, danmaku)
     this.observer.observe(danmaku.outTunnelObserveEl)
   }
   protected onMovingDanmakuOutTunnel(danmaku: Danmaku) {
+    if (!danmaku.outTunnelObserveEl) return
     this.observer.unobserve(danmaku.outTunnelObserveEl)
     this.observerMap.delete(danmaku.outTunnelObserveEl)
     danmaku.outTunnel = true
