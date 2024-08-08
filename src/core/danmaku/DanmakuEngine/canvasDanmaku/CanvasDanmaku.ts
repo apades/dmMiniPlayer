@@ -32,6 +32,9 @@ export default class CanvasDanmaku extends DanmakuBase {
   onInit(props: DanmakuInitProps): void {
     if (this.initd) return
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
+    if (this.type == 'top') {
+      console.log('top danmaku', this.tunnel, this)
+    }
     if (this.tunnel == -1) {
       this.disabled = true
       return
@@ -94,20 +97,16 @@ export default class CanvasDanmaku extends DanmakuBase {
   private unlistens: noop[] = []
 
   onUnload(): void {
+    if (!this.tunnelOuted) {
+      this.danmakuEngine.tunnelManager.popTunnel(this)
+      this.danmakuEngine.emit('danmaku-leaveTunnel', this)
+    }
     if (this.initd && this.drawSuccess) {
       this.danmakuEngine.emit('danmaku-leave', this)
     }
     this.unlistens.forEach((unlisten) => unlisten())
     this.unlistens.length = 0
-    this.reset()
-
-    if (this.type != 'right') {
-      this.danmakuEngine.tunnelManager.popTunnel(this)
-    } else if (
-      this.danmakuEngine.tunnelManager.tunnelsMap['right'][this.tunnel] == this
-    ) {
-      this.danmakuEngine.tunnelManager.popTunnel(this)
-    }
+    // this.reset()
   }
 
   reset(): void {
@@ -125,7 +124,10 @@ export default class CanvasDanmaku extends DanmakuBase {
   /**给requestAnimationFrame用的 */
   draw(time: number) {
     if (this.disabled) return this.unload()
-    if (time < this.startTime) return this.unload()
+    if (time < this.startTime) {
+      this.disabled = true
+      return this.unload()
+    }
     if (this.endTime && (time < this.startTime || time > this.endTime)) {
       this.disabled = true
       this.unload()
@@ -153,6 +155,8 @@ export default class CanvasDanmaku extends DanmakuBase {
         if (this.endTime - 1 < time && !this.tunnelOuted) {
           this.tunnelOuted = true
           this.danmakuEngine.tunnelManager.popTunnel(this)
+          this.danmakuEngine.emit('danmaku-leaveTunnel', this)
+          this.disabled = true
         }
         break
       }

@@ -107,7 +107,10 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     this.tunnelManager.resetTunnelsMap()
     this.nowPos = 0
     this.runningDanmakus.clear()
-    this.danmakus.forEach((danmaku) => danmaku.unload())
+    this.danmakus.forEach((danmaku) => {
+      danmaku.unload()
+      danmaku.reset()
+    })
     const offsetStartTime = 10
 
     const videoCTime = this.media.currentTime
