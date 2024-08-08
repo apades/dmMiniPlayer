@@ -1,6 +1,6 @@
 import VideoPlayer, { VideoPlayerHandle } from '@root/components/VideoPlayer'
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import { createElement } from '@root/utils'
+import { createElement, throttle } from '@root/utils'
 import { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
 import CanvasVideo from '../CanvasVideo'
@@ -27,7 +27,25 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
   }
 
   get canvasVideoStream() {
-    const canvasVideo = new CanvasVideo({ videoEl: this.webVideoEl })
+    const canvasVideo = new CanvasVideo({
+      videoEl: this.webVideoEl,
+      width: this.playerRootEl?.clientWidth,
+      height: this.playerRootEl?.clientHeight,
+    })
+    const updateSize = throttle(() => {
+      if (!this.playerRootEl) return
+      canvasVideo.updateSize({
+        width: this.playerRootEl.clientWidth,
+        height: this.playerRootEl.clientHeight,
+      })
+    }, 500)
+
+    updateSize()
+    this.addCallback(
+      this.on2(PlayerEvent.resize, () => {
+        updateSize()
+      })
+    )
     console.log('canvasVideo', canvasVideo)
     return canvasVideo.canvasVideoStream
   }

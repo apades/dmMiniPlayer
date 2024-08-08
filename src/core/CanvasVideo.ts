@@ -124,8 +124,8 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
       this.videoHeight = conWidthToConRatioHeight
     }
 
-    this.canvas.width = width * window.devicePixelRatio
-    this.canvas.height = height * window.devicePixelRatio
+    this.canvas.width = this.width * window.devicePixelRatio
+    this.canvas.height = this.height * window.devicePixelRatio
     this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
   }
 
@@ -176,7 +176,13 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
   }
 
   drawCanvas() {
-    this.ctx.drawImage(this.videoEl, this.x, this.y, this.width, this.height)
+    this.ctx.drawImage(
+      this.videoEl,
+      this.x,
+      this.y,
+      this.videoWidth,
+      this.videoHeight
+    )
   }
 
   // TODO 检测视频FPS
@@ -223,5 +229,13 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
       cb()
       this.updateFrame = 0
     }
+  }
+
+  __appendToBody() {
+    this.canvas.style.position = 'fixed'
+    this.canvas.style.top = '0'
+    this.canvas.style.left = '0'
+    this.canvas.style.zIndex = '9999999'
+    document.body.appendChild(this.canvas)
   }
 }
