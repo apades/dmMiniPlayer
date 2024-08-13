@@ -12,6 +12,7 @@ class SubtitleManager
   extends Events2<SubtitleManagerEvents>
   implements PlayerComponent
 {
+  initd = false
   subtitleItems: SubtitleItem[] = []
 
   video?: HTMLVideoElement
@@ -40,9 +41,11 @@ class SubtitleManager
     this.video = video
 
     this.onInit()
+    this.initd = true
   }
   onInit() {}
   unload() {
+    this.reset()
     this.onUnload()
   }
   onUnload() {}

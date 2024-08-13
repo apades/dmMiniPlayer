@@ -86,31 +86,24 @@ type Props = React.DetailedHTMLProps<
   size?: CSSProperties['fontSize']
 }
 
-const Iconfont: FC<Props> = forwardRef((props, ref) => {
+const Iconfont: FC<Props> = (props, ref) => {
   return (
-    <span
-      ref={ref}
-      {...props}
+    <svg
+      width="1em"
+      height="1em"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
       className={`component-icon ${props.className ?? ''} ${props.type}`}
       style={{
         color: props.color,
         fontSize: props.size,
-        lineHeight: 1,
-        verticalAlign: 'middle',
         ...(props.style ?? {}),
       }}
     >
-      <svg
-        width="1em"
-        height="1em"
-        fill="currentColor"
-        aria-hidden="true"
-        focusable="false"
-      >
-        {(svgMap as any)[props.type]}
-      </svg>
-    </span>
+      {(svgMap as any)[props.type]}
+    </svg>
   )
-})
+}
 
 export default Iconfont

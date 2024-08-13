@@ -27,7 +27,7 @@ export const dq1Parent: {
     else {
       if (p.parentElement) p = p.parentElement
       else {
-        p = null
+        p = null!
         break
       }
     }
@@ -75,14 +75,14 @@ export function getTopParentsWithSameRect(
         : false
       if (isAbHeightFull) {
         rs.push(p)
-        rs.push(p.parentElement)
-        p = p.parentElement.parentElement
+        rs.push(pel)
+        p = pel.parentElement!
       } else if (
         Math.abs(pel.clientHeight - p.clientHeight) <= offset &&
         pel.clientWidth == p.clientWidth
       ) {
         rs.push(pel)
-        p = p.parentElement
+        p = pel
       } else break
     } else break
   }
@@ -105,7 +105,7 @@ export function getTopParentWithCallback(
       let rs = fn(pel, p)
       switch (rs) {
         case BackType.null: {
-          p = null
+          p = null!
           break
         }
         case BackType.true: {
@@ -117,4 +117,15 @@ export function getTopParentWithCallback(
     } else break
   }
   return p
+}
+
+export function hasParent(el: HTMLElement, parent: HTMLElement) {
+  let p = el.parentElement
+  while (true) {
+    if (!p) return false
+    if (p == parent) {
+      return true
+    }
+    p = p.parentElement
+  }
 }

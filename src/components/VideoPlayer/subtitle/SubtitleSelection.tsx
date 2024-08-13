@@ -1,14 +1,13 @@
+import Dropdown from '@root/components/Dropdown'
+import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
 import type SubtitleManager from '@root/core/SubtitleManager'
-import { observer } from 'mobx-react'
-import { type FC, memo, useState } from 'react'
-import classNames from 'classnames'
 import vpConfig from '@root/store/vpConfig'
-import { runInAction } from 'mobx'
-import FileDropper from '@root/components/FileDropper'
-import Dropdown from '@root/components/Dropdown'
-import { createElement, inputFile } from '@root/utils'
 import { t } from '@root/utils/i18n'
+import classNames from 'classnames'
+import { runInAction } from 'mobx'
+import { observer } from 'mobx-react'
+import { type FC, memo } from 'react'
 
 type Props = {
   subtitleManager: SubtitleManager
@@ -19,12 +18,8 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
 
   return (
     <Dropdown menuRender={() => <Menu {...props} />}>
-      <Iconfont
-        type="subtitle"
-        size={18}
-        className={classNames(
-          !(vpConfig.showSubtitle && activeLabel) && 'opacity-50'
-        )}
+      <div
+        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
         onClick={() => {
           runInAction(() => {
             if (!subtitleManager.activeSubtitleLabel) {
@@ -41,7 +36,13 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
             }
           })
         }}
-      />
+      >
+        <Iconfont
+          type="subtitle"
+          size={18}
+          className={classNames(!vpConfig.showSubtitle && 'opacity-50')}
+        />
+      </div>
     </Dropdown>
   )
 })
@@ -50,7 +51,7 @@ const Menu: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
   return (
-    <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px]">
+    <div className="w-[150px] bg-[#0007] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
       {[
         {
           key: 'add',
@@ -61,7 +62,8 @@ const Menu: FC<Props> = observer((props) => {
                 className="absolute w-full left-0 top-0 h-full opacity-0 cursor-pointer"
                 type="file"
                 onChange={(e) => {
-                  const file = e.target.files[0]
+                  const file = e.target.files?.[0]
+                  if (!file) return
                   subtitleManager.addFileSubtitle(file)
                 }}
                 accept=".srt, .ass"
@@ -117,7 +119,7 @@ const SubtitleSelection: FC<Props> = memo((props) => {
         document.body
       }
     >
-      <div className="relative" style={{ zIndex: 10 }}>
+      <div>
         <SubtitleSelectionInner {...props} />
       </div>
     </FileDropper>

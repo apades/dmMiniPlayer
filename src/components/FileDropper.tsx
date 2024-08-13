@@ -1,5 +1,5 @@
+import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { getClientRect, isArray } from '@root/utils'
-import { useEventListener } from 'ahooks'
 import {
   Children,
   cloneElement,
@@ -29,7 +29,7 @@ type Props = {
 /**拖拽文件进来的handler组件 */
 const FileDropper: FC<Props> = (props) => {
   const childRef = useRef<HTMLElement>()
-  const coverRef = useRef<HTMLDivElement>()
+  const coverRef = useRef<HTMLDivElement>(null)
   const [isDragover, setDragover] = useState(false)
   const [rect, setRect] = useState<DOMRect>()
   const leaveTimer = useRef<NodeJS.Timeout>()
@@ -44,21 +44,22 @@ const FileDropper: FC<Props> = (props) => {
     // console.log('childRef', childRef.current, target)
   }, [childRef.current])
 
-  useEventListener(
+  useTargetEventListener(
     'dragenter',
     (e) => {
+      if (!target) return
       if (props.disable) return
       //   console.log('enter')
-      if (!e.dataTransfer.types.includes('Files')) return
+      if (!e.dataTransfer?.types.includes('Files')) return
       setDragover(true)
       clearTimeout(leaveTimer.current)
       if (isGlobal) return
       setRect(getClientRect(target))
     },
-    { target }
+    target
   )
 
-  useEventListener(
+  useTargetEventListener(
     'dragleave',
     (e) => {
       //   console.log('leave')
@@ -66,22 +67,22 @@ const FileDropper: FC<Props> = (props) => {
         setDragover(false)
       }, 50)
     },
-    { target }
+    target
   )
-  useEventListener(
+  useTargetEventListener(
     'dragover',
     (e) => {
-      if (!e.dataTransfer.types.includes('Files')) return
+      if (!e.dataTransfer?.types.includes('Files')) return
       e.preventDefault()
       clearTimeout(leaveTimer.current)
     },
-    { target }
+    target
   )
 
-  useEventListener(
+  useTargetEventListener(
     'drop',
     (e) => {
-      if (!e.dataTransfer.types.includes('Files')) return
+      if (!e.dataTransfer?.types.includes('Files')) return
       e.preventDefault()
       setDragover(false)
       // if (props.accept) {
@@ -94,9 +95,9 @@ const FileDropper: FC<Props> = (props) => {
       //     if (!accept.includes(file.type)) return
       //   }
       // }
-      props.handleDrop(e.dataTransfer, e)
+      props.handleDrop?.(e.dataTransfer, e)
     },
-    { target }
+    target
   )
 
   if (isArray(props.children)) throw new Error('不要传数组children给该组件')

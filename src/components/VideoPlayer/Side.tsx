@@ -3,7 +3,7 @@ import { formatTime, formatView } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState, type FC } from 'react'
+import { Fragment, useEffect, useRef, useState, type FC } from 'react'
 
 export type VideoItem = {
   /**spa点击切换路由的link元素 */
@@ -57,22 +57,23 @@ const VideoPlayerSide: FC<Props> = (props) => {
   }, [props.sideSwitcher.videoList])
 
   return (
-    <div className="side-outer-container">
-      <div className="side-inner-container">
+    <div className="side-outer-container h-full">
+      <div className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]">
         {props.sideSwitcher.videoList.map((list, vi) => {
           const isCoverTitle = !!list.items?.[0]?.cover
+          if (!list.items?.length) return null
           return (
             <div key={vi}>
-              <h3>{list.category}</h3>
-              <ul className="select-list">
+              <h3 className="text-sm mb-1">{list.category}</h3>
+              <ul className="select-list flex flex-col gap-1 m-0 pl-0 list-none">
                 {list.items.map((item, ii) => {
                   return (
                     <li
                       key={item.id ?? ii}
                       className={classNames(
-                        'select',
-                        activeMap[vi] == ii && 'active',
-                        isCoverTitle && 'cover-title'
+                        'px-[8px] py-[2px] overflow-hidden whitespace-nowrap overflow-ellipsis bor-[#fff7] rounded-[2px] cursor-pointer',
+                        activeMap[vi] == ii && 'active bg-[#80bfff]',
+                        isCoverTitle && 'cover-title f-i-center gap-1'
                       )}
                       title={item.title}
                       onClick={() => {
@@ -104,20 +105,33 @@ const VideoPlayerSide: FC<Props> = (props) => {
 }
 
 const CoverTitleItem: FC<VideoItem> = (data) => {
+  const infoSharedClass = `absolute px-[2px] py-[1px] bg-[#0005] rounded-[4px]`
   return (
     <>
-      <div className="img-container">
-        <img src={data.cover} loading="lazy" />
-        {data.played && <div className="info">{formatView(+data.played)}</div>}
+      <div className="img-container wh-[99px,66px] relative text-xs">
+        <img
+          className="wh-[100%] object-contain"
+          src={data.cover}
+          loading="lazy"
+        />
+        {data.played && (
+          <div className={classNames('info bottom-1 left-1', infoSharedClass)}>
+            {formatView(+data.played)}
+          </div>
+        )}
         {data.duration && (
-          <div className="duration">{formatTime(+data.duration)}</div>
+          <div
+            className={classNames('duration right-1 bottom-1', infoSharedClass)}
+          >
+            {formatTime(+data.duration)}
+          </div>
         )}
       </div>
-      <div className="right">
-        <div className="title" title={data.title}>
+      <div className="right flex-1 overflow-hidden">
+        <div className="title line-clamp-2 mb-1 text-wrap" title={data.title}>
           {data.title}
         </div>
-        <div className="name">{data.user}</div>
+        <div className="name text-[#fffc] text-xs">{data.user}</div>
       </div>
     </>
   )

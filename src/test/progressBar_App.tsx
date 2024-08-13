@@ -1,15 +1,19 @@
-import { useRef, useMemo, type FC } from 'react'
-import Slider from '../../../../slef project origin/slider/es/Slider'
-import '../../../../slef project origin/slider/assets/index.css'
+import Slider from '@mui/material/Slider'
+import IconButton from '@root/components/IconButton'
+import Iconfont from '@root/components/Iconfont'
+import { type FC } from 'react'
 
 const App: FC = (props) => {
   return (
     <div>
       asdfadf
+      <div>
+        <IconButton size={30}>
+          <Iconfont type="input" size={24} />
+        </IconButton>
+      </div>
       <Slider
-        range
         defaultValue={[0, 30]}
-        draggableTrack
         onChange={(val) => console.log('val', val)}
       />
     </div>

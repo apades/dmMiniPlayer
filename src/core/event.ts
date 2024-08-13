@@ -13,6 +13,10 @@ export enum PlayerEvent {
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged = 'webVideoChanged',
 
+  /**长按倍速功能 */
+  longTabPlaybackRate = 'longTabPlaybackRate',
+  longTabPlaybackRateEnd = 'longTabPlaybackRateEnd',
+
   // danmakuEngine
   danmakuEngineBeforeInit = 'danmakuEngineBeforeInit',
   danmakuEngineInitd = 'danmakuEngineInitd',

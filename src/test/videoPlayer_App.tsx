@@ -1,9 +1,16 @@
 import VideoPlayer from '@root/components/VideoPlayer'
-import BarrageSender from '@root/core/danmaku/BarrageSender'
+import VideoPlayerV2 from '@root/components/VideoPlayerV2'
 import { useOnce } from '@root/hook'
 import configStore, { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
-import { CSSProperties, useRef, useState, type FC } from 'react'
+import {
+  CSSProperties,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+  type FC,
+} from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
 import { runInAction } from 'mobx'
@@ -14,6 +21,9 @@ import { HtmlDanmakuEngine as DanmakuEngine } from '@root/core/danmaku/DanmakuEn
 import { dans } from './data/dans'
 import CanvasVideo from '@root/core/CanvasVideo'
 import chalk from 'chalk'
+import { SideSwitcher } from '@root/core/SideSwitcher'
+import { useUpdate } from 'ahooks'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 
 window.parser = parser
 window.listSelector = listSelector
@@ -36,18 +46,25 @@ const Side: FC = () => {
 }
 
 const App = () => {
-  const ref = useRef<HTMLDivElement>()
-  const videoRef = useRef<HTMLVideoElement>(dq1('.video'))
+  const ref = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(dq1('.video')!)
   let [input, setInput] = useState('')
   const [editInput, setEditInput] = useState('edit')
-  const danmakuContainerRef = useRef<HTMLDivElement>()
+  const danmakuContainerRef = useRef<HTMLDivElement>(null)
+  const danmakuSenderRef = useRef<DanmakuSender>()
+  const danmakuEngineRef = useRef<DanmakuEngine>()
   const video2ref = useRef<HTMLVideoElement>(null)
+  const sideSwitcher = useRef<SideSwitcher>()
+  const forceUpdate = useUpdate()
 
   useOnce(async () => {
     console.log('dm')
     const dm = new DanmakuEngine()
     window.dm = dm
-    dm.init({ media: videoRef.current, container: danmakuContainerRef.current })
+    dm.init({
+      media: videoRef.current,
+      container: danmakuContainerRef.current!,
+    })
     dm.addDanmakus(dans)
 
     dm.on('danmaku-leave', (danmaku) => {
@@ -59,38 +76,53 @@ const App = () => {
     dm.on('danmaku-leaveTunnel', (danmaku) => {
       console.log(chalk.yellow('danmaku-leaveTunnel'), danmaku)
     })
+    danmakuEngineRef.current = dm
 
     // captureStream() 需要用户信任操作才能用
     await new Promise((res) => (window.onclick = res))
     const canvasVideo = new CanvasVideo({ videoEl: videoRef.current })
     window.canvasVideo = canvasVideo
-    video2ref.current.srcObject = canvasVideo.canvasVideoStream
-    video2ref.current.play()
+    video2ref.current!.srcObject = canvasVideo.canvasVideoStream
+    video2ref.current!.play()
     document.body.appendChild(canvasVideo.canvas)
   })
 
   useOnce(() => {
-    const sender = new BarrageSender({
-      textInput: dq1('.input-o'),
-      webSendButton: dq1('.btn1'),
-      webTextInput: dq1('.input1'),
-    })
-
-    const sender2 = new BarrageSender({
-      textInput: dq1('.input-o2'),
-      webSendButton: dq1('.btn2'),
-      webTextInput: dq1('.input2'),
-    })
-
     runInAction(() => {
       vpConfig.canSendDanmaku = true
       vpConfig.showDanmaku = true
-      configStore.vpActionAreaLock = true
+      // configStore.vpActionAreaLock = true
     })
 
-    window.sender = sender
-    window.sender2 = sender2
     console.log('ref.current')
+
+    sideSwitcher.current = new SideSwitcher()
+    const el = document.createElement('div')
+    const generateItems = (name: string, length: number) =>
+      new Array(length)
+        .fill(0)
+        .map((_, i) => ({ el, link: '', linkEl: el, title: `${name}${i + 1}` }))
+    sideSwitcher.current.init([
+      {
+        category: 'a',
+        items: generateItems('a', 4),
+      },
+      {
+        category: 'b',
+        items: [],
+      },
+      {
+        category: 'c',
+        items: generateItems('c', 3),
+      },
+    ])
+
+    danmakuSenderRef.current = new DanmakuSender()
+    danmakuSenderRef.current.setData({
+      webSendButton: dq1('.btn1') as any,
+      webTextInput: dq1('.input1') as any,
+    })
+    forceUpdate()
   })
 
   return (
@@ -100,14 +132,25 @@ const App = () => {
         ref={danmakuContainerRef}
         className="!fixed w-full h-full left-0 top-0 pointer-events-none"
       ></div>
-      <div style={{ height: 200 }}>
+      {/* <div style={{ height: 200 }}>
         <VideoPlayer
-          index={1}
-          // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+          // useWebVideo
           webVideo={videoRef.current}
-          renderSideActionArea={<Side />}
+          sideSwitcher={sideSwitcher.current}
+        />
+      </div> */}
+      <div style={{ height: 200 }}>
+        <VideoPlayerV2
+          // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+          // useWebVideo
+          webVideo={videoRef.current}
+          sideSwitcher={sideSwitcher.current}
+          danmakuSender={danmakuSenderRef.current}
+          danmakuEngine={danmakuEngineRef.current}
+          // renderSideActionArea={<Side />}
         />
       </div>
+
       <button onClick={() => openSettingPanel()}>open setting</button>
       <div>
         <p>input 测试</p>
