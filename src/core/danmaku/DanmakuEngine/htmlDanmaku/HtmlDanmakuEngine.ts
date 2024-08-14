@@ -202,4 +202,10 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
       this.container.style.visibility = 'hidden'
     }
   }
+
+  updateVideo(video: HTMLVideoElement): void {
+    this.unbindEvent()
+    this.media = video
+    this.bindEvent(video)
+  }
 }

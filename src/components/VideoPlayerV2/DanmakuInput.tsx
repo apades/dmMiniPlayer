@@ -4,17 +4,18 @@ import vpContext from './context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { useOnce } from '@root/hook'
 import classNames from 'classnames'
-import { wait } from '@root/utils'
+import { ownerWindow, wait } from '@root/utils'
 import Iconfont from '../Iconfont'
 
 type Props = {
   danmakuSender?: DanmakuSender
 }
 const DanmakuInputInner: FC<Props> = (props) => {
-  const { keydownWindow } = useContext(vpContext)
+  const { webVideo } = useContext(vpContext)
   const [isVisible, setVisible] = useState(false)
   const [isInitd, setInitd] = useState(false)
   const danmakuInputRef = useRef<HTMLInputElement>(null)
+  const keydownWindow = ownerWindow(webVideo)
 
   useOnce(() => {
     if (!danmakuInputRef.current || !props.danmakuSender) return
@@ -53,7 +54,7 @@ const DanmakuInputInner: FC<Props> = (props) => {
       setVisible(true)
       danmakuInputRef.current?.focus()
     },
-    keydownWindow ?? window
+    keydownWindow
   )
 
   return (
@@ -99,7 +100,6 @@ const DanmakuInputInner: FC<Props> = (props) => {
 }
 
 const DanmakuInput: FC<Props> = (props) => {
-  console.log('props.danmakuSender', props.danmakuSender)
   if (!props.danmakuSender) return null
   return <DanmakuInputInner {...props} />
 }

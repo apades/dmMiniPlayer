@@ -1,4 +1,4 @@
-import VideoPlayer, { VideoPlayerHandle } from '@root/components/VideoPlayer'
+import VideoPlayer /* , { VideoPlayerHandle } */ from '@root/components/VideoPlayer'
 import configStore, { DocPIPRenderType } from '@root/store/config'
 import { createElement, throttle } from '@root/utils'
 import { ComponentProps } from 'react'
@@ -10,6 +10,9 @@ import VideoPlayerBase from './VideoPlayerBase'
 import tailwind from '@root/style/tailwind.css?inline'
 import tailwindBase from '@root/style/tailwindBase.css?inline'
 import style from '@root/components/VideoPlayer/index.less?inline'
+import VideoPlayerV2, {
+  VideoPlayerHandle,
+} from '@root/components/VideoPlayerV2'
 
 const styleEl = createElement('div', {
   className: 'style-list',
@@ -76,7 +79,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     })
     const reactRoot = createRoot(root)
 
-    const vpProps: ComponentProps<typeof VideoPlayer> = (() => {
+    const vpProps: ComponentProps<typeof VideoPlayerV2> = (() => {
       // webVideo模式，使用原生video标签
       if (isWebVideoMode) return { useWebVideo: true }
       // canvas模式，传入canvasVideo的stream
@@ -94,8 +97,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     console.log('vpProps', vpProps)
 
     reactRoot.render(
-      <VideoPlayer
-        index={1}
+      <VideoPlayerV2
         // 外挂插件
         subtitleManager={this.subtitleManager}
         danmakuSender={this.danmakuSender}
@@ -109,9 +111,9 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           vpRef = ref
         }}
         // emit事件
-        onSeeked={() => this.emit(PlayerEvent.seeked)}
-        onPlay={() => this.emit(PlayerEvent.play)}
-        onPause={() => this.emit(PlayerEvent.pause)}
+        // onSeeked={() => this.emit(PlayerEvent.seeked)}
+        // onPlay={() => this.emit(PlayerEvent.play)}
+        // onPause={() => this.emit(PlayerEvent.pause)}
         {...vpProps}
       />
     )
@@ -121,6 +123,14 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       if (isWebVideoMode) {
         console.log('observeVideoElChange', newVideoEl)
         vpRef.updateVideo(newVideoEl)
+
+        if (this.subtitleManager) {
+          this.subtitleManager.updateVideo(newVideoEl)
+        }
+        if (this.danmakuEngine) {
+          this.danmakuEngine.updateVideo(newVideoEl)
+        }
+
         // 控制要不要把上一个还原
         restoreWebVideoPlayerElState =
           this.initWebVideoPlayerElState(newVideoEl)

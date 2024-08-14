@@ -47,18 +47,19 @@ const Side: FC = () => {
 
 const App = () => {
   const ref = useRef<HTMLDivElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(dq1('.video')!)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const video2ref = useRef<HTMLVideoElement>(null)
+
   let [input, setInput] = useState('')
   const [editInput, setEditInput] = useState('edit')
   const danmakuContainerRef = useRef<HTMLDivElement>(null)
   const danmakuSenderRef = useRef<DanmakuSender>()
   const danmakuEngineRef = useRef<DanmakuEngine>()
-  const video2ref = useRef<HTMLVideoElement>(null)
   const sideSwitcher = useRef<SideSwitcher>()
+
   const forceUpdate = useUpdate()
 
   useOnce(async () => {
-    console.log('dm')
     const dm = new DanmakuEngine()
     window.dm = dm
     dm.init({
@@ -127,7 +128,16 @@ const App = () => {
 
   return (
     <div ref={ref}>
-      <video ref={video2ref} />
+      <div className="p-2 bor-[black] mb-4">
+        <h2>video 1</h2>
+        <video
+          src="https://github.com/nickdesaulniers/netfix/raw/gh-pages/demo/frag_bunny.mp4"
+          ref={videoRef}
+        />
+
+        <button>replace video node</button>
+      </div>
+
       <div
         ref={danmakuContainerRef}
         className="!fixed w-full h-full left-0 top-0 pointer-events-none"
@@ -199,24 +209,6 @@ const App = () => {
         >
           test
         </button>
-      </div>
-
-      <div>
-        <ul className="select-list">
-          {new Array(10).fill(0).map((_, i) => {
-            return (
-              <li
-                className="select"
-                key={i}
-                onClick={() => {
-                  console.log('adf')
-                }}
-              >
-                第{i + 1}集
-              </li>
-            )
-          })}
-        </ul>
       </div>
     </div>
   )

@@ -147,6 +147,12 @@ class SubtitleManager
     }
   }
 
+  updateVideo(video: HTMLVideoElement) {
+    this.videoUnListen()
+    this.video = video
+    this.listenVideoEvents(video)
+  }
+
   async useSubtitle(subtitleItemsLabel: string) {
     this.resetSubtitleState()
     this.activeSubtitleLabel = subtitleItemsLabel

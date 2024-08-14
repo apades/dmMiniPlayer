@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import vpContext from './context'
-import { minmax } from '@root/utils'
+import { minmax, ownerWindow } from '@root/utils'
 import configStore from '@root/store/config'
 import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
@@ -10,12 +10,17 @@ export const useTogglePlayState = () => {
 
   const togglePlayState = async (type?: 'play' | 'pause') => {
     if (!webVideo) return
-    const canPause = !!webVideo.getAttribute('can-pause')
+    // 第一次进来没有can-pause attr，忽略判断能否pause
+    const canPauseAttr = webVideo.getAttribute('can-pause')
+    const canPause = canPauseAttr ? canPauseAttr == 'true' : true
 
     if ((!webVideo.paused || type === 'pause') && canPause && type !== 'play') {
       webVideo.pause()
     } else {
-      webVideo.removeAttribute('can-pause')
+      webVideo.setAttribute('can-pause', 'false')
+      if (webVideo.currentTime === webVideo.duration) {
+        webVideo.currentTime = 0
+      }
       return webVideo
         .play()
         .then(() => {
@@ -33,14 +38,14 @@ export const useTogglePlayState = () => {
 }
 
 /**监听docPIP全局键盘 */
-export const useInWindowKeydown = (keydownWindow: Window = window) => {
+export const useInWindowKeydown = () => {
   const { webVideo, eventBus, isLive } = useContext(vpContext)
   const togglePlayState = useTogglePlayState()
-
-  let speedModeTimer: NodeJS.Timeout,
-    isSpeedMode = false
+  const keydownWindow = ownerWindow(webVideo)
 
   useEffect(() => {
+    let speedModeTimer: NodeJS.Timeout | null,
+      isSpeedMode = false
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!webVideo) return
       // if (window.videoPlayers.focusIndex !== index) return
@@ -116,6 +121,7 @@ export const useInWindowKeydown = (keydownWindow: Window = window) => {
           if (isLive) return
           e.preventDefault()
           clearTimeout(speedModeTimer)
+          speedModeTimer = null
           eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
 
           if (isSpeedMode) {

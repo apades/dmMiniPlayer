@@ -427,3 +427,12 @@ export function getDeepPrototype<T = any>(from: any, equal: T): T {
   if (root.constructor === equal) return from
   return getDeepPrototype(root, equal)
 }
+
+export function ownerWindow(node: Node | null | undefined): Window {
+  const doc = ownerDocument(node)
+  return doc.defaultView || window
+}
+
+export function ownerDocument(node: Node | null | undefined): Document {
+  return (node && node.ownerDocument) || document
+}

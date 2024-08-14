@@ -13,6 +13,7 @@ import { observer } from 'mobx-react'
 import {
   FC,
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -76,37 +77,43 @@ const VideoPlayerV2Inner = observer(
     /**video插入替换位置 */
     const videoInsertRef = useRef<HTMLDivElement>(null)
     const videoRef = useRef<HTMLVideoElement>()
-    useOnce(() => {
+    useEffect(() => {
       if (!videoRef.current) return
       const video = videoRef.current
       props.setContext((v) => ({ ...v, webVideo: video }))
-    })
+    }, [videoRef.current])
 
-    useOnce(() => {
+    useEffect(() => {
       if (!props.webVideo) return
+      if (!videoRef.current) {
+        videoRef.current = props.webVideo
+      }
+
       // 不替换video
       if (!props.useWebVideo) {
-        updateVideoRef(props.webVideo)
+        updateVideoRef(videoRef.current)
         return
       }
       // 替换video node
       const parent = videoInsertRef.current?.parentElement
+      const lastVideo = videoRef.current
       if (!parent) return
-      parent.replaceChild(props.webVideo, videoInsertRef.current)
-      updateVideoRef(props.webVideo)
+      console.log('替换video node')
+      parent.replaceChild(videoRef.current, videoInsertRef.current)
+      updateVideoRef(videoRef.current)
 
       return () => {
         try {
-          if (props.webVideo?.parentElement != parent) {
-            return
-          }
+          if (lastVideo?.parentElement != parent) return
+          if (!videoInsertRef.current) return
 
-          parent.replaceChild(videoInsertRef.current!, props.webVideo)
+          console.log('还原videoInert')
+          parent.replaceChild(videoInsertRef.current, lastVideo)
         } catch (error) {
           console.error(error)
         }
       }
-    })
+    }, [videoRef.current])
 
     const updateVideoRef = useMemoizedFn((video: HTMLVideoElement) => {
       console.trace('updateVideoRef', video)
@@ -135,20 +142,19 @@ const VideoPlayerV2Inner = observer(
     const togglePlayState = useTogglePlayState()
 
     // 初始化
-    useInWindowKeydown(props.keydownWindow)
+    useInWindowKeydown()
     useWebVideoEventsInit()
 
+    const setCurrentTime = useMemoizedFn((time: number, pause?: boolean) => {
+      if (!videoRef.current) return
+      videoRef.current.currentTime = time
+      if (pause) togglePlayState('pause')
+    })
     useImperativeHandle(ref, () => {
       return {
-        setCurrentTime(time, pause) {
-          if (!videoRef.current) return
-          videoRef.current.currentTime = time
-          if (pause) togglePlayState('pause')
-        },
+        setCurrentTime,
         togglePlayState,
-        updateVideo(video) {
-          updateVideoRef(video)
-        },
+        updateVideo: updateVideoRef,
         ref: videoRef,
       }
     })
@@ -288,7 +294,7 @@ const DanmakuVisibleToggleBtn: FC<{ danmakuEngine?: DanmakuEngine }> = observer(
   }
 )
 
-const VideoPlayerV2: FC<Props> = (props) => {
+const VideoPlayerV2 = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
   const [context, setContext] = useState<ContextData>({
     ...defaultVpContext,
     isLive: props.isLive,
@@ -303,9 +309,10 @@ const VideoPlayerV2: FC<Props> = (props) => {
         {...props}
         eventBus={context.eventBus}
         setContext={setContext}
+        ref={ref}
       />
     </vpContext.Provider>
   )
-}
+})
 
 export default VideoPlayerV2

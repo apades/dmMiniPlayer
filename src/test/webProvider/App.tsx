@@ -37,7 +37,7 @@ const v2 = () => (
 
 const App: FC = (props) => {
   // const [player, setPlayer] = useState<WebProvider>()
-  const [isV2, setV2] = useState(true)
+  const [isV2, setV2] = useState(false)
   const mainRef = useRef<HTMLDivElement>(null)
 
   // useOnce(() => {

@@ -161,4 +161,8 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
     this.danmakus.length = 0
     this.tunnelManager.resetTunnelsMap()
   }
+
+  updateVideo(video: HTMLVideoElement) {
+    this.media = video
+  }
 }
