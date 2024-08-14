@@ -5,13 +5,12 @@ import { openSettingPanel } from '@root/store/config'
 import { useRef, useState, type FC } from 'react'
 import TestWebProvider from './TestWebProvider'
 import { PlayerEvent } from '@root/core/event'
+import { TEST_VIDEO_1 } from '../data/video'
 
 const v1 = () => (
   <div key="v1">
     <video
-      src={
-        'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'
-      }
+      src={TEST_VIDEO_1}
       className="video1"
       muted
       controls
@@ -23,9 +22,7 @@ const v2 = () => (
   <div key="v2">
     <div>
       <video
-        src={
-          'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4'
-        }
+        src={TEST_VIDEO_1}
         className="video2"
         muted
         controls
@@ -35,19 +32,10 @@ const v2 = () => (
   </div>
 )
 
+// ? 不知道为什么这不支持canvas stream显示在docPIP里，插件用法就没有问题
 const App: FC = (props) => {
-  // const [player, setPlayer] = useState<WebProvider>()
   const [isV2, setV2] = useState(false)
   const mainRef = useRef<HTMLDivElement>(null)
-
-  // useOnce(() => {
-  //   const webProvider = new TestWebProvider()
-  //   window.webProvider = webProvider
-  //   setPlayer(webProvider)
-  //   webProvider.on(PlayerEvent.close, () => {
-
-  //   })
-  // })
 
   const openPlayer = () => {
     const webProvider = new TestWebProvider()

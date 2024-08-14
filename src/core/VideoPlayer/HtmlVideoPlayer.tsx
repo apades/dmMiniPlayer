@@ -1,4 +1,3 @@
-import VideoPlayer /* , { VideoPlayerHandle } */ from '@root/components/VideoPlayer'
 import configStore, { DocPIPRenderType } from '@root/store/config'
 import { createElement, throttle } from '@root/utils'
 import { ComponentProps } from 'react'
@@ -85,12 +84,12 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       // canvas模式，传入canvasVideo的stream
       if (isCanvasVideoMode)
         return {
-          srcObject: this.canvasVideoStream,
+          videoStream: this.canvasVideoStream,
         }
 
       return {
         // 最后一个设置的使用reactVP_cs
-        srcObject: this.webPlayerVideoStream,
+        videoStream: this.webPlayerVideoStream,
       }
     })()
 
@@ -122,6 +121,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       // 只给reactVP_webVideo模式监听
       if (isWebVideoMode) {
         console.log('observeVideoElChange', newVideoEl)
+        // TODO videoStream update
         vpRef.updateVideo(newVideoEl)
 
         if (this.subtitleManager) {

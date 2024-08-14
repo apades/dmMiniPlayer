@@ -42,6 +42,7 @@ export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
   togglePlayState: ReturnType<typeof useTogglePlayState>
   updateVideo: (video: HTMLVideoElement) => void
+  updateVideoStream: (videoStream: MediaStream) => void
   ref: React.MutableRefObject<HTMLVideoElement | undefined>
 }
 
@@ -51,6 +52,7 @@ type Props = {
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  videoStream?: MediaStream
 } & Omit<ContextData, 'eventBus'>
 
 type VpInnerProps = Props & {
@@ -77,10 +79,16 @@ const VideoPlayerV2Inner = observer(
     /**video插入替换位置 */
     const videoInsertRef = useRef<HTMLDivElement>(null)
     const videoRef = useRef<HTMLVideoElement>()
+    /**这个专属于vp的ref，videoRef是专属于传入的webVideo */
+    const inVpVideoRef = useRef<HTMLVideoElement>()
     useEffect(() => {
       if (!videoRef.current) return
       const video = videoRef.current
       props.setContext((v) => ({ ...v, webVideo: video }))
+
+      if (!props.useWebVideo && props.videoStream) {
+        updateVideoStream(props.videoStream)
+      }
     }, [videoRef.current])
 
     useEffect(() => {
@@ -116,7 +124,7 @@ const VideoPlayerV2Inner = observer(
     }, [videoRef.current])
 
     const updateVideoRef = useMemoizedFn((video: HTMLVideoElement) => {
-      console.trace('updateVideoRef', video)
+      // console.trace('updateVideoRef', video)
       videoRef.current = video
       if (!subtitleManager.initd) {
         subtitleManager.init(video)
@@ -150,11 +158,17 @@ const VideoPlayerV2Inner = observer(
       videoRef.current.currentTime = time
       if (pause) togglePlayState('pause')
     })
+    const updateVideoStream = useMemoizedFn((stream: MediaStream) => {
+      if (!inVpVideoRef.current) return
+      inVpVideoRef.current.srcObject = stream
+    })
+
     useImperativeHandle(ref, () => {
       return {
         setCurrentTime,
         togglePlayState,
         updateVideo: updateVideoRef,
+        updateVideoStream,
         ref: videoRef,
       }
     })
@@ -209,6 +223,8 @@ const VideoPlayerV2Inner = observer(
                 if (!props.webVideo) {
                   updateVideoRef(ref)
                 }
+
+                inVpVideoRef.current = ref
               }}
               autoPlay
               muted
