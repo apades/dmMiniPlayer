@@ -36,7 +36,7 @@ import SpeedIcon from './SpeedIcon'
 import TogglePlayActionButton from './TogglePlayActionButton'
 import VolumeBar from './VolumeBar'
 import VolumeIcon from './VolumeIcon'
-import DanmakuInput from './DanmakuInput'
+import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -262,7 +262,7 @@ const VideoPlayerV2Inner = observer(
 
               <DanmakuVisibleToggleBtn danmakuEngine={props.danmakuEngine} />
 
-              <DanmakuInput danmakuSender={props.danmakuSender} />
+              <DanmakuInputIcon danmakuSender={props.danmakuSender} />
             </div>
 
             {!props.isLive && <PlayerProgressBar />}
@@ -272,6 +272,8 @@ const VideoPlayerV2Inner = observer(
             </div>
           </div>
         </div>
+
+        <DanmakuInput danmakuSender={props.danmakuSender} />
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (

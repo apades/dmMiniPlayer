@@ -51,7 +51,7 @@ const Menu: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
   return (
-    <div className="w-[150px] bg-[#0007] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
+    <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
       {[
         {
           key: 'add',
