@@ -115,7 +115,7 @@ const HandleWithToolTips: FC<
         className={classNames(
           isVisible || props.dragging ? 'opacity-100' : 'opacity-0',
           'handle-tooltips pointer-events-none',
-          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#fff3] rounded-[2px] px-[4px] py-[2px]'
+          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px]'
         )}
       >
         {formatTime(props.duration * (props.value / 100))}
@@ -170,7 +170,7 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
     <div
       className={classNames(
         isVisible ? 'opacity-100' : 'opacity-0',
-        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#fff3] rounded-[2px] px-[4px] py-[2px] pointer-events-none'
+        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none'
       )}
       style={{
         left: `${percent}%`,
