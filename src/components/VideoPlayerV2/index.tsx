@@ -233,7 +233,7 @@ const VideoPlayerV2Inner = observer(
         height: 100% !important;
         margin: 0 auto !important;
         cursor: pointer !important;
-        filter: contrast(1) !important;
+        ${configStore.videoSharpening ? `filter: contrast(1) !important;` : ''}
         pointer-events: none;
       }`}
           </style>

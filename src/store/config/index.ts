@@ -36,6 +36,11 @@ export const baseConfigMap = {
     defaultValue: false,
     notRecommended: true,
   }),
+  videoSharpening: config({
+    defaultValue: false,
+    label: t('settingPanel.videoSharpening'),
+    desc: t('settingPanel.videoSharpeningDesc'),
+  }),
   videoNoBorder: config<videoBorderType>({
     type: 'group',
     label: t('settingPanel.videoNoBorder'),

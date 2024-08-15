@@ -7,6 +7,8 @@
 
     "videoNoBorder": "自适应边框",
     "videoNoBorderDesc": "打开画中画时，根据之前保存的窗口大小自动调整成没黑边的视频",
+    "videoSharpening": "视频锐化",
+    "videoSharpeningDesc": "画中画宽度小于800时效果很明显，但跟[使用html渲染弹幕]一起用有些性能问题",
     "videoNoBorder_default": "默认不调整",
     "videoNoBorder_width": "以宽度为准",
     "videoNoBorder_height": "以高度为准",
@@ -31,7 +33,7 @@
 
     "danmaku": "弹幕",
     "useHtmlDanmaku": "使用html渲染弹幕",
-    "useHtmlDanmakuDesc": "显示效果、多弹幕+大字体性能比canvas更好，但很多情况下需要最小化页面才能视频不卡顿。关闭可以切回旧版canvas",
+    "useHtmlDanmakuDesc": "显示效果、多弹幕+大字体性能比canvas更好，但很多情况下需要最小化页面才能视频不卡顿(视频锐化打开是其中之一)。关闭可以切回旧版canvas",
     "danSpeed": "弹幕速度",
     "danSpeedDesc": "受 canvas渲染的帧数 影响，每次x+={val}/10",
     "danVerticalSafeTime": "垂直弹幕停留时间",
