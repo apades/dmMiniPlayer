@@ -23,8 +23,9 @@ export default class CanvasDanmakuVideo extends CanvasVideo {
     // TODO 监听container大小变化，然后调用resize
     // this.danmakuManager.container
     this.resizeObserver.observe(this.danmakuEngine.container)
-    this.on(PlayerEvent.close, () => {
+    const unListenerClose = this.on2(PlayerEvent.close, () => {
       this.resizeObserver.disconnect()
+      unListenerClose()
     })
   }
   drawCanvas(): void {

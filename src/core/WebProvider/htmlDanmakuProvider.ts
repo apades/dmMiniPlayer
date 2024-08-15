@@ -126,7 +126,6 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
         this.danmakuEngine?.addDanmakus([
           {
             text,
-            time: this.webVideo.currentTime,
             type: 'right',
             color: '#fff',
           },

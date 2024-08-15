@@ -109,6 +109,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           if (!ref) return
           vpRef = ref
         }}
+        isLive={this.isLive}
         // emit事件
         // onSeeked={() => this.emit(PlayerEvent.seeked)}
         // onPlay={() => this.emit(PlayerEvent.play)}
@@ -117,25 +118,27 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       />
     )
 
-    this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
-      // 只给reactVP_webVideo模式监听
-      if (isWebVideoMode) {
-        console.log('observeVideoElChange', newVideoEl)
-        // TODO videoStream update
-        vpRef.updateVideo(newVideoEl)
+    this.addCallback(
+      this.on2(PlayerEvent.webVideoChanged, (newVideoEl) => {
+        // 只给reactVP_webVideo模式监听
+        if (isWebVideoMode) {
+          console.log('observeVideoElChange', newVideoEl)
+          // TODO videoStream update
+          vpRef.updateVideo(newVideoEl)
 
-        if (this.subtitleManager) {
-          this.subtitleManager.updateVideo(newVideoEl)
-        }
-        if (this.danmakuEngine) {
-          this.danmakuEngine.updateVideo(newVideoEl)
-        }
+          if (this.subtitleManager) {
+            this.subtitleManager.updateVideo(newVideoEl)
+          }
+          if (this.danmakuEngine) {
+            this.danmakuEngine.updateVideo(newVideoEl)
+          }
 
-        // 控制要不要把上一个还原
-        restoreWebVideoPlayerElState =
-          this.initWebVideoPlayerElState(newVideoEl)
-      }
-    })
+          // 控制要不要把上一个还原
+          restoreWebVideoPlayerElState =
+            this.initWebVideoPlayerElState(newVideoEl)
+        }
+      })
+    )
 
     // 用来把video元素还原回原本位置的方法
     let restoreWebVideoPlayerElState = () => {}
@@ -145,10 +148,12 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       )
     }
 
-    this.on(PlayerEvent.close, () => {
-      reactRoot.unmount()
-      this.playerRootEl = undefined
-      restoreWebVideoPlayerElState()
-    })
+    this.addCallback(
+      this.on2(PlayerEvent.close, () => {
+        reactRoot.unmount()
+        this.playerRootEl = undefined
+        restoreWebVideoPlayerElState()
+      })
+    )
   }
 }

@@ -145,6 +145,7 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
       ...danmakus.map((dan) => {
         return new DanmakuBase({
           ...dan,
+          time: dan.time ?? this.media?.currentTime,
           danmakuEngine: this,
         })
       })

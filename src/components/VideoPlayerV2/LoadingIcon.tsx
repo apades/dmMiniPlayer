@@ -6,16 +6,15 @@ import { checkJumpInBufferArea } from '../VideoPlayer/utls'
 
 const LoadingIcon: FC = (props) => {
   const [isLoading, setLoading] = useState(false)
-  const { webVideo } = useContext(vpContext)
+  const { webVideo, isLive } = useContext(vpContext)
 
   useTargetEventListener(
     'waiting',
     () => {
       if (!webVideo) return
-      const isCanPlay = checkJumpInBufferArea(
-        webVideo.buffered,
-        webVideo.currentTime
-      )
+      const isCanPlay = isLive
+        ? false
+        : checkJumpInBufferArea(webVideo.buffered, webVideo.currentTime)
       setLoading(!isCanPlay)
     },
     webVideo

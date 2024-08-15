@@ -31,7 +31,7 @@
 
     "danmaku": "弹幕",
     "useHtmlDanmaku": "使用html渲染弹幕",
-    "useHtmlDanmakuDesc": "相比起旧版canvas弹幕，性能和显示效果更好，但可能会存在问题，关闭可以切回旧版本",
+    "useHtmlDanmakuDesc": "显示效果、多弹幕+大字体性能比canvas更好，但很多情况下需要最小化页面才能视频不卡顿。关闭可以切回旧版canvas",
     "danSpeed": "弹幕速度",
     "danSpeedDesc": "受 canvas渲染的帧数 影响，每次x+={val}/10",
     "danVerticalSafeTime": "垂直弹幕停留时间",

@@ -25,6 +25,7 @@ export default abstract class WebProvider
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  isLive?: boolean
 
   private _webVideo?: HTMLVideoElement
   get webVideo() {
@@ -100,6 +101,7 @@ export default abstract class WebProvider
       subtitleManager: this.subtitleManager,
       danmakuSender: this.danmakuSender,
       sideSwitcher: this.sideSwitcher,
+      isLive: !!this.isLive,
     })
 
     await this.onOpenPlayer()

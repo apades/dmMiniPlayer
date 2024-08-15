@@ -8,7 +8,8 @@ const isLive = () => !!getIframe()
 
 export default class YoutubeProvider extends HtmlDanmakuProvider {
   onInit() {
-    if (isLive()) {
+    this.isLive = isLive()
+    if (this.isLive) {
       return super.onInit()
     }
 

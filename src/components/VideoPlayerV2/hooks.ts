@@ -6,9 +6,10 @@ import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 
 export const useTogglePlayState = () => {
-  const { webVideo } = useContext(vpContext)
+  const { webVideo, isLive } = useContext(vpContext)
 
   const togglePlayState = async (type?: 'play' | 'pause') => {
+    if (isLive) return
     if (!webVideo) return
     // 第一次进来没有can-pause attr，忽略判断能否pause
     const canPauseAttr = webVideo.getAttribute('can-pause')
@@ -120,7 +121,10 @@ export const useInWindowKeydown = () => {
         case 'ArrowRight': {
           if (isLive) return
           e.preventDefault()
-          clearTimeout(speedModeTimer)
+          if (speedModeTimer) {
+            clearTimeout(speedModeTimer)
+          }
+
           speedModeTimer = null
           eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
 
@@ -148,7 +152,7 @@ export const useInWindowKeydown = () => {
       keydownWindow.removeEventListener('keydown', handleKeyDown)
       keydownWindow.removeEventListener('keyup', handleKeyUp)
     }
-  }, [keydownWindow])
+  }, [keydownWindow, isLive])
 }
 
 export const useWebVideoEventsInit = () => {

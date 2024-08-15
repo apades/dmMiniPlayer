@@ -2,6 +2,7 @@ import { HtmlDanmakuProvider } from '@root/core/WebProvider'
 import { dq1 } from '@root/utils'
 
 export default class TwitchProvider extends HtmlDanmakuProvider {
+  isLive = true
   getObserveHtmlDanmakuConfig() {
     return {
       container: dq1<HTMLDivElement>(

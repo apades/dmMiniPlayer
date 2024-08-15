@@ -17,8 +17,6 @@ export default class CCLiveProvider extends WebProvider {
           {
             ...danmaku,
             type: 'right',
-            // TODO 让add里面自己加
-            time: this.webVideo.currentTime,
           },
         ])
       })

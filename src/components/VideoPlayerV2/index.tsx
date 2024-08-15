@@ -13,6 +13,7 @@ import { observer } from 'mobx-react'
 import {
   FC,
   forwardRef,
+  useContext,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -37,6 +38,7 @@ import TogglePlayActionButton from './TogglePlayActionButton'
 import VolumeBar from './VolumeBar'
 import VolumeIcon from './VolumeIcon'
 import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
+import { hasParent } from '@root/utils/dom'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -63,6 +65,7 @@ const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const [isActionAreaVisible, setActionAreaVisible] = useState(false)
     const forceUpdate = useUpdate()
+    const { isLive } = useContext(vpContext)
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
@@ -76,6 +79,7 @@ const VideoPlayerV2Inner = observer(
       setActionAreaVisible(false)
     })
 
+    const videoPlayerRef = useRef<HTMLDivElement>(null)
     /**video插入替换位置 */
     const videoInsertRef = useRef<HTMLDivElement>(null)
     const videoRef = useRef<HTMLVideoElement>()
@@ -84,7 +88,8 @@ const VideoPlayerV2Inner = observer(
     useEffect(() => {
       if (!videoRef.current) return
       const video = videoRef.current
-      props.setContext((v) => ({ ...v, webVideo: video }))
+      const isLive = props.isLive || video.duration === Infinity
+      props.setContext((v) => ({ ...v, isLive, webVideo: video }))
 
       if (!props.useWebVideo && props.videoStream) {
         updateVideoStream(props.videoStream)
@@ -102,25 +107,27 @@ const VideoPlayerV2Inner = observer(
         updateVideoRef(videoRef.current)
         return
       }
+
+      if (!videoInsertRef.current) return
       // 替换video node
       const parent = videoInsertRef.current?.parentElement
       const lastVideo = videoRef.current
       if (!parent) return
       console.log('替换video node')
-      parent.replaceChild(videoRef.current, videoInsertRef.current)
+      parent.insertBefore(videoRef.current, videoInsertRef.current)
       updateVideoRef(videoRef.current)
 
-      return () => {
-        try {
-          if (lastVideo?.parentElement != parent) return
-          if (!videoInsertRef.current) return
+      // return () => {
+      //   try {
+      //     if (lastVideo?.parentElement != parent) return
+      //     if (!videoInsertRef.current) return
 
-          console.log('还原videoInert')
-          parent.replaceChild(videoInsertRef.current, lastVideo)
-        } catch (error) {
-          console.error(error)
-        }
-      }
+      //     console.log('还原videoInert')
+      //     parent.replaceChild(videoInsertRef.current, lastVideo)
+      //   } catch (error) {
+      //     console.error(error)
+      //   }
+      // }
     }, [videoRef.current])
 
     const updateVideoRef = useMemoizedFn((video: HTMLVideoElement) => {
@@ -162,12 +169,25 @@ const VideoPlayerV2Inner = observer(
       if (!inVpVideoRef.current) return
       inVpVideoRef.current.srcObject = stream
     })
+    const updateVideo = useMemoizedFn((video: HTMLVideoElement) => {
+      if (videoRef.current && videoPlayerRef.current && props.useWebVideo) {
+        const videoInVp = hasParent(videoRef.current, videoPlayerRef.current)
+        // 避免检测到替换了video，但旧video还存在vp中
+        if (videoInVp) {
+          videoRef.current.parentElement!.removeChild(videoRef.current)
+        }
+      }
+
+      setTimeout(() => {
+        updateVideoRef(video)
+      }, 0)
+    })
 
     useImperativeHandle(ref, () => {
       return {
         setCurrentTime,
         togglePlayState,
-        updateVideo: updateVideoRef,
+        updateVideo,
         updateVideoStream,
         ref: videoRef,
       }
@@ -190,6 +210,7 @@ const VideoPlayerV2Inner = observer(
           '--c-text-main': 'rgba(0, 0, 0, 0.85)',
           '--side-width': configStore.sideWidth + 'px',
         }}
+        ref={videoPlayerRef}
       >
         <div
           className="video-container relative h-full bg-black cursor-pointer"
@@ -265,7 +286,7 @@ const VideoPlayerV2Inner = observer(
               <DanmakuInputIcon danmakuSender={props.danmakuSender} />
             </div>
 
-            {!props.isLive && <PlayerProgressBar />}
+            {!isLive && <PlayerProgressBar />}
 
             <div className="right ml-auto">
               <VolumeBar />

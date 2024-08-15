@@ -12,6 +12,7 @@ export type ExtendComponent = {
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  isLive?: boolean
 }
 export type BaseComponent = {
   /**网站的video dom */
@@ -29,6 +30,7 @@ export default class VideoPlayerBase
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  isLive?: boolean
 
   constructor(props: MiniPlayerProps) {
     super()
@@ -37,6 +39,7 @@ export default class VideoPlayerBase
     this.danmakuEngine = props.danmakuEngine
     this.danmakuSender = props.danmakuSender
     this.sideSwitcher = props.sideSwitcher
+    this.isLive = props.isLive
   }
 
   private unobserveVideoElChange = () => {}
