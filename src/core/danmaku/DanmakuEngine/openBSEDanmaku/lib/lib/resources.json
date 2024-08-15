@@ -1,0 +1,12 @@
+{
+    "EVENT_NAME_NOT_FOUND_ERROR": "Event name not found.",
+    "EVENT_ALREADY_EXISTS_ERROR": "Event already exists.",
+    "PARAMETERS_TYPE_ERROR": "Parameters type error.",
+    "RENDER_MODE_ERROR": "The render mode \"{renderMode}\" is undefined.",
+    "BROWSER_NOT_SUPPORT_ERROR": "This browser does not support \"{message}\".",
+    "REQUESTANIMATIONFRAME_NOT_SUPPORT_WARN": "Your browser does not support method \"requestAnimationFrame\" and will switch to method \"setTimeout\", which may affect performance.",
+    "PREFORMANCENOW_NOT_SUPPORT_WARN": "Your browser does not support method \"performance.now\" and will switch to method \"Date.getTime\", which may affect time accuracy.",
+    "DEVICEPIXELRATIO_NOT_SUPPORT_WARN": "Your browser does not support variable \"devicePixelRatio\", which may cause canvas unable to display properly in high DPI mode. It is recommended to use CSS3 render mode.",
+    "LOADED_INFO": "%c{name}%c now loaded.\n\n%cVersion: {version}\nBuild Date: {buildDate}\n\n%c{description}\nHome: {home}",
+    "LOADED_INFO_IE": "{name} now loaded.\n\nVersion: {version}\nBuild Date: {buildDate}\n\n{description}\nHome: {home}"
+}
