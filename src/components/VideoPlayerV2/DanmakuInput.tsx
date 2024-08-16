@@ -29,12 +29,12 @@ const DanmakuInputIconInner: FC<Props> = (props) => {
   return (
     <div className={classNames(isInitd ? 'visible' : 'invisible')}>
       <div
-        className="p-1 cursor-pointer rounded-sm transition-colors hover:bg-[#333]"
+        className="p-[5px] cursor-pointer rounded-sm transition-colors hover:bg-[#333]"
         onClick={() => {
           eventBus.emit('visible')
         }}
       >
-        <Iconfont type="input" />
+        <Iconfont size={16} type="input" />
       </div>
     </div>
   )

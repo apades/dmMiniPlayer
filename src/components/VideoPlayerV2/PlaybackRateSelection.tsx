@@ -56,7 +56,7 @@ const PlaybackRateSelection: FC = (props) => {
   return (
     <Dropdown menuRender={() => menu}>
       <div
-        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors leading-[18px]"
         onClick={() => {
           if (playbackRate === 1) {
             handleChangePlaybackRate(lastPlaybackRate)

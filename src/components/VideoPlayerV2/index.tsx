@@ -64,9 +64,9 @@ type VpInnerProps = Props & {
 
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
-    const [isActionAreaVisible, setActionAreaVisible] = useState(false)
     const forceUpdate = useUpdate()
     const { isLive } = useContext(vpContext)
+    const actionAreaRef = useRef<HTMLDivElement>(null)
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
@@ -77,7 +77,7 @@ const VideoPlayerV2Inner = observer(
     })
 
     const { run, clear } = useDebounceTimeoutCallback(() => {
-      setActionAreaVisible(false)
+      actionAreaRef.current?.classList.remove('active')
     })
 
     const videoPlayerRef = useRef<HTMLDivElement>(null)
@@ -143,14 +143,16 @@ const VideoPlayerV2Inner = observer(
 
     const handleChangeActionArea = useMemoizedFn(
       (visible = true, lock = false) => {
+        if (configStore.vpActionAreaLock) return
+
         if (visible) {
-          run(() => setActionAreaVisible(true))
+          run(() => actionAreaRef.current?.classList.add('active'))
           if (lock) {
             clear()
           }
         } else {
           clear()
-          setActionAreaVisible(false)
+          actionAreaRef.current?.classList.remove('active')
         }
       }
     )
@@ -198,10 +200,7 @@ const VideoPlayerV2Inner = observer(
       <div
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%]',
-          props.className,
-          {
-            'action-area-show': isActionAreaVisible,
-          }
+          props.className
         )}
         style={{
           '--color-main': '#0669ff',
@@ -262,10 +261,10 @@ const VideoPlayerV2Inner = observer(
         {/* 底部操作栏 */}
         <div
           className={classNames(
-            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 opacity-0',
-            (isActionAreaVisible || configStore.vpActionAreaLock) &&
-              '!bottom-0 !opacity-100'
+            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 opacity-0 [&.active]:bottom-0 [&.active]:opacity-100',
+            configStore.vpActionAreaLock && 'active'
           )}
+          ref={actionAreaRef}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
             handleChangeActionArea(false)
