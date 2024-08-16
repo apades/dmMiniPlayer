@@ -7,7 +7,6 @@ import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
 
 export const pr = (...p: any) => path.resolve(__dirname, ...p)
 
-export const isDev = process.env.NODE_ENV === 'development'
 export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
 

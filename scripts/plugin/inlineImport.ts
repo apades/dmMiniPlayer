@@ -7,6 +7,8 @@ import fs from 'fs/promises'
 import less from 'less'
 import loadConfig, { type Result } from 'postcss-load-config'
 import postcss from 'postcss'
+import { isDev } from '../shared'
+import { transform } from 'esbuild'
 
 type Props = {}
 export const inlineImport = (props: Props): EsbuildPlugin => {
@@ -89,6 +91,19 @@ export const inlineImport = (props: Props): EsbuildPlugin => {
 
             contents = result.css
           }
+        }
+
+        if (!isDev) {
+          contents = (
+            await transform(contents, {
+              minify: true,
+              minifyIdentifiers: true,
+              minifySyntax: true,
+              minifyWhitespace: true,
+              logLevel: 'silent',
+              loader: 'css',
+            })
+          ).code
         }
 
         return {
