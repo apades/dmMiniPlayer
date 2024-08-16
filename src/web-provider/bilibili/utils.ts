@@ -1,5 +1,5 @@
+import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine'
 import type { SubtitleItem } from '@root/core/SubtitleManager/types'
-import { DanType } from '@root/danmaku'
 import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-api'
 import { DanmakuStack } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-stack'
 import { DanmakuType } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-type'
@@ -86,7 +86,7 @@ export const getDanmakus = onceCall(async (aid: string, cid: string) => {
           text: d.content,
           time: d.progress ? d.progress / 1000 : 0,
           type: type == 'top' ? 'top' : 'right',
-        } as DanType
+        } as DanmakuInitData
       })
     }
   }
