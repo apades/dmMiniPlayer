@@ -83,8 +83,8 @@ const App = () => {
     await new Promise((res) => (window.onclick = res))
     const canvasVideo = new CanvasVideo({ videoEl: videoRef.current })
     window.canvasVideo = canvasVideo
-    video2ref.current!.srcObject = canvasVideo.canvasVideoStream
-    video2ref.current!.play()
+    // video2ref.current!.srcObject = canvasVideo.canvasVideoStream
+    // video2ref.current!.play()
     document.body.appendChild(canvasVideo.canvas)
   })
 
@@ -150,15 +150,17 @@ const App = () => {
         />
       </div> */}
       <div style={{ height: 200 }}>
-        <VideoPlayerV2
-          // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
-          // useWebVideo
-          webVideo={videoRef.current}
-          sideSwitcher={sideSwitcher.current}
-          danmakuSender={danmakuSenderRef.current}
-          danmakuEngine={danmakuEngineRef.current}
-          // renderSideActionArea={<Side />}
-        />
+        {videoRef.current && (
+          <VideoPlayerV2
+            // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+            // useWebVideo
+            webVideo={videoRef.current}
+            sideSwitcher={sideSwitcher.current}
+            danmakuSender={danmakuSenderRef.current}
+            danmakuEngine={danmakuEngineRef.current}
+            // renderSideActionArea={<Side />}
+          />
+        )}
       </div>
 
       <button onClick={() => openSettingPanel()}>open setting</button>
