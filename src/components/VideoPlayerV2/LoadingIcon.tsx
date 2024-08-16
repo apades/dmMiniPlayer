@@ -22,7 +22,7 @@ const LoadingIcon: FC = (props) => {
   useTargetEventListener(
     'canplay',
     () => {
-      if (!webVideo) return
+      // if (!webVideo) return
       setLoading(false)
     },
     webVideo
