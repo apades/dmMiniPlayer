@@ -62,11 +62,12 @@ type VpInnerProps = Props & {
   setContext: React.Dispatch<React.SetStateAction<ContextData>>
 } & Pick<ContextData, 'eventBus'>
 
+const ACTION_AREA_ACTIVE = 'action-area-active'
+
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
     const { isLive } = useContext(vpContext)
-    const actionAreaRef = useRef<HTMLDivElement>(null)
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
@@ -77,7 +78,7 @@ const VideoPlayerV2Inner = observer(
     })
 
     const { run, clear } = useDebounceTimeoutCallback(() => {
-      actionAreaRef.current?.classList.remove('active')
+      videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
     })
 
     const videoPlayerRef = useRef<HTMLDivElement>(null)
@@ -146,13 +147,13 @@ const VideoPlayerV2Inner = observer(
         if (configStore.vpActionAreaLock) return
 
         if (visible) {
-          run(() => actionAreaRef.current?.classList.add('active'))
+          run(() => videoPlayerRef.current?.classList.add(ACTION_AREA_ACTIVE))
           if (lock) {
             clear()
           }
         } else {
           clear()
-          actionAreaRef.current?.classList.remove('active')
+          videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
         }
       }
     )
@@ -199,8 +200,9 @@ const VideoPlayerV2Inner = observer(
     return (
       <div
         className={classNames(
-          'video-player-v2 relative overflow-hidden select-none wh-[100%]',
-          props.className
+          'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
+          props.className,
+          configStore.vpActionAreaLock && ACTION_AREA_ACTIVE
         )}
         style={{
           '--color-main': '#0669ff',
@@ -261,10 +263,10 @@ const VideoPlayerV2Inner = observer(
         {/* 底部操作栏 */}
         <div
           className={classNames(
-            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 opacity-0 [&.active]:bottom-0 [&.active]:opacity-100',
-            configStore.vpActionAreaLock && 'active'
+            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 opacity-0',
+            // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
+            `group-[&.action-area-active]:opacity-100 group-[&.action-area-active]:bottom-0`
           )}
-          ref={actionAreaRef}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
             handleChangeActionArea(false)
@@ -301,9 +303,9 @@ const VideoPlayerV2Inner = observer(
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (
-          <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+10px)] hover:right-0 group">
+          <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+10px)] hover:right-0 group/side">
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
-            <div className="side-dragger group-hover:opacity-0 absolute ab-vertical-center w-[10px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all"></div>
+            <div className="side-dragger !group-hover/side:opacity-0 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[10px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all"></div>
           </div>
         )}
       </div>
