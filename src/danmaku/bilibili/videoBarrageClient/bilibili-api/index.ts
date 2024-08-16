@@ -58,7 +58,7 @@ export async function getBiliBiliVideoDanmu(
     if (IGNORE_TYPES.has(danmakuType)) return
 
     const danmaku: DanmakuInitData = {
-      color: '#' + (+color).toString(16),
+      color: '#' + (+color).toString(16).padStart(6, '0'),
       text: xmlDan.textContent || '',
       time: +startTime,
       type:
