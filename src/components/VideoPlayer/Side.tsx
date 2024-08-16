@@ -58,7 +58,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
 
   return (
     <div className="side-outer-container h-full">
-      <div className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]">
+      <div className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white text-sm bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]">
         {props.sideSwitcher.videoList.map((list, vi) => {
           const isCoverTitle = !!list.items?.[0]?.cover
           if (!list.items?.length) return null

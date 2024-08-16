@@ -301,7 +301,7 @@ const VideoPlayerV2Inner = observer(
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (
-          <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-10 right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+10px)] hover:right-0 group">
+          <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+10px)] hover:right-0 group">
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
             <div className="side-dragger group-hover:opacity-0 absolute ab-vertical-center w-[10px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all"></div>
           </div>
