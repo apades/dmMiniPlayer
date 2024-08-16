@@ -46,11 +46,10 @@ export const DanmakuInputIcon: FC<Props> = (props) => {
 }
 
 const DanmakuInputInner: FC<Props> = (props) => {
-  const { webVideo } = useContext(vpContext)
+  const { keydownWindow } = useContext(vpContext)
   const [isVisible, setVisible] = useState(false)
   const [isInitd, setInitd] = useState(false)
   const danmakuInputRef = useRef<HTMLInputElement>(null)
-  const keydownWindow = ownerWindow(webVideo)
 
   useTargetEventListener(
     'keydown',

@@ -40,6 +40,7 @@ import VolumeIcon from './VolumeIcon'
 import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
 import { hasParent } from '@root/utils/dom'
 import PlaybackRateSelection from './PlaybackRateSelection'
+import { ownerWindow } from '@root/utils'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -91,7 +92,16 @@ const VideoPlayerV2Inner = observer(
       if (!videoRef.current) return
       const video = videoRef.current
       const isLive = props.isLive || video.duration === Infinity
-      props.setContext((v) => ({ ...v, isLive, webVideo: video }))
+
+      const keydownWindow = props.useWebVideo
+        ? ownerWindow(video)
+        : ownerWindow(videoPlayerRef.current)
+      props.setContext((v) => ({
+        ...v,
+        isLive,
+        webVideo: video,
+        keydownWindow,
+      }))
 
       if (!props.useWebVideo && props.videoStream) {
         updateVideoStream(props.videoStream)

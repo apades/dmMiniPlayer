@@ -5,7 +5,7 @@ import Dropdown from '../Dropdown'
 import classNames from 'classnames'
 
 const PlaybackRateSelection: FC = (props) => {
-  const { webVideo } = useContext(vpContext)
+  const { webVideo, isLive } = useContext(vpContext)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [lastPlaybackRate, setLastPlaybackRate] = useState(3)
 
@@ -53,6 +53,7 @@ const PlaybackRateSelection: FC = (props) => {
     </div>
   )
 
+  if (isLive) return null
   return (
     <Dropdown menuRender={() => menu}>
       <div

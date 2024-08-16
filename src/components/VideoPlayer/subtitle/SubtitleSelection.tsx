@@ -1,13 +1,14 @@
 import Dropdown from '@root/components/Dropdown'
 import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
+import vpContext from '@root/components/VideoPlayerV2/context'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import vpConfig from '@root/store/vpConfig'
 import { t } from '@root/utils/i18n'
 import classNames from 'classnames'
 import { runInAction } from 'mobx'
 import { observer } from 'mobx-react'
-import { type FC, memo } from 'react'
+import { type FC, memo, useContext } from 'react'
 
 type Props = {
   subtitleManager: SubtitleManager
@@ -101,6 +102,8 @@ const Menu: FC<Props> = observer((props) => {
 })
 
 const SubtitleSelection: FC<Props> = memo((props) => {
+  const { isLive } = useContext(vpContext)
+  if (isLive) return null
   return (
     <FileDropper
       global

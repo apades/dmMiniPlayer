@@ -40,11 +40,11 @@ export const useTogglePlayState = () => {
 
 /**监听docPIP全局键盘 */
 export const useInWindowKeydown = () => {
-  const { webVideo, eventBus, isLive } = useContext(vpContext)
+  const { webVideo, eventBus, isLive, keydownWindow } = useContext(vpContext)
   const togglePlayState = useTogglePlayState()
-  const keydownWindow = ownerWindow(webVideo)
 
   useEffect(() => {
+    if (!keydownWindow) return
     let speedModeTimer: NodeJS.Timeout | null,
       isSpeedMode = false
     const handleKeyDown = (e: KeyboardEvent) => {
