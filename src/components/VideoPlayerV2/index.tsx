@@ -39,6 +39,7 @@ import VolumeBar from './VolumeBar'
 import VolumeIcon from './VolumeIcon'
 import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
 import { hasParent } from '@root/utils/dom'
+import PlaybackRateSelection from './PlaybackRateSelection'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -261,8 +262,9 @@ const VideoPlayerV2Inner = observer(
         {/* 底部操作栏 */}
         <div
           className={classNames(
-            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))]',
-            (isActionAreaVisible || configStore.vpActionAreaLock) && '!bottom-0'
+            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 opacity-0',
+            (isActionAreaVisible || configStore.vpActionAreaLock) &&
+              '!bottom-0 !opacity-100'
           )}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
@@ -284,6 +286,8 @@ const VideoPlayerV2Inner = observer(
               <DanmakuVisibleToggleBtn danmakuEngine={props.danmakuEngine} />
 
               <DanmakuInputIcon danmakuSender={props.danmakuSender} />
+
+              <PlaybackRateSelection />
             </div>
 
             {!isLive && <PlayerProgressBar />}
