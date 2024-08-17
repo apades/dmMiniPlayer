@@ -246,7 +246,9 @@ const VideoPlayerV2Inner = observer(
         margin: 0 auto !important;
         cursor: pointer !important;
         ${configStore.videoSharpening ? `filter: contrast(1) !important;` : ''}
-        pointer-events: none;
+        pointer-events: none !important;
+        transform: initial !important;
+        z-index: initial !important;
       }`}
           </style>
           {!props.useWebVideo && (
