@@ -9,6 +9,9 @@ const version = packageData.version
 const getBuildName = (ver) => `chrome-mv3-prod-${ver}.zip`
 const codeBuildOutDir = pr('../dist')
 const zipOutDir = pr('../build')
+if (!fs.existsSync(zipOutDir)) {
+  fs.mkdirSync(zipOutDir)
+}
 
 const verSplit = version.split('.')
 let toVersion =

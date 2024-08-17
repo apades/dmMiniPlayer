@@ -1,0 +1,40 @@
+name: Auto release
+
+on:
+  push:
+    branches:
+      - main
+    tags: 
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: |
+            - args: [--frozen-lockfile]
+
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - run: pnpm i
+      - name: Start build
+        run: pnpm run build
+      - name: Archive dist
+        run: pnpm run archive
+      - name: Github release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/*.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
