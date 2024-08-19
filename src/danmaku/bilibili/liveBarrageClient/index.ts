@@ -1,5 +1,7 @@
+import API_bilibili from '@root/api/bilibili'
 import BarrageClient from '@root/core/danmaku/BarrageClient'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
+import Cookies from 'js-cookie'
 
 export const proto = {
   nested: {
@@ -19,7 +21,10 @@ const getRoomid = async (short: number) => {
 export const getConf = async (roomid: number) => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const raw = await fetch(
-    `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomid}`
+    `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomid}&type=0`,
+    {
+      credentials: 'include',
+    }
   ).then((w) => w.json())
   const {
     data: {
@@ -42,12 +47,16 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
     const realRoomId = await getRoomid(id)
     const conf = await getConf(realRoomId)
     const address = `wss://${conf.host}:${conf.port}/sub`
+    const uid = await API_bilibili.getSelfMid()
+    const buvid = Cookies.get('buvid3')
 
     console.log('realRoomId', realRoomId, conf)
     this.ws = new LiveWS(realRoomId, {
       protover: 3,
       address,
       key: conf.key,
+      uid,
+      buvid,
     })
     this.ws.on('open', () => console.log('弹幕ws连接成功'))
     this.ws.on('close', () => console.log('弹幕ws断开'))
@@ -62,6 +71,7 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
       let color = '#' + info[0][3].toString(16),
         text = info[1]
 
+      // console.log('danmu', text, info)
       this.emit('danmu', { color, text })
     })
   }

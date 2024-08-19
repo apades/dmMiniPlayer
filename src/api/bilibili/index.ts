@@ -1,4 +1,5 @@
 import { MomentType, type BiliLiteItem, type BiliLiveLiteItem } from './type'
+import { BilibiliFollowApiData, BilibiliFollowData } from './types/follow'
 
 const API_bilibili = {
   async getMomentsVideos(
@@ -59,6 +60,66 @@ const API_bilibili = {
     ).then((res) => res.json())
 
     return res?.data?.Related
+  },
+  async getFollows(
+    /**用户id */
+    vmid: number,
+    page = 1,
+    count = 50
+  ) {
+    const res = (await fetch(
+      `https://api.bilibili.com/x/relation/followings?vmid=${vmid}&order=desc&order_type=attention&gaia_source=main_web&pn=${page}&ps=${count}`,
+      {
+        credentials: 'include',
+      }
+    ).then((res) => res.json())) as BilibiliFollowApiData
+
+    return res
+  },
+
+  async getSelfMid() {
+    try {
+      const res = await fetch('https://api.bilibili.com/x/web-interface/nav', {
+        credentials: 'include',
+      }).then((res) => res.json())
+
+      return res.data.mid as number
+    } catch (error) {
+      console.error(error)
+      return undefined
+    }
+  },
+
+  async getAllFollows(vmid?: number): Promise<BilibiliFollowData[]> {
+    let _vmid = vmid ?? (await this.getSelfMid())
+    if (!_vmid) {
+      // throw Error('需要登录')
+      console.error('未登录')
+      return []
+    }
+
+    const count = 50
+    const res = await this.getFollows(_vmid, 1, count)
+
+    const total = res.data.total
+
+    const lastCount = Math.ceil((total - count) / count)
+
+    const lastRes = (
+      await Promise.all(
+        new Array(lastCount).fill(0).map(async (_, i) => {
+          return (await this.getFollows(_vmid, i + 2, count)).data.list
+        })
+      )
+    ).flat()
+
+    return [...res.data.list, ...lastRes].map((data) => {
+      return {
+        mid: data.mid,
+        name: data.uname,
+        avatar: data.face,
+      }
+    })
   },
 }
 
