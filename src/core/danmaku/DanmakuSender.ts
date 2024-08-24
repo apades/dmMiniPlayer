@@ -124,7 +124,17 @@ export default class DanmakuSender {
   }
 
   send() {
-    this.webSendButton.click()
+    if (this.webSendButton.click) {
+      this.webSendButton.click()
+    } else {
+      // 抖音的挂载在svg上没有click方法，且是假的方法需要通过冒泡传给父元素处理
+      this.webSendButton.dispatchEvent(
+        new MouseEvent('click', {
+          bubbles: true,
+        })
+      )
+    }
+
     this.textInput.value = ''
   }
 
