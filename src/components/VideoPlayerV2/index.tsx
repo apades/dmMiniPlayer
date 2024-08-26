@@ -80,7 +80,7 @@ const VideoPlayerV2Inner = observer(
 
     const { run, clear } = useDebounceTimeoutCallback(() => {
       videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
-    })
+    }, 1000)
 
     const videoPlayerRef = useRef<HTMLDivElement>(null)
     /**video插入替换位置 */
@@ -157,7 +157,9 @@ const VideoPlayerV2Inner = observer(
         if (configStore.vpActionAreaLock) return
 
         if (visible) {
-          run(() => videoPlayerRef.current?.classList.add(ACTION_AREA_ACTIVE))
+          run(() => {
+            videoPlayerRef.current?.classList.add(ACTION_AREA_ACTIVE)
+          })
           if (lock) {
             clear()
           }
@@ -288,9 +290,11 @@ const VideoPlayerV2Inner = observer(
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
 
+          {!isLive && <PlayerProgressBar />}
+
           <div className="opacity-0 group-[&.action-area-active]:opacity-100 transition-all duration-500">
             <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
-            <div className="actions text-white px-5 py-2 f-i-center relative z-[2] gap-3 h-area-height">
+            <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
               <TogglePlayActionButton />
               <PlayedTime />
 
@@ -303,8 +307,6 @@ const VideoPlayerV2Inner = observer(
 
                 <PlaybackRateSelection />
               </div>
-
-              {!isLive && <PlayerProgressBar />}
 
               <div className="right ml-auto">
                 <VolumeBar />

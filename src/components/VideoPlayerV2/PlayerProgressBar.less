@@ -1,15 +1,33 @@
 .video-player-v2 {
+    &:not(.action-area-active){
+        .played-progress-bar.use-bottom-progress {
+            height: var(--bottom-progress-height);
+            left: 0;
+            // bottom: calc(var(--bottom-progress-height) + 100% + 5px);
+            // bottom: initial;
+            top: calc(var(--bottom-progress-height) * -1 - 5px);
+            width: 100%;
+            border-radius: 0;
+            .rc-slider {
+                --load-color: var(--bottom-progress-color) !important;
+            }
+        }
+    }
+
     .played-progress-bar {
-        width: 100%;
+        transition-property: width, height, left, bottom, top;
+        transition-duration: 0.2s;
+        transition-delay: 0.3s;
+        z-index: 5;
         height: 5px;
-        position: relative;
         flex: 1;
         border-radius: 4px;
         --offset: 38px;
         width: calc(100% - var(--offset));
         flex: none;
         position: absolute;
-        bottom: 38px;
+        // bottom: 38px;
+        top: -4px;
         left: calc(var(--offset) / 2);
         margin: 0;
     

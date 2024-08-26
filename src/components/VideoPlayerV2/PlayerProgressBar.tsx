@@ -8,6 +8,8 @@ import ProgressBar from '../ProgressBar'
 import vpContext from './context'
 import { useTogglePlayState } from './hooks'
 import style from './PlayerProgressBar.less?inline'
+import { observer } from 'mobx-react'
+import configStore from '@root/store/config'
 
 type Props = {}
 const PlayerProgressBar: FC<Props> = (props) => {
@@ -35,6 +37,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
   useEffect(() => {
     if (!webVideo || !webVideo.duration) return
     setDuration(webVideo.duration)
+    setPlayedPercent((webVideo.currentTime / webVideo.duration) * 100)
   }, [webVideo])
 
   const togglePlayState = useTogglePlayState()
@@ -53,7 +56,17 @@ const PlayerProgressBar: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div ref={containerRef} className="played-progress-bar">
+    <div
+      ref={containerRef}
+      className={classNames(
+        'played-progress-bar',
+        configStore.videoProgress_show && 'use-bottom-progress'
+      )}
+      style={{
+        '--bottom-progress-color': configStore.videoProgress_color,
+        '--bottom-progress-height': configStore.videoProgress_height + 'px',
+      }}
+    >
       <style dangerouslySetInnerHTML={{ __html: style }}></style>
       <ProgressBar
         percent={playedPercent}
@@ -115,7 +128,7 @@ const HandleWithToolTips: FC<
         className={classNames(
           isVisible || props.dragging ? 'opacity-100' : 'opacity-0',
           'handle-tooltips pointer-events-none',
-          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px]'
+          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] text-white text-[12px]'
         )}
       >
         {formatTime(props.duration * (props.value / 100))}
@@ -170,7 +183,7 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
     <div
       className={classNames(
         isVisible ? 'opacity-100' : 'opacity-0',
-        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none'
+        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none text-white text-[12px]'
       )}
       style={{
         left: `${percent}%`,
@@ -180,4 +193,4 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
     </div>
   )
 }
-export default PlayerProgressBar
+export default observer(PlayerProgressBar)

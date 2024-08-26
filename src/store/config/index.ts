@@ -67,7 +67,7 @@ export const baseConfigMap = {
     desc: t('settingPanel.videoProgress_showDesc'),
   }),
   videoProgress_color: config({
-    defaultValue: '#00AEEC',
+    defaultValue: '#0669ff',
     label: t('settingPanel.videoProgress_color'),
     relateBy: 'videoProgress_show',
     relateByValue: true,
