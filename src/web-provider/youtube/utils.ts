@@ -37,7 +37,9 @@ export async function getSubtitle(subtitleUrl: string): Promise<SubtitleRow[]> {
   return textEls.map((el, i) => {
     const startTime = +(el.getAttribute('start') ?? 0),
       duration = +(el.getAttribute('dur') ?? 0),
-      text = el.textContent ?? ''
+      text = (el.textContent ?? '').replace(/&#(\d+);/g, (_, $1) => {
+        return String.fromCharCode(+$1)
+      })
 
     return {
       startTime,
