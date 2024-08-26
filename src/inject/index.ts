@@ -26,3 +26,11 @@ onMessage_inject('inject-api:run', (data) => {
     })
   })
 })
+
+const originCreateElement = document.createElement
+const createElement: typeof originCreateElement = (tag, options) => {
+  const dom = originCreateElement.call(document, tag, options)
+  return dom
+}
+
+document.createElement = createElement

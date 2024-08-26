@@ -275,9 +275,9 @@ const VideoPlayerV2Inner = observer(
         {/* 底部操作栏 */}
         <div
           className={classNames(
-            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 opacity-0',
+            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 ',
             // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
-            `group-[&.action-area-active]:opacity-100 group-[&.action-area-active]:bottom-0`
+            `group-[&.action-area-active]:bottom-0`
           )}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
@@ -288,25 +288,27 @@ const VideoPlayerV2Inner = observer(
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
 
-          <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
-          <div className="actions text-white px-5 py-2 f-i-center relative z-[2] gap-3 h-area-height">
-            <TogglePlayActionButton />
-            <PlayedTime />
+          <div className="opacity-0 group-[&.action-area-active]:opacity-100 transition-all duration-500">
+            <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
+            <div className="actions text-white px-5 py-2 f-i-center relative z-[2] gap-3 h-area-height">
+              <TogglePlayActionButton />
+              <PlayedTime />
 
-            <div className="f-i-center gap-1">
-              <SubtitleSelection subtitleManager={subtitleManager} />
+              <div className="f-i-center gap-1">
+                <SubtitleSelection subtitleManager={subtitleManager} />
 
-              <DanmakuVisibleToggleBtn danmakuEngine={props.danmakuEngine} />
+                <DanmakuVisibleToggleBtn danmakuEngine={props.danmakuEngine} />
 
-              <DanmakuInputIcon danmakuSender={props.danmakuSender} />
+                <DanmakuInputIcon danmakuSender={props.danmakuSender} />
 
-              <PlaybackRateSelection />
-            </div>
+                <PlaybackRateSelection />
+              </div>
 
-            {!isLive && <PlayerProgressBar />}
+              {!isLive && <PlayerProgressBar />}
 
-            <div className="right ml-auto">
-              <VolumeBar />
+              <div className="right ml-auto">
+                <VolumeBar />
+              </div>
             </div>
           </div>
         </div>
