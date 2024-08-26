@@ -7,10 +7,8 @@ export default class BilibiliLiveProvider extends WebProvider {
   onInit(): void {
     this.danmakuSender = new DanmakuSender()
     this.danmakuSender.setData({
-      webSendButton: dq1Adv<HTMLElement>(
-        '#chat-control-panel-vm .bottom-actions button'
-      ),
-      webTextInput: dq1Adv<HTMLInputElement>('#chat-control-panel-vm textarea'),
+      webSendButton: dq1Adv<HTMLElement>('.right-actions button'),
+      webTextInput: dq1Adv<HTMLInputElement>('.chat-input-new textarea'),
     })
   }
 
