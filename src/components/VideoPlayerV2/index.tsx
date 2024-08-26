@@ -225,6 +225,9 @@ const VideoPlayerV2Inner = observer(
           '--side-width': configStore.sideWidth + 'px',
         }}
         ref={videoPlayerRef}
+        onMouseLeave={() => {
+          handleChangeActionArea(false)
+        }}
       >
         <div
           className="video-container relative h-full bg-black cursor-pointer"
