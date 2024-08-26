@@ -1,6 +1,6 @@
 {
   "appName": {
-    "message": "Danmaku mini player"
+    "message": "Danmaku mini player - picture-in-picture video player"
   },
   "appDesc": {
     "message": "Supports the latest picture-in-picture API function, and can play/send danmaku in video/live"
