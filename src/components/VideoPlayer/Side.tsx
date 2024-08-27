@@ -1,5 +1,5 @@
 import { SideSwitcher } from '@root/core/SideSwitcher'
-import { formatTime, formatView } from '@root/utils'
+import { formatTime, formatView, isNumber } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -17,7 +17,7 @@ export type VideoItem = {
   cover?: string
   played?: number
   user?: string
-  duration?: number
+  duration?: number | string
   id?: string
 }
 export type VideoList = {
@@ -60,20 +60,20 @@ const VideoPlayerSide: FC<Props> = (props) => {
     <div className="side-outer-container h-full">
       <div className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white text-sm bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]">
         {props.sideSwitcher.videoList.map((list, vi) => {
-          const isCoverTitle = !!list.items?.[0]?.cover
           if (!list.items?.length) return null
           return (
             <div key={vi}>
               <h3 className="text-sm mb-1">{list.category}</h3>
               <ul className="select-list flex flex-col gap-1 m-0 pl-0 list-none">
                 {list.items.map((item, ii) => {
+                  const isCoverItem = !!item.cover
                   return (
                     <li
                       key={item.id ?? ii}
                       className={classNames(
                         'px-[8px] py-[2px] overflow-hidden whitespace-nowrap overflow-ellipsis bor-[#fff7] rounded-[2px] cursor-pointer',
                         activeMap[vi] == ii && 'active bg-[#80bfff]',
-                        isCoverTitle && 'cover-title f-i-center gap-1'
+                        isCoverItem && 'cover-title f-i-center gap-1'
                       )}
                       title={item.title}
                       onClick={() => {
@@ -91,7 +91,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
                         setActiveMap((map) => ({ ...map, [vi]: ii }))
                       }}
                     >
-                      {isCoverTitle ? <CoverTitleItem {...item} /> : item.title}
+                      {isCoverItem ? <CoverTitleItem {...item} /> : item.title}
                     </li>
                   )
                 })}
@@ -123,7 +123,9 @@ const CoverTitleItem: FC<VideoItem> = (data) => {
           <div
             className={classNames('duration right-1 bottom-1', infoSharedClass)}
           >
-            {formatTime(+data.duration)}
+            {isNumber(data.duration)
+              ? formatTime(+data.duration)
+              : data.duration}
           </div>
         )}
       </div>
@@ -131,7 +133,9 @@ const CoverTitleItem: FC<VideoItem> = (data) => {
         <div className="title line-clamp-2 mb-1 text-wrap" title={data.title}>
           {data.title}
         </div>
-        <div className="name text-[#fffc] text-xs">{data.user}</div>
+        <div className="name line-clamp-1 text-[#fffc] text-xs">
+          {data.user}
+        </div>
       </div>
     </>
   )

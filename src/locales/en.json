@@ -92,6 +92,8 @@
   "vp": {
     "speed": "Speed >>",
     "addNewSubtitle": "Add new subtitle",
-    "subtitleSupport": "Support .srt .ass"
+    "subtitleSupport": "Support .srt .ass",
+    "playList": "Play list",
+    "recommendedList": "Recommended list"
   }
 }

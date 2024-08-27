@@ -436,3 +436,31 @@ export function ownerWindow(node: Node | null | undefined): Window {
 export function ownerDocument(node: Node | null | undefined): Document {
   return (node && node.ownerDocument) || document
 }
+
+export function getPrototypeSetter<T>(obj: T, key: keyof T) {
+  const setter = Object.getOwnPropertyDescriptor(obj, key)?.set
+
+  if (!setter) {
+    const prototype = Object.getPrototypeOf(obj)
+    if (!prototype) {
+      return null
+    }
+    return getPrototypeSetter(prototype, key)
+  }
+
+  return setter
+}
+
+export function getPrototypeGetter<T>(obj: T, key: keyof T) {
+  const getter = Object.getOwnPropertyDescriptor(obj, key)?.get
+
+  if (!getter) {
+    const prototype = Object.getPrototypeOf(obj)
+    if (!prototype) {
+      return null
+    }
+    return getPrototypeGetter(prototype, key)
+  }
+
+  return getter
+}

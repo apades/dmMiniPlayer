@@ -1,10 +1,5 @@
 import { onMessage, sendMessage } from '../contentSender'
 
-sendMessage('inject-api:run', {
-  origin: 'history',
-  keys: ['pushState', 'forward', 'replaceState'],
-  onTriggerEvent: 'history',
-})
 onMessage('inject-api:onTrigger', (data) => {
   if (data.event != 'history') return null
   console.log('切换了路由 history')

@@ -92,6 +92,8 @@
   "vp": {
     "speed": "倍速中 >>",
     "addNewSubtitle": "添加新的字幕",
-    "subtitleSupport": "支持 .srt .ass"
+    "subtitleSupport": "支持 .srt .ass",
+    "playList": "播放列表",
+    "recommendedList": "推荐列表"
   }
 }

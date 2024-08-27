@@ -7,6 +7,7 @@ import { dq, dq1 } from '@root/utils'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
+import { t } from '@root/utils/i18n'
 
 type RecommendVideo = {
   el: HTMLElement
@@ -145,11 +146,11 @@ export default class BilibiliVideoProvider extends WebProvider {
 
     this.sideSwitcher.init([
       {
-        category: '视频分P',
+        category: t('vp.playList'),
         items: videoPItems,
       },
       {
-        category: '推荐视频',
+        category: t('vp.recommendedList'),
         items: (await getRecommendVideos()).map((v) => ({ ...v, id: v.bvid })),
       },
     ])
