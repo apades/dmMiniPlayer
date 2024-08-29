@@ -7,7 +7,7 @@ export default class YoutubeSubtitleManager extends SubtitleManager {
   onInit() {
     runInAction(async () => {
       this.subtitleItems.length = 0
-      this.subtitleItems.push(...(await getSubtitles()))
+      this.subtitleItems = await getSubtitles(location.href)
     })
   }
   async loadSubtitle(value: string): Promise<SubtitleRow[]> {

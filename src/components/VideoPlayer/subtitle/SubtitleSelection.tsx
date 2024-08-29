@@ -3,7 +3,6 @@ import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
 import vpContext from '@root/components/VideoPlayerV2/context'
 import type SubtitleManager from '@root/core/SubtitleManager'
-import vpConfig from '@root/store/vpConfig'
 import { t } from '@root/utils/i18n'
 import classNames from 'classnames'
 import { runInAction } from 'mobx'
@@ -28,12 +27,12 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
                 subtitleManager.useSubtitle(
                   subtitleManager.subtitleItems[0].label
                 )
-                vpConfig.showSubtitle = true
+                subtitleManager.showSubtitle = true
               } else {
                 return console.log('No subtitle')
               }
             } else {
-              vpConfig.showSubtitle = !vpConfig.showSubtitle
+              subtitleManager.showSubtitle = !subtitleManager.showSubtitle
             }
           })
         }}
@@ -41,7 +40,7 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
         <Iconfont
           type="subtitle"
           size={18}
-          className={classNames(!vpConfig.showSubtitle && 'opacity-50')}
+          className={classNames(!subtitleManager.showSubtitle && 'opacity-50')}
         />
       </div>
     </Dropdown>
@@ -52,7 +51,7 @@ const Menu: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
   return (
-    <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
+    <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] text-[14px] text-white max-h-[calc(100vh-var(--area-height)-10px)] custom-scrollbar overflow-auto">
       {[
         {
           key: 'add',
@@ -80,7 +79,7 @@ const Menu: FC<Props> = observer((props) => {
             label: subtitleItem.label,
             onClick: () => {
               subtitleManager.useSubtitle(subtitleItem.label)
-              vpConfig.showSubtitle = true
+              subtitleManager.showSubtitle = true
             },
             isActive: activeLabel == subtitleItem.label,
           }
@@ -90,7 +89,8 @@ const Menu: FC<Props> = observer((props) => {
           key={i}
           className={classNames(
             'h-[24px] px-[4px] rounded-[4px] text-ellipsis text-center cursor-pointer hover:bg-gray-800 w-full transition-colors whitespace-nowrap overflow-hidden leading-[24px]',
-            v.isActive && 'text-[var(--color-main)]'
+            v.isActive && 'text-[var(--color-main)]',
+            i !== 0 && 'mt-1'
           )}
           onClick={v.onClick}
         >

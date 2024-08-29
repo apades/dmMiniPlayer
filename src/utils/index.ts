@@ -1,6 +1,6 @@
 import isEqual from 'fast-deep-equal'
 import type { CSSProperties } from 'react'
-import type { Rec, TransStringValToAny, ValueOf } from './typeUtils'
+import type { AsyncFn, Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
 import _throttle from './feat/throttle'
 // export * as debounce from './feat/debounce'
@@ -463,4 +463,20 @@ export function getPrototypeGetter<T>(obj: T, key: keyof T) {
   }
 
   return getter
+}
+
+/** 多次请求时，如果上一个还没结束，这次的promise会覆盖上一个的promise请求 */
+export function switchLatest<Args extends readonly unknown[], Return>(
+  asyncFn: AsyncFn<Args, Return>
+) {
+  let lastKey: symbol
+  return async function (...args: Args): Promise<Return> {
+    return new Promise((res, rej) => {
+      const key = (lastKey = Symbol())
+      asyncFn(...args).then(
+        (data) => lastKey === key && res(data),
+        (err) => lastKey === key && rej(err)
+      )
+    })
+  }
 }

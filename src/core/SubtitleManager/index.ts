@@ -1,7 +1,7 @@
 import vpConfig from '@root/store/vpConfig'
 import { addEventListener, readTextFromFile } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import { makeObservable, observable } from 'mobx'
+import { makeObservable, observable, runInAction } from 'mobx'
 import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
@@ -22,6 +22,7 @@ class SubtitleManager
   rowIndex = 0
   activeRows = new Set<SubtitleRow>()
   activeSubtitleLabel: string = ''
+  showSubtitle = false
 
   /**停止监听所有video事件 */
   private videoUnListen = () => {}
@@ -33,6 +34,7 @@ class SubtitleManager
       rowIndex: observable,
       // activeRows: observable,
       activeSubtitleLabel: observable,
+      showSubtitle: true,
     })
   }
 
@@ -170,7 +172,7 @@ class SubtitleManager
     }
 
     this.listenVideoEvents()
-    vpConfig.showSubtitle = true
+    this.showSubtitle = true
   }
 
   async loadSubtitle(value: string): Promise<SubtitleRow[]> {
@@ -190,6 +192,7 @@ class SubtitleManager
     this.rowIndex = 0
     this.activeRows.clear()
     this.activeSubtitleLabel = ''
+    this.showSubtitle = false
   }
 }
 

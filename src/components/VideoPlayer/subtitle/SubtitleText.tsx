@@ -2,7 +2,6 @@ import SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
 import { useOnce } from '@root/hook'
 import configStore from '@root/store/config'
-import vpConfig from '@root/store/vpConfig'
 import { useSet } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useState, type FC } from 'react'
@@ -46,7 +45,9 @@ const SubtitleText: FC<Props> = (props) => {
     <div
       className="vp-subtitle w-full flex flex-col justify-center items-center left-0 bottom-[12px] px-[24px]"
       style={{
-        opacity: !vpConfig.showSubtitle ? 0 : configStore.subtitle_opacity,
+        opacity: !subtitleManager.showSubtitle
+          ? 0
+          : configStore.subtitle_opacity,
       }}
     >
       {Object.values(activeRows).map((row, i) => (

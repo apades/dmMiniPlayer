@@ -42,3 +42,7 @@ export type TransStringValToAny<
 > = {
   [K in keyof T]: T[K] extends string ? val : T[K]
 }
+
+export type AsyncFn<Args extends readonly unknown[] = any[], Return = any> = (
+  ...args: Args
+) => Promise<Awaited<Return>>
