@@ -12,7 +12,7 @@ export default class BilibiliLiveProvider extends WebProvider {
         dq1Adv<HTMLElement>('#chat-control-panel-vm .bottom-actions button'),
       webTextInput:
         dq1Adv<HTMLInputElement>('.chat-input-new textarea') ||
-        dq1Adv<HTMLInputElement>('.chat-input-new textarea'),
+        dq1Adv<HTMLInputElement>('#chat-control-panel-vm textarea'),
     })
   }
 
