@@ -87,7 +87,8 @@
     "subtitleFontFamily": "Font"
   },
   "popup": {
-    "tips": "Click on the web page to trigger picture-in-picture"
+    "tips": "Click on the web page to trigger picture-in-picture",
+    "noVideo": "No video in this page"
   },
   "vp": {
     "speed": "Speed >>",

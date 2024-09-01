@@ -87,7 +87,8 @@
     "subtitleFontFamily": "字体"
   },
   "popup": {
-    "tips": "需要点击下页面才能触发画中画播放"
+    "tips": "需要点击下页面才能触发画中画播放",
+    "noVideo": "该网页中没有视频"
   },
   "vp": {
     "speed": "倍速中 >>",
