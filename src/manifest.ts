@@ -26,12 +26,23 @@ export const manifest: chrome.runtime.ManifestV3 = {
     default_popup: 'popup.html',
   },
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting'],
+  permissions: ['storage'],
   background: {
     service_worker: 'background.js',
     type: 'module',
   },
   content_scripts: [
+    {
+      js: ['assets/lib/before-init-main.js'],
+      run_at: 'document_start',
+      matches: ['<all_urls>'],
+    },
+    {
+      js: ['assets/lib/entry-world.js'],
+      run_at: 'document_start',
+      world: 'MAIN',
+      matches: ['<all_urls>'],
+    },
     {
       matches: ['<all_urls>'],
       js: ['assets/lib/entry-all-frames.js'],
