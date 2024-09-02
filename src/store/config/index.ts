@@ -175,7 +175,7 @@ if (isPluginEnv) {
 
       return { ...config, ...savedConfig }
     },
-    useShadowDom: !isDev,
+    useShadowDom: true,
   })
 }
 

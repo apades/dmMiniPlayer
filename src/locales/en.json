@@ -90,6 +90,13 @@
     "tips": "Click on the web page to trigger picture-in-picture",
     "noVideo": "No video in this page"
   },
+  "menu": {
+    "showFloatBtn": "Show float button",
+    "openSetting": "Open setting"
+  },
+  "floatButton": {
+    "closeTips": "You can reopen float button in extension menu"
+  },
   "vp": {
     "speed": "Speed >>",
     "addNewSubtitle": "Add new subtitle",

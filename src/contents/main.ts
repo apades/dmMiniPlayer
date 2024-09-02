@@ -60,6 +60,10 @@ onBgMessage('player-startPIPPlay', async (req) => {
   return { state: 'ok' }
 })
 
+onBgMessage('open-setting', () => {
+  window.openSettingPanel()
+})
+
 // 从子iframe里过来的消息
 onMessage('start-PIP', (data) => {
   openPlayer({ videoEl: data.videoEl })

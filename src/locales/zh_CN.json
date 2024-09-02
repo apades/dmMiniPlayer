@@ -90,6 +90,13 @@
     "tips": "需要点击下页面才能触发画中画播放",
     "noVideo": "该网页中没有视频"
   },
+  "menu": {
+    "showFloatBtn": "显示浮动按钮",
+    "openSetting": "打开设置"
+  },
+  "floatButton": {
+    "closeTips": "您可以在扩展菜单中重新打开浮动按钮"
+  },
   "vp": {
     "speed": "倍速中 >>",
     "addNewSubtitle": "添加新的字幕",

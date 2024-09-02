@@ -3,6 +3,8 @@ import Browser from 'webextension-polyfill'
 import floatBtnStyle from './floatButton.less?inline'
 
 import { getTopParentsWithSameRect } from '@root/utils/dom'
+import { useBrowserLocalStorage } from '@root/utils/storage'
+import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
 
 const INIT_ATTR = 'rc-f-init'
 function _initVideoFloatBtn(
@@ -78,6 +80,10 @@ function _initVideoFloatBtn(
   })
   shadowRoot.appendChild(styleEl)
 
+  useBrowserLocalStorage(FLOAT_BTN_HIDDEN, (hidden) => {
+    floatBtn.style.visibility = !hidden ? 'visible' : 'hidden'
+  })
+
   try {
     if (container == vel) container = container.parentElement!
     if (container.getAttribute(INIT_ATTR) === 'true') return
@@ -121,6 +127,11 @@ function _initVideoFloatBtn(
   container.addEventListener('mouseleave', () => {
     floatBtn.classList.add('hidden')
     timmer && clearTimeout(timmer)
+  })
+
+  Browser.storage.local.get()
+  Browser.storage.local.onChanged.addListener((changes) => {
+    changes
   })
 }
 
