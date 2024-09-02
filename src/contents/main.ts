@@ -6,11 +6,11 @@ import { WebProvider } from '@root/core/WebProvider'
 
 console.log('run content')
 
-let provider = onceCall(() => {
+let provider = () => {
   let provider = getWebProvider()!
   window.provider = provider
   return provider
-})
+}
 
 const waitingPageActive = async () => {
   console.log(
