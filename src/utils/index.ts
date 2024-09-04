@@ -237,24 +237,25 @@ export function createElement<
   const { children, dataset, style, ...op } = { ...option }
   const el = document.createElement(tag)
   Object.assign(el, op)
-  if (style && isObject(style)) {
-    delete op.style
-    Object.entries(style).forEach(([k, v]) => {
-      if (isNumber(v)) {
-        v = v + 'px'
-      }
-      if (isUndefined(v) || isNull(v)) return
-      el.style[k as any] = v as any
-    })
+  if (style) {
+    if (isObject(style)) {
+      Object.entries(style).forEach(([k, v]) => {
+        if (isNumber(v)) {
+          v = v + 'px'
+        }
+        if (isUndefined(v) || isNull(v)) return
+        el.style[k as any] = v as any
+      })
+    } else {
+      el.style.cssText = style
+    }
   }
   if (dataset) {
-    delete (op as any).dataset
     Object.entries(dataset).forEach(([key, val]) => {
       el.setAttribute(`data-${key}`, val + '')
     })
   }
   if (children) {
-    delete (op as any).children
     children.forEach((c) => {
       el.appendChild(c)
     })
