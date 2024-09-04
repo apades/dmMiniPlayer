@@ -7,9 +7,15 @@ import { dq } from '@root/utils'
 export async function getVideoInfo(url = location.href) {
   const htmlText = await fetch(url).then((res) => res.text())
 
-  return JSON.parse(
-    '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};/)?.[1] + '}'
-  )
+  try {
+    return JSON.parse(
+      '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};var/)?.[1] + '}'
+    )
+  } catch (error) {
+    return JSON.parse(
+      '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};/)?.[1] + '}'
+    )
+  }
 }
 
 export async function getSubtitles(
