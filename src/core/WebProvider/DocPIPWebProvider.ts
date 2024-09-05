@@ -1,9 +1,10 @@
 import configStore, { videoBorderType } from '@root/store/config'
 import { createElement } from '@root/utils'
-import { getPIPWindowConfig } from '@root/utils/storage'
+import { getBrowserSyncStorage } from '@root/utils/storage'
 import { WebProvider } from '.'
 import { PlayerEvent } from '../event'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
+import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
@@ -13,7 +14,7 @@ export default class DocPIPWebProvider extends WebProvider {
 
   async onOpenPlayer() {
     // 获取应该有的docPIP宽高
-    const pipWindowConfig = await getPIPWindowConfig()
+    const pipWindowConfig = await getBrowserSyncStorage(PIP_WINDOW_CONFIG)
     let width = pipWindowConfig?.width ?? this.webVideo.clientWidth,
       height = pipWindowConfig?.height ?? this.webVideo.clientHeight
 

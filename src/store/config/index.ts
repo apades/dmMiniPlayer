@@ -1,6 +1,9 @@
 import { config } from '@apad/setting-panel'
 import { initSetting } from '@apad/setting-panel'
-import { extStorage } from '@root/utils/storage'
+import {
+  getBrowserSyncStorage,
+  setBrowserSyncStorage,
+} from '@root/utils/storage'
 import * as mobx from 'mobx'
 import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
@@ -9,8 +12,8 @@ import config_danmaku from './danmaku'
 import config_bilibili from './bilibili'
 import config_subtitle from './subtitle'
 import { isEn, t } from '@root/utils/i18n'
-import { observer } from 'mobx-react'
-import isDev from '@root/utils/isDev'
+import { DM_MINI_PLAYER_CONFIG } from '@root/shared/storeKey'
+import isPluginEnv from '@root/shared/isPluginEnv'
 
 export { DocPIPRenderType } from './docPIP'
 
@@ -143,61 +146,42 @@ export const baseConfigMap = {
   ...docPIPConfig,
 }
 
-const LOCAL_CONFIG = 'LOCAL_CONFIG'
-
-window.extStorage = extStorage
-
-const isPluginEnv = !!chrome?.storage
-const settingProps = {
-  settings: baseConfigMap,
-  saveInLocal: !isPluginEnv,
-  mobx,
-  i18n: isEn ? en : zh,
-  mobxObserver: observer,
-}
-
-if (isPluginEnv) {
-  Object.assign(settingProps, {
-    onSave(newConfig: Partial<typeof configStore>) {
+export const { configStore, openSettingPanel, closeSettingPanel, observe } =
+  initSetting({
+    settings: baseConfigMap,
+    saveInLocal: !isPluginEnv,
+    mobx,
+    i18n: isEn ? en : zh,
+    onSave(newConfig) {
+      if (!isPluginEnv) return
       if (newConfig.useDocPIP) {
         if (!window?.documentPictureInPicture) {
-          delete newConfig.useDocPIP
+          delete (newConfig as any).useDocPIP
           alert(t('settingPanel.unsupportDocPIPTips'))
         }
       }
-      return extStorage.set(LOCAL_CONFIG, newConfig)
+      setBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, newConfig)
     },
-    async onInitLoadConfig(config: any) {
-      const savedConfig =
-        ((await extStorage.get<Record<any, any>>(
-          LOCAL_CONFIG
-        )) as typeof config) || {}
+    async onInitLoadConfig(config) {
+      if (!isPluginEnv) return config
+      // 这里去掉as any会触发ts的循环type错误
+      const savedConfig = (await getBrowserSyncStorage(
+        DM_MINI_PLAYER_CONFIG
+      )) as any
 
-      return { ...config, ...savedConfig }
+      return { ...config, ...(savedConfig ?? {}) }
     },
     useShadowDom: true,
   })
-}
-
-// if (isDev) {
-//   import('@apad/setting-panel/lib/index.css')
-// }
-
-export const { configStore, openSettingPanel, closeSettingPanel, observe } =
-  initSetting({ ...settingProps })
 
 // 同步多个tab的config
 if (isPluginEnv) {
   document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState !== 'visible') return
 
-    const config = await extStorage.get(LOCAL_CONFIG)
-    if (config) {
-      Object.entries(config).forEach(([key, value]) => {
-        if ((configStore as any)[key] !== value) {
-          ;(configStore as any)[key] = value
-        }
-      })
+    const config = await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
+    if (config && window.__spSetSavedConfig) {
+      window.__spSetSavedConfig(config)
     }
   })
 }
