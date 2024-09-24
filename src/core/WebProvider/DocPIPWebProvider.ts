@@ -1,6 +1,9 @@
 import configStore, { videoBorderType } from '@root/store/config'
 import { createElement } from '@root/utils'
-import { getBrowserSyncStorage } from '@root/utils/storage'
+import {
+  getBrowserSyncStorage,
+  setBrowserSyncStorage,
+} from '@root/utils/storage'
 import { WebProvider } from '.'
 import { PlayerEvent } from '../event'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
@@ -45,6 +48,10 @@ export default class DocPIPWebProvider extends WebProvider {
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {
       this.emit(PlayerEvent.close)
+      setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
+        height: pipWindow.innerHeight,
+        width: pipWindow.innerWidth,
+      })
     })
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)
