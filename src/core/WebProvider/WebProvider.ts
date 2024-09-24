@@ -104,6 +104,13 @@ export default abstract class WebProvider
       isLive: !!this.isLive,
     })
 
+    const unListenVideoChanged = this.on2(
+      PlayerEvent.webVideoChanged,
+      (newVideoEl) => {
+        this.webVideo = newVideoEl
+      }
+    )
+
     await this.onOpenPlayer()
     await this.onPlayerInitd()
 
@@ -122,6 +129,7 @@ export default abstract class WebProvider
       this.removeAllCallbacks()
 
       unListenOnClose()
+      unListenVideoChanged()
     })
   }
 
