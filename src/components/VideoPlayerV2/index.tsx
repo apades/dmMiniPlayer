@@ -194,9 +194,7 @@ const VideoPlayerV2Inner = observer(
         }
       }
 
-      setTimeout(() => {
-        updateVideoRef(video)
-      }, 0)
+      updateVideoRef(video)
     })
 
     useImperativeHandle(ref, () => {

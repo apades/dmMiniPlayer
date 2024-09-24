@@ -27,7 +27,6 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
 
   fpsInterval = 0
 
-  @onceCallGet
   get canvasVideoStream() {
     return this.canvas.captureStream()
   }

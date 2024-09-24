@@ -28,7 +28,10 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     // this.on(PlayerEvent.close, () => {})
   }
 
+  private unloadPreCanvasVideoStream = () => {}
   get canvasVideoStream() {
+    this.unloadPreCanvasVideoStream()
+
     const canvasVideo = new CanvasVideo({
       videoEl: this.webVideoEl,
       width: this.playerRootEl?.clientWidth,
@@ -43,12 +46,15 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     }, 500)
 
     updateSize()
-    this.addCallback(
-      this.on2(PlayerEvent.resize, () => {
-        updateSize()
-      })
-    )
+    const unListenResize = this.on2(PlayerEvent.resize, () => {
+      updateSize()
+    })
     console.log('canvasVideo', canvasVideo)
+
+    this.unloadPreCanvasVideoStream = () => {
+      canvasVideo.stopRenderAsCanvas()
+      unListenResize()
+    }
     return canvasVideo.canvasVideoStream
   }
   get webPlayerVideoStream() {
@@ -120,22 +126,33 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     this.addCallback(
       this.on2(PlayerEvent.webVideoChanged, (newVideoEl) => {
-        // 只给reactVP_webVideo模式监听
+        console.log('observeVideoElChange', newVideoEl)
+        this.webVideoEl = newVideoEl
+
         if (isWebVideoMode) {
-          console.log('observeVideoElChange', newVideoEl)
-          // TODO videoStream update
           vpRef.updateVideo(newVideoEl)
-
-          if (this.subtitleManager) {
-            this.subtitleManager.updateVideo(newVideoEl)
-          }
-          if (this.danmakuEngine) {
-            this.danmakuEngine.updateVideo(newVideoEl)
-          }
-
           // 控制要不要把上一个还原
           restoreWebVideoPlayerElState =
             this.initWebVideoPlayerElState(newVideoEl)
+        } else if (isCanvasVideoMode) {
+          const canvasVideoStream = this.canvasVideoStream
+          vpRef.updateVideoStream(canvasVideoStream)
+          // vpRef.updateVideo(newVideoEl)
+          setTimeout(() => {
+            vpRef.updateVideo(newVideoEl)
+          }, 0)
+        } else {
+          vpRef.updateVideo(newVideoEl)
+          setTimeout(() => {
+            vpRef.updateVideoStream(this.webPlayerVideoStream)
+          }, 0)
+        }
+
+        if (this.subtitleManager) {
+          this.subtitleManager.updateVideo(newVideoEl)
+        }
+        if (this.danmakuEngine) {
+          this.danmakuEngine.updateVideo(newVideoEl)
         }
       })
     )
@@ -153,6 +170,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         reactRoot.unmount()
         this.playerRootEl = undefined
         restoreWebVideoPlayerElState()
+        this.unloadPreCanvasVideoStream()
       })
     )
   }
