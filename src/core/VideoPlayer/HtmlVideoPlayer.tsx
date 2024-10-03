@@ -71,7 +71,11 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     // bilibili直播有一些页面是套同源iframe的，例如瓦洛兰特比赛什么的
     // 需要强制使用canvasVideoMode
-    if (this.webVideoEl.ownerDocument !== document) {
+    if (
+      this.webVideoEl.ownerDocument !== document &&
+      // 三方url可以直接转移video dom，blob才不行需要canvasVideoMode
+      this.webVideoEl.src.startsWith('blob:')
+    ) {
       console.log('强制canvasVideoMode')
       isCanvasVideoMode = true
       isWebVideoMode = false
