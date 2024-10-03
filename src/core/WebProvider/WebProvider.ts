@@ -15,6 +15,7 @@ import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import { checkIsLive } from '@root/utils/video'
+import EventSwitcher from '@root/utils/EventSwitcher'
 
 export default abstract class WebProvider
   extends EventBus
@@ -92,6 +93,7 @@ export default abstract class WebProvider
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
+    this.injectVideoEventsListener(this.webVideo)
     this.bindCommandsEvent()
 
     const MiniPlayer = (Object.getPrototypeOf(this) as WebProvider).MiniPlayer
@@ -131,6 +133,27 @@ export default abstract class WebProvider
       unListenOnClose()
       unListenVideoChanged()
     })
+  }
+
+  // 注入video事件监听器
+  injectVideoEventsListener(videoEl: HTMLVideoElement) {
+    const eventSwitcher = new EventSwitcher(videoEl)
+
+    this.onUnloadFn.push(
+      ...[
+        this.on2(PlayerEvent.longTabPlaybackRate, () => {
+          eventSwitcher.disable('seeking')
+          eventSwitcher.disable('seeked')
+        }),
+        this.on2(PlayerEvent.longTabPlaybackRateEnd, () => {
+          setTimeout(() => {
+            eventSwitcher.enable('seeking')
+            eventSwitcher.enable('seeked')
+          }, 0)
+        }),
+        eventSwitcher.unload,
+      ]
+    )
   }
 
   /**获取视频 */

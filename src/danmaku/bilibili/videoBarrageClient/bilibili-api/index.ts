@@ -34,7 +34,6 @@ export async function getBiliBiliVideoDanmu(
   const parser = new DOMParser()
 
   const doc = parser.parseFromString(xmlText, 'text/xml').documentElement
-  console.log('doc', doc)
 
   const xmlDans = Array.from(doc.querySelectorAll('d'))
 
