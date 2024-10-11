@@ -53,7 +53,7 @@ export default class EventSwitcher<T extends EventTarget> {
     }
   }
 
-  unload() {
+  unload = () => {
     if (!this.#tar || !this.#originalAdd || !this.#originalRemove) return
 
     this.#tar.addEventListener = this.#originalAdd
