@@ -207,6 +207,8 @@ const VideoPlayerV2Inner = observer(
       }
     })
 
+    const [isSideHovered, setSideIsHovered] = useState(false);
+
     return (
       <div
         className={classNames(
@@ -320,9 +322,11 @@ const VideoPlayerV2Inner = observer(
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (
-          <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+10px)] hover:right-0 group/side">
+          <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+15px)] hover:right-0 group/side"
+            onMouseEnter={() => setSideIsHovered(true)}
+            onMouseLeave={() => setSideIsHovered(false)}>
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
-            <div className="side-dragger !group-hover/side:opacity-0 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[10px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all"></div>
+            <div className="side-dragger !group-hover/side:opacity-0 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all leading-[30px] text-white text-center"> {isSideHovered ? '>' : '<'} </div>
           </div>
         )}
       </div>
