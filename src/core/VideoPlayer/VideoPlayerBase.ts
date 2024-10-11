@@ -1,6 +1,5 @@
-import vpConfig from '@root/store/vpConfig'
 import { observeVideoEl } from '@root/utils/observeVideoEl'
-import { runInAction } from 'mobx'
+import { makeObservable, runInAction } from 'mobx'
 import { SideSwitcher } from '../SideSwitcher'
 import SubtitleManager from '../SubtitleManager'
 import { DanmakuEngine } from '../danmaku/DanmakuEngine'
@@ -32,6 +31,10 @@ export default class VideoPlayerBase
   sideSwitcher?: SideSwitcher
   isLive?: boolean
 
+  canSendDanmaku = false
+  canShowDanmaku = false
+  showDanmaku = true
+
   constructor(props: MiniPlayerProps) {
     super()
     this.webVideoEl = props.webVideoEl
@@ -40,6 +43,20 @@ export default class VideoPlayerBase
     this.danmakuSender = props.danmakuSender
     this.sideSwitcher = props.sideSwitcher
     this.isLive = props.isLive
+
+    makeObservable(this, {
+      canSendDanmaku: true,
+      canShowDanmaku: true,
+      showDanmaku: true,
+    })
+  }
+
+  reset() {
+    runInAction(() => {
+      this.canSendDanmaku = false
+      this.canShowDanmaku = false
+      this.showDanmaku = true
+    })
   }
 
   private unobserveVideoElChange = () => {}
@@ -51,7 +68,7 @@ export default class VideoPlayerBase
       this.unload()
       this.danmakuEngine?.unload()
       this.unobserveVideoElChange()
-      vpConfig.reset()
+      this.reset()
     })
     this.emit(PlayerEvent.videoPlayerBeforeInit)
 
@@ -66,11 +83,11 @@ export default class VideoPlayerBase
 
     runInAction(() => {
       if (this.danmakuSender) {
-        vpConfig.canSendDanmaku = true
+        this.canSendDanmaku = true
       }
 
       if (this.danmakuEngine) {
-        vpConfig.canShowDanmaku = true
+        this.canShowDanmaku = true
       }
     })
 

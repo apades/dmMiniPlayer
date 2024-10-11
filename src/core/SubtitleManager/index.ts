@@ -1,4 +1,3 @@
-import vpConfig from '@root/store/vpConfig'
 import { addEventListener, readTextFromFile } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import { makeObservable, observable, runInAction } from 'mobx'

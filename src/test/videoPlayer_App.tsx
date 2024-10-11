@@ -1,20 +1,15 @@
 import VideoPlayer from '@root/components/VideoPlayer'
 import VideoPlayerV2 from '@root/components/VideoPlayerV2'
 import { useOnce } from '@root/hook'
-import configStore, { openSettingPanel } from '@root/store/config'
+import { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
 import {
-  CSSProperties,
-  useEffect,
-  useReducer,
   useRef,
   useState,
   type FC,
 } from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
-import { runInAction } from 'mobx'
-import vpConfig from '@root/store/vpConfig'
 import parser from '@root/core/SubtitleManager/subtitleParser/srt'
 import '@root/core/danmaku/DanmakuEngine/htmlDanmaku/index.less'
 import { HtmlDanmakuEngine as DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
@@ -24,6 +19,7 @@ import chalk from 'chalk'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { useUpdate } from 'ahooks'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
 
 window.parser = parser
 window.listSelector = listSelector
@@ -56,6 +52,7 @@ const App = () => {
   const danmakuSenderRef = useRef<DanmakuSender>()
   const danmakuEngineRef = useRef<DanmakuEngine>()
   const sideSwitcher = useRef<SideSwitcher>()
+  const videoPlayerRef = useRef<VideoPlayerBase>()
 
   const forceUpdate = useUpdate()
 
@@ -63,7 +60,7 @@ const App = () => {
     const dm = new DanmakuEngine()
     window.dm = dm
     dm.init({
-      media: videoRef.current,
+      media: videoRef.current!,
       container: danmakuContainerRef.current!,
     })
     dm.addDanmakus(dans)
@@ -81,7 +78,7 @@ const App = () => {
 
     // captureStream() 需要用户信任操作才能用
     await new Promise((res) => (window.onclick = res))
-    const canvasVideo = new CanvasVideo({ videoEl: videoRef.current })
+    const canvasVideo = new CanvasVideo({ videoEl: videoRef.current! })
     window.canvasVideo = canvasVideo
     // video2ref.current!.srcObject = canvasVideo.canvasVideoStream
     // video2ref.current!.play()
@@ -89,12 +86,6 @@ const App = () => {
   })
 
   useOnce(() => {
-    runInAction(() => {
-      vpConfig.canSendDanmaku = true
-      vpConfig.showDanmaku = true
-      // configStore.vpActionAreaLock = true
-    })
-
     console.log('ref.current')
 
     sideSwitcher.current = new SideSwitcher()
@@ -124,6 +115,13 @@ const App = () => {
       webTextInput: dq1('.input1') as any,
     })
     forceUpdate()
+
+    videoPlayerRef.current = new VideoPlayerBase({
+      webVideoEl: videoRef.current!,
+      danmakuEngine: danmakuEngineRef.current,
+      danmakuSender: danmakuSenderRef.current,
+      sideSwitcher: sideSwitcher.current,
+    })
   })
 
   return (
@@ -150,7 +148,7 @@ const App = () => {
         />
       </div> */}
       <div style={{ height: 200 }}>
-        {videoRef.current && (
+        {videoRef.current && videoPlayerRef.current && (
           <VideoPlayerV2
             // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
             // useWebVideo
@@ -158,6 +156,7 @@ const App = () => {
             sideSwitcher={sideSwitcher.current}
             danmakuSender={danmakuSenderRef.current}
             danmakuEngine={danmakuEngineRef.current}
+            videoPlayer={videoPlayerRef.current}
             // renderSideActionArea={<Side />}
           />
         )}

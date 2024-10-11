@@ -1,10 +1,5 @@
 import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { SideSwitcher } from '@root/core/SideSwitcher'
-import SubtitleManager, {
-  CommonSubtitleManager,
-} from '@root/core/SubtitleManager'
-import { useOnce } from '@root/hook'
+import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import configStore from '@root/store/config'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
@@ -52,11 +47,6 @@ export type VideoPlayerHandle = {
 
 type Props = {
   className?: string
-  subtitleManager?: SubtitleManager
-  danmakuEngine?: DanmakuEngine
-  danmakuSender?: DanmakuSender
-  sideSwitcher?: SideSwitcher
-  videoStream?: MediaStream
 } & Omit<ContextData, 'eventBus'>
 
 type VpInnerProps = Props & {
@@ -358,10 +348,7 @@ const DanmakuVisibleToggleBtn: FC<{ danmakuEngine?: DanmakuEngine }> = observer(
 const VideoPlayerV2 = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
   const [context, setContext] = useState<ContextData>({
     ...defaultVpContext,
-    isLive: props.isLive,
-    keydownWindow: props.keydownWindow,
-    useWebVideo: props.useWebVideo,
-    webVideo: props.webVideo,
+    ...props,
   })
 
   return (

@@ -1,15 +1,13 @@
-import { PlayerComponent } from '@root/core/types'
 import configStore from '@root/store/config'
 import { createElement, minmax } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import { autorun, makeObservable, runInAction } from 'mobx'
+import { makeObservable, runInAction } from 'mobx'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
   DanmakuInitData,
   TunnelManager,
 } from '.'
-import vpConfig from '@root/store/vpConfig'
 
 type DanmakuConfig = {
   speed: number
@@ -92,22 +90,21 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
     return configStore.renderFPS
   }
 
-  get visible() {
-    return vpConfig.showDanmaku
-  }
+  visible = true
 
   constructor() {
     super()
     makeObservable(this, {
       containerWidth: true,
       containerHeight: true,
+      visible: true,
     })
     this.tunnelManager = new TunnelManager(this)
   }
 
   changeVisible(visible?: boolean) {
     runInAction(() => {
-      vpConfig.showDanmaku = visible ?? !vpConfig.showDanmaku
+      this.visible = visible ?? !this.visible
     })
   }
 

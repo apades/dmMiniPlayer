@@ -1,9 +1,9 @@
-import vpConfig from '@root/store/vpConfig'
 import { wait } from '@root/utils'
-import { useEffect, useRef, useState, type FC } from 'react'
+import { useContext, useEffect, useRef, useState, type FC } from 'react'
 import Iconfont from '../Iconfont'
 import configStore from '@root/store/config'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import vpContext from '../VideoPlayerV2/context'
 
 const DanmakuInput: FC<{
   setActionAreaLock: (b: boolean) => void
@@ -12,6 +12,8 @@ const DanmakuInput: FC<{
 }> = (props) => {
   const danmakuInputRef = useRef<HTMLInputElement>(null)
   const [isErr, setErr] = useState(false)
+  const { videoPlayer } = useContext(vpContext)
+
   useEffect(() => {
     if (!danmakuInputRef.current) return
     props.danmakuSender.setData({
@@ -38,7 +40,7 @@ const DanmakuInput: FC<{
       className="barrage-input"
       style={{ display: isErr ? 'none' : undefined }}
     >
-      {vpConfig.canSendDanmaku && (
+      {videoPlayer?.canSendDanmaku && (
         <Iconfont
           type="input"
           onClick={() => {

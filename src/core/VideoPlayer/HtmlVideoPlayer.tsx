@@ -88,7 +88,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     })
     const reactRoot = createRoot(root)
 
-    const vpProps: ComponentProps<typeof VideoPlayerV2> = (() => {
+    const vpProps: Partial<ComponentProps<typeof VideoPlayerV2>> = (() => {
       // webVideo模式，使用原生video标签
       if (isWebVideoMode) return { useWebVideo: true }
       // canvas模式，传入canvasVideo的stream
@@ -112,6 +112,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         danmakuSender={this.danmakuSender}
         danmakuEngine={this.danmakuEngine}
         sideSwitcher={this.sideSwitcher}
+        videoPlayer={this}
         // ----
         webVideo={this.webVideoEl}
         keydownWindow={pipWindow}
@@ -120,10 +121,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           vpRef = ref
         }}
         isLive={this.isLive}
-        // emit事件
-        // onSeeked={() => this.emit(PlayerEvent.seeked)}
-        // onPlay={() => this.emit(PlayerEvent.play)}
-        // onPause={() => this.emit(PlayerEvent.pause)}
         {...vpProps}
       />
     )
