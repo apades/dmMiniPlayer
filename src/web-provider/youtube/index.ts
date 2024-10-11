@@ -5,10 +5,11 @@ import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { t } from '@root/utils/i18n'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
+import configStore from '@root/store/config'
 
 const getIframe = () => dq1<HTMLIFrameElement>('.ytd-live-chat-frame')
-const isLive = () => !!getIframe()
-
+const getLiveClass = () => dq1<HTMLDivElement>('.ytp-live')
+const isLive = () => configStore.useIframeToDetectIsLiveOnYoutube ? !!getIframe() : !!getLiveClass()
 export default class YoutubeProvider extends HtmlDanmakuProvider {
   onInit() {
     this.isLive = isLive()
