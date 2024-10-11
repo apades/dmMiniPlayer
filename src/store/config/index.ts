@@ -110,6 +110,12 @@ export const baseConfigMap = {
     relateByValue: true,
   }),
   // debug
+  useIframeToDetectIsLiveOnYoutube: config({
+    defaultValue: true,
+    label: 'useIframeDetectionOnYT',
+    desc: 'use chat iframe to decect isLive on Youtube, else use HTML element',
+    notRecommended: true,
+  }),
   performanceInfo: config({
     defaultValue: false,
     label: t('settingPanel.performanceInfo'),
