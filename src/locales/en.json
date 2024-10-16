@@ -8,7 +8,7 @@
     "videoNoBorder": "Adaptive size",
     "videoNoBorderDesc": "When opening PIP, the video without black borders is automatically adjusted according to the previously saved window size.",
     "videoSharpening": "Video Sharpening",
-    "videoSharpeningDesc": "The effect is obvious when the PIP width is less than 800, but there are some performance issues when used together with [Use HTML render danmakus]",
+    "videoSharpeningDesc": "The effect is obvious when the PIP width is less than 800.",
     "videoNoBorder_default": "Not adjusted by default",
     "videoNoBorder_width": "Based on width",
     "videoNoBorder_height": "Based on height",
@@ -33,7 +33,7 @@
 
     "danmaku": "Danmaku",
     "useHtmlDanmaku": "Use HTML render danmakus",
-    "useHtmlDanmakuDesc": "Better display effect, better massive danmakus and large font rendering performance than canvas. But in many cases the page needs to be minimized when the video always stuck and stopped (Video Sharpen open is one of issues). Back to canvas rendering in turn off",
+    "useHtmlDanmakuDesc": "Better display effect, better massive danmakus and large font rendering performance than canvas. Back to canvas rendering in turn off",
     "danSpeed": "Danmaku speed",
     "danSpeedDesc": "Affected by [Canvas FPS limit], x+={val}/10 each time",
     "danVerticalSafeTime": "Vertical danmaku alive time",
