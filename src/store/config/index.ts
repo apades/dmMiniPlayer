@@ -177,7 +177,6 @@ export const { configStore, openSettingPanel, closeSettingPanel, observe } =
 
       return { ...config, ...(savedConfig ?? {}) }
     },
-    useShadowDom: true,
   })
 
 // 同步多个tab的config

@@ -42,6 +42,7 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
     floatButton: pr('../src/contents/floatButton.ts'),
     // popup的脚本
     popup: pr('../src/popup/index.tsx'),
+    options: pr('../src/options/index.tsx'),
   },
   noExternal: [/(.*)/],
   async onSuccess() {
@@ -60,14 +61,15 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
     ]
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
 
-    const popupHtmlFile = pr('../src/popup/index.html')
-    const popupHtmlText = fs
-      .readFileSync(popupHtmlFile, 'utf-8')
-      .replace(
+    const htmlPages = ['popup', 'options']
+    for (const page of htmlPages) {
+      const htmlFile = pr(`../src/${page}/index.html`)
+      const htmlText = fs.readFileSync(htmlFile, 'utf-8').replace(
         '<script src="./index.tsx" type="module"></script>',
-        '<script src="./popup.js" type="module"></script>'
+        `<script src="./${page}.js" type="module"></script>`
       )
-    fs.writeFileSync(pr(outDir, './popup.html'), popupHtmlText, 'utf-8')
+      fs.writeFileSync(pr(outDir, `./${page}.html`), htmlText, 'utf-8')
+    }
   },
   define: {
     'process.env.NODE_ENV': process.env.NODE_ENV

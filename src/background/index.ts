@@ -9,6 +9,7 @@ import {
   setBrowserLocalStorage,
   useBrowserLocalStorage,
 } from '@root/utils/storage'
+import { isBG } from '@root/shared/pageContext'
 // import './messages/bgFetch'
 
 console.log('run bg')
@@ -38,25 +39,26 @@ Browser.runtime.onInstalled.addListener(() => {
   })
 })
 
-useBrowserLocalStorage(FLOAT_BTN_HIDDEN, (val) => {
-  Browser.contextMenus.update(FLOAT_BTN_ID, {
-    checked: !val,
+if (isBG) { 
+  useBrowserLocalStorage(FLOAT_BTN_HIDDEN, (val) => {
+    Browser.contextMenus.update(FLOAT_BTN_ID, {
+      checked: !val,
+    })
   })
-})
-
-Browser.contextMenus.onClicked.addListener((info, tab) => {
-  switch (info.menuItemId) {
-    case FLOAT_BTN_ID: {
-      setBrowserLocalStorage(FLOAT_BTN_HIDDEN, !info.checked)
-      break
-    }
-    case SETTING_ID: {
-      if (tab?.id) {
-        sendMessage('open-setting', null, {
-          tabId: tab.id,
-          context: 'content-script',
-        })
+  Browser.contextMenus.onClicked.addListener((info, tab) => {
+    switch (info.menuItemId) {
+      case FLOAT_BTN_ID: {
+        setBrowserLocalStorage(FLOAT_BTN_HIDDEN, !info.checked)
+        break
+      }
+      case SETTING_ID: {
+        if (tab?.id) {
+          sendMessage('open-setting', null, {
+            tabId: tab.id,
+            context: 'content-script',
+          })
+        }
       }
     }
-  }
-})
+  })
+}

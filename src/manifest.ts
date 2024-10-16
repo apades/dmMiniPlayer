@@ -31,6 +31,7 @@ export const manifest: chrome.runtime.ManifestV3 = {
     service_worker: 'background.js',
     type: 'module',
   },
+  options_page: 'options.html',
   content_scripts: [
     {
       js: ['assets/lib/before-init-main.js'],
