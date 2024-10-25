@@ -86,6 +86,9 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
   offsetStartTime = 10
   initd = false
 
+  /**弹幕时间差 */
+  timeOffset = 0
+
   get fps() {
     return configStore.renderFPS
   }
@@ -98,6 +101,7 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
       containerWidth: true,
       containerHeight: true,
       visible: true,
+      timeOffset: true,
     })
     this.tunnelManager = new TunnelManager(this)
   }

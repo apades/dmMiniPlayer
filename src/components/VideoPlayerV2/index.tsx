@@ -37,6 +37,7 @@ import { hasParent } from '@root/utils/dom'
 import PlaybackRateSelection from './PlaybackRateSelection'
 import { ownerWindow } from '@root/utils'
 import { LeftOutlined } from '@ant-design/icons'
+import { ToastContainer } from 'react-toastify'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -314,10 +315,16 @@ const VideoPlayerV2Inner = observer(
           <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+15px)] hover:right-0 group/side">
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
             <div className="side-dragger group-hover/side:opacity-100 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center">
-              <LeftOutlined className={classNames('group-hover/side:rotate-180 rotate-0 text-xs')} />
+              <LeftOutlined
+                className={classNames(
+                  'group-hover/side:rotate-180 rotate-0 text-xs'
+                )}
+              />
             </div>
           </div>
         )}
+
+        <ToastContainer />
       </div>
     )
   })

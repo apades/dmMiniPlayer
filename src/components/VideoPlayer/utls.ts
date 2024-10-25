@@ -7,13 +7,14 @@ export let checkJumpInBufferArea = (buffered: TimeRanges, time: number) => {
 }
 
 type noop = (this: any, ...args: any[]) => any
-export function handleOnPressEnter<T extends noop>(
-  e: KeyboardEvent,
+export function handleOnPressEnter<T extends (e: KeyboardEvent) => void>(
   cb: T
-): ReturnType<T> {
-  if (e.nativeEvent.isComposing) return
-  if (e.key === 'Enter') {
-    e.preventDefault()
-    return cb()
+): (e: KeyboardEvent) => void {
+  return (e) => {
+    if (e.nativeEvent.isComposing) return
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      return cb(e)
+    }
   }
 }
