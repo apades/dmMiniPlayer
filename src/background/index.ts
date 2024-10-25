@@ -1,6 +1,5 @@
 import 'webext-bridge/background'
 import './commands'
-import './messages/bgFetch'
 import { onMessage, sendMessage } from 'webext-bridge/background'
 import Browser from 'webextension-polyfill'
 import { t } from '@root/utils/i18n'
@@ -9,10 +8,12 @@ import {
   setBrowserLocalStorage,
   useBrowserLocalStorage,
 } from '@root/utils/storage'
-// import './messages/bgFetch'
+import WebextEvent from '@root/shared/webextEvent'
+import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
+import { v4 as uuid } from 'uuid'
 
 console.log('run bg')
-onMessage('PIP-need-click-notifications', (req) => {
+onMessage(WebextEvent.needClickWebToOpenPIP, (req) => {
   Browser.notifications.create(new Date().getTime() + '', {
     type: 'basic',
     message: '由于浏览器限制，需要去网页上随便点击下才能显示画中画',
@@ -20,6 +21,52 @@ onMessage('PIP-need-click-notifications', (req) => {
     iconUrl: Browser.runtime.getURL('/assets/icon.png'),
     ...{ requireInteraction: true },
   })
+})
+onMessage(WebextEvent.bgFetch, async (req) => {
+  const data = req.data
+  const type = data.options?.type ?? 'json'
+  const fetchRes = await fetch(data.url, data.options).then(async (res) => {
+    switch (type) {
+      case 'json':
+        return res.json()
+      case 'text':
+        return res.text()
+      case 'blob': {
+        const blob = await res.blob()
+        return URL.createObjectURL(blob)
+      }
+    }
+  })
+
+  return fetchRes
+})
+
+const danmakuGetterCacheMap = new Map<
+  string,
+  ReturnType<typeof getDanmakuGetter>
+>()
+onMessage(WebextEvent.setGetDanmaku, (req) => {
+  const { data, sender } = req
+  const senderId = sender.tabId
+  const id = uuid()
+  const danmakuGetter = getDanmakuGetter(data)
+  danmakuGetter.init()
+  danmakuGetter.on('addDanmakus', (danmakus) => {
+    sendMessage(WebextEvent.getDanmaku, danmakus, {
+      tabId: senderId,
+      context: 'content-script',
+    })
+  })
+
+  danmakuGetterCacheMap.set(id, danmakuGetter)
+  return { id }
+})
+onMessage(WebextEvent.stopGetDanmaku, ({ data }) => {
+  const danmakuGetter = danmakuGetterCacheMap.get(data.id)
+  if (danmakuGetter) {
+    danmakuGetter.unload()
+    danmakuGetterCacheMap.delete(data.id)
+  }
 })
 
 const FLOAT_BTN_ID = 'FLOAT_BTN_ID',

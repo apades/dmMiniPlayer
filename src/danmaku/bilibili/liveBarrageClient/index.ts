@@ -1,7 +1,7 @@
+import cookie from '@pkgs/js-cookie'
 import API_bilibili from '@root/api/bilibili'
 import BarrageClient from '@root/core/danmaku/BarrageClient'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
-import Cookies from 'js-cookie'
 
 export const proto = {
   nested: {
@@ -48,7 +48,7 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
     const conf = await getConf(realRoomId)
     const address = `wss://${conf.host}:${conf.port}/sub`
     const uid = await API_bilibili.getSelfMid()
-    const buvid = Cookies.get('buvid3')
+    const buvid = cookie.get('buvid3')
 
     console.log('realRoomId', realRoomId, conf)
     this.ws = new LiveWS(realRoomId, {

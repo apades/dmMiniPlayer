@@ -11,11 +11,12 @@ export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
 
 export const shareConfig: Parameters<typeof defineConfig>[0] = {
-  esbuildPlugins: [inlineImport({}), esbuildMetaUrl({})],
+  esbuildPlugins: [inlineImport({}), (esbuildMetaUrl as any)({})],
   esbuildOptions(options, ctx) {
     options.alias ??= {}
     Object.assign(options.alias, {
       '@root': pr('../src'),
+      '@pkgs': pr('../packages'),
     })
   },
   outExtension({ format }) {

@@ -1,3 +1,4 @@
+import WebextEvent from '@root/shared/webextEvent'
 import { sendMessage } from 'webext-bridge/content-script'
 
 const bgFetch = (
@@ -7,13 +8,10 @@ const bgFetch = (
     type?: 'json' | 'text' | 'blob'
   }
 ) => {
-  return sendMessage('bgFetch', {
-    name: 'bgFetch',
-    body: {
-      url,
-      options,
-    } as any,
-  }) as Promise<any>
+  return sendMessage(WebextEvent.bgFetch, {
+    url,
+    options,
+  })
 }
 
 export default bgFetch
