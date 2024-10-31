@@ -15,6 +15,7 @@ interface Window {
     /**被focus过的视频 */
     focusIndex: string | number
   }
+  openSettingPanel: () => void
   [k: string]: any
 }
 
@@ -25,6 +26,11 @@ type dykey<T = any> = {
 declare module 'ass-parser' {
   const assParser: (text: string, option?: any) => any[]
   export default assParser
+}
+
+declare module '*.png' {
+  const url: string
+  export default url
 }
 
 declare module '*?raw' {

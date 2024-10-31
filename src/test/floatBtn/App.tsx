@@ -1,9 +1,13 @@
-import '@root/contents/floatButton'
+import DraggerContainer from '@root/components/DraggerContainer'
+import Draggable from 'react-draggable'
+import '@root/contents/floatButton.tsx'
 
 export default function App() {
   return (
     <div>
-      <button>asdf</button>
+      <DraggerContainer>
+        <button onClick={() => console.log('adsfa')}>asdf</button>
+      </DraggerContainer>
       <video
         id="my-video"
         className="video-js"

@@ -1,7 +1,6 @@
-import '@root/style/tailwind.css'
-import '@root/style/tailwindBase.css'
 import openBSEEngine from '@root/core/danmaku/DanmakuEngine/openBSEDanmaku/lib/engines/generalEngine'
 import { dq1 } from '@root/utils'
+import '@root/style'
 
 const engine = new openBSEEngine(dq1('#app')!, {})
 window.engine = engine

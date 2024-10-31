@@ -5,19 +5,20 @@ import { createRoot } from 'react-dom/client'
 import CanvasVideo from '../CanvasVideo'
 import { PlayerEvent } from '../event'
 import VideoPlayerBase from './VideoPlayerBase'
-// style
-import tailwind from '@root/style/tailwind.css?inline'
-import tailwindBase from '@root/style/tailwindBase.css?inline'
 // import style from '@root/components/VideoPlayer/index.less?inline'
 import VideoPlayerV2, {
   VideoPlayerHandle,
 } from '@root/components/VideoPlayerV2'
+import Browser from 'webextension-polyfill'
 
 const styleEl = createElement('div', {
   className: 'style-list',
-  children: [tailwindBase, tailwind].map((style) =>
-    createElement('style', { innerHTML: style })
-  ),
+  children: [
+    createElement('link', {
+      rel: 'stylesheet',
+      href: Browser.runtime.getURL('/css.css'),
+    }),
+  ],
 })
 
 export class HtmlVideoPlayer extends VideoPlayerBase {
