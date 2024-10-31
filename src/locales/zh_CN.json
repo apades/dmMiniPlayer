@@ -102,6 +102,13 @@
     "addNewSubtitle": "添加新的字幕",
     "subtitleSupport": "支持 .srt .ass",
     "playList": "播放列表",
-    "recommendedList": "推荐列表"
+    "recommendedList": "推荐列表",
+    "loadCustomDanmaku": "加载自定义弹幕",
+    "fromLocal": "从本地加载",
+    "danmakuFileError": "请选择ass或ass文件",
+    "getDanmakuFromUrlTips": "目前只支持从bilibili获取弹幕",
+    "getDanmakuFromUrl": "从url加载",
+    "danmakuTimeOffsetTips": "目前只有HTML渲染弹幕支持该功能",
+    "danmakuTimeOffset": "时间差"
   }
 }

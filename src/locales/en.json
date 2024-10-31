@@ -102,6 +102,13 @@
     "addNewSubtitle": "Add new subtitle",
     "subtitleSupport": "Support .srt .ass",
     "playList": "Play list",
-    "recommendedList": "Recommended list"
+    "recommendedList": "Recommended list",
+    "loadCustomDanmaku": "Load custom danmaku",
+    "fromLocal": "From local",
+    "danmakuFileError": "Please upload ass/xml file",
+    "getDanmakuFromUrlTips": "Currently only support bilibili url",
+    "getDanmakuFromUrl": "From url",
+    "danmakuTimeOffsetTips": "Currently only support in [HTML render danmakus]",
+    "danmakuTimeOffset": "Time offset"
   }
 }

@@ -16,7 +16,7 @@ type Concat<K extends string, P extends string> = `${K}${'' extends P
   ? ''
   : '.'}${P}`
 
-export type I18nKeys = DeepLeafKeys<typeof en>
+export type I18nKeys = DeepLeafKeys<typeof zhCn>
 export const nowLang = navigator.languages.find((lang) =>
   lang.toLocaleLowerCase().replace('_', '-').startsWith('zh')
 )

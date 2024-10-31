@@ -18,6 +18,7 @@ import {
 import { getAnyObjToString } from '@root/utils'
 import { parserBilibiliDanmuFromXML } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 import AssParser from '@root/utils/AssParser'
+import { t } from '@root/utils/i18n'
 
 const Menu: FC = observer((props) => {
   const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
@@ -71,12 +72,12 @@ const Menu: FC = observer((props) => {
   return (
     <div className="bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
       <h3 className="f-i-center justify-between">
-        加载自定义弹幕
+        {t('vp.loadCustomDanmaku')}
         {isDownloading && <LoadingOutlined className="animate-spin" />}
         {isDownloaded && <CheckOutlined />}
       </h3>
       <div className="relative w-full p-1 hover:bg-gray-800 transition-colors cursor-pointer">
-        从本地加载
+        {t('vp.fromLocal')}
         <input
           className="absolute w-full left-0 top-0 h-full opacity-0 cursor-pointer"
           type="file"
@@ -85,7 +86,7 @@ const Menu: FC = observer((props) => {
             if (!file) return
 
             if (!file.name.endsWith('.ass') && !file.name.endsWith('.xml')) {
-              setError('请选择ass或ass文件')
+              setError(t('vp.danmakuFileError'))
               return
             }
 
@@ -114,9 +115,9 @@ const Menu: FC = observer((props) => {
       </div>
       <p
         className="f-i-center justify-between"
-        title="目前只支持从bilibili获取弹幕"
+        title={t('vp.getDanmakuFromUrlTips')}
       >
-        从url加载 <WarningOutlined />
+        {t('vp.getDanmakuFromUrl')} <WarningOutlined />
       </p>
       <div className="f-i-center">
         <input
@@ -132,9 +133,9 @@ const Menu: FC = observer((props) => {
       {error && <p className="text-red-500">ERROR: {error}</p>}
       <p
         className="f-i-center justify-between"
-        title="目前只有HTML渲染弹幕支持该功能"
+        title={t('vp.danmakuTimeOffsetTips')}
       >
-        时间差
+        {t('vp.danmakuTimeOffset')}
         <WarningOutlined />
       </p>
       <input
