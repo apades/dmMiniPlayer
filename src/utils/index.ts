@@ -481,3 +481,10 @@ export function switchLatest<Args extends readonly unknown[], Return>(
     })
   }
 }
+
+export function getAnyObjToString(obj: any) {
+  if (typeof obj?.toString === 'function') {
+    return obj.toString()
+  }
+  return ''
+}

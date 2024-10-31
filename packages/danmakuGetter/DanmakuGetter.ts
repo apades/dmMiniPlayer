@@ -6,6 +6,8 @@ type DanmakuEvents = {
   addDanmakus: DanmakuInitData[]
   init: void
   unload: void
+  error: string
+  config: any
 }
 
 export type Props = {

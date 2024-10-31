@@ -1,12 +1,8 @@
 import getWebProvider from '../web-provider/getWebProvider'
-import {
-  onMessage as onBgMessage,
-  sendMessage as sendBgMessage,
-} from 'webext-bridge/content-script'
+import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import { onMessage } from '@root/inject/contentSender'
-import { createElement, dq1Adv, onceCall } from '@root/utils'
+import { createElement, dq1Adv } from '@root/utils'
 import { WebProvider } from '@root/core/WebProvider'
-import WebextEvent from '@root/shared/webextEvent'
 
 console.log('run content')
 
@@ -82,10 +78,3 @@ try {
 }
 
 window.getWebProvider = getWebProvider
-
-onBgMessage(WebextEvent.getDanmaku, (data) => {
-  console.log('getDanmaku', data)
-})
-
-window.WebextEvent = WebextEvent
-window.sendBgMessage = sendBgMessage

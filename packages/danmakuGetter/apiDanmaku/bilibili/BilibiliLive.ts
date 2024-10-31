@@ -1,6 +1,7 @@
 import cookie from '@pkgs/js-cookie'
 import { DanmakuGetter } from '../..'
 import { LiveWS } from 'bilibili-live-ws'
+import { getAnyObjToString } from '@root/utils'
 
 async function getSelfMid() {
   try {
@@ -45,38 +46,43 @@ export const getConf = async (roomid: number) => {
 export default class BilibiliLive extends DanmakuGetter {
   ws?: LiveWS
   onInit = async () => {
-    const id = +this.url.pathname.split('/').pop()!
+    try {
+      const id = +this.url.pathname.split('/').pop()!
 
-    const realRoomId = await getRoomid(id)
-    const conf = await getConf(realRoomId)
-    const address = `wss://${conf.host}:${conf.port}/sub`
-    const uid = await getSelfMid()
-    const buvid = cookie(this.cookie).get('buvid3')
+      const realRoomId = await getRoomid(id)
+      const conf = await getConf(realRoomId)
+      const address = `wss://${conf.host}:${conf.port}/sub`
+      const uid = await getSelfMid()
+      const buvid = cookie(this.cookie).get('buvid3')
 
-    console.log('realRoomId', realRoomId, conf)
-    this.ws = new LiveWS(realRoomId, {
-      protover: 3,
-      address,
-      key: conf.key,
-      uid,
-      buvid,
-    })
-    this.ws.on('open', () => console.log('弹幕ws连接成功'))
-    this.ws.on('close', () => console.log('弹幕ws断开'))
-    // Connection is established
-    this.ws.on('live', () => {
-      this.ws?.on('heartbeat', console.log)
-      // 13928
-    })
+      console.log('realRoomId', realRoomId, conf)
+      this.ws = new LiveWS(realRoomId, {
+        protover: 3,
+        address,
+        key: conf.key,
+        uid,
+        buvid,
+      })
+      this.ws.on('open', () => console.log('弹幕ws连接成功'))
+      this.ws.on('close', () => console.log('弹幕ws断开'))
+      // Connection is established
+      this.ws.on('live', () => {
+        this.ws?.on('heartbeat', console.log)
+        // 13928
+      })
 
-    this.ws.on('DANMU_MSG', (data) => {
-      let info = data.info
-      let color = '#' + info[0][3].toString(16),
-        text = info[1]
+      this.ws.on('DANMU_MSG', (data) => {
+        let info = data.info
+        let color = '#' + info[0][3].toString(16),
+          text = info[1]
 
-      // console.log('danmu', text, info)
-      this.emit('addDanmakus', [{ color, text, type: 'right' }])
-    })
+        // console.log('danmu', text, info)
+        this.emit('addDanmakus', [{ color, text, type: 'right' }])
+      })
+    } catch (error: any) {
+      console.error(error)
+      getAnyObjToString(error) && this.emit('error', getAnyObjToString(error))
+    }
   }
   onUnload = () => {
     if (!this.ws) return

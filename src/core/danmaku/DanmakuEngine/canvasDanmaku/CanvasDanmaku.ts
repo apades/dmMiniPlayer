@@ -32,9 +32,6 @@ export default class CanvasDanmaku extends DanmakuBase {
   onInit(props: DanmakuInitProps): void {
     if (this.initd) return
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
-    if (this.type == 'top') {
-      console.log('top danmaku', this.tunnel, this)
-    }
     if (this.tunnel == -1) {
       this.disabled = true
       return

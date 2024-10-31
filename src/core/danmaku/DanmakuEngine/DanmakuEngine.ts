@@ -1,7 +1,7 @@
 import configStore from '@root/store/config'
 import { createElement, minmax } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import { makeObservable, runInAction } from 'mobx'
+import { autorun, makeObservable, runInAction } from 'mobx'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
@@ -28,7 +28,7 @@ export type DanmakuEngineInitProps = {
   media: HTMLMediaElement
 }
 
-export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
+export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents> {
   // implements DanmakuConfig, PlayerComponent
   /**弹幕在实例化时会new这个 */
   Danmaku = DanmakuBase
@@ -86,6 +86,9 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
   offsetStartTime = 10
   initd = false
 
+  /**弹幕时间差 */
+  timeOffset = 0
+
   get fps() {
     return configStore.renderFPS
   }
@@ -98,23 +101,26 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
       containerWidth: true,
       containerHeight: true,
       visible: true,
+      timeOffset: true,
     })
     this.tunnelManager = new TunnelManager(this)
   }
 
+  unloadCallbacks = [] as (() => void)[]
   changeVisible(visible?: boolean) {
     runInAction(() => {
       this.visible = visible ?? !this.visible
     })
   }
 
-  onInit(props: DanmakuEngineInitProps) {}
-  onUnload() {}
+  abstract onInit(props: DanmakuEngineInitProps): void
+  abstract onUnload(): void
 
   unload() {
     this.onUnload()
     this.tunnelManager.unload()
     this.resizeObserver.disconnect()
+    this.unloadCallbacks.forEach((cb) => cb())
   }
 
   // 监听container大小变化
@@ -129,6 +135,18 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
 
   init(props: DanmakuEngineInitProps) {
     this.resizeObserver.unobserve(this.container)
+    // 处理弹幕偏移时间
+    this.unloadCallbacks.push(
+      autorun(() => {
+        const timeOffset = this.timeOffset
+        this.danmakus.forEach((dan) => {
+          dan.time = dan.propsTime + timeOffset
+        })
+        setTimeout(() => {
+          this.forceRerenderDanmaku()
+        }, 0)
+      })
+    )
 
     Object.assign(this, props)
     this.onInit(props)
@@ -162,5 +180,11 @@ export default class DanmakuEngine extends Events2<DanmakuEngineEvents> {
 
   updateVideo(video: HTMLVideoElement) {
     this.media = video
+  }
+
+  forceRerenderDanmaku() {
+    if (!this.media) return
+    this.media.dispatchEvent(new Event('seeking'))
+    this.media.dispatchEvent(new Event('seeked'))
   }
 }

@@ -9,12 +9,14 @@ export default class DanmakuBase implements DanmakuInitData, PlayerComponent {
   id: string
   color: string
   text: string
-  time: number
+  time = 0
   type: DanmakuMoveType
-  width: number = 0
-  tunnel: number = 0
+  width = 0
+  tunnel = 0
   /**实际init的time，用来video seek用的 */
-  initTime: number = 0
+  initTime = 0
+  /**和time一样，记录原本的时间 */
+  propsTime = 0
 
   initd = false
   outTunnel = false
@@ -43,6 +45,7 @@ export default class DanmakuBase implements DanmakuInitData, PlayerComponent {
     this.text = props.text
     this.time = props.time || 0
     this.type = props.type
+    this.propsTime = this.time
 
     if (this instanceof props.danmakuEngine.Danmaku) {
       return this

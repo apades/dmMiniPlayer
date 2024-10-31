@@ -19,7 +19,11 @@ declare module 'webext-bridge' {
       DanmakuGetterProps,
       { id: string }
     >
-    [WebextEvent.getDanmaku]: DanmakuInitData[]
+    [WebextEvent.getDanmaku]: {
+      data?: DanmakuInitData[]
+      err?: string
+      config?: { duration?: number }
+    }
     [WebextEvent.stopGetDanmaku]: { id: string }
     [WebextEvent.needClickWebToOpenPIP]: void
   }

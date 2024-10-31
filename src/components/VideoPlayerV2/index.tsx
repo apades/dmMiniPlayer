@@ -37,6 +37,8 @@ import { hasParent } from '@root/utils/dom'
 import PlaybackRateSelection from './PlaybackRateSelection'
 import { ownerWindow } from '@root/utils'
 import { LeftOutlined } from '@ant-design/icons'
+import { ToastContainer } from 'react-toastify'
+import DanmakuSettingBtn from './DanmakuSettingBtn'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -293,7 +295,7 @@ const VideoPlayerV2Inner = observer(
               <div className="f-i-center gap-1">
                 <SubtitleSelection subtitleManager={subtitleManager} />
 
-                <DanmakuVisibleToggleBtn danmakuEngine={props.danmakuEngine} />
+                <DanmakuSettingBtn />
 
                 <DanmakuInputIcon danmakuSender={props.danmakuSender} />
 
@@ -322,6 +324,8 @@ const VideoPlayerV2Inner = observer(
             </div>
           </div>
         )}
+
+        <ToastContainer />
       </div>
     )
   })

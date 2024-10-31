@@ -51,12 +51,36 @@ onMessage(WebextEvent.setGetDanmaku, (req) => {
   const id = uuid()
   const danmakuGetter = getDanmakuGetter(data)
   danmakuGetter.init()
-  danmakuGetter.on('addDanmakus', (danmakus) => {
-    sendMessage(WebextEvent.getDanmaku, danmakus, {
-      tabId: senderId,
-      context: 'content-script',
-    })
+  danmakuGetter.on('addDanmakus', (data) => {
+    sendMessage(
+      WebextEvent.getDanmaku,
+      { data },
+      {
+        tabId: senderId,
+        context: 'content-script',
+      }
+    )
   })
+  danmakuGetter.on('config', (config) =>
+    sendMessage(
+      WebextEvent.getDanmaku,
+      { config },
+      {
+        tabId: senderId,
+        context: 'content-script',
+      }
+    )
+  )
+  danmakuGetter.on('error', (err) =>
+    sendMessage(
+      WebextEvent.getDanmaku,
+      { err },
+      {
+        tabId: senderId,
+        context: 'content-script',
+      }
+    )
+  )
 
   danmakuGetterCacheMap.set(id, danmakuGetter)
   return { id }

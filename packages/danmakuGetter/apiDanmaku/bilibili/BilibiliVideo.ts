@@ -1,6 +1,7 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
 import { DanmakuGetter } from '../..'
 import parser from 'node-html-parser'
+import { getAnyObjToString } from '@root/utils'
 
 enum BilibiliDanmakuType {
   normal1 = '1',
@@ -31,6 +32,10 @@ async function getBiliBiliVideoDanmu(cid: string): Promise<DanmakuInitData[]> {
     `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`
   ).then((res) => res.text())
 
+  return parserBilibiliDanmuFromXML(xmlText)
+}
+
+export function parserBilibiliDanmuFromXML(xmlText: string): DanmakuInitData[] {
   const doc = parser(xmlText)
 
   const xmlDans = Array.from(doc.querySelectorAll('d'))
@@ -115,7 +120,7 @@ async function getVideoInfoFromUrl(_url: string) {
 
   // 电影、动画，单独的弹幕接口
   if (/\/bangumi\//.test(url.pathname)) {
-    const match = location.pathname.match(/\/(ss|ep)(\d+)/)
+    const match = url.pathname.match(/\/(ss|ep)(\d+)/)
     const id = match?.[2],
       isEp = match?.[1] == 'ep'
 
@@ -133,11 +138,13 @@ async function getVideoInfoFromUrl(_url: string) {
 
     aid = findEp.aid
     cid = findEp.cid
+    const duration = findEp.duration / 1000
 
     return {
       aid,
       bid,
       cid,
+      duration,
     }
   }
 
@@ -181,10 +188,21 @@ async function getVideoInfoFromUrl(_url: string) {
 export default class BilibiliVideo extends DanmakuGetter {
   abortController = new AbortController()
   onInit = async () => {
-    const { aid, cid } = await getVideoInfoFromUrl(this.url.toString())
+    try {
+      const { aid, cid, duration } = await getVideoInfoFromUrl(
+        this.url.toString()
+      )
 
-    const danmakus = await getBiliBiliVideoDanmu(cid)
-    this.emit('addDanmakus', danmakus)
+      const danmakus = await getBiliBiliVideoDanmu(cid)
+      this.emit('addDanmakus', danmakus)
+
+      if (duration) {
+        this.emit('config', { duration })
+      }
+    } catch (error: any) {
+      console.error(error)
+      getAnyObjToString(error) && this.emit('error', getAnyObjToString(error))
+    }
   }
   onUnload = () => {
     this.abortController.abort()

@@ -11,12 +11,13 @@ import {
 
 type Props = PropsWithChildren<{
   menuRender: () => ReactNode
+  open?: boolean
 }>
 const Dropdown: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setVisible] = useState(false)
+  const [isVisible, setVisible] = useState(props.open ?? false)
   const { run, clear } = useDebounceTimeoutCallback(() => {
-    setVisible(false)
+    setVisible(props.open ?? false)
   }, 200)
 
   if (isArray(props.children)) throw new Error('不要传数组children给该组件')
