@@ -22,6 +22,8 @@ module.exports = {
       },
       colors: {
         main: 'var(--main, #0669ff)',
+        bg: '#262626',
+        'bg-hover': '#404040',
       },
       width: {
         'side-width': 'var(--side-width, 200px)',

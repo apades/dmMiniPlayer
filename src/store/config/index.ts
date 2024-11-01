@@ -86,13 +86,6 @@ export const baseConfigMap = {
     defaultValue: 300,
     label: t('settingPanel.sideWidth'),
   }),
-  // TODO canvas增加视频信息
-  // showInfoInBackOrForward: config({
-  //   defaultValue: true,
-  //   desc: '直播下无效',
-  //   label: '快进/后退时显示视频信息',
-  //   deprecated: true,
-  // }),
   playbackRate: config({
     defaultValue: 3,
     label: t('settingPanel.playbackRate'),
@@ -149,6 +142,14 @@ export const baseConfigMap = {
     desc: t('settingPanel.saveWidthOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
   }),
+  dragArea_show: config({ defaultValue: false, notRecommended: true }),
+  /**
+   * 在4个角范围内，保存位置是绝对值
+   *
+   * 如果不在4个角范围内，保存的位置会是相对值。例如在top区，top为绝对值，left为以中线为准，计算出绝对值
+   *  */
+  dragArea_cornerPercentW: config({ defaultValue: 30, notRecommended: true }),
+  dragArea_cornerPercentH: config({ defaultValue: 30, notRecommended: true }),
   ...docPIPConfig,
 }
 

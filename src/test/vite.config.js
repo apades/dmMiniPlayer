@@ -62,9 +62,9 @@ export default defineConfig({
     ...getDefinesObject('dev'),
   },
   server: {
-    https: {
-      key: fs.readFileSync(pr('../../localhost-key.pem')),
-      cert: fs.readFileSync(pr('../../localhost.pem')),
-    },
+    // https: {
+    //   key: fs.readFileSync(pr('../../localhost-key.pem')),
+    //   cert: fs.readFileSync(pr('../../localhost.pem')),
+    // },
   },
 })
