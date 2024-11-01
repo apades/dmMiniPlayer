@@ -1,5 +1,11 @@
 import Browser from 'webextension-polyfill'
 
+Browser.storage.local.onChanged.addListener((changes) => {
+  Object.keys(changes).forEach((key) => {
+    localCallbacksMap[key]?.forEach?.((cb) => cb(changes[key].newValue))
+  })
+})
+const localCallbacksMap: Record<string, ((v: any) => void)[]> = {}
 export function useBrowserLocalStorage<
   T extends (string & { __key: any }) | string
 >(
@@ -8,19 +14,12 @@ export function useBrowserLocalStorage<
     val: (T extends string & { __key: any } ? T['__key'] : any) | undefined
   ) => void
 ) {
-  const listen = (changes: Record<any, any>) => {
-    if (changes[key]) {
-      callback(changes[key].newValue)
-    }
+  if (!localCallbacksMap[key]) {
+    localCallbacksMap[key] = []
   }
-  Browser.storage.local.get(key as any).then(({ [key as any]: val }) => {
-    callback(val)
-  })
-
-  Browser.storage.local.onChanged.addListener(listen)
-
+  localCallbacksMap[key].push(callback)
   return () => {
-    Browser.storage.local.onChanged.removeListener(listen)
+    localCallbacksMap[key].slice(localCallbacksMap[key].indexOf(callback), 1)
   }
 }
 
@@ -43,6 +42,12 @@ export function getBrowserLocalStorage<
     )
 }
 
+Browser.storage.sync.onChanged.addListener((changes) => {
+  Object.keys(changes).forEach((key) => {
+    syncCallbacksMap[key]?.forEach?.((cb) => cb(changes[key].newValue))
+  })
+})
+const syncCallbacksMap: Record<string, ((v: any) => void)[]> = {}
 export function useBrowserSyncStorage<
   T extends (string & { __key: any }) | string
 >(
@@ -51,19 +56,12 @@ export function useBrowserSyncStorage<
     val: (T extends string & { __key: any } ? T['__key'] : any) | undefined
   ) => void
 ) {
-  const listen = (changes: Record<any, any>) => {
-    if (changes[key]) {
-      callback(changes[key].newValue)
-    }
+  if (!syncCallbacksMap[key]) {
+    syncCallbacksMap[key] = []
   }
-  Browser.storage.sync.get(key as any).then(({ [key as any]: val }) => {
-    callback(val)
-  })
-
-  Browser.storage.sync.onChanged.addListener(listen)
-
+  syncCallbacksMap[key].push(callback)
   return () => {
-    Browser.storage.sync.onChanged.removeListener(listen)
+    syncCallbacksMap[key].slice(syncCallbacksMap[key].indexOf(callback), 1)
   }
 }
 

@@ -84,7 +84,15 @@
     "subtitleFontColor": "Font color",
     "subtitleFontWeight": "Font weight",
     "subtitleFontOpacity": "Font opacity",
-    "subtitleFontFamily": "Font"
+    "subtitleFontFamily": "Font",
+
+    "floatButton": "Float button",
+    "floatButtonPos": "Position",
+    "leftTop": "Left top",
+    "rightTop": "Right top",
+    "leftBottom": "Left bottom",
+    "rightBottom": "Right bottom",
+    "visible": "Visible"
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

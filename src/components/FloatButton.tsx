@@ -8,16 +8,18 @@ import configStore from '@root/store/config'
 import { throttle } from '@root/utils'
 import {
   setBrowserSyncStorage,
-  useBrowserLocalStorage,
+  useBrowserSyncStorage,
 } from '@root/utils/storage'
 import { useMemoizedFn, useSize } from 'ahooks'
 import { observer } from 'mobx-react'
-import { FC, useRef } from 'react'
+import { FC, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 import icon from '../../assets/icon.png'
 import DraggerContainer from './DraggerContainer'
 import ShadowRootContainer from './ShadowRootContainer'
+import classNames from 'classnames'
+import { FloatButtonPos } from '@root/store/config/floatButton'
 
 type Props = {
   container: HTMLElement
@@ -32,7 +34,7 @@ const FloatButton: FC<Props> = (props) => {
   const videoIsContainer = vel === container
 
   useOnce(
-    useBrowserLocalStorage(FLOAT_BTN_HIDDEN, (hidden) => {
+    useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (hidden) => {
       if (!floatBtn.current) return
       floatBtn.current.style.visibility = !hidden ? 'visible' : 'hidden'
     })
@@ -93,6 +95,37 @@ const FloatButton: FC<Props> = (props) => {
   const containerSize = useSize(container)
   const floatBtnSize = useSize(floatBtn)
 
+  const posStyle = useMemo(() => {
+    switch (configStore.floatButtonPos) {
+      case FloatButtonPos.leftBottom:
+        return {
+          left: +configStore.floatButtonX,
+          bottom: +configStore.floatButtonY,
+        }
+      case FloatButtonPos.rightBottom:
+        return {
+          right: +configStore.floatButtonX,
+          bottom: +configStore.floatButtonY,
+        }
+      case FloatButtonPos.leftTop:
+        return {
+          left: +configStore.floatButtonX,
+          top: +configStore.floatButtonY,
+        }
+      case FloatButtonPos.rightTop:
+        return {
+          right: +configStore.floatButtonX,
+          top: +configStore.floatButtonY,
+        }
+    }
+  }, [
+    configStore.floatButtonPos,
+    configStore.floatButtonX,
+    configStore.floatButtonY,
+  ])
+
+  console.log('posStyle', posStyle)
+
   return (
     <>
       {/* 拖动测试的4个角 */}
@@ -137,7 +170,8 @@ const FloatButton: FC<Props> = (props) => {
 
       {createPortal(
         <ShadowRootContainer>
-          <DraggerContainer
+          {/* TODO 拖拽功能在小网站还可以用，但是油管、bilibili这些复杂网站会出问题 */}
+          {/* <DraggerContainer
             bounds={{
               left: 0,
               top: 0,
@@ -164,80 +198,90 @@ const FloatButton: FC<Props> = (props) => {
               x: props.initPos.x,
               y: props.initPos.y,
             }}
+          > */}
+          <div
+            ref={floatBtn}
+            className={classNames(
+              'f-i-center w-fit absolute z-[100] h-[28px] text-[14px] text-white text-center rounded cursor-pointer opacity-100 transition-opacity [&.hidden]:opacity-0 overflow-hidden'
+            )}
+            onMouseEnter={() => {
+              clear()
+              showFloatBtn()
+            }}
+            style={posStyle}
           >
             <div
-              ref={floatBtn}
-              className="f-i-center w-fit absolute top-[5px] left-[5px] z-[100] h-[28px] text-[14px] text-white text-center rounded cursor-pointer opacity-100 transition-opacity [&.hidden]:opacity-0 overflow-hidden"
+              className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+              onClick={(e) => {
+                e.stopPropagation()
+                const videoEl =
+                  container instanceof HTMLVideoElement
+                    ? container
+                    : container.querySelector('video')
+
+                console.log('视频容器', videoEl, '父容器', container)
+                const event = new CustomEvent('inject-response', {
+                  detail: {
+                    type: 'start-PIP',
+                    data: {
+                      videoEl,
+                    },
+                  },
+                })
+                try {
+                  top!.document
+                } catch (error) {
+                  console.error(error)
+                  if (videoEl) {
+                    videoEl.requestPictureInPicture()
+                  }
+                  throw Error(
+                    '该视频可能在非同源的iframe中，目前不支持非同源iframe'
+                  )
+                }
+                top?.dispatchEvent(event)
+              }}
               onMouseEnter={() => {
-                console.log('clear')
                 clear()
-                showFloatBtn()
               }}
             >
-              <div
-                className="f-center px-2 bg-bg h-full hover:bg-bg-hover transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  const videoEl =
-                    container instanceof HTMLVideoElement
-                      ? container
-                      : container.querySelector('video')
-
-                  console.log('视频容器', videoEl, '父容器', container)
-                  const event = new CustomEvent('inject-response', {
-                    detail: {
-                      type: 'start-PIP',
-                      data: {
-                        videoEl,
-                      },
-                    },
-                  })
-                  try {
-                    top!.document
-                  } catch (error) {
-                    console.error(error)
-                    if (videoEl) {
-                      videoEl.requestPictureInPicture()
-                    }
-                    throw Error(
-                      '该视频可能在非同源的iframe中，目前不支持非同源iframe'
-                    )
-                  }
-                  top?.dispatchEvent(event)
-                }}
-                onMouseEnter={() => {
-                  clear()
-                }}
-              >
-                <img
-                  className="wh-[16px]"
-                  src={
-                    isPluginEnv
-                      ? `${Browser.runtime.getURL('/assets/icon.png')}`
-                      : icon
-                  }
-                />
-              </div>
-              <div
-                className="f-center px-2 bg-bg h-full hover:bg-bg-hover transition-colors"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  try {
-                    top!.document
-                  } catch (error) {
-                    console.error(error)
-                    throw Error(
-                      '该视频可能在非同源的iframe中，目前不支持非同源iframe'
-                    )
-                  }
-                  top?.openSettingPanel()
-                }}
-              >
-                <SettingOutlined />
-              </div>
+              <img
+                className="wh-[16px]"
+                src={
+                  isPluginEnv
+                    ? `${Browser.runtime.getURL('/assets/icon.png')}`
+                    : icon
+                }
+              />
             </div>
-          </DraggerContainer>
+            <div
+              className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+
+                isLockRef.current = true
+                clear()
+                showFloatBtn()
+                setTimeout(() => {
+                  isLockRef.current = false
+                }, 500)
+
+                try {
+                  top!.document
+                } catch (error) {
+                  console.error(error)
+                  throw Error(
+                    '该视频可能在非同源的iframe中，目前不支持非同源iframe'
+                  )
+                }
+                top?.openSettingPanel()
+              }}
+            >
+              <SettingOutlined />
+            </div>
+          </div>
+          {/* </DraggerContainer> */}
         </ShadowRootContainer>,
         container
       )}

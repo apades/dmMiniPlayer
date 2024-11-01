@@ -49,11 +49,6 @@ export const manifest: chrome.runtime.ManifestV3 = {
       run_at: 'document_end',
       all_frames: true,
     },
-    {
-      matches: ['<all_urls>'],
-      js: ['assets/lib/entry-main.js'],
-      run_at: 'document_end',
-    },
   ],
   default_locale: 'en',
   web_accessible_resources: [

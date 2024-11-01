@@ -5,8 +5,8 @@ import Browser from 'webextension-polyfill'
 import { t } from '@root/utils/i18n'
 import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
 import {
-  setBrowserLocalStorage,
-  useBrowserLocalStorage,
+  setBrowserSyncStorage,
+  useBrowserSyncStorage,
 } from '@root/utils/storage'
 import WebextEvent from '@root/shared/webextEvent'
 import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
@@ -109,7 +109,7 @@ Browser.runtime.onInstalled.addListener(() => {
   })
 })
 
-useBrowserLocalStorage(FLOAT_BTN_HIDDEN, (val) => {
+useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (val) => {
   Browser.contextMenus.update(FLOAT_BTN_ID, {
     checked: !val,
   })
@@ -118,7 +118,7 @@ useBrowserLocalStorage(FLOAT_BTN_HIDDEN, (val) => {
 Browser.contextMenus.onClicked.addListener((info, tab) => {
   switch (info.menuItemId) {
     case FLOAT_BTN_ID: {
-      setBrowserLocalStorage(FLOAT_BTN_HIDDEN, !info.checked)
+      setBrowserSyncStorage(FLOAT_BTN_HIDDEN, !info.checked)
       break
     }
     case SETTING_ID: {

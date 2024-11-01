@@ -39,8 +39,6 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
     world: pr('../src/contents/inject.ts'),
     // 修改cs的clog脚本
     clogInject: pr('../src/contents/clogInject.ts'),
-    // 视频浮动按钮的cs
-    floatButton: pr('../src/contents/floatButton.tsx'),
     // popup的脚本
     popup: pr('../src/popup/index.tsx'),
     css: pr('../src/style/index.ts'),

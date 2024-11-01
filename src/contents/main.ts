@@ -3,6 +3,7 @@ import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import { onMessage } from '@root/inject/contentSender'
 import { createElement, dq1Adv } from '@root/utils'
 import { WebProvider } from '@root/core/WebProvider'
+import './floatButton'
 
 console.log('run content')
 

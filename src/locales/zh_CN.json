@@ -84,7 +84,15 @@
     "subtitleFontColor": "字体颜色",
     "subtitleFontWeight": "字体宽度",
     "subtitleFontOpacity": "字体透明度",
-    "subtitleFontFamily": "字体"
+    "subtitleFontFamily": "字体",
+
+    "floatButton": "浮动按钮",
+    "floatButtonPos": "位置",
+    "leftTop": "左上",
+    "rightTop": "右上",
+    "leftBottom": "左下",
+    "rightBottom": "右下",
+    "visible": "是否显示"
   },
   "popup": {
     "tips": "需要点击下页面才能触发画中画播放",
