@@ -488,3 +488,7 @@ export function getAnyObjToString(obj: any) {
   }
   return ''
 }
+
+export function newArray(len: number, fill = null) {
+  return new Array(len).fill(fill)
+}

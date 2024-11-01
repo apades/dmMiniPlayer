@@ -3,9 +3,11 @@ import { createElement, throttle } from '@root/utils'
 import FloatButton from '@root/components/FloatButton'
 import { getTopParentsWithSameRect } from '@root/utils/dom'
 import { createRoot } from 'react-dom/client'
+import { getBrowserSyncStorage } from '@root/utils/storage'
+import { DRAG_POS } from '@root/shared/storeKey'
 
 const INIT_ATTR = 'rc-f-init'
-function _initVideoFloatBtn(
+async function _initVideoFloatBtn(
   container: HTMLElement,
   vel: HTMLVideoElement,
   fixedPos?: boolean
@@ -17,9 +19,18 @@ function _initVideoFloatBtn(
 
   container.setAttribute(INIT_ATTR, 'true')
 
+  const initPos = await getBrowserSyncStorage(DRAG_POS)
   const reactRoot = createElement('div')
   createRoot(reactRoot).render(
-    <FloatButton fixedPos={fixedPos} container={container} vel={vel} />
+    <FloatButton
+      fixedPos={fixedPos}
+      container={container}
+      vel={vel}
+      initPos={{
+        x: initPos?.x || 0,
+        y: initPos?.y || 0,
+      }}
+    />
   )
 }
 
