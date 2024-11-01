@@ -1,1 +1,0 @@
-该代码来自[rc-slider](http://github.com/react-component/slider)二次修改并打包，主要改了document -> target.ownerDocument相关
