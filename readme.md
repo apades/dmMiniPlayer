@@ -9,6 +9,7 @@
 
 - [chrome商店](https://chrome.google.com/webstore/detail/%E5%BC%B9%E5%B9%95%E7%94%BB%E4%B8%AD%E7%94%BB%E6%92%AD%E6%94%BE%E5%99%A8/nahbabjlllhocabmecfjmcblchhpoclj)
 - [edge商店](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
+- [FAQ](https://github.com/apades/dmMiniPlayer/wiki/FAQ)
 
 ## 🚀 功能
 - 在画中画窗口中拖动、键盘控制进度、调整音量，调节倍速
