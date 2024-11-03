@@ -1,0 +1,23 @@
+{
+  "appName": {
+    "message": "Lecteur image dans l'image Danmaku"
+  },
+  "appDesc": {
+    "message": "Prend en charge la dernière fonction API image dans l'image et peut lire/envoyer des barrages dans des vidéos/diffusions en direct"
+  },
+  "back": {
+    "message": "Retour"
+  },
+  "forward": {
+    "message": "Avance rapide"
+  },
+  "playOrPause": {
+    "message": "Pause/Lecture"
+  },
+  "hide": {
+    "message": "Masquer l'image dans l'image"
+  },
+  "playbackRate": {
+    "message": "Activer/désactiver la double vitesse. La valeur par défaut est 3x. Veuillez vous rendre sur la page des paramètres pour la modifier."
+  }
+}

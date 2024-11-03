@@ -1,0 +1,23 @@
+{
+  "appName": {
+    "message": "단막 PIP 플레이어"
+  },
+  "appDesc": {
+    "message": "최신 PIP(picture-in-picture) API 기능을 지원하며 비디오/라이브 방송에서 탄막을 재생/전송할 수 있습니다."
+  },
+  "back": {
+    "message": "뒤로"
+  },
+  "forward": {
+    "message": "빨리 감기"
+  },
+  "playOrPause": {
+    "message": "일시중지/재생"
+  },
+  "hide": {
+    "message": "PIP 숨기기"
+  },
+  "playbackRate": {
+    "message": "2배속을 켜거나 끕니다. 기본값은 3배속입니다. 수정하려면 설정 페이지로 이동하세요."
+  }
+}

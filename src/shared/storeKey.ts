@@ -1,4 +1,5 @@
 import type configStore from '@root/store/config'
+import { Language } from '@root/utils/i18n'
 
 function key<T = any>(key: string) {
   return key as string & { __key: T }
@@ -18,3 +19,5 @@ export const DRAG_POS = key<{
   xType: 'left' | 'right'
   yType: 'top' | 'bottom'
 }>('DRAG_POS')
+
+export const LOCALE = key<Language>('LOCALE')

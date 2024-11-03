@@ -1,5 +1,10 @@
 import en from '../locales/en.json'
-import zhCn from '../locales/zh_CN.json'
+import zhCN from '../locales/zh_CN.json'
+import zhTW from '../locales/zh_TW.json'
+import es from '../locales/es.json'
+import fr from '../locales/fr.json'
+import ja from '../locales/ja.json'
+import ko from '../locales/ko.json'
 import { get } from '.'
 
 type DeepKeys<T> = T extends Record<string, unknown>
@@ -16,16 +21,57 @@ type Concat<K extends string, P extends string> = `${K}${'' extends P
   ? ''
   : '.'}${P}`
 
-export type I18nKeys = DeepLeafKeys<typeof zhCn>
-export const nowLang = navigator.languages.find((lang) =>
-  lang.toLocaleLowerCase().replace('_', '-').startsWith('zh')
-)
-  ? 'zh_CN'
-  : 'en'
+export enum Language {
+  English = 'en',
+  'Chinese(Simplified)' = 'zh_cn',
+  'Chinese(Traditional)' = 'zh_tw',
+  // 按知名度排序
+  Spanish = 'es',
+  French = 'fr',
+  Japanese = 'ja',
+  Korean = 'ko',
+}
 
-export const isEn = nowLang == 'en'
+export const LanguageNativeNames: Record<Language, string> = {
+  en: 'English',
+  zh_cn: '中文(简体)',
+  zh_tw: '中文(繁體)',
+  es: 'Español',
+  fr: 'Français',
+  ja: '日本語',
+  ko: '한국어',
+}
 
+const i18nMap: Record<Language, any> = {
+  en: en,
+  es: es,
+  fr: fr,
+  ja: ja,
+  ko: ko,
+  zh_cn: zhCN,
+  zh_tw: zhTW,
+}
+
+export const defaultLang = Language.English
+
+export type I18nKeys = DeepLeafKeys<typeof zhCN>
+
+const formatLang = (lang: string) =>
+  lang.toLocaleLowerCase().replace('-', '_') as any
+const langKeys = Object.values(Language)
+
+export const nowLang: Language =
+  window.__LOCALE ||
+  formatLang(
+    navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
+      Language.English
+  )
+
+export const isZh =
+  nowLang == Language['Chinese(Simplified)'] ||
+  nowLang == Language['Chinese(Traditional)']
+
+const langFile = i18nMap[nowLang]
 export function t(key: I18nKeys) {
-  const langFile = isEn ? en : zhCn
-  return get(langFile, key) as string
+  return (get(langFile, key) || get(en, key)) as string
 }

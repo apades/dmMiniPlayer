@@ -2,6 +2,7 @@ import { config } from '@apad/setting-panel'
 import { initSetting } from '@apad/setting-panel'
 import {
   getBrowserSyncStorage,
+  setBrowserLocalStorage,
   setBrowserSyncStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
@@ -12,8 +13,18 @@ import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
 import config_bilibili from './bilibili'
 import config_subtitle from './subtitle'
-import { isEn, t } from '@root/utils/i18n'
-import { DM_MINI_PLAYER_CONFIG, FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
+import {
+  isZh,
+  Language,
+  LanguageNativeNames,
+  nowLang,
+  t,
+} from '@root/utils/i18n'
+import {
+  DM_MINI_PLAYER_CONFIG,
+  FLOAT_BTN_HIDDEN,
+  LOCALE,
+} from '@root/shared/storeKey'
 import isPluginEnv from '@root/shared/isPluginEnv'
 import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
@@ -31,6 +42,16 @@ export const baseConfigMap = {
   ...config_danmaku,
   ...config_bilibili,
   ...config_subtitle,
+  language: config<Language>({
+    label: 'Language',
+    desc: 'Will reload page when language has changed',
+    defaultValue: nowLang,
+    type: 'group',
+    group: Object.values(Language).map((v) => ({
+      label: LanguageNativeNames[v],
+      value: v,
+    })),
+  }),
   FPS_limitOffsetAccurate: config({
     defaultValue: false,
     desc: t('settingPanel.FPS_limitOffsetAccurateDesc'),
@@ -162,8 +183,13 @@ export const { configStore, openSettingPanel, closeSettingPanel, observe } =
     settings: baseConfigMap,
     saveInLocal: !isPluginEnv,
     mobx,
-    i18n: isEn ? en : zh,
-    onSave(newConfig) {
+    i18n: isZh ? zh : en,
+    async onSave(newConfig) {
+      if (newConfig.language) {
+        await setBrowserLocalStorage(LOCALE, newConfig.language)
+        location.reload()
+        delete (newConfig as any).language
+      }
       if (!isPluginEnv) return
       if (newConfig.useDocPIP) {
         if (!window?.documentPictureInPicture) {

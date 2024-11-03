@@ -1,0 +1,23 @@
+{
+  "appName": {
+    "message": "Reproductor de imagen en imagen Danmaku"
+  },
+  "appDesc": {
+    "message": "Admite la última función API de imagen en imagen y puede reproducir/enviar bombardeos en videos/transmisiones en vivo"
+  },
+  "back": {
+    "message": "Volver"
+  },
+  "forward": {
+    "message": "Avance rápido"
+  },
+  "playOrPause": {
+    "message": "Pausar/Reproducir"
+  },
+  "hide": {
+    "message": "Ocultar imagen en imagen"
+  },
+  "playbackRate": {
+    "message": "Activa/desactiva la velocidad doble. La velocidad predeterminada es 3x. Ve a la página de configuración para modificarla"
+  }
+}

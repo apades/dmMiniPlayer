@@ -1,0 +1,23 @@
+{
+  "appName": {
+    "message": "彈幕畫中畫播放器"
+  },
+  "appDesc": {
+    "message": "支援最新的畫中畫API功能，並且可以在 視訊/直播 中 播放/發送 彈幕"
+  },
+  "back": {
+    "message": "後退"
+  },
+  "forward": {
+    "message": "快轉"
+  },
+  "playOrPause": {
+    "message": "暫停/播放"
+  },
+  "hide": {
+    "message": "隱藏畫中畫"
+  },
+  "playbackRate": {
+    "message": "開啟/關閉倍速，預設3倍速，修改請至設定頁"
+  }
+}
