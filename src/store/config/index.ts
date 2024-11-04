@@ -14,10 +14,10 @@ import config_danmaku from './danmaku'
 import config_bilibili from './bilibili'
 import config_subtitle from './subtitle'
 import {
-  isZh,
+  getIsZh,
   Language,
   LanguageNativeNames,
-  nowLang,
+  getNowLang,
   t,
 } from '@root/utils/i18n'
 import {
@@ -45,7 +45,7 @@ export const baseConfigMap = {
   language: config<Language>({
     label: 'Language',
     desc: 'Will reload page when language has changed',
-    defaultValue: nowLang,
+    defaultValue: getNowLang(),
     type: 'group',
     group: Object.values(Language).map((v) => ({
       label: LanguageNativeNames[v],
@@ -183,7 +183,7 @@ export const { configStore, openSettingPanel, closeSettingPanel, observe } =
     settings: baseConfigMap,
     saveInLocal: !isPluginEnv,
     mobx,
-    i18n: isZh ? zh : en,
+    i18n: getIsZh() ? zh : en,
     async onSave(newConfig) {
       if (newConfig.language) {
         await setBrowserLocalStorage(LOCALE, newConfig.language)

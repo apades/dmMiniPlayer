@@ -5,7 +5,7 @@ import es from '../locales/es.json'
 import fr from '../locales/fr.json'
 import ja from '../locales/ja.json'
 import ko from '../locales/ko.json'
-import { get } from '.'
+import { get, onceCall } from '.'
 
 type DeepKeys<T> = T extends Record<string, unknown>
   ? {
@@ -60,18 +60,23 @@ const formatLang = (lang: string) =>
   lang.toLocaleLowerCase().replace('-', '_') as any
 const langKeys = Object.values(Language)
 
-export const nowLang: Language =
-  window.__LOCALE ||
-  formatLang(
-    navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
-      Language.English
-  )
+const getLangFromNavigator = onceCall(
+  (): Language =>
+    formatLang(
+      navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
+        Language.English
+    )
+)
 
-export const isZh =
-  nowLang == Language['Chinese(Simplified)'] ||
-  nowLang == Language['Chinese(Traditional)']
+export const getNowLang = (): Language =>
+  (globalThis as any).__LOCALE || getLangFromNavigator()
 
-const langFile = i18nMap[nowLang]
+export const getIsZh = () =>
+  getNowLang() == Language['Chinese(Simplified)'] ||
+  getNowLang() == Language['Chinese(Traditional)']
+
+const getLangFile = () => i18nMap[getNowLang()]
 export function t(key: I18nKeys) {
+  const langFile = getLangFile()
   return (get(langFile, key) || get(en, key)) as string
 }

@@ -3,9 +3,11 @@ import './commands'
 import { onMessage, sendMessage } from 'webext-bridge/background'
 import Browser from 'webextension-polyfill'
 import { t } from '@root/utils/i18n'
-import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
+import { FLOAT_BTN_HIDDEN, LOCALE } from '@root/shared/storeKey'
 import {
+  getBrowserLocalStorage,
   setBrowserSyncStorage,
+  useBrowserLocalStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
 import WebextEvent from '@root/shared/webextEvent'
@@ -13,6 +15,11 @@ import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
 import { v4 as uuid } from 'uuid'
 
 console.log('run bg')
+getBrowserLocalStorage(LOCALE).then((locale) => {
+  if (!locale) return
+  ;(globalThis as any).__LOCALE = locale
+})
+
 onMessage(WebextEvent.needClickWebToOpenPIP, (req) => {
   Browser.notifications.create(new Date().getTime() + '', {
     type: 'basic',
@@ -106,6 +113,17 @@ Browser.runtime.onInstalled.addListener(() => {
     contexts: ['action'],
     title: t('menu.openSetting'),
     id: SETTING_ID,
+  })
+})
+
+useBrowserLocalStorage(LOCALE, (locale) => {
+  if (!locale) return
+  ;(globalThis as any).__LOCALE = locale
+  Browser.contextMenus.update(FLOAT_BTN_ID, {
+    title: t('menu.showFloatBtn'),
+  })
+  Browser.contextMenus.update(SETTING_ID, {
+    title: t('menu.openSetting'),
   })
 })
 
