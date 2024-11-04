@@ -9,13 +9,14 @@ import configStore from '@root/store/config'
 
 const getIframe = () => dq1<HTMLIFrameElement>('.ytd-live-chat-frame')
 const getLiveClass = () => dq1<HTMLDivElement>('.ytp-live')
-const isLive = () => configStore.useIframeToDetectIsLiveOnYoutube ? !!getIframe() : !!getLiveClass()
+const isLive = () =>
+  configStore.useIframeToDetectIsLiveOnYoutube
+    ? !!getIframe()
+    : !!getLiveClass()
 export default class YoutubeProvider extends HtmlDanmakuProvider {
   onInit() {
+    super.onInit()
     this.isLive = isLive()
-    if (this.isLive) {
-      return super.onInit()
-    }
 
     this.subtitleManager = new YoutubeSubtitleManager()
     this.sideSwitcher = new SideSwitcher()

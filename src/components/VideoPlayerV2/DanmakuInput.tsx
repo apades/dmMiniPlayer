@@ -26,8 +26,10 @@ const DanmakuInputIconInner: FC<Props> = (props) => {
     })
   })
 
+  if (!isInitd) return
+
   return (
-    <div className={classNames(isInitd ? 'visible' : 'invisible')}>
+    <div>
       <div
         className="p-[5px] cursor-pointer rounded-sm transition-colors hover:bg-[#333]"
         onClick={() => {
