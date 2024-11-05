@@ -37,6 +37,13 @@ interface MediaSession {
   ): void
 }
 
+interface DisplayMediaStreamOptions {
+  preferCurrentTab?: boolean
+}
+
+interface MediaStreamTrack {
+  cropTo: (cropTarget: any) => Promise<void>
+}
 declare namespace chrome.runtime {
   interface ManifestBase {
     content_scripts?:

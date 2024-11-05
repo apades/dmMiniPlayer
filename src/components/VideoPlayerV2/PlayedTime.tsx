@@ -1,5 +1,5 @@
 import { formatTime } from '@root/utils'
-import { FC, useContext, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import vpContext from './context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 
@@ -15,6 +15,11 @@ const PlayedTime: FC = (props) => {
     },
     webVideo
   )
+  useEffect(() => {
+    if (!webVideo) return
+    setCurrentTime(webVideo.currentTime)
+  }, [webVideo])
+
   return (
     <span style={{ whiteSpace: 'nowrap' }}>
       {formatTime(currentTime)}
