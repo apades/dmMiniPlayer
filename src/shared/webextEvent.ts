@@ -6,6 +6,8 @@ enum WebextEvent {
   getDanmaku = 'getDanmaku',
   stopGetDanmaku = 'stopGetDanmaku',
   needClickWebToOpenPIP = 'needClickWebToOpenPIP',
+  openPIP = 'openPIP',
 }
 
+export const WEBEXT_NSP = 'WEBEXT_NSP'
 export default WebextEvent

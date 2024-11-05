@@ -1,11 +1,18 @@
 import getWebProvider from '../web-provider/getWebProvider'
-import { onMessage as onBgMessage } from 'webext-bridge/content-script'
+import {
+  onMessage as onBgMessage,
+  allowWindowMessaging,
+  sendMessage as sendExtMessage,
+} from 'webext-bridge/content-script'
 import { onMessage } from '@root/inject/contentSender'
 import { createElement, dq1Adv } from '@root/utils'
 import { WebProvider } from '@root/core/WebProvider'
 import './floatButton'
+import WebextEvent, { WEBEXT_NSP } from '@root/shared/webextEvent'
 
 console.log('run content')
+
+allowWindowMessaging(WEBEXT_NSP)
 
 let provider = () => {
   let provider = getWebProvider()
@@ -79,3 +86,6 @@ try {
 }
 
 window.getWebProvider = getWebProvider
+
+window.WebextEvent = WebextEvent
+window.sendExtMessage = sendExtMessage

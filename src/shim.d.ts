@@ -26,5 +26,6 @@ declare module 'webext-bridge' {
     }
     [WebextEvent.stopGetDanmaku]: { id: string }
     [WebextEvent.needClickWebToOpenPIP]: void
+    [WebextEvent.openPIP]: void
   }
 }

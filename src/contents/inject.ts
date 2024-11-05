@@ -1,5 +1,13 @@
 // import type { PlasmoCSConfig } from 'plasmo'
+import { setNamespace, onMessage } from 'webext-bridge/window'
 import '../inject'
+import WebextEvent, { WEBEXT_NSP } from '@root/shared/webextEvent'
+
+setNamespace(WEBEXT_NSP)
+
+onMessage(WebextEvent.openPIP, () => {
+  console.log('openPIP', location.host)
+})
 
 // console.log('run inject in', location.href)
 // // 只在iframe里测试
