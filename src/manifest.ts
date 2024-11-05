@@ -7,6 +7,7 @@ export const manifest: chrome.runtime.ManifestV3 = {
   description: '__MSG_appDesc__',
   author: 'apades',
   manifest_version: 3,
+  homepage_url: 'https://github.com/apades/dmMiniPlayer',
   version,
   icons: {
     '16': 'assets/icon16.png',
