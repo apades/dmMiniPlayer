@@ -92,6 +92,30 @@ const FloatButton: FC<Props> = (props) => {
     container
   )
 
+  useTargetEventListener(
+    'message',
+    (e) => {
+      const data = e.data
+      console.log('iframe message', e.data)
+      if (data?.from !== 'dmMiniPlayer-main') return
+      switch (data?.type) {
+        case 'update-video-state': {
+          if (data.data.isPause) {
+            window.__controllingVideoEl.pause()
+          }
+          if (data.data.isPlay) {
+            window.__controllingVideoEl.play()
+          }
+          if (data.data.currentTime !== undefined) {
+            window.__controllingVideoEl.currentTime = data.data.currentTime
+          }
+          break
+        }
+      }
+    },
+    window
+  )
+
   const containerSize = useSize(container)
   const floatBtnSize = useSize(floatBtn)
 
@@ -123,8 +147,6 @@ const FloatButton: FC<Props> = (props) => {
     configStore.floatButtonX,
     configStore.floatButtonY,
   ])
-
-  console.log('posStyle', posStyle)
 
   return (
     <>
@@ -212,7 +234,7 @@ const FloatButton: FC<Props> = (props) => {
           >
             <div
               className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation()
                 const videoEl =
                   container instanceof HTMLVideoElement
@@ -220,26 +242,46 @@ const FloatButton: FC<Props> = (props) => {
                     : container.querySelector('video')
 
                 console.log('视频容器', videoEl, '父容器', container)
-                const event = new CustomEvent('inject-response', {
-                  detail: {
-                    type: 'start-PIP',
-                    data: {
-                      videoEl,
-                    },
-                  },
-                })
+                if (!videoEl) return
                 try {
                   top!.document
                 } catch (error) {
-                  console.error(error)
-                  if (videoEl) {
+                  console.error('非同源iframe，采用其他方式', error)
+                  try {
+                    top?.postMessage(
+                      {
+                        from: 'dmMiniPlayer',
+                        type: 'start-PIP-capture-displayMedia',
+                        data: {
+                          cropTarget: await window.CropTarget.fromElement(
+                            videoEl
+                          ),
+                          duration: videoEl.duration,
+                          currentTime: videoEl.currentTime,
+                          isPause: videoEl.paused,
+                        },
+                      },
+                      '*'
+                    )
+                    window.__controllingVideoEl = videoEl
+                  } catch (error) {
+                    console.error('CropTarget.fromElement没法用', error)
                     videoEl.requestPictureInPicture()
+                    throw Error(
+                      '该视频可能在非同源的iframe中，目前不支持非同源iframe'
+                    )
                   }
-                  throw Error(
-                    '该视频可能在非同源的iframe中，目前不支持非同源iframe'
-                  )
                 }
-                top?.dispatchEvent(event)
+                top?.dispatchEvent(
+                  new CustomEvent('inject-response', {
+                    detail: {
+                      type: 'start-PIP',
+                      data: {
+                        videoEl,
+                      },
+                    },
+                  })
+                )
               }}
               onMouseEnter={() => {
                 clear()

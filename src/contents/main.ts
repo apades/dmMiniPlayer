@@ -1,4 +1,4 @@
-import getWebProvider from '../web-provider/getWebProvider'
+import _getWebProvider from '../web-provider/getWebProvider'
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import { onMessage } from '@root/inject/contentSender'
 import { createElement, dq1Adv } from '@root/utils'
@@ -7,8 +7,9 @@ import './floatButton'
 
 console.log('run content')
 
-let provider = () => {
-  let provider = getWebProvider()
+let provider: WebProvider | undefined
+let getProvider = () => {
+  provider = _getWebProvider()
   window.provider = provider
   return provider
 }
@@ -39,7 +40,7 @@ const openPlayer = async (props?: Parameters<WebProvider['openPlayer']>[0]) => {
   // 避免多次open
   if (isWaiting) return
   isWaiting = true
-  await provider()?.openPlayer(props)
+  await getProvider()?.openPlayer(props)
   isWaiting = false
 }
 
@@ -70,12 +71,105 @@ onMessage('start-PIP', (data) => {
   openPlayer({ videoEl: data.videoEl })
 })
 
+let captureSource: Window | undefined
+const updateCaptureSourceVideoState = (data: any) => {
+  console.log('updateCaptureIframeVideoState', data, captureSource)
+  if (!captureSource) return
+  captureSource.postMessage(
+    {
+      from: 'dmMiniPlayer-main',
+      type: 'update-video-state',
+      data,
+    },
+    '*'
+  )
+}
+const getTime = () => new Date().getTime()
+onMessage('start-PIP-capture-displayMedia', async (data) => {
+  window.__cropTarget = data.cropTarget
+  const videoEl = createElement('video')
+
+  let isPause = data.isPause,
+    currentTime = data.currentTime
+
+  Object.defineProperties(videoEl, {
+    duration: {
+      get: () => data.duration,
+    },
+    currentTime: {
+      get: () => currentTime,
+      set: (val) => {
+        updateCaptureSourceVideoState({ currentTime: val })
+        currentTime = val
+      },
+    },
+    paused: {
+      get: () => isPause,
+    },
+    buffered: {
+      get: () => {
+        return {
+          start: () => 0,
+          end: () => data.duration,
+          length: 1,
+        } satisfies TimeRanges
+      },
+    },
+    pause: {
+      get: () => () => {
+        updateCaptureSourceVideoState({ isPause: true })
+        isPause = true
+        videoEl.dispatchEvent(new CustomEvent('pause'))
+      },
+    },
+    play: {
+      get: () => async () => {
+        updateCaptureSourceVideoState({ isPlay: true })
+        isPause = false
+        videoEl.dispatchEvent(new CustomEvent('play'))
+      },
+    },
+  })
+
+  let now = getTime()
+  setInterval(() => {
+    if (isPause) {
+      now = getTime()
+      return
+    }
+    const nowTime = getTime()
+    currentTime += (nowTime - now) / 1000
+    now = nowTime
+    videoEl.dispatchEvent(new CustomEvent('timeupdate'))
+  }, 1000)
+
+  openPlayer({ videoEl })
+})
+
+// 非同源iframe只能通过postMessage通信
+window.addEventListener('message', (e) => {
+  const data = e.data
+  if (data?.from !== 'dmMiniPlayer') return
+  if (data?.type === 'start-PIP-capture-displayMedia') {
+    captureSource = e.source as Window
+  }
+
+  window.dispatchEvent(
+    new CustomEvent('inject-response', {
+      detail: {
+        type: data.type,
+        data: data.data,
+      },
+    })
+  )
+})
+
 try {
   navigator.mediaSession.setActionHandler('enterpictureinpicture', () => {
-    provider()?.openPlayer()
+    getProvider()?.openPlayer()
   })
 } catch (error) {
   console.log('🟡 No support mediaSession action enterpictureinpicture')
 }
 
-window.getWebProvider = getWebProvider
+window.getWebProvider = _getWebProvider

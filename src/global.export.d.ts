@@ -26,6 +26,12 @@ declare global {
     }
     openSettingPanel: () => void
     __LOCALE: Language
+
+    CropTarget: {
+      fromElement: (el: HTMLElement) => void
+    }
+    __cropTarget: any
+    __controllingVideoEl: HTMLVideoElement
     [k: string]: any
   }
 }

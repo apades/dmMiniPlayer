@@ -5,6 +5,7 @@ import SubtitleManager from '../SubtitleManager'
 import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
+import configStore, { DocPIPRenderType } from '@root/store/config'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
@@ -74,12 +75,16 @@ export default class VideoPlayerBase
 
     await this.onInit()
 
-    this.unobserveVideoElChange = observeVideoEl(
-      this.webVideoEl,
-      (newVideoEl) => {
-        this.emit(PlayerEvent.webVideoChanged, newVideoEl as any)
-      }
-    )
+    if (
+      configStore.docPIP_renderType !== DocPIPRenderType.capture_displayMedia
+    ) {
+      this.unobserveVideoElChange = observeVideoEl(
+        this.webVideoEl,
+        (newVideoEl) => {
+          this.emit(PlayerEvent.webVideoChanged, newVideoEl as any)
+        }
+      )
+    }
 
     runInAction(() => {
       if (this.danmakuSender) {
@@ -104,6 +109,9 @@ export default class VideoPlayerBase
 
   /**return的函数运行是还原videoEl位置和状态 */
   protected initWebVideoPlayerElState(videoEl: HTMLVideoElement) {
+    if (configStore.docPIP_renderType === DocPIPRenderType.capture_displayMedia)
+      return () => {}
+
     const originParent = videoEl.parentElement
     if (!originParent) {
       console.error('不正常的video标签，没有父元素', videoEl)

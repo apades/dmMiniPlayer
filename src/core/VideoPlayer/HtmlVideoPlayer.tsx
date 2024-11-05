@@ -24,8 +24,8 @@ const styleEl = createElement('div', {
 export class HtmlVideoPlayer extends VideoPlayerBase {
   playerRootEl?: HTMLElement
 
-  onInit(): void {
-    this.renderReactVideoPlayer()
+  async onInit() {
+    await this.renderReactVideoPlayer()
     // this.on(PlayerEvent.close, () => {})
   }
 
@@ -62,13 +62,29 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     return (this.webVideoEl as any).captureStream() as MediaStream
   }
 
-  protected renderReactVideoPlayer() {
-    const pipWindow = window.documentPictureInPicture.window
+  protected async renderReactVideoPlayer() {
+    let vpRef: VideoPlayerHandle
+    const root = createElement('div')
+    this.playerRootEl = createElement('div', {
+      children: [root, styleEl],
+    })
+    const reactRoot = createRoot(root)
 
-    let isCanvasVideoMode =
-        configStore.docPIP_renderType == DocPIPRenderType.reactVP_canvasCs,
-      isWebVideoMode =
-        configStore.docPIP_renderType == DocPIPRenderType.reactVP_webVideo
+    const commonProps: ComponentProps<typeof VideoPlayerV2> = {
+      subtitleManager: this.subtitleManager,
+      danmakuSender: this.danmakuSender,
+      danmakuEngine: this.danmakuEngine,
+      sideSwitcher: this.sideSwitcher,
+      videoPlayer: this,
+      webVideo: this.webVideoEl,
+      ref: (ref) => {
+        if (!ref) return
+        vpRef = ref
+      },
+      isLive: this.isLive,
+    }
+
+    let renderMode = configStore.docPIP_renderType
 
     // bilibili直播有一些页面是套同源iframe的，例如瓦洛兰特比赛什么的
     // 需要强制使用canvasVideoMode
@@ -77,54 +93,59 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       // 三方url可以直接转移video dom，blob才不行需要canvasVideoMode
       this.webVideoEl.src.startsWith('blob:')
     ) {
-      console.log('强制canvasVideoMode')
-      isCanvasVideoMode = true
-      isWebVideoMode = false
+      console.log('强制capture_captureStreamWithCanvas模式')
+      renderMode = DocPIPRenderType.capture_captureStreamWithCanvas
     }
 
-    let vpRef: VideoPlayerHandle
-    const root = createElement('div')
-    this.playerRootEl = createElement('div', {
-      children: [root, styleEl],
-    })
-    const reactRoot = createRoot(root)
+    if (window.__cropTarget) {
+      console.log('强制capture_displayMedia模式')
+      renderMode = DocPIPRenderType.capture_displayMedia
+    }
 
-    const vpProps: Partial<ComponentProps<typeof VideoPlayerV2>> = (() => {
-      // webVideo模式，使用原生video标签
-      if (isWebVideoMode) return { useWebVideo: true }
-      // canvas模式，传入canvasVideo的stream
-      if (isCanvasVideoMode)
-        return {
-          videoStream: this.canvasVideoStream,
+    const isWebVideoMode = renderMode === DocPIPRenderType.replaceVideoEl,
+      isCanvasVideoMode =
+        renderMode === DocPIPRenderType.capture_captureStreamWithCanvas
+
+    const playerComponent = await (async () => {
+      switch (renderMode) {
+        case DocPIPRenderType.capture_captureStreamWithCanvas:
+          return (
+            <VideoPlayerV2
+              {...commonProps}
+              videoStream={this.canvasVideoStream}
+            />
+          )
+        case DocPIPRenderType.replaceVideoEl:
+          return <VideoPlayerV2 {...commonProps} useWebVideo />
+        case DocPIPRenderType.capture_captureStream:
+          return (
+            <VideoPlayerV2
+              {...commonProps}
+              videoStream={this.webPlayerVideoStream}
+            />
+          )
+        // TODO
+        case DocPIPRenderType.capture_captureStreamWithWebRTC:
+          return
+        case DocPIPRenderType.capture_displayMedia: {
+          if (!window.__cropTarget) throw Error('没有定义__cropTarget')
+          const stream = await navigator.mediaDevices.getDisplayMedia({
+            preferCurrentTab: true,
+            video: { frameRate: 60 },
+          })
+          const [track] = stream.getVideoTracks()
+          await track.cropTo(window.__cropTarget)
+          return <VideoPlayerV2 {...commonProps} videoStream={stream} />
         }
 
-      return {
-        // 最后一个设置的使用reactVP_cs
-        videoStream: this.webPlayerVideoStream,
+        case DocPIPRenderType.capture_tabCapture:
+          return
       }
     })()
 
-    console.log('vpProps', vpProps)
+    if (!playerComponent) throw new Error(`未支持的renderMode: ${renderMode}`)
 
-    reactRoot.render(
-      <VideoPlayerV2
-        // 外挂插件
-        subtitleManager={this.subtitleManager}
-        danmakuSender={this.danmakuSender}
-        danmakuEngine={this.danmakuEngine}
-        sideSwitcher={this.sideSwitcher}
-        videoPlayer={this}
-        // ----
-        webVideo={this.webVideoEl}
-        keydownWindow={pipWindow}
-        ref={(ref) => {
-          if (!ref) return
-          vpRef = ref
-        }}
-        isLive={this.isLive}
-        {...vpProps}
-      />
-    )
+    reactRoot.render(playerComponent)
 
     this.addCallback(
       this.on2(PlayerEvent.webVideoChanged, (newVideoEl) => {
