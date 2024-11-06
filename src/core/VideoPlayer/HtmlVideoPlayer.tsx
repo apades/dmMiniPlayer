@@ -1,5 +1,5 @@
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import { createElement, throttle } from '@root/utils'
+import { addEventListener, createElement, throttle } from '@root/utils'
 import { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
 import CanvasVideo from '../CanvasVideo'
@@ -10,6 +10,8 @@ import VideoPlayerV2, {
   VideoPlayerHandle,
 } from '@root/components/VideoPlayerV2'
 import Browser from 'webextension-polyfill'
+import { sendMessage as sendBgMessage } from 'webext-bridge/content-script'
+import WebextEvent from '@root/shared/webextEvent'
 
 const styleEl = createElement('div', {
   className: 'style-list',
@@ -98,8 +100,10 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     }
 
     if (window.__cropTarget) {
-      console.log('强制capture_displayMedia模式')
-      renderMode = DocPIPRenderType.capture_displayMedia
+      console.log(
+        `🟡 强制 ${configStore.notSameOriginIframeCaptureModePriority} 模式`
+      )
+      renderMode = configStore.notSameOriginIframeCaptureModePriority
     }
 
     const isWebVideoMode = renderMode === DocPIPRenderType.replaceVideoEl,
@@ -132,14 +136,50 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           const stream = await navigator.mediaDevices.getDisplayMedia({
             preferCurrentTab: true,
             video: { frameRate: 60 },
+            audio: false,
           })
           const [track] = stream.getVideoTracks()
+          track.addEventListener('ended', () => {
+            this.emit(PlayerEvent.close)
+          })
           await track.cropTo(window.__cropTarget)
           return <VideoPlayerV2 {...commonProps} videoStream={stream} />
         }
 
         case DocPIPRenderType.capture_tabCapture:
-          return
+          if (!window.__cropTarget) throw Error('没有定义__cropTarget')
+          await sendBgMessage(WebextEvent.getup, null)
+          // FIXME 为什么bg一直提示Extension has not been invoked for the current page
+          const data = await sendBgMessage(WebextEvent.startTabCapture, null)
+          if (!data.streamId) throw Error('没有获取到streamId')
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              mandatory: {
+                chromeMediaSource: 'tab',
+                chromeMediaSourceId: data.streamId,
+              },
+            },
+            audio: false,
+          })
+          const [track] = stream.getVideoTracks()
+          track.addEventListener('ended', () => {
+            this.emit(PlayerEvent.close)
+          })
+          // FIXME 非常卡，tab都卡爆了
+          // tabCapture不支持cropTarget，所以需要手动裁剪
+          // const videoEl = createElement('video', {
+          //   srcObject: stream,
+          // })
+          // videoEl.play()
+          // const canvasVideo = new CanvasVideo({
+          //   videoEl,
+          //   width: window.__cropPos.x,
+          //   height: window.__cropPos.y,
+          //   x: window.__cropPos.x,
+          //   y: window.__cropPos.y,
+          //   fps: 30,
+          // })
+          return <VideoPlayerV2 {...commonProps} videoStream={stream} />
       }
     })()
 

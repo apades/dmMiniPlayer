@@ -5,10 +5,11 @@ import {
   sendMessage as sendExtMessage,
 } from 'webext-bridge/content-script'
 import { onMessage } from '@root/inject/contentSender'
-import { createElement, dq1Adv } from '@root/utils'
+import { createElement, dq, dq1Adv } from '@root/utils'
 import { WebProvider } from '@root/core/WebProvider'
 import './floatButton'
 import WebextEvent, { WEBEXT_NSP } from '@root/shared/webextEvent'
+import { pick } from 'lodash-es'
 
 console.log('run content')
 
@@ -94,6 +95,23 @@ const updateCaptureSourceVideoState = (data: any) => {
 const getTime = () => new Date().getTime()
 onMessage('start-PIP-capture-displayMedia', async (data) => {
   window.__cropTarget = data.cropTarget
+
+  window.__cropPos = pick(data, ['x', 'y', 'w', 'h', 'vw', 'vh'])
+  // 判断captureSource是iframe里还是top发起的
+  const isIframe = captureSource !== window
+  if (isIframe) {
+    const targetIframeEl = dq('iframe').find(
+      (iframeEl) => iframeEl.contentWindow === captureSource
+    )
+    if (!targetIframeEl) {
+      console.error('captureSource', captureSource)
+      throw Error('找不到captureSource iframe')
+    }
+    const targetIframeRect = targetIframeEl.getBoundingClientRect()
+    window.__cropPos.x += targetIframeRect.x
+    window.__cropPos.y += targetIframeRect.y
+  }
+
   const videoEl = createElement('video')
 
   let isPause = data.isPause,

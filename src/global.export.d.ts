@@ -31,6 +31,14 @@ declare global {
       fromElement: (el: HTMLElement) => void
     }
     __cropTarget: any
+    __cropPos: {
+      x: number
+      y: number
+      w: number
+      h: number
+      vw: number
+      vh: number
+    }
     __controllingVideoEl: HTMLVideoElement
     [k: string]: any
   }

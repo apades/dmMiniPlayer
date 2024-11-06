@@ -39,7 +39,7 @@ export default class DocPIPWebProvider extends WebProvider {
       }
     }
 
-    this.miniPlayer.init()
+    await this.miniPlayer.init()
     const playerEl = this.miniPlayer.playerRootEl
     if (!playerEl) {
       console.error('不正常的miniPlayer.init()，没有 playerEl', this.miniPlayer)
@@ -63,6 +63,14 @@ export default class DocPIPWebProvider extends WebProvider {
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)
     })
+
+    this.addCallback(
+      this.on2(PlayerEvent.close, () => {
+        try {
+          pipWindow.close()
+        } catch (error) {}
+      })
+    )
 
     pipWindow.document.body.appendChild(playerEl)
 

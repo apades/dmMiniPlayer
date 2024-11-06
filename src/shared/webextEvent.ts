@@ -7,6 +7,9 @@ enum WebextEvent {
   stopGetDanmaku = 'stopGetDanmaku',
   needClickWebToOpenPIP = 'needClickWebToOpenPIP',
   openPIP = 'openPIP',
+  startTabCapture = 'startTabCapture',
+  /**让bg起来 */
+  getup = 'getup',
 }
 
 export const WEBEXT_NSP = 'WEBEXT_NSP'

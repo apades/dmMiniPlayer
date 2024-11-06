@@ -41,6 +41,14 @@ interface DisplayMediaStreamOptions {
   preferCurrentTab?: boolean
 }
 
+interface MediaTrackConstraints {
+  mandatory?: Partial<{
+    maxFrameRate: number
+    chromeMediaSource: 'tab'
+    chromeMediaSourceId: string | number
+  }>
+}
+
 interface MediaStreamTrack {
   cropTo: (cropTarget: any) => Promise<void>
 }

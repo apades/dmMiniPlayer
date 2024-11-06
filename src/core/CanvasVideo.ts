@@ -1,6 +1,7 @@
 import { addEventListener } from '@root/utils'
 import { onceCallGet } from '@root/utils/decorator'
 import { EventBus } from './event'
+import { isUndefined } from 'lodash-es'
 
 type Props = {
   videoEl: HTMLVideoElement
@@ -8,6 +9,8 @@ type Props = {
   FPS_limitOffsetAccurate?: boolean
   width?: number
   height?: number
+  x?: number
+  y?: number
 }
 
 export default class CanvasVideo extends EventBus implements Required<Props> {
@@ -15,17 +18,20 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
   fps = 60
   FPS_limitOffsetAccurate = false
   /**容器高度 */
-  height: number = 0
+  height = 0
   /**容器宽度 */
-  width: number = 0
+  width = 0
 
   canvas = document.createElement('canvas')
   ctx = this.canvas.getContext('2d')!
-  private animationFrameSignal: number = 0
+  private animationFrameSignal = 0
   isPause = true
   hasSeek = true
 
   fpsInterval = 0
+
+  propsX?: number
+  propsY?: number
 
   get canvasVideoStream() {
     return this.canvas.captureStream()
@@ -38,6 +44,8 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
       props.FPS_limitOffsetAccurate ?? this.FPS_limitOffsetAccurate
     this.width = props.width || props.videoEl.clientWidth
     this.height = props.height || props.videoEl.clientHeight
+    this.propsX = props.x
+    this.propsY = props.y
 
     // 没有metadata前的video元素宽高是不正常的
     if (this.videoEl.readyState >= 1) {
@@ -110,15 +118,32 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
       const conHeightToConRatioWidth =
         (this.height / videoEl.videoHeight) * videoEl.videoWidth
 
-      this.y = 0
-      this.x = (this.width - conHeightToConRatioWidth) / 2
+      if (isUndefined(this.propsX)) {
+        this.x = (this.width - conHeightToConRatioWidth) / 2
+      } else {
+        this.x = this.propsX
+      }
+      if (isUndefined(this.propsY)) {
+        this.y = 0
+      } else {
+        this.y = this.propsY
+      }
+
       this.videoHeight = this.height
       this.videoWidth = conHeightToConRatioWidth
     }
     // 转成width为底的模式
     else {
-      this.x = 0
-      this.y = (this.height - conWidthToConRatioHeight) / 2
+      if (isUndefined(this.propsX)) {
+        this.x = 0
+      } else {
+        this.x = this.propsX
+      }
+      if (isUndefined(this.propsY)) {
+        this.y = (this.height - conWidthToConRatioHeight) / 2
+      } else {
+        this.y = this.propsY
+      }
       this.videoWidth = this.width
       this.videoHeight = conWidthToConRatioHeight
     }
