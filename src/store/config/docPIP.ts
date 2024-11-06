@@ -96,8 +96,22 @@ export const docPIPConfig = {
       {
         label: 'Use chrome extension API',
         value: DocPIPRenderType.capture_tabCapture,
-        desc: 'No browser sharing top bar, but maybe have some performance issues',
+        desc: 'No browser sharing top bar, but performance is not good. Recommended to turn the web video into full screen before turning on this function.',
       },
     ],
+  }),
+  capture_tabCapture_FPS: config({
+    label: 'Record FPS',
+    defaultValue: 30,
+    desc: 'Warning: The higher the FPS, the higher the CPU usage, and browser may crash',
+    relateBy: 'notSameOriginIframeCaptureModePriority',
+    relateByValue: DocPIPRenderType.capture_tabCapture,
+  }),
+  capture_tabCapture_clip: config({
+    label: 'Record clip',
+    defaultValue: false,
+    desc: 'Warning: Consuming performance very much',
+    relateBy: 'notSameOriginIframeCaptureModePriority',
+    relateByValue: DocPIPRenderType.capture_tabCapture,
   }),
 } as const

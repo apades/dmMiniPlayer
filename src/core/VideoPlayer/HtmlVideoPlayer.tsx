@@ -148,13 +148,14 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
         case DocPIPRenderType.capture_tabCapture:
           if (!window.__cropTarget) throw Error('没有定义__cropTarget')
-          await sendBgMessage(WebextEvent.getup, null)
-          // FIXME 为什么bg一直提示Extension has not been invoked for the current page
+          // TODO 提示用户点击下插件icon
+          // 这里必须要用户点击插件icon或者右键菜单功能才能用tapCapture功能 😅
           const data = await sendBgMessage(WebextEvent.startTabCapture, null)
           if (!data.streamId) throw Error('没有获取到streamId')
           const stream = await navigator.mediaDevices.getUserMedia({
             video: {
               mandatory: {
+                maxFrameRate: configStore.capture_tabCapture_FPS,
                 chromeMediaSource: 'tab',
                 chromeMediaSourceId: data.streamId,
               },
@@ -165,21 +166,37 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           track.addEventListener('ended', () => {
             this.emit(PlayerEvent.close)
           })
-          // FIXME 非常卡，tab都卡爆了
-          // tabCapture不支持cropTarget，所以需要手动裁剪
-          // const videoEl = createElement('video', {
-          //   srcObject: stream,
-          // })
-          // videoEl.play()
-          // const canvasVideo = new CanvasVideo({
-          //   videoEl,
-          //   width: window.__cropPos.x,
-          //   height: window.__cropPos.y,
-          //   x: window.__cropPos.x,
-          //   y: window.__cropPos.y,
-          //   fps: 30,
-          // })
-          return <VideoPlayerV2 {...commonProps} videoStream={stream} />
+          this.addCallback(
+            this.on2(PlayerEvent.close, () => {
+              try {
+                track.stop()
+              } catch (error) {}
+            })
+          )
+          if (configStore.capture_tabCapture_clip) {
+            // FIXME 非常卡，tab都卡爆了
+            // tabCapture不支持cropTarget，所以需要手动裁剪
+            const videoEl = createElement('video', {
+              srcObject: stream,
+            })
+            videoEl.play()
+            const canvasVideo = new CanvasVideo({
+              videoEl,
+              width: window.__cropPos.w,
+              height: window.__cropPos.h,
+              x: -window.__cropPos.x,
+              y: -window.__cropPos.y,
+              fps: configStore.capture_tabCapture_FPS,
+            })
+            return (
+              <VideoPlayerV2
+                {...commonProps}
+                videoStream={canvasVideo.canvasVideoStream}
+              />
+            )
+          } else {
+            return <VideoPlayerV2 {...commonProps} videoStream={stream} />
+          }
       }
     })()
 
