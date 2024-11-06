@@ -32,4 +32,7 @@ export default class Events2<Events extends Record<string, unknown>> {
   off(type: any, handler: any) {
     return this.mitt.off(type, handler)
   }
+  offAll() {
+    this.mitt.all.clear()
+  }
 }

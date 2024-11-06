@@ -1,6 +1,6 @@
 import { addEventListener } from '@root/utils'
 import { onceCallGet } from '@root/utils/decorator'
-import { EventBus } from './event'
+import { EventBus, PlayerEvent } from './event'
 import { isUndefined } from 'lodash-es'
 
 type Props = {
@@ -90,8 +90,8 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
         this.hasSeek = true
       })
     })
-    this.clearEventListener = clearEventListener
-    this.addCallback(clearEventListener)
+
+    this.on(PlayerEvent.close, clearEventListener)
   }
 
   //   containerWidth = 0

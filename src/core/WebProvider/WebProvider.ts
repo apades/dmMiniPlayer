@@ -128,7 +128,7 @@ export default abstract class WebProvider
         }
       }
 
-      this.removeAllCallbacks()
+      this.offAll()
 
       unListenOnClose()
       unListenVideoChanged()

@@ -166,13 +166,11 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           track.addEventListener('ended', () => {
             this.emit(PlayerEvent.close)
           })
-          this.addCallback(
-            this.on2(PlayerEvent.close, () => {
-              try {
-                track.stop()
-              } catch (error) {}
-            })
-          )
+          this.on(PlayerEvent.close, () => {
+            try {
+              track.stop()
+            } catch (error) {}
+          })
           if (configStore.capture_tabCapture_clip) {
             // FIXME 非常卡，tab都卡爆了
             // tabCapture不支持cropTarget，所以需要手动裁剪
@@ -204,38 +202,36 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     reactRoot.render(playerComponent)
 
-    this.addCallback(
-      this.on2(PlayerEvent.webVideoChanged, (newVideoEl) => {
-        console.log('observeVideoElChange', newVideoEl)
-        this.webVideoEl = newVideoEl
+    this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
+      console.log('observeVideoElChange', newVideoEl)
+      this.webVideoEl = newVideoEl
 
-        if (isWebVideoMode) {
+      if (isWebVideoMode) {
+        vpRef.updateVideo(newVideoEl)
+        // 控制要不要把上一个还原
+        restoreWebVideoPlayerElState =
+          this.initWebVideoPlayerElState(newVideoEl)
+      } else if (isCanvasVideoMode) {
+        const canvasVideoStream = this.canvasVideoStream
+        vpRef.updateVideoStream(canvasVideoStream)
+        // vpRef.updateVideo(newVideoEl)
+        setTimeout(() => {
           vpRef.updateVideo(newVideoEl)
-          // 控制要不要把上一个还原
-          restoreWebVideoPlayerElState =
-            this.initWebVideoPlayerElState(newVideoEl)
-        } else if (isCanvasVideoMode) {
-          const canvasVideoStream = this.canvasVideoStream
-          vpRef.updateVideoStream(canvasVideoStream)
-          // vpRef.updateVideo(newVideoEl)
-          setTimeout(() => {
-            vpRef.updateVideo(newVideoEl)
-          }, 0)
-        } else {
-          vpRef.updateVideo(newVideoEl)
-          setTimeout(() => {
-            vpRef.updateVideoStream(this.webPlayerVideoStream)
-          }, 0)
-        }
+        }, 0)
+      } else {
+        vpRef.updateVideo(newVideoEl)
+        setTimeout(() => {
+          vpRef.updateVideoStream(this.webPlayerVideoStream)
+        }, 0)
+      }
 
-        if (this.subtitleManager) {
-          this.subtitleManager.updateVideo(newVideoEl)
-        }
-        if (this.danmakuEngine) {
-          this.danmakuEngine.updateVideo(newVideoEl)
-        }
-      })
-    )
+      if (this.subtitleManager) {
+        this.subtitleManager.updateVideo(newVideoEl)
+      }
+      if (this.danmakuEngine) {
+        this.danmakuEngine.updateVideo(newVideoEl)
+      }
+    })
 
     // 用来把video元素还原回原本位置的方法
     let restoreWebVideoPlayerElState = () => {}
@@ -245,13 +241,11 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       )
     }
 
-    this.addCallback(
-      this.on2(PlayerEvent.close, () => {
-        reactRoot.unmount()
-        this.playerRootEl = undefined
-        restoreWebVideoPlayerElState()
-        this.unloadPreCanvasVideoStream()
-      })
-    )
+    this.on(PlayerEvent.close, () => {
+      reactRoot.unmount()
+      this.playerRootEl = undefined
+      restoreWebVideoPlayerElState()
+      this.unloadPreCanvasVideoStream()
+    })
   }
 }

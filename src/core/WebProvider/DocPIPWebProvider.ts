@@ -64,13 +64,11 @@ export default class DocPIPWebProvider extends WebProvider {
       this.emit(PlayerEvent.resize)
     })
 
-    this.addCallback(
-      this.on2(PlayerEvent.close, () => {
-        try {
-          pipWindow.close()
-        } catch (error) {}
-      })
-    )
+    this.on(PlayerEvent.close, () => {
+      try {
+        pipWindow.close()
+      } catch (error) {}
+    })
 
     pipWindow.document.body.appendChild(playerEl)
 
