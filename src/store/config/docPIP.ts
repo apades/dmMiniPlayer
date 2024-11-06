@@ -50,6 +50,12 @@ export enum DocPIPRenderType {
    * 该模式是针对目标video不在同源iframe中设计的
    */
   capture_tabCapture = 'capture_tabCapture',
+  /**
+   * 注入MediaSource模式
+   *
+   * 该模式是针对目标video不在同源iframe中设计的
+   */
+  injectMediaSource = 'injectMediaSource',
 }
 
 export const docPIPConfig = {
@@ -57,12 +63,12 @@ export const docPIPConfig = {
     defaultValue: !!window?.documentPictureInPicture,
     label: t('settingPanel.useDocPIP'),
     desc: t('settingPanel.useDocPIPDesc'),
-    notRecommended: true,
   }),
   docPIP_renderType: config<DocPIPRenderType>({
     // notRecommended: true,
     label: t('settingPanel.docPIP_renderType'),
     defaultValue: DocPIPRenderType.replaceVideoEl,
+    desc: 'Force mode to debugger',
     type: 'group',
     group: [
       {
@@ -78,10 +84,21 @@ export const docPIPConfig = {
       DocPIPRenderType.capture_captureStream,
       DocPIPRenderType.capture_displayMedia,
       DocPIPRenderType.capture_tabCapture,
+      DocPIPRenderType.capture_captureStreamWithWebRTC,
+      DocPIPRenderType.injectMediaSource,
     ],
     relateBy: 'useDocPIP',
     relateByValue: true,
     notRecommended: true,
+  }),
+  sameOriginIframeCaptureModePriority: config({
+    label: 'Same origin iframe capture mode priority',
+    defaultValue: DocPIPRenderType.capture_captureStreamWithCanvas,
+    type: 'group',
+    group: [
+      DocPIPRenderType.capture_captureStreamWithCanvas,
+      DocPIPRenderType.capture_captureStream,
+    ],
   }),
   notSameOriginIframeCaptureModePriority: config({
     label: 'Not same origin iframe capture mode priority',
@@ -98,6 +115,8 @@ export const docPIPConfig = {
         value: DocPIPRenderType.capture_tabCapture,
         desc: 'No browser sharing top bar, but performance is not good. Recommended to turn the web video into full screen before turning on this function.',
       },
+      DocPIPRenderType.capture_captureStreamWithWebRTC,
+      DocPIPRenderType.injectMediaSource,
     ],
   }),
   capture_tabCapture_FPS: config({

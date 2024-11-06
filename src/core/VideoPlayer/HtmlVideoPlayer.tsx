@@ -95,10 +95,13 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       // 三方url可以直接转移video dom，blob才不行需要canvasVideoMode
       this.webVideoEl.src.startsWith('blob:')
     ) {
-      console.log('强制capture_captureStreamWithCanvas模式')
-      renderMode = DocPIPRenderType.capture_captureStreamWithCanvas
+      console.log(
+        `🟡 强制 ${configStore.sameOriginIframeCaptureModePriority} 模式`
+      )
+      renderMode = configStore.sameOriginIframeCaptureModePriority
     }
 
+    // 非同源模式，像agemys、crunchyroll这种，需要录制模式
     if (window.__cropTarget) {
       console.log(
         `🟡 强制 ${configStore.notSameOriginIframeCaptureModePriority} 模式`
