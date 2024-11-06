@@ -52,7 +52,6 @@ onMessage(WebextEvent.getup, () => 'hello')
 
 onMessage(WebextEvent.startTabCapture, (req) => {
   const tabId = req.sender.tabId
-  console.log('startTabCapture', tabId, req, req.id, req.sender.frameId)
   return new Promise((res) => {
     chrome.tabCapture.getMediaStreamId(
       { targetTabId: tabId, consumerTabId: tabId },
