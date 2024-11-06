@@ -6,6 +6,10 @@ enum WebextEvent {
   getDanmaku = 'getDanmaku',
   stopGetDanmaku = 'stopGetDanmaku',
   needClickWebToOpenPIP = 'needClickWebToOpenPIP',
+  openPIP = 'openPIP',
+  startTabCapture = 'startTabCapture',
+  /**让bg起来 */
+  getup = 'getup',
 }
 
 export default WebextEvent

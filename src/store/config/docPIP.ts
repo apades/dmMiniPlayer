@@ -36,6 +36,8 @@ export enum DocPIPRenderType {
    * 使用 {@link navigator.mediaDevices.getDisplayMedia getDisplayMedia} + {@link window.CropTarget CropTarget} 来获取stream和剪切范围，
    * 这个需要chrome 104+才支持，其他浏览器都不支持
    *
+   * *该模式有缺陷，因为是录制tab的，该tab就没法动了*
+   *
    * 该模式是针对目标video不在同源iframe中设计的
    */
   capture_displayMedia = 'capture_displayMedia',
@@ -73,9 +75,29 @@ export const docPIPConfig = {
         label: t('settingPanel.reactVP_canvasCs'),
         desc: t('settingPanel.reactVP_canvasCsDesc'),
       },
+      DocPIPRenderType.capture_captureStream,
+      DocPIPRenderType.capture_displayMedia,
+      DocPIPRenderType.capture_tabCapture,
     ],
     relateBy: 'useDocPIP',
     relateByValue: true,
     notRecommended: true,
   }),
-}
+  notSameOriginIframeCaptureModePriority: config({
+    label: 'Not same origin iframe capture mode priority',
+    defaultValue: DocPIPRenderType.capture_displayMedia,
+    type: 'group',
+    group: [
+      {
+        label: 'Use web record API',
+        value: DocPIPRenderType.capture_displayMedia,
+        desc: 'Better performance, but cannot hide browser sharing top bar',
+      },
+      {
+        label: 'Use chrome extension API',
+        value: DocPIPRenderType.capture_tabCapture,
+        desc: 'No browser sharing top bar, but maybe have some performance issues',
+      },
+    ],
+  }),
+} as const

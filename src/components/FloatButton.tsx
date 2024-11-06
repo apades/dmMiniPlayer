@@ -4,8 +4,8 @@ import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import isPluginEnv from '@root/shared/isPluginEnv'
 import { DRAG_POS, FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
-import configStore from '@root/store/config'
-import { throttle } from '@root/utils'
+import configStore, { DocPIPRenderType } from '@root/store/config'
+import { getClientRect, throttle } from '@root/utils'
 import {
   setBrowserSyncStorage,
   useBrowserSyncStorage,
@@ -243,27 +243,37 @@ const FloatButton: FC<Props> = (props) => {
 
                 console.log('视频容器', videoEl, '父容器', container)
                 if (!videoEl) return
+                const postCaptureModeDataMsg = async () => {
+                  const rect = videoEl.getBoundingClientRect()
+                  top?.postMessage(
+                    {
+                      from: 'dmMiniPlayer',
+                      type: 'start-PIP-capture-displayMedia',
+                      data: {
+                        cropTarget: await window.CropTarget.fromElement(
+                          videoEl
+                        ),
+                        duration: videoEl.duration,
+                        currentTime: videoEl.currentTime,
+                        isPause: videoEl.paused,
+                        x: rect.x,
+                        y: rect.y,
+                        w: rect.width,
+                        h: rect.height,
+                        vw: videoEl.videoWidth,
+                        vh: videoEl.videoHeight,
+                      },
+                    },
+                    '*'
+                  )
+                  window.__controllingVideoEl = videoEl
+                }
                 try {
                   top!.document
                 } catch (error) {
-                  console.error('非同源iframe，采用其他方式', error)
+                  console.error('非同源iframe，采用其他方式')
                   try {
-                    top?.postMessage(
-                      {
-                        from: 'dmMiniPlayer',
-                        type: 'start-PIP-capture-displayMedia',
-                        data: {
-                          cropTarget: await window.CropTarget.fromElement(
-                            videoEl
-                          ),
-                          duration: videoEl.duration,
-                          currentTime: videoEl.currentTime,
-                          isPause: videoEl.paused,
-                        },
-                      },
-                      '*'
-                    )
-                    window.__controllingVideoEl = videoEl
+                    return postCaptureModeDataMsg()
                   } catch (error) {
                     console.error('CropTarget.fromElement没法用', error)
                     videoEl.requestPictureInPicture()
@@ -272,16 +282,24 @@ const FloatButton: FC<Props> = (props) => {
                     )
                   }
                 }
-                top?.dispatchEvent(
-                  new CustomEvent('inject-response', {
-                    detail: {
-                      type: 'start-PIP',
-                      data: {
-                        videoEl,
-                      },
-                    },
-                  })
-                )
+
+                switch (configStore.docPIP_renderType) {
+                  case DocPIPRenderType.capture_displayMedia:
+                  case DocPIPRenderType.capture_tabCapture:
+                    return postCaptureModeDataMsg()
+                  default: {
+                    top?.dispatchEvent(
+                      new CustomEvent('inject-response', {
+                        detail: {
+                          type: 'start-PIP',
+                          data: {
+                            videoEl,
+                          },
+                        },
+                      })
+                    )
+                  }
+                }
               }}
               onMouseEnter={() => {
                 clear()

@@ -26,5 +26,11 @@ declare module 'webext-bridge' {
     }
     [WebextEvent.stopGetDanmaku]: { id: string }
     [WebextEvent.needClickWebToOpenPIP]: void
+    [WebextEvent.openPIP]: void
+    [WebextEvent.startTabCapture]: ProtocolWithReturn<
+      null,
+      { streamId?: string }
+    >
+    [WebextEvent.getup]: ProtocolWithReturn<null, string>
   }
 }

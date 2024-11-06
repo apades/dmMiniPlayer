@@ -33,5 +33,11 @@ export type TProtocolMap = {
     duration: number
     currentTime: number
     isPause: boolean
+    x: number
+    y: number
+    w: number
+    h: number
+    vw: number
+    vh: number
   }
 }
