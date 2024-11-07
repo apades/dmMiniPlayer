@@ -29,8 +29,9 @@ declare module 'webext-bridge' {
     [WebextEvent.openPIP]: void
     [WebextEvent.startTabCapture]: ProtocolWithReturn<
       null,
-      { streamId?: string }
+      { streamId?: string; error?: string }
     >
     [WebextEvent.getup]: ProtocolWithReturn<null, string>
+    [WebextEvent.getTabCapturePermission]: ProtocolWithReturn<null, boolean>
   }
 }

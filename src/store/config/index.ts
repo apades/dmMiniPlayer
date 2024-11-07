@@ -7,7 +7,7 @@ import {
   useBrowserSyncStorage,
 } from '@root/utils/storage'
 import * as mobx from 'mobx'
-import { docPIPConfig } from './docPIP'
+import { docPIPConfig, DocPIPRenderType } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
@@ -28,6 +28,10 @@ import {
 import isPluginEnv from '@root/shared/isPluginEnv'
 import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
+import { sendMessage as sendMessageInCs } from 'webext-bridge/content-script'
+import { sendMessage as sendMessageInBg } from 'webext-bridge/background'
+import isBG from '@root/shared/isBG'
+import WebextEvent from '@root/shared/webextEvent'
 
 export { DocPIPRenderType } from './docPIP'
 
@@ -190,7 +194,27 @@ export const { configStore, openSettingPanel, closeSettingPanel, observe } =
         location.reload()
         delete (newConfig as any).language
       }
+
       if (!isPluginEnv) return
+
+      // 判断是否需要请求tabCapture权限
+      // if (
+      //   newConfig.notSameOriginIframeCaptureModePriority ===
+      //     DocPIPRenderType.capture_tabCapture ||
+      //   newConfig.docPIP_renderType === DocPIPRenderType.capture_tabCapture
+      // ) {
+      //   let sendFn = sendMessageInCs
+      //   if (isBG) {
+      //     sendFn = sendMessageInBg
+      //   }
+      //   const res = await sendFn(WebextEvent.getTabCapturePermission, null)
+      //   if (!res) {
+      //     newConfig.notSameOriginIframeCaptureModePriority =
+      //       oldConfig.notSameOriginIframeCaptureModePriority
+      //     newConfig.docPIP_renderType = oldConfig.docPIP_renderType
+      //   }
+      // }
+
       if (newConfig.useDocPIP) {
         if (!window?.documentPictureInPicture) {
           delete (newConfig as any).useDocPIP
@@ -198,6 +222,8 @@ export const { configStore, openSettingPanel, closeSettingPanel, observe } =
         }
       }
       setBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, newConfig)
+
+      oldConfig = { ...oldConfig, ...newConfig }
     },
     async onInitLoadConfig(config) {
       if (!isPluginEnv) return config
@@ -206,10 +232,13 @@ export const { configStore, openSettingPanel, closeSettingPanel, observe } =
         DM_MINI_PLAYER_CONFIG
       )) as any
 
-      return { ...config, ...(savedConfig ?? {}) }
+      const loadedConfig = { ...config, ...(savedConfig ?? {}) }
+      oldConfig = loadedConfig
+      return loadedConfig
     },
     useShadowDom: true,
   })
+let oldConfig: typeof configStore
 
 // 同步多个tab的config
 if (isPluginEnv) {

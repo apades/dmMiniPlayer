@@ -10,6 +10,7 @@ enum WebextEvent {
   startTabCapture = 'startTabCapture',
   /**让bg起来 */
   getup = 'getup',
+  getTabCapturePermission = 'getTabCapturePermission',
 }
 
 export default WebextEvent

@@ -1,5 +1,8 @@
-import { config } from '@apad/setting-panel'
+import { config as _config } from '@apad/setting-panel'
 import { t } from '@root/utils/i18n'
+
+const category = 'PIP'
+const config: typeof _config = (props) => ({ ...props, category })
 
 export enum DocPIPRenderType {
   /**
@@ -89,7 +92,6 @@ export const docPIPConfig = {
     ],
     relateBy: 'useDocPIP',
     relateByValue: true,
-    notRecommended: true,
   }),
   sameOriginIframeCaptureModePriority: config({
     label: 'Same origin iframe capture mode priority',
