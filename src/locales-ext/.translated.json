@@ -1,0 +1,23 @@
+{
+  "appName": {
+    "message": "Danmaku mini player - picture-in-picture video player"
+  },
+  "appDesc": {
+    "message": "Supports the latest picture-in-picture API function, and can play/send danmaku in video/live"
+  },
+  "back": {
+    "message": "backward"
+  },
+  "forward": {
+    "message": "forward"
+  },
+  "playOrPause": {
+    "message": "pause/play"
+  },
+  "hide": {
+    "message": "hide picture-in-picture"
+  },
+  "playbackRate": {
+    "message": "Turn on/off double speed. Default 3x, can change in settings"
+  }
+}

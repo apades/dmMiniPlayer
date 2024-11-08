@@ -5,16 +5,16 @@
   "appDesc": {
     "message": "最新のピクチャインピクチャAPI機能に対応し,動画/生放送での連打再生/送信が可能"
   },
-  "back":{
+  "back": {
     "message": "戻る"
   },
-  "forward":{
+  "forward": {
     "message": "早送り"
   },
   "playOrPause": {
     "message": "一時停止/再生"
   },
-  "hide":{
+  "hide": {
     "message": "ピクチャーインピクチャーを非表示にする"
   },
   "playbackRate": {

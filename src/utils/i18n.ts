@@ -23,8 +23,8 @@ type Concat<K extends string, P extends string> = `${K}${'' extends P
 
 export enum Language {
   English = 'en',
-  'Chinese(Simplified)' = 'zh_cn',
-  'Chinese(Traditional)' = 'zh_tw',
+  'Chinese(Simplified)' = 'zh_CN',
+  'Chinese(Traditional)' = 'zh_TW',
   // 按知名度排序
   Spanish = 'es',
   French = 'fr',
@@ -34,8 +34,8 @@ export enum Language {
 
 export const LanguageNativeNames: Record<Language, string> = {
   en: 'English',
-  zh_cn: '中文(简体)',
-  zh_tw: '中文(繁體)',
+  zh_CN: '中文(简体)',
+  zh_TW: '中文(繁體)',
   es: 'Español',
   fr: 'Français',
   ja: '日本語',
@@ -48,16 +48,15 @@ const i18nMap: Record<Language, any> = {
   fr: fr,
   ja: ja,
   ko: ko,
-  zh_cn: zhCN,
-  zh_tw: zhTW,
+  zh_CN: zhCN,
+  zh_TW: zhTW,
 }
 
 export const defaultLang = Language.English
 
 export type I18nKeys = DeepLeafKeys<typeof zhCN>
 
-const formatLang = (lang: string) =>
-  lang.toLocaleLowerCase().replace('-', '_') as any
+const formatLang = (lang: string) => lang.replace('-', '_') as any
 const langKeys = Object.values(Language)
 
 const getLangFromNavigator = onceCall(

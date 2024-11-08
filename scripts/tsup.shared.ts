@@ -45,7 +45,14 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
   },
   noExternal: [/(.*)/],
   async onSuccess() {
-    fs.copySync(pr('../locales'), pr(outDir, './_locales'))
+    const locales = fs.readdirSync(pr('../src/locales-ext'))
+    locales.forEach((locale) => {
+      if (locale === '.translated.json') return
+      fs.copySync(
+        pr('../src/locales-ext', locale),
+        pr(outDir, `./_locales/${locale.replace('.json', '')}/messages.json`)
+      )
+    })
     fs.copySync(pr('../assets'), pr(outDir, './assets'))
 
     manifest.web_accessible_resources = [
