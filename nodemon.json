@@ -1,0 +1,9 @@
+{
+    "watch": [
+        "assets/lib",
+        "src/locales-ext",
+        "src/popup/index.html",
+        "scripts/tsup.shared.ts",
+        "scripts/tsup.dev.ts"
+    ]
+}
