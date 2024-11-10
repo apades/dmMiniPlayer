@@ -182,83 +182,93 @@ export const baseConfigMap = {
   ...docPIPConfig,
 }
 
-export const { configStore, openSettingPanel, closeSettingPanel, observe } =
-  initSetting({
-    settings: baseConfigMap,
-    saveInLocal: !isPluginEnv,
-    mobx,
-    i18n: getIsZh() ? zh : en,
-    async onSave(newConfig) {
-      if (newConfig.language) {
-        await setBrowserLocalStorage(LOCALE, newConfig.language)
-        location.reload()
-        delete (newConfig as any).language
+export const {
+  configStore,
+  openSettingPanel: _openSettingPanel,
+  closeSettingPanel,
+  observe,
+} = initSetting({
+  settings: baseConfigMap,
+  saveInLocal: !isPluginEnv,
+  mobx,
+  i18n: getIsZh() ? zh : en,
+  async onSave(newConfig) {
+    if (newConfig.language) {
+      await setBrowserLocalStorage(LOCALE, newConfig.language)
+      location.reload()
+      delete (newConfig as any).language
+    }
+
+    if (!isPluginEnv) return
+
+    // 判断是否需要请求tabCapture权限
+    // if (
+    //   newConfig.notSameOriginIframeCaptureModePriority ===
+    //     DocPIPRenderType.capture_tabCapture ||
+    //   newConfig.docPIP_renderType === DocPIPRenderType.capture_tabCapture
+    // ) {
+    //   let sendFn = sendMessageInCs
+    //   if (isBG) {
+    //     sendFn = sendMessageInBg
+    //   }
+    //   const res = await sendFn(WebextEvent.getTabCapturePermission, null)
+    //   if (!res) {
+    //     newConfig.notSameOriginIframeCaptureModePriority =
+    //       oldConfig.notSameOriginIframeCaptureModePriority
+    //     newConfig.docPIP_renderType = oldConfig.docPIP_renderType
+    //   }
+    // }
+
+    if (newConfig.useDocPIP) {
+      if (!window?.documentPictureInPicture) {
+        delete (newConfig as any).useDocPIP
+        alert(t('settingPanel.unsupportDocPIPTips'))
       }
+    }
+    setBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, newConfig)
 
-      if (!isPluginEnv) return
+    oldConfig = { ...oldConfig, ...newConfig }
+  },
+  async onInitLoadConfig(config) {
+    if (!isPluginEnv) return config
+    // 这里去掉as any会触发ts的循环type错误
+    const savedConfig = (await getBrowserSyncStorage(
+      DM_MINI_PLAYER_CONFIG
+    )) as any
 
-      // 判断是否需要请求tabCapture权限
-      // if (
-      //   newConfig.notSameOriginIframeCaptureModePriority ===
-      //     DocPIPRenderType.capture_tabCapture ||
-      //   newConfig.docPIP_renderType === DocPIPRenderType.capture_tabCapture
-      // ) {
-      //   let sendFn = sendMessageInCs
-      //   if (isBG) {
-      //     sendFn = sendMessageInBg
-      //   }
-      //   const res = await sendFn(WebextEvent.getTabCapturePermission, null)
-      //   if (!res) {
-      //     newConfig.notSameOriginIframeCaptureModePriority =
-      //       oldConfig.notSameOriginIframeCaptureModePriority
-      //     newConfig.docPIP_renderType = oldConfig.docPIP_renderType
-      //   }
-      // }
-
-      if (newConfig.useDocPIP) {
-        if (!window?.documentPictureInPicture) {
-          delete (newConfig as any).useDocPIP
-          alert(t('settingPanel.unsupportDocPIPTips'))
-        }
-      }
-      setBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, newConfig)
-
-      oldConfig = { ...oldConfig, ...newConfig }
-    },
-    async onInitLoadConfig(config) {
-      if (!isPluginEnv) return config
-      // 这里去掉as any会触发ts的循环type错误
-      const savedConfig = (await getBrowserSyncStorage(
-        DM_MINI_PLAYER_CONFIG
-      )) as any
-
-      const loadedConfig = { ...config, ...(savedConfig ?? {}) }
-      oldConfig = loadedConfig
-      return loadedConfig
-    },
-    useShadowDom: true,
-  })
+    const loadedConfig = { ...config, ...(savedConfig ?? {}) }
+    oldConfig = loadedConfig
+    return loadedConfig
+  },
+  useShadowDom: true,
+})
 let oldConfig: typeof configStore
+
+const updateConfig = async () => {
+  const config = await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
+  if (!config) return
+  Object.entries(config).forEach(([key, value]) => {
+    ;(configStore as any)[key] = value
+  })
+  if (window.__spSetSavedConfig) {
+    window.__spSetSavedConfig(config)
+  }
+}
 
 // 同步多个tab的config
 if (isPluginEnv) {
   document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState !== 'visible') return
 
-    const config = await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
-    if (!config) return
-    if (window.__spSetSavedConfig) {
-      window.__spSetSavedConfig(config)
-    } else {
-      Object.entries(config).forEach(([key, value]) => {
-        ;(configStore as any)[key] = value
-      })
-    }
+    updateConfig()
   })
 }
 
 window.configStore = configStore
-window.openSettingPanel = openSettingPanel
+window.openSettingPanel = () => {
+  _openSettingPanel()
+  setTimeout(updateConfig, 50)
+}
 
 let firstChange = true
 // 同步icon栏的修改隐藏floatButton
@@ -276,10 +286,9 @@ useBrowserSyncStorage(FLOAT_BTN_HIDDEN, async (val) => {
   const config = await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
 
   if (!config) return
+  configStore.floatButtonVisible = !val
   if (window.__spSetSavedConfig) {
     window.__spSetSavedConfig({ ...config, floatButtonVisible: !val })
-  } else {
-    configStore.floatButtonVisible = !val
   }
 })
 

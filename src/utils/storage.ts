@@ -18,6 +18,9 @@ export function useBrowserLocalStorage<
     localCallbacksMap[key] = []
   }
   localCallbacksMap[key].push(callback)
+  Browser.storage.local.get(key).then(({ [key as any]: val }) => {
+    callback(val)
+  })
   return () => {
     localCallbacksMap[key].slice(localCallbacksMap[key].indexOf(callback), 1)
   }
@@ -60,6 +63,9 @@ export function useBrowserSyncStorage<
     syncCallbacksMap[key] = []
   }
   syncCallbacksMap[key].push(callback)
+  Browser.storage.sync.get(key).then(({ [key as any]: val }) => {
+    callback(val)
+  })
   return () => {
     syncCallbacksMap[key].slice(syncCallbacksMap[key].indexOf(callback), 1)
   }
