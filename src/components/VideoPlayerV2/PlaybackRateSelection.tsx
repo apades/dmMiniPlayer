@@ -34,7 +34,7 @@ const PlaybackRateSelection: FC = (props) => {
 
   const menu = (
     <div className="w-[60px] bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
-      {[0.5, 1, 2, 3].map((rate) => {
+      {[0.5, 1, 1.25, 1.5, 2].map((rate) => {
         return (
           <div
             key={rate}
