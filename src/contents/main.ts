@@ -174,7 +174,7 @@ function main() {
 
   // 从子iframe里过来的消息
   onPostMessage(PostMessageEvent.startPIPFromButtonClick, (data) => {
-    openPlayer({ videoEl: data.videoEl })
+    openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${data.id}"]`) })
   })
 
   let captureSource: Window | undefined

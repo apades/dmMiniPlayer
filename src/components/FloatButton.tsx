@@ -147,7 +147,7 @@ const FloatButton: FC<Props> = (props) => {
         break
       default: {
         postMessageToTop(PostMessageEvent.startPIPFromButtonClick, {
-          videoEl,
+          id,
         })
       }
     }

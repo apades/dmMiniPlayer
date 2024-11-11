@@ -35,7 +35,7 @@ export interface PostMessageProtocolMap {
     isMute: boolean
     isPlaying: boolean
   }[]
-  [PostMessageEvent.startPIPFromButtonClick]: { videoEl: HTMLVideoElement }
+  [PostMessageEvent.startPIPFromButtonClick]: { id: string }
   [PostMessageEvent.requestVideoPIP]: { id: string }
   [PostMessageEvent.openSettingPanel]: void
 }
