@@ -15,3 +15,7 @@ How to trigger it, it would be better to have screenshots
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
  - Version [e.g. 22]
+
+**Environment/环境**
+ - [ ] 是否关闭其他插件/Have you close other extensions?
+ - [ ] 是否禁用自定义js/Have you disable custom js file?
