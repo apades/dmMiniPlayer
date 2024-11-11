@@ -86,7 +86,7 @@
     "rightBottom": "Right bottom",
     "visible": "Visible",
     "disableSites": "Disable sites",
-    "disableSitesTips": "Support regex"
+    "disableSitesTips": "Support regex with format \"/regex/\""
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

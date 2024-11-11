@@ -168,7 +168,7 @@ Browser.contextMenus.onClicked.addListener((info, tab) => {
     }
     case SETTING_ID: {
       if (tab?.id) {
-        sendMessage('open-setting', null, {
+        sendMessage(WebextEvent.openSetting, undefined, {
           tabId: tab.id,
           context: 'content-script',
         })

@@ -86,7 +86,7 @@
     "rightBottom": "오른쪽 하단",
     "visible": "표시할지 여부",
     "disableSites": "사이트 비활성화",
-    "disableSitesTips": "정규식 지원"
+    "disableSitesTips": "\"/regex/\" 형식의 정규식 지원"
   },
   "popup": {
     "tips": "Picture-in-Picture 재생을 시작하려면 다음 페이지를 클릭해야 합니다",
