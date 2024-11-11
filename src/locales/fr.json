@@ -84,7 +84,9 @@
     "rightTop": "en haut à droite",
     "leftBottom": "en bas à gauche",
     "rightBottom": "en bas à droite",
-    "visible": "S'il faut afficher"
+    "visible": "S'il faut afficher",
+    "disableSites": "Désactiver les sites",
+    "disableSitesTips": "Prise en charge des expressions régulières"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",

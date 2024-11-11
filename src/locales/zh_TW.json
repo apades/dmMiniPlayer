@@ -84,7 +84,9 @@
     "rightTop": "右上",
     "leftBottom": "左下",
     "rightBottom": "右下",
-    "visible": "是否顯示"
+    "visible": "是否顯示",
+    "disableSites": "停用站點",
+    "disableSitesTips": "支援正規表達式"
   },
   "popup": {
     "tips": "需要點擊下頁面才能觸發畫中畫播放",

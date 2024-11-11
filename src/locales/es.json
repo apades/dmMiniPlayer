@@ -84,7 +84,9 @@
     "rightTop": "arriba a la derecha",
     "leftBottom": "abajo izquierda",
     "rightBottom": "abajo derecho",
-    "visible": "Si mostrar o no"
+    "visible": "Si mostrar o no",
+    "disableSites": "Deshabilitar sitios",
+    "disableSitesTips": "Soporte de expresiones regulares"
   },
   "popup": {
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",

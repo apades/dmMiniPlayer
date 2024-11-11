@@ -84,7 +84,9 @@
     "rightTop": "右上",
     "leftBottom": "左下",
     "rightBottom": "右下",
-    "visible": "表示するかどうか"
+    "visible": "表示するかどうか",
+    "disableSites": "サイトを無効にする",
+    "disableSitesTips": "正規表現のサポート"
   },
   "popup": {
     "tips": "ピクチャーインピクチャー再生をトリガーするには,次のページをクリックする必要があります",

@@ -84,7 +84,9 @@
     "rightTop": "右上",
     "leftBottom": "左下",
     "rightBottom": "右下",
-    "visible": "是否显示"
+    "visible": "是否显示",
+    "disableSites": "禁用站点",
+    "disableSitesTips": "支持正则表达式"
   },
   "popup": {
     "tips": "需要点击下页面才能触发画中画播放",

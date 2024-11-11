@@ -179,6 +179,11 @@ export const baseConfigMap = {
    *  */
   dragArea_cornerPercentW: config({ defaultValue: 30, notRecommended: true }),
   dragArea_cornerPercentH: config({ defaultValue: 30, notRecommended: true }),
+  disable_sites: config({
+    defaultValue: [],
+    label: t('settingPanel.disableSites'),
+    desc: t('settingPanel.disableSitesTips'),
+  }),
   ...docPIPConfig,
 }
 
