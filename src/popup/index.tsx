@@ -4,9 +4,10 @@ import { sendMessage } from 'webext-bridge/popup'
 import Browser from 'webextension-polyfill'
 import { t } from '../utils/i18n'
 import { createRoot } from 'react-dom/client'
+import WebextEvent from '@root/shared/webextEvent'
 
 const errorTypeMap: Record<string, string> = {
-  'click-page': t('popup.tips'),
+  'user-activation': t('popup.tips'),
   'no-video': t('popup.noVideo'),
 }
 
@@ -16,23 +17,13 @@ const Page_popup: FC = () => {
   useOnce(async () => {
     const tabs = await Browser.tabs.query({ active: true, currentWindow: true })
     if (!tabs.length) return
-    sendMessage(
-      'player-startPIPPlay',
-      {
-        name: 'player-startPIPPlay',
-      },
-      {
-        tabId: tabs[0].id!,
-        context: 'content-script',
-      }
-    ).then((res: any) => {
-      if (res.state == 'ok') return window.close()
-      switch (res.type) {
-        case 'click-page':
-        case 'no-video': {
-          setErrorType(res.type)
-          break
-        }
+    sendMessage(WebextEvent.requestVideoPIP, null, {
+      tabId: tabs[0].id!,
+      context: 'content-script',
+    }).then((res) => {
+      if (res.state === 'ok') return window.close()
+      if (res.state === 'error' && res.errType) {
+        setErrorType(res.errType)
       }
     })
   })

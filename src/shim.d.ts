@@ -33,5 +33,12 @@ declare module 'webext-bridge' {
     >
     [WebextEvent.getup]: ProtocolWithReturn<null, string>
     [WebextEvent.getTabCapturePermission]: ProtocolWithReturn<null, boolean>
+    [WebextEvent.requestVideoPIP]: ProtocolWithReturn<
+      null,
+      | { state: 'ok' }
+      | { state: 'error'; errType: 'no-video' | 'user-activation' }
+      | { state: string; errType?: string }
+    >
+    [WebextEvent.openSetting]: void
   }
 }

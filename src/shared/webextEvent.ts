@@ -11,6 +11,8 @@ enum WebextEvent {
   /**让bg起来 */
   getup = 'getup',
   getTabCapturePermission = 'getTabCapturePermission',
+  requestVideoPIP = 'requestVideoPIP',
+  openSetting = 'openSetting',
 }
 
 export default WebextEvent

@@ -3,23 +3,21 @@ import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import isPluginEnv from '@root/shared/isPluginEnv'
-import { DRAG_POS, FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
+import PostMessageEvent from '@root/shared/postMessageEvent'
+import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import { getClientRect, throttle } from '@root/utils'
-import {
-  setBrowserSyncStorage,
-  useBrowserSyncStorage,
-} from '@root/utils/storage'
+import { FloatButtonPos } from '@root/store/config/floatButton'
+import { dq, throttle, uuid } from '@root/utils'
+import { useBrowserSyncStorage } from '@root/utils/storage'
 import { useMemoizedFn, useSize } from 'ahooks'
+import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { FC, useMemo, useRef } from 'react'
+import { FC, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 import icon from '../../assets/icon.png'
-import DraggerContainer from './DraggerContainer'
 import ShadowRootContainer from './ShadowRootContainer'
-import classNames from 'classnames'
-import { FloatButtonPos } from '@root/store/config/floatButton'
+import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 
 type Props = {
   container: HTMLElement
@@ -39,6 +37,16 @@ const FloatButton: FC<Props> = (props) => {
       floatBtn.current.style.visibility = !hidden ? 'visible' : 'hidden'
     })
   )
+
+  const [id, setId] = useState(() => uuid())
+
+  useOnce(() => {
+    vel.setAttribute('data-dm-vid', id)
+
+    return () => {
+      vel.removeAttribute('data-dm-vid')
+    }
+  })
 
   // fixed会受到 transform、perspective、filter 或 backdrop-filter 影响上下文
   // @see https://developer.mozilla.org/zh-CN/docs/Web/CSS/position#fixed
@@ -92,28 +100,85 @@ const FloatButton: FC<Props> = (props) => {
     container
   )
 
-  useTargetEventListener(
-    'message',
-    (e) => {
-      const data = e.data
-      console.log('iframe message', e.data)
-      if (data?.from !== 'dmMiniPlayer-main') return
-      switch (data?.type) {
-        case 'update-video-state': {
-          if (data.data.isPause) {
-            window.__controllingVideoEl.pause()
-          }
-          if (data.data.isPlay) {
-            window.__controllingVideoEl.play()
-          }
-          if (data.data.currentTime !== undefined) {
-            window.__controllingVideoEl.currentTime = data.data.currentTime
-          }
-          break
-        }
+  const handleStartPIP = useMemoizedFn(() => {
+    const videoEl =
+      container instanceof HTMLVideoElement
+        ? container
+        : container.querySelector('video')
+
+    console.log('视频容器', videoEl, '父容器', container)
+    if (!videoEl) return
+    const postCaptureModeDataMsg = async () => {
+      console.log('id', id)
+      const rect = videoEl.getBoundingClientRect()
+      postMessageToTop(PostMessageEvent.startPIPCaptureDisplayMedia, {
+        cropTarget: await window.CropTarget.fromElement(videoEl),
+        duration: videoEl.duration,
+        currentTime: videoEl.currentTime,
+        isPause: videoEl.paused,
+        x: rect.x,
+        y: rect.y,
+        w: rect.width,
+        h: rect.height,
+        vw: videoEl.videoWidth,
+        vh: videoEl.videoHeight,
+        id,
+      })
+      window.__controllingVideoEl = videoEl
+    }
+    try {
+      top!.document
+    } catch (error) {
+      console.error('非同源iframe，采用其他方式')
+      try {
+        postCaptureModeDataMsg()
+        return true
+      } catch (error) {
+        console.error('CropTarget.fromElement没法用', error)
+        videoEl.requestPictureInPicture()
+        throw Error('该视频可能在非同源的iframe中，目前不支持非同源iframe')
       }
-    },
-    window
+    }
+
+    switch (configStore.docPIP_renderType) {
+      case DocPIPRenderType.capture_displayMedia:
+      case DocPIPRenderType.capture_tabCapture:
+        postCaptureModeDataMsg()
+        break
+      default: {
+        postMessageToTop(PostMessageEvent.startPIPFromButtonClick, {
+          videoEl,
+        })
+      }
+    }
+    return true
+  })
+
+  const handleOpenSetting = useMemoizedFn(() => {
+    postMessageToTop(PostMessageEvent.openSettingPanel)
+  })
+
+  // 处理top发来的更新video状态的消息
+  useOnce(
+    onPostMessage(PostMessageEvent.updateVideoState, (data) => {
+      if (data.id !== id) return
+      if (data.isPause) {
+        window.__controllingVideoEl.pause()
+      }
+      if (data.isPlay) {
+        window.__controllingVideoEl.play()
+      }
+      if (data.currentTime !== undefined) {
+        window.__controllingVideoEl.currentTime = data.currentTime
+      }
+    })
+  )
+  // 处理top发来的请求PIP
+  useOnce(
+    onPostMessage(PostMessageEvent.requestVideoPIP, (data) => {
+      if (data.id !== id) return
+      handleStartPIP()
+    })
   )
 
   const containerSize = useSize(container)
@@ -234,72 +299,9 @@ const FloatButton: FC<Props> = (props) => {
           >
             <div
               className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
-              onClick={async (e) => {
+              onClick={(e) => {
                 e.stopPropagation()
-                const videoEl =
-                  container instanceof HTMLVideoElement
-                    ? container
-                    : container.querySelector('video')
-
-                console.log('视频容器', videoEl, '父容器', container)
-                if (!videoEl) return
-                const postCaptureModeDataMsg = async () => {
-                  const rect = videoEl.getBoundingClientRect()
-                  top?.postMessage(
-                    {
-                      from: 'dmMiniPlayer',
-                      type: 'start-PIP-capture-displayMedia',
-                      data: {
-                        cropTarget: await window.CropTarget.fromElement(
-                          videoEl
-                        ),
-                        duration: videoEl.duration,
-                        currentTime: videoEl.currentTime,
-                        isPause: videoEl.paused,
-                        x: rect.x,
-                        y: rect.y,
-                        w: rect.width,
-                        h: rect.height,
-                        vw: videoEl.videoWidth,
-                        vh: videoEl.videoHeight,
-                      },
-                    },
-                    '*'
-                  )
-                  window.__controllingVideoEl = videoEl
-                }
-                try {
-                  top!.document
-                } catch (error) {
-                  console.error('非同源iframe，采用其他方式')
-                  try {
-                    return postCaptureModeDataMsg()
-                  } catch (error) {
-                    console.error('CropTarget.fromElement没法用', error)
-                    videoEl.requestPictureInPicture()
-                    throw Error(
-                      '该视频可能在非同源的iframe中，目前不支持非同源iframe'
-                    )
-                  }
-                }
-
-                switch (configStore.docPIP_renderType) {
-                  case DocPIPRenderType.capture_displayMedia:
-                  case DocPIPRenderType.capture_tabCapture:
-                    return postCaptureModeDataMsg()
-                  default: {
-                    top?.dispatchEvent(
-                      new CustomEvent('inject-response', {
-                        detail: {
-                          type: 'start-PIP',
-                          data: {
-                            videoEl,
-                          },
-                        },
-                      })
-                    )
-                  }
-                }
+                handleStartPIP()
               }}
               onMouseEnter={() => {
                 clear()
@@ -327,15 +329,7 @@ const FloatButton: FC<Props> = (props) => {
                   isLockRef.current = false
                 }, 500)
 
-                try {
-                  top!.document
-                } catch (error) {
-                  console.error(error)
-                  throw Error(
-                    '该视频可能在非同源的iframe中，目前不支持非同源iframe'
-                  )
-                }
-                top?.openSettingPanel()
+                handleOpenSetting()
               }}
             >
               <SettingOutlined />

@@ -76,12 +76,3 @@ const handleMousemove = throttle((e: MouseEvent) => {
 }, 1000)
 
 window.addEventListener('mousemove', handleMousemove)
-
-// 有时候不会触发，不知道为什么
-// onWindowLoad().then(() => {
-//   const videos = dq('video')
-
-//   videos.forEach((video) => {
-//     initVideoFloatBtn(video)
-//   })
-// })

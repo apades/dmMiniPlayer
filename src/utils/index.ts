@@ -492,3 +492,11 @@ export function getAnyObjToString(obj: any) {
 export function newArray(len: number, fill = null) {
   return new Array(len).fill(fill)
 }
+
+export function getAllNotSameOriginIframesWindow() {
+  return dq('iframe')
+    .filter((d) => !d.contentDocument && !!d.contentWindow)
+    .map((d) => d.contentWindow!)
+}
+
+export { v4 as uuid } from 'uuid'

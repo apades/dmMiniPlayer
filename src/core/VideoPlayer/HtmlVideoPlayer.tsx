@@ -145,6 +145,11 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           track.addEventListener('ended', () => {
             this.emit(PlayerEvent.close)
           })
+          this.on(PlayerEvent.close, () => {
+            try {
+              track.stop()
+            } catch (error) {}
+          })
           await track.cropTo(window.__cropTarget)
           return <VideoPlayerV2 {...commonProps} videoStream={stream} />
         }

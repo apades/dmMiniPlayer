@@ -27,7 +27,6 @@ export type TProtocolMap = {
   >
 
   'msg-test': ProtocolWithReturn<any, any>
-  'start-PIP': { videoEl?: HTMLVideoElement }
   'start-PIP-capture-displayMedia': {
     cropTarget: any
     duration: number

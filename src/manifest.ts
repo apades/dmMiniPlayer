@@ -27,7 +27,11 @@ export const manifest: chrome.runtime.ManifestV3 = {
     default_popup: 'popup.html',
   },
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'contextMenus', 'tabCapture'],
+  permissions: [
+    'storage',
+    'contextMenus',
+    // 'tabCapture',
+  ],
   background: {
     service_worker: 'background.js',
     type: 'module',

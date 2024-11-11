@@ -249,8 +249,8 @@ export const {
 })
 let oldConfig: typeof configStore
 
-const updateConfig = async () => {
-  const config = await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
+const updateConfig = async (config?: typeof configStore) => {
+  config ??= await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
   if (!config) return
   Object.entries(config).forEach(([key, value]) => {
     ;(configStore as any)[key] = value
@@ -262,11 +262,17 @@ const updateConfig = async () => {
 
 // 同步多个tab的config
 if (isPluginEnv) {
+  let unListenUpdate = () => {}
   document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState !== 'visible') return
+    if (document.visibilityState !== 'visible') return unListenUpdate()
 
-    updateConfig()
+    unListenUpdate()
+    unListenUpdate = useBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, updateConfig)
   })
+
+  if (document.visibilityState === 'visible') {
+    unListenUpdate = useBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, updateConfig)
+  }
 }
 
 window.configStore = configStore
