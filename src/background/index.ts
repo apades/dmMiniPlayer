@@ -141,22 +141,24 @@ Browser.runtime.onInstalled.addListener(() => {
   })
 })
 
-useBrowserLocalStorage(LOCALE, (locale) => {
-  if (!locale) return
-  ;(globalThis as any).__LOCALE = locale
-  Browser.contextMenus.update(FLOAT_BTN_ID, {
-    title: t('menu.showFloatBtn'),
+// 很奇怪的需要延迟点才不会触发'Cannot find menu item with id'
+setTimeout(() => {
+  useBrowserLocalStorage(LOCALE, (locale) => {
+    if (!locale) return
+    ;(globalThis as any).__LOCALE = locale
+    Browser.contextMenus.update(FLOAT_BTN_ID, {
+      title: t('menu.showFloatBtn'),
+    })
+    Browser.contextMenus.update(SETTING_ID, {
+      title: t('menu.openSetting'),
+    })
   })
-  Browser.contextMenus.update(SETTING_ID, {
-    title: t('menu.openSetting'),
+  useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (val) => {
+    Browser.contextMenus.update(FLOAT_BTN_ID, {
+      checked: !val,
+    })
   })
-})
-
-useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (val) => {
-  Browser.contextMenus.update(FLOAT_BTN_ID, {
-    checked: !val,
-  })
-})
+}, 50)
 
 Browser.contextMenus.onClicked.addListener((info, tab) => {
   switch (info.menuItemId) {
