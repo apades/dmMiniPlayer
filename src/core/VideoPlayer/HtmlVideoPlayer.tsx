@@ -12,6 +12,7 @@ import VideoPlayerV2, {
 import Browser from 'webextension-polyfill'
 import { sendMessage as sendBgMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
+import { getMediaStreamInGetter } from '@root/utils/webRTC'
 
 const styleEl = createElement('div', {
   className: 'style-list',
@@ -137,9 +138,9 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
               videoStream={this.webPlayerVideoStream}
             />
           )
-        // TODO
         case DocPIPRenderType.capture_captureStreamWithWebRTC:
-          return
+          const { mediaStream } = getMediaStreamInGetter()
+          return <VideoPlayerV2 {...commonProps} videoStream={mediaStream} />
         case DocPIPRenderType.capture_displayMedia: {
           if (!window.__cropTarget) throw Error('没有定义__cropTarget')
           const stream = await navigator.mediaDevices.getDisplayMedia({

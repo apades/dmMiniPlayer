@@ -18,6 +18,7 @@ import Browser from 'webextension-polyfill'
 import icon from '../../assets/icon.png'
 import ShadowRootContainer from './ShadowRootContainer'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
+import { sendMediaStreamInSender } from '@root/utils/webRTC'
 
 type Props = {
   container: HTMLElement
@@ -144,6 +145,10 @@ const FloatButton: FC<Props> = (props) => {
       case DocPIPRenderType.capture_displayMedia:
       case DocPIPRenderType.capture_tabCapture:
         postCaptureModeDataMsg()
+        break
+      case DocPIPRenderType.capture_captureStreamWithWebRTC:
+        const stream = videoEl.captureStream()
+        const {} = sendMediaStreamInSender({ stream })
         break
       default: {
         postMessageToTop(PostMessageEvent.startPIPFromButtonClick, {

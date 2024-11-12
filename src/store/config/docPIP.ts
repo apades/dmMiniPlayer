@@ -87,7 +87,7 @@ export const docPIPConfig = {
       DocPIPRenderType.capture_captureStream,
       DocPIPRenderType.capture_displayMedia,
       // DocPIPRenderType.capture_tabCapture,
-      // DocPIPRenderType.capture_captureStreamWithWebRTC,
+      DocPIPRenderType.capture_captureStreamWithWebRTC,
       // DocPIPRenderType.injectMediaSource,
     ],
     relateBy: 'useDocPIP',
@@ -117,7 +117,11 @@ export const docPIPConfig = {
       //   value: DocPIPRenderType.capture_tabCapture,
       //   desc: 'No browser sharing top bar, but performance is not good. Recommended to turn the web video into full screen before turning on this function.',
       // },
-      // DocPIPRenderType.capture_captureStreamWithWebRTC,
+      {
+        label: 'Use video captureStream with webRTC',
+        value: DocPIPRenderType.capture_captureStreamWithWebRTC,
+        desc: 'No browser sharing top bar, better performance, but need to use webRTC',
+      },
       // DocPIPRenderType.injectMediaSource,
     ],
   }),
@@ -134,5 +138,9 @@ export const docPIPConfig = {
     desc: 'Warning: Consuming performance very much',
     relateBy: 'notSameOriginIframeCaptureModePriority',
     relateByValue: DocPIPRenderType.capture_tabCapture,
+  }),
+  capture_captureStream_autoSetCrossOrigin: config({
+    label: 'Auto set video crossOrigin',
+    defaultValue: true,
   }),
 } as const

@@ -174,12 +174,11 @@ function main() {
     openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${data.id}"]`) })
   })
 
-  let captureSource: Window | undefined
   const getTime = () => new Date().getTime()
 
   onPostMessage(
     PostMessageEvent.startPIPCaptureDisplayMedia,
-    async (data, source) => {
+    async (data, captureSource) => {
       const id = data.id
       const updateCaptureSourceVideoState = (
         data: Omit<
@@ -194,7 +193,6 @@ function main() {
           captureSource
         )
       }
-      captureSource = source
       window.__cropTarget = data.cropTarget
 
       window.__cropPos = pick(data, ['x', 'y', 'w', 'h', 'vw', 'vh'])
