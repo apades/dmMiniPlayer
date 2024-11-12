@@ -41,6 +41,10 @@ interface DisplayMediaStreamOptions {
   preferCurrentTab?: boolean
 }
 
+interface HTMLVideoElement {
+  captureStream: () => MediaStream
+}
+
 interface MediaTrackConstraints {
   mandatory?: Partial<{
     maxFrameRate: number

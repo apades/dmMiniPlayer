@@ -75,7 +75,10 @@ export const sendMediaStreamInSender = (props: {
   pc.current.onicecandidate = (event) => {
     if (event.candidate) {
       if (!isTop) {
-        postMessageToTop(PostMessageEvent.webRTC_candidate, event.candidate)
+        postMessageToTop(
+          PostMessageEvent.webRTC_candidate,
+          JSON.parse(JSON.stringify(event.candidate))
+        )
       } else {
         postMessageToChild(
           PostMessageEvent.webRTC_candidate,
