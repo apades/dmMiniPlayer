@@ -159,7 +159,7 @@ const FloatButton: FC<Props> = (props) => {
   })
 
   // 处理top发来的更新video状态的消息
-  useOnce(
+  useOnce(() =>
     onPostMessage(PostMessageEvent.updateVideoState, (data) => {
       if (data.id !== id) return
       if (data.isPause) {
@@ -174,7 +174,7 @@ const FloatButton: FC<Props> = (props) => {
     })
   )
   // 处理top发来的请求PIP
-  useOnce(
+  useOnce(() =>
     onPostMessage(PostMessageEvent.requestVideoPIP, (data) => {
       if (data.id !== id) return
       handleStartPIP()
