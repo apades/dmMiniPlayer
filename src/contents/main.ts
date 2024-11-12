@@ -18,8 +18,11 @@ import {
   postMessageToTop,
 } from '@root/utils/windowMessages'
 import PostMessageEvent, {
+  BaseVideoState,
   PostMessageProtocolMap,
 } from '@root/shared/postMessageEvent'
+import { PlayerEvent } from '@root/core/event'
+import { getMediaStreamInGetter } from '@root/utils/webRTC'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -53,10 +56,6 @@ function main() {
   }
 
   const waitingPageActive = async () => {
-    console.log(
-      'navigator.userActivation.isActive',
-      navigator.userActivation.isActive
-    )
     if (navigator.userActivation.isActive) return
     return new Promise<void>((res) => {
       const coverEl = createElement('div')
@@ -91,13 +90,8 @@ function main() {
 
     // 没找到再启用非同源iframe查找
     if (!hasVideo) {
-      console.log(
-        'getAllNotSameOriginIframesWindow',
-        getAllNotSameOriginIframesWindow()
-      )
       const postedWindows = postMessageToChild(PostMessageEvent.detectVideo_req)
 
-      console.log('hasVideo', hasVideo)
       let respCount = 0
       let stopListenMessage = () => {}
       const videoList: (PostMessageProtocolMap[PostMessageEvent.detectVideo_resp][number] & {
@@ -111,11 +105,6 @@ function main() {
               respCount++
 
               videoList.push(...data.map((item) => ({ ...item, source })))
-              console.log(
-                'respCount === postedWindows.length',
-                respCount,
-                postedWindows.length
-              )
               if (respCount === postedWindows.length) {
                 res()
               }
@@ -176,25 +165,90 @@ function main() {
 
   const getTime = () => new Date().getTime()
 
+  const getSimulateVideoEl = (data: BaseVideoState, captureSource: Window) => {
+    const id = data.id
+    type UpdateData = Omit<
+      PostMessageProtocolMap[PostMessageEvent.updateVideoState],
+      'id'
+    >
+    const updateCaptureSourceVideoState = (data: UpdateData) => {
+      if (!captureSource) return
+      postMessageToChild(
+        PostMessageEvent.updateVideoState,
+        { ...data, id },
+        captureSource
+      )
+    }
+
+    const videoEl = createElement('video')
+
+    let isPause = data.isPause,
+      currentTime = data.currentTime
+
+    Object.defineProperties(videoEl, {
+      duration: {
+        get: () => data.duration,
+      },
+      currentTime: {
+        get: () => currentTime,
+        set: (val) => {
+          updateCaptureSourceVideoState({ currentTime: val })
+          currentTime = val
+        },
+      },
+      paused: {
+        get: () => isPause,
+      },
+      buffered: {
+        get: () => {
+          return {
+            start: () => 0,
+            end: () => data.duration,
+            length: 1,
+          } satisfies TimeRanges
+        },
+      },
+      pause: {
+        get: () => () => {
+          updateCaptureSourceVideoState({ isPause: true })
+          isPause = true
+          videoEl.dispatchEvent(new CustomEvent('pause'))
+        },
+      },
+      play: {
+        get: () => async () => {
+          updateCaptureSourceVideoState({ isPlay: true })
+          isPause = false
+          videoEl.dispatchEvent(new CustomEvent('play'))
+        },
+      },
+    })
+
+    let now = getTime()
+    const timer = setInterval(() => {
+      if (isPause) {
+        now = getTime()
+        return
+      }
+      const nowTime = getTime()
+      currentTime += (nowTime - now) / 1000
+      now = nowTime
+      videoEl.dispatchEvent(new CustomEvent('timeupdate'))
+    }, 1000)
+
+    return {
+      videoEl,
+      unMount: () => {
+        clearInterval(timer)
+      },
+    }
+  }
+
+  // 下面2个是从非同源iframe发起的PIP启动数据
   onPostMessage(
     PostMessageEvent.startPIPCaptureDisplayMedia,
     async (data, captureSource) => {
-      const id = data.id
-      const updateCaptureSourceVideoState = (
-        data: Omit<
-          PostMessageProtocolMap[PostMessageEvent.updateVideoState],
-          'id'
-        >
-      ) => {
-        if (!captureSource) return
-        postMessageToChild(
-          PostMessageEvent.updateVideoState,
-          { ...data, id },
-          captureSource
-        )
-      }
       window.__cropTarget = data.cropTarget
-
       window.__cropPos = pick(data, ['x', 'y', 'w', 'h', 'vw', 'vh'])
       // 判断captureSource是iframe里还是top发起的
       const isIframe = captureSource !== window
@@ -211,65 +265,31 @@ function main() {
         window.__cropPos.y += targetIframeRect.y
       }
 
-      const videoEl = createElement('video')
-
-      let isPause = data.isPause,
-        currentTime = data.currentTime
-
-      Object.defineProperties(videoEl, {
-        duration: {
-          get: () => data.duration,
-        },
-        currentTime: {
-          get: () => currentTime,
-          set: (val) => {
-            updateCaptureSourceVideoState({ currentTime: val })
-            currentTime = val
-          },
-        },
-        paused: {
-          get: () => isPause,
-        },
-        buffered: {
-          get: () => {
-            return {
-              start: () => 0,
-              end: () => data.duration,
-              length: 1,
-            } satisfies TimeRanges
-          },
-        },
-        pause: {
-          get: () => () => {
-            updateCaptureSourceVideoState({ isPause: true })
-            isPause = true
-            videoEl.dispatchEvent(new CustomEvent('pause'))
-          },
-        },
-        play: {
-          get: () => async () => {
-            updateCaptureSourceVideoState({ isPlay: true })
-            isPause = false
-            videoEl.dispatchEvent(new CustomEvent('play'))
-          },
-        },
-      })
-
-      let now = getTime()
-      setInterval(() => {
-        if (isPause) {
-          now = getTime()
-          return
-        }
-        const nowTime = getTime()
-        currentTime += (nowTime - now) / 1000
-        now = nowTime
-        videoEl.dispatchEvent(new CustomEvent('timeupdate'))
-      }, 1000)
+      const { videoEl, unMount } = getSimulateVideoEl(data, captureSource)
 
       openPlayer({ videoEl })
+      provider?.on(PlayerEvent.close, () => {
+        unMount()
+        window.__cropTarget = null
+      })
     }
   )
+  onPostMessage(PostMessageEvent.startPIPWithWebRTC, (data, source) => {
+    const { mediaStream, unMount: unMountMediaStream } = getMediaStreamInGetter(
+      { target: source }
+    )
+    // console.log('media', mediaStream)
+    window.__webRTCMediaStream = mediaStream
+
+    const { videoEl, unMount } = getSimulateVideoEl(data, source)
+
+    openPlayer({ videoEl })
+    provider?.on(PlayerEvent.close, () => {
+      unMount()
+      unMountMediaStream()
+      window.__webRTCMediaStream = undefined
+    })
+  })
 
   onPostMessage(PostMessageEvent.openSettingPanel, () => {
     window.openSettingPanel()

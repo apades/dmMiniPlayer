@@ -1,5 +1,6 @@
 enum PostMessageEvent {
   startPIPCaptureDisplayMedia = 'startPIPCaptureDisplayMedia',
+  startPIPWithWebRTC = 'startPIPWithWebRTC',
   updateVideoState = 'updateVideoState',
   startPIPFromButtonClick = 'startPIPFromButtonClick',
   detectVideo_req = 'detectVideo_req',
@@ -11,20 +12,23 @@ enum PostMessageEvent {
   webRTC_candidate = 'webRTCCandidate',
 }
 
+export type BaseVideoState = {
+  id: string
+  duration: number
+  currentTime: number
+  isPause: boolean
+}
+
 export interface PostMessageProtocolMap {
   [PostMessageEvent.startPIPCaptureDisplayMedia]: {
-    id: string
     cropTarget: ReturnType<typeof window.CropTarget.fromElement>
-    duration: number
-    currentTime: number
-    isPause: boolean
     x: number
     y: number
     w: number
     h: number
     vw: number
     vh: number
-  }
+  } & BaseVideoState
   [PostMessageEvent.updateVideoState]: Partial<{
     isPause: boolean
     isPlay: boolean
@@ -39,6 +43,7 @@ export interface PostMessageProtocolMap {
     isPlaying: boolean
   }[]
   [PostMessageEvent.startPIPFromButtonClick]: { id: string }
+  [PostMessageEvent.startPIPWithWebRTC]: BaseVideoState
   [PostMessageEvent.requestVideoPIP]: { id: string }
   [PostMessageEvent.openSettingPanel]: void
   [PostMessageEvent.webRTC_offer]: RTCSessionDescriptionInit

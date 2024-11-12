@@ -32,6 +32,8 @@ const FloatButton: FC<Props> = (props) => {
 
   const videoIsContainer = vel === container
 
+  const videoRef = useRef<HTMLVideoElement>()
+
   useOnce(
     useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (hidden) => {
       if (!floatBtn.current) return
@@ -109,8 +111,9 @@ const FloatButton: FC<Props> = (props) => {
 
     console.log('视频容器', videoEl, '父容器', container)
     if (!videoEl) return
+    videoRef.current = videoEl
+
     const postCaptureModeDataMsg = async () => {
-      console.log('id', id)
       const rect = videoEl.getBoundingClientRect()
       postMessageToTop(PostMessageEvent.startPIPCaptureDisplayMedia, {
         cropTarget: await window.CropTarget.fromElement(videoEl),
@@ -125,14 +128,30 @@ const FloatButton: FC<Props> = (props) => {
         vh: videoEl.videoHeight,
         id,
       })
-      window.__controllingVideoEl = videoEl
     }
     try {
+      // 检测可否访问top
       top!.document
     } catch (error) {
       console.error('非同源iframe，采用其他方式')
       try {
-        postCaptureModeDataMsg()
+        switch (configStore.notSameOriginIframeCaptureModePriority) {
+          case DocPIPRenderType.capture_displayMedia:
+          case DocPIPRenderType.capture_tabCapture:
+            postCaptureModeDataMsg()
+            break
+          case DocPIPRenderType.capture_captureStreamWithWebRTC:
+            const stream = videoEl.captureStream()
+            const {} = sendMediaStreamInSender({ stream })
+            postMessageToTop(PostMessageEvent.startPIPWithWebRTC, {
+              id,
+              currentTime: videoEl.currentTime,
+              duration: videoEl.duration,
+              isPause: videoEl.paused,
+            })
+            break
+        }
+
         return true
       } catch (error) {
         console.error('CropTarget.fromElement没法用', error)
@@ -166,15 +185,16 @@ const FloatButton: FC<Props> = (props) => {
   // 处理top发来的更新video状态的消息
   useOnce(() =>
     onPostMessage(PostMessageEvent.updateVideoState, (data) => {
-      if (data.id !== id) return
+      if (data.id !== id || !videoRef.current) return
+      const video = videoRef.current
       if (data.isPause) {
-        window.__controllingVideoEl.pause()
+        video.pause()
       }
       if (data.isPlay) {
-        window.__controllingVideoEl.play()
+        video.play()
       }
       if (data.currentTime !== undefined) {
-        window.__controllingVideoEl.currentTime = data.currentTime
+        video.currentTime = data.currentTime
       }
     })
   )

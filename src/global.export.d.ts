@@ -39,7 +39,7 @@ declare global {
       vw: number
       vh: number
     }
-    __controllingVideoEl: HTMLVideoElement
+    __webRTCMediaStream?: MediaStream
     [k: string]: any
   }
 }

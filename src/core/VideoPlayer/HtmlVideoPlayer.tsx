@@ -115,10 +115,13 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       )
       renderMode = configStore.notSameOriginIframeCaptureModePriority
     }
-
-    const isWebVideoMode = renderMode === DocPIPRenderType.replaceVideoEl,
-      isCanvasVideoMode =
-        renderMode === DocPIPRenderType.capture_captureStreamWithCanvas
+    // webRTC模式
+    else if (window.__webRTCSource) {
+      console.log(
+        `🟡 强制 ${DocPIPRenderType.capture_captureStreamWithWebRTC} 模式`
+      )
+      renderMode = DocPIPRenderType.capture_captureStreamWithWebRTC
+    }
 
     const playerComponent = await (async () => {
       switch (renderMode) {
@@ -139,8 +142,14 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
             />
           )
         case DocPIPRenderType.capture_captureStreamWithWebRTC:
-          const { mediaStream } = getMediaStreamInGetter()
-          return <VideoPlayerV2 {...commonProps} videoStream={mediaStream} />
+          if (!window.__webRTCMediaStream)
+            throw Error('没有定义__webRTCMediaSource')
+          return (
+            <VideoPlayerV2
+              {...commonProps}
+              videoStream={window.__webRTCMediaStream}
+            />
+          )
         case DocPIPRenderType.capture_displayMedia: {
           if (!window.__cropTarget) throw Error('没有定义__cropTarget')
           const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -221,23 +230,30 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       console.log('observeVideoElChange', newVideoEl)
       this.webVideoEl = newVideoEl
 
-      if (isWebVideoMode) {
-        vpRef.updateVideo(newVideoEl)
-        // 控制要不要把上一个还原
-        restoreWebVideoPlayerElState =
-          this.initWebVideoPlayerElState(newVideoEl)
-      } else if (isCanvasVideoMode) {
-        const canvasVideoStream = this.canvasVideoStream
-        vpRef.updateVideoStream(canvasVideoStream)
-        // vpRef.updateVideo(newVideoEl)
-        setTimeout(() => {
+      switch (renderMode) {
+        case DocPIPRenderType.replaceVideoEl: {
           vpRef.updateVideo(newVideoEl)
-        }, 0)
-      } else {
-        vpRef.updateVideo(newVideoEl)
-        setTimeout(() => {
-          vpRef.updateVideoStream(this.webPlayerVideoStream)
-        }, 0)
+          // 控制要不要把上一个还原
+          restoreWebVideoPlayerElState =
+            this.initWebVideoPlayerElState(newVideoEl)
+          break
+        }
+        case DocPIPRenderType.capture_captureStreamWithCanvas: {
+          const canvasVideoStream = this.canvasVideoStream
+          vpRef.updateVideoStream(canvasVideoStream)
+          // vpRef.updateVideo(newVideoEl)
+          setTimeout(() => {
+            vpRef.updateVideo(newVideoEl)
+          }, 0)
+          break
+        }
+        case DocPIPRenderType.capture_captureStream: {
+          vpRef.updateVideo(newVideoEl)
+          setTimeout(() => {
+            vpRef.updateVideoStream(this.webPlayerVideoStream)
+          }, 0)
+          break
+        }
       }
 
       if (this.subtitleManager) {
@@ -250,7 +266,8 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     // 用来把video元素还原回原本位置的方法
     let restoreWebVideoPlayerElState = () => {}
-    if (isWebVideoMode) {
+
+    if (renderMode === DocPIPRenderType.replaceVideoEl) {
       restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
         this.webVideoEl
       )

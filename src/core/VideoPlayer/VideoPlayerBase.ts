@@ -109,9 +109,6 @@ export default class VideoPlayerBase
 
   /**return的函数运行是还原videoEl位置和状态 */
   protected initWebVideoPlayerElState(videoEl: HTMLVideoElement) {
-    if (configStore.docPIP_renderType === DocPIPRenderType.capture_displayMedia)
-      return () => {}
-
     const originParent = videoEl.parentElement
     if (!originParent) {
       console.error('不正常的video标签，没有父元素', videoEl)
