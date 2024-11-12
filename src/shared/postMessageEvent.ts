@@ -6,6 +6,9 @@ enum PostMessageEvent {
   detectVideo_resp = 'detectVideo_resp',
   requestVideoPIP = 'requestVideoPIP',
   openSettingPanel = 'openSettingPanel',
+  webRTC_offer = 'webRTCOffer',
+  webRTC_answer = 'webRTCAnswer',
+  webRTC_candidate = 'webRTCCandidate',
 }
 
 export interface PostMessageProtocolMap {
@@ -38,6 +41,9 @@ export interface PostMessageProtocolMap {
   [PostMessageEvent.startPIPFromButtonClick]: { id: string }
   [PostMessageEvent.requestVideoPIP]: { id: string }
   [PostMessageEvent.openSettingPanel]: void
+  [PostMessageEvent.webRTC_offer]: RTCSessionDescriptionInit
+  [PostMessageEvent.webRTC_answer]: RTCSessionDescriptionInit
+  [PostMessageEvent.webRTC_candidate]: RTCIceCandidateInit
 }
 
 export default PostMessageEvent

@@ -275,11 +275,13 @@ if (isPluginEnv) {
   }
 }
 
-window.configStore = configStore
-window.openSettingPanel = () => {
+export function openSettingPanel() {
   _openSettingPanel()
   setTimeout(updateConfig, 50)
 }
+
+window.configStore = configStore
+window.openSettingPanel = openSettingPanel
 
 let firstChange = true
 // 同步icon栏的修改隐藏floatButton
