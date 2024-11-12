@@ -22,10 +22,13 @@ export function postMessageToTop<
   )
 }
 
-export function postMessageToChild<T extends PostMessageEvent>(
-  type: T,
-  data: PostMessageProtocolMap[T],
-  target?: Window | Window[]
+export function postMessageToChild<
+  T extends PostMessageEvent,
+  data extends PostMessageProtocolMap[T]
+>(
+  ...[type, data, target]: data extends undefined
+    ? [T, undefined?, Window?]
+    : [T, data, Window?]
 ) {
   let targets = !isUndefined(target)
     ? isArray(target)

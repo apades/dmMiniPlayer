@@ -95,10 +95,7 @@ function main() {
         'getAllNotSameOriginIframesWindow',
         getAllNotSameOriginIframesWindow()
       )
-      const postedWindows = postMessageToChild(
-        PostMessageEvent.detectVideo_req,
-        undefined
-      )
+      const postedWindows = postMessageToChild(PostMessageEvent.detectVideo_req)
 
       console.log('hasVideo', hasVideo)
       let respCount = 0
