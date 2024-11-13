@@ -91,11 +91,9 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
         this.container.classList.remove('paused')
       })
       el.addEventListener('pause', () => {
-        console.log('video pause', this.container)
         this.container.classList.add('paused')
       })
       el.addEventListener('seeking', () => {
-        console.log('video seeked')
         this.danmakus.forEach((d) => d.reset())
         this.tunnelManager.resetTunnelsMap()
         this.hasSeek = true

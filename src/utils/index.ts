@@ -500,3 +500,17 @@ export function getAllNotSameOriginIframesWindow() {
 }
 
 export { v4 as uuid } from 'uuid'
+
+export function tryCatch<T extends () => void>(
+  fn: T
+): T extends () => Promise<any>
+  ? Promise<[undefined, Awaited<ReturnType<T>>] | [Error, undefined]>
+  : Promise<[undefined, ReturnType<T>] | [Error, undefined]> {
+  return new Promise(async (res) => {
+    try {
+      res([undefined, await fn()])
+    } catch (error) {
+      res([error as Error, undefined])
+    }
+  }) as any
+}

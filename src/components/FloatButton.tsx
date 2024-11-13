@@ -7,7 +7,7 @@ import PostMessageEvent from '@root/shared/postMessageEvent'
 import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
 import configStore, { DocPIPRenderType } from '@root/store/config'
 import { FloatButtonPos } from '@root/store/config/floatButton'
-import { dq, throttle, uuid } from '@root/utils'
+import { dq, throttle, tryCatch, uuid } from '@root/utils'
 import { useBrowserSyncStorage } from '@root/utils/storage'
 import { useMemoizedFn, useSize } from 'ahooks'
 import classNames from 'classnames'
@@ -103,7 +103,7 @@ const FloatButton: FC<Props> = (props) => {
     container
   )
 
-  const handleStartPIP = useMemoizedFn(() => {
+  const handleStartPIP = useMemoizedFn(async () => {
     const videoEl =
       container instanceof HTMLVideoElement
         ? container
@@ -129,12 +129,13 @@ const FloatButton: FC<Props> = (props) => {
         id,
       })
     }
-    try {
-      // 检测可否访问top
-      top!.document
-    } catch (error) {
-      console.error('非同源iframe，采用其他方式')
-      try {
+
+    // 检测可否访问top
+    const [cannotAccessTop] = await tryCatch(() => top!.document)
+    if (cannotAccessTop) {
+      console.log('🟡 非同源iframe，将启用其他模式')
+
+      const [isErrorInOtherMode] = await tryCatch(() => {
         switch (configStore.notSameOriginIframeCaptureModePriority) {
           case DocPIPRenderType.capture_displayMedia:
           case DocPIPRenderType.capture_tabCapture:
@@ -151,15 +152,21 @@ const FloatButton: FC<Props> = (props) => {
             })
             break
         }
+      })
 
-        return true
-      } catch (error) {
-        console.error('CropTarget.fromElement没法用', error)
+      if (isErrorInOtherMode) {
+        console.error(
+          '🔴 其他模式也不可用，启动保底的旧画中画',
+          isErrorInOtherMode
+        )
         videoEl.requestPictureInPicture()
         throw Error('该视频可能在非同源的iframe中，目前不支持非同源iframe')
       }
+
+      return true
     }
 
+    // 强制模式
     switch (configStore.docPIP_renderType) {
       case DocPIPRenderType.capture_displayMedia:
       case DocPIPRenderType.capture_tabCapture:
