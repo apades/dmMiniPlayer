@@ -1,5 +1,7 @@
+import { DocPIPRenderType } from '@root/store/config'
+
 enum PostMessageEvent {
-  startPIPCaptureDisplayMedia = 'startPIPCaptureDisplayMedia',
+  startPIPFromFloatButton = 'startPIPFromFloatButton',
   startPIPWithWebRTC = 'startPIPWithWebRTC',
   updateVideoState = 'updateVideoState',
   startPIPFromButtonClick = 'startPIPFromButtonClick',
@@ -19,16 +21,23 @@ export type BaseVideoState = {
   isPause: boolean
 }
 
+export type VideoPosData = {
+  x: number
+  y: number
+  w: number
+  h: number
+  vw: number
+  vh: number
+}
+
 export interface PostMessageProtocolMap {
-  [PostMessageEvent.startPIPCaptureDisplayMedia]: {
-    cropTarget: ReturnType<typeof window.CropTarget.fromElement>
-    x: number
-    y: number
-    w: number
-    h: number
-    vw: number
-    vh: number
-  } & BaseVideoState
+  [PostMessageEvent.startPIPFromFloatButton]: {
+    cropTarget?: CropTarget
+    restrictionTarget?: RestrictionTarget
+    posData: VideoPosData
+    videoState: BaseVideoState
+    renderType: DocPIPRenderType
+  }
   [PostMessageEvent.updateVideoState]: Partial<{
     isPause: boolean
     isPlay: boolean

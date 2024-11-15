@@ -13,6 +13,7 @@ import Browser from 'webextension-polyfill'
 import { sendMessage as sendBgMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
+import playerConfig from '@root/store/playerConfig'
 
 const styleEl = createElement('div', {
   className: 'style-list',
@@ -93,38 +94,13 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       isLive: this.isLive,
     }
 
-    let renderMode = configStore.docPIP_renderType
-
-    // bilibili直播有一些页面是套同源iframe的，例如瓦洛兰特比赛什么的
-    // 需要强制使用canvasVideoMode
-    if (
-      this.webVideoEl.ownerDocument !== document &&
-      // 三方url可以直接转移video dom，blob才不行需要canvasVideoMode
-      this.webVideoEl.src.startsWith('blob:')
-    ) {
-      console.log(
-        `🟡 强制 ${configStore.sameOriginIframeCaptureModePriority} 模式`
-      )
-      renderMode = configStore.sameOriginIframeCaptureModePriority
-    }
-
-    // 非同源模式，像agemys、crunchyroll这种，需要录制模式
-    if (window.__cropTarget) {
-      console.log(
-        `🟡 强制 ${configStore.notSameOriginIframeCaptureModePriority} 模式`
-      )
-      renderMode = configStore.notSameOriginIframeCaptureModePriority
-    }
-    // webRTC模式
-    else if (window.__webRTCSource) {
-      console.log(
-        `🟡 强制 ${DocPIPRenderType.capture_captureStreamWithWebRTC} 模式`
-      )
-      renderMode = DocPIPRenderType.capture_captureStreamWithWebRTC
-    }
+    const renderMode =
+      playerConfig.forceDocPIPRenderType || configStore.docPIP_renderType
 
     const playerComponent = await (async () => {
       switch (renderMode) {
+        case DocPIPRenderType.replaceVideoEl:
+          return <VideoPlayerV2 {...commonProps} useWebVideo />
         case DocPIPRenderType.capture_captureStreamWithCanvas:
           return (
             <VideoPlayerV2
@@ -132,8 +108,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
               videoStream={this.canvasVideoStream}
             />
           )
-        case DocPIPRenderType.replaceVideoEl:
-          return <VideoPlayerV2 {...commonProps} useWebVideo />
         case DocPIPRenderType.capture_captureStream:
           return (
             <VideoPlayerV2
@@ -141,17 +115,12 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
               videoStream={this.webPlayerVideoStream}
             />
           )
-        case DocPIPRenderType.capture_captureStreamWithWebRTC:
-          if (!window.__webRTCMediaStream)
-            throw Error('没有定义__webRTCMediaSource')
-          return (
-            <VideoPlayerV2
-              {...commonProps}
-              videoStream={window.__webRTCMediaStream}
-            />
-          )
-        case DocPIPRenderType.capture_displayMedia: {
-          if (!window.__cropTarget) throw Error('没有定义__cropTarget')
+        case DocPIPRenderType.capture_displayMediaWithCropTarget:
+        case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
+          if (!playerConfig.cropTarget && !playerConfig.restrictionTarget)
+            throw Error(
+              `没有定义数据 cropTarget:${!playerConfig.cropTarget} restrictionTarget:${!playerConfig.restrictionTarget}`
+            )
           const stream = await navigator.mediaDevices.getDisplayMedia({
             preferCurrentTab: true,
             video: { frameRate: 60 },
@@ -166,12 +135,17 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
               track.stop()
             } catch (error) {}
           })
-          await track.cropTo(window.__cropTarget)
+
+          if (playerConfig.cropTarget) {
+            await track.cropTo(playerConfig.cropTarget)
+          }
+          if (playerConfig.restrictionTarget) {
+            await track.restrictTo(playerConfig.restrictionTarget)
+          }
           return <VideoPlayerV2 {...commonProps} videoStream={stream} />
         }
-
         case DocPIPRenderType.capture_tabCapture:
-          if (!window.__cropTarget) throw Error('没有定义__cropTarget')
+          if (!playerConfig.posData) throw Error('没有定义playerConfig.posData')
           // TODO 提示用户点击下插件icon
           // 这里必须要用户点击插件icon或者右键菜单功能才能用tapCapture功能 😅
           const data = await sendBgMessage(WebextEvent.startTabCapture, null)
@@ -204,10 +178,10 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
             videoEl.play()
             const canvasVideo = new CanvasVideo({
               videoEl,
-              width: window.__cropPos.w,
-              height: window.__cropPos.h,
-              x: -window.__cropPos.x,
-              y: -window.__cropPos.y,
+              width: playerConfig.posData.w,
+              height: playerConfig.posData.h,
+              x: -playerConfig.posData.x,
+              y: -playerConfig.posData.y,
               fps: configStore.capture_tabCapture_FPS,
             })
             return (
@@ -219,6 +193,15 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           } else {
             return <VideoPlayerV2 {...commonProps} videoStream={stream} />
           }
+        case DocPIPRenderType.capture_captureStreamWithWebRTC:
+          if (!playerConfig.webRTCMediaStream)
+            throw Error('没有定义playerConfig.webRTCMediaStream')
+          return (
+            <VideoPlayerV2
+              {...commonProps}
+              videoStream={playerConfig.webRTCMediaStream}
+            />
+          )
       }
     })()
 
@@ -226,10 +209,17 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     reactRoot.render(playerComponent)
 
+    const supportOnVideoChange = [
+      DocPIPRenderType.replaceVideoEl,
+      DocPIPRenderType.capture_captureStreamWithCanvas,
+      DocPIPRenderType.capture_captureStream,
+    ].includes(renderMode)
+
     this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
       console.log('observeVideoElChange', newVideoEl)
       this.webVideoEl = newVideoEl
 
+      if (!supportOnVideoChange) return
       switch (renderMode) {
         case DocPIPRenderType.replaceVideoEl: {
           vpRef.updateVideo(newVideoEl)

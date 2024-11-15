@@ -23,6 +23,8 @@ import PostMessageEvent, {
 } from '@root/shared/postMessageEvent'
 import { PlayerEvent } from '@root/core/event'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
+import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/store/config'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -246,50 +248,74 @@ function main() {
 
   // 下面2个是从非同源iframe发起的PIP启动数据
   onPostMessage(
-    PostMessageEvent.startPIPCaptureDisplayMedia,
+    PostMessageEvent.startPIPFromFloatButton,
     async (data, captureSource) => {
-      window.__cropTarget = data.cropTarget
-      window.__cropPos = pick(data, ['x', 'y', 'w', 'h', 'vw', 'vh'])
-      // 判断captureSource是iframe里还是top发起的
-      const isIframe = captureSource !== window
-      if (isIframe) {
-        const targetIframeEl = dq('iframe').find(
-          (iframeEl) => iframeEl.contentWindow === captureSource
-        )
-        if (!targetIframeEl) {
-          console.error('captureSource', captureSource)
-          throw Error('找不到captureSource iframe')
-        }
-        const targetIframeRect = targetIframeEl.getBoundingClientRect()
-        window.__cropPos.x += targetIframeRect.x
-        window.__cropPos.y += targetIframeRect.y
+      if (data.cropTarget) {
+        playerConfig.cropTarget = data.cropTarget
       }
+      if (data.restrictionTarget) {
+        playerConfig.restrictionTarget = data.restrictionTarget
+      }
+      playerConfig.forceDocPIPRenderType = data.renderType
+      playerConfig.posData = data.posData
 
-      const { videoEl, unMount } = getSimulateVideoEl(data, captureSource)
+      const id = data.videoState.id
 
-      openPlayer({ videoEl })
-      provider?.on(PlayerEvent.close, () => {
-        unMount()
-        window.__cropTarget = null
-      })
+      const isWebRTCMode =
+        data.renderType === DocPIPRenderType.capture_captureStreamWithWebRTC
+
+      switch (data.renderType) {
+        case DocPIPRenderType.capture_captureStreamWithWebRTC:
+        case DocPIPRenderType.capture_displayMediaWithCropTarget:
+        case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
+          // 判断captureSource是iframe里还是top发起的
+          const isIframe = captureSource !== window
+
+          if (isIframe) {
+            const targetIframeEl = dq('iframe').find(
+              (iframeEl) => iframeEl.contentWindow === captureSource
+            )
+            if (!targetIframeEl) {
+              console.error('captureSource', captureSource)
+              throw Error('找不到captureSource iframe')
+            }
+            const targetIframeRect = targetIframeEl.getBoundingClientRect()
+            playerConfig.posData.x += targetIframeRect.x
+            playerConfig.posData.y += targetIframeRect.y
+          }
+
+          const { videoEl, unMount } = getSimulateVideoEl(
+            data.videoState,
+            captureSource
+          )
+
+          // webRTC模式
+          if (isWebRTCMode) {
+            const { mediaStream, unMount: unMountMediaStream } =
+              getMediaStreamInGetter({ target: captureSource })
+            playerConfig.webRTCMediaStream = mediaStream
+
+            openPlayer({ videoEl })
+            provider?.on(PlayerEvent.close, () => {
+              unMountMediaStream()
+              unMount()
+              playerConfig.clear()
+            })
+          } else {
+            openPlayer({ videoEl })
+            provider?.on(PlayerEvent.close, () => {
+              unMount()
+              playerConfig.clear()
+            })
+          }
+          return
+        }
+        default: {
+          return openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${id}"]`) })
+        }
+      }
     }
   )
-  onPostMessage(PostMessageEvent.startPIPWithWebRTC, (data, source) => {
-    const { mediaStream, unMount: unMountMediaStream } = getMediaStreamInGetter(
-      { target: source }
-    )
-    // console.log('media', mediaStream)
-    window.__webRTCMediaStream = mediaStream
-
-    const { videoEl, unMount } = getSimulateVideoEl(data, source)
-
-    openPlayer({ videoEl })
-    provider?.on(PlayerEvent.close, () => {
-      unMount()
-      unMountMediaStream()
-      window.__webRTCMediaStream = undefined
-    })
-  })
 
   onPostMessage(PostMessageEvent.openSettingPanel, () => {
     window.openSettingPanel()

@@ -505,12 +505,20 @@ export function tryCatch<T extends () => void>(
   fn: T
 ): T extends () => Promise<any>
   ? Promise<[undefined, Awaited<ReturnType<T>>] | [Error, undefined]>
-  : Promise<[undefined, ReturnType<T>] | [Error, undefined]> {
-  return new Promise(async (res) => {
-    try {
-      res([undefined, await fn()])
-    } catch (error) {
-      res([error as Error, undefined])
+  : [undefined, ReturnType<T>] | [Error, undefined] {
+  try {
+    const rs: any = fn()
+    if (rs instanceof Promise) {
+      return rs
+        .then((d) => [undefined, d])
+        .catch((err) => [err, undefined]) as any
+    } else {
+      return [undefined, rs] as any
     }
-  }) as any
+  } catch (error) {
+    return [error as Error, undefined] as any
+  }
 }
+
+export const objectKeys = <T>(obj: Record<string, T>) =>
+  Object.keys(obj) as (keyof T)[]

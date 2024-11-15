@@ -54,7 +54,8 @@ interface MediaTrackConstraints {
 }
 
 interface MediaStreamTrack {
-  cropTo: (cropTarget: any) => Promise<void>
+  cropTo: (cropTarget: CropTarget) => Promise<void>
+  restrictTo: (restrictTarget: RestrictionTarget) => Promise<void>
 }
 declare namespace chrome.runtime {
   interface ManifestBase {

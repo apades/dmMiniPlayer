@@ -7,6 +7,10 @@ declare module 'react' {
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface CropTarget {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface RestrictionTarget {}
   interface Window {
     documentPictureInPicture: {
       window: Window
@@ -27,20 +31,17 @@ declare global {
     openSettingPanel: () => void
     __LOCALE: Language
 
-    CropTarget: {
-      fromElement: (el: HTMLElement) => void
-    }
-    __cropTarget: any
-    __cropPos: {
-      x: number
-      y: number
-      w: number
-      h: number
-      vw: number
-      vh: number
-    }
-    __webRTCMediaStream?: MediaStream
+    // RestrictionTarget: {
+    //   fromElement: (el: HTMLElement) => RestrictionTarget
+    // }
     [k: string]: any
+  }
+
+  const RestrictionTarget: {
+    fromElement: (el: HTMLElement) => Promise<RestrictionTarget>
+  }
+  const CropTarget: {
+    fromElement: (el: HTMLElement) => Promise<CropTarget>
   }
 }
 

@@ -76,7 +76,8 @@ export default class VideoPlayerBase
     await this.onInit()
 
     if (
-      configStore.docPIP_renderType !== DocPIPRenderType.capture_displayMedia
+      configStore.docPIP_renderType !==
+      DocPIPRenderType.capture_displayMediaWithCropTarget
     ) {
       this.unobserveVideoElChange = observeVideoEl(
         this.webVideoEl,

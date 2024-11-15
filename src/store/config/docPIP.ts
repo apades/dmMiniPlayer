@@ -43,9 +43,15 @@ export enum DocPIPRenderType {
    *
    * 该模式是针对目标video不在同源iframe中设计的
    */
-  capture_displayMedia = 'capture_displayMedia',
+  capture_displayMediaWithCropTarget = 'capture_displayMedia',
   /**
-   * 使用 {@link chrome.tabCapture.getMediaStreamId getMediaStreamId} 来获取stream，
+   * 该模式需要`chrome://flags/#element-capture`开启，{@link https://developer.chrome.com/docs/web-platform/element-capture developer.chrome文章}
+   *
+   * 与 {@link DocPIPRenderType.capture_displayMediaWithCropTarget capture_displayMediaWithCropTarget} 类似，但裁剪方案由 {@link window.CropTarget CropTarget} 改成了 {@link window.RestrictionTarget RestrictionTarget}
+   */
+  capture_displayMediaWithRestrictionTarget = 'capture_displayMediaWithRestrictionTarget',
+  /**
+   * TODO: 使用 {@link chrome.tabCapture.getMediaStreamId getMediaStreamId} 来获取stream，
    * 然后附加到canvas上绘制+裁剪位置，最后从canvas.captureStream()获取stream附加到video上播放
    *
    * *该模式有缺陷，因为是录制tab的，该tab就没法动了*
@@ -54,7 +60,7 @@ export enum DocPIPRenderType {
    */
   capture_tabCapture = 'capture_tabCapture',
   /**
-   * 注入MediaSource模式
+   * TODO: 注入MediaSource模式
    *
    * 该模式是针对目标video不在同源iframe中设计的
    */
@@ -85,7 +91,8 @@ export const docPIPConfig = {
         desc: t('settingPanel.reactVP_canvasCsDesc'),
       },
       DocPIPRenderType.capture_captureStream,
-      DocPIPRenderType.capture_displayMedia,
+      DocPIPRenderType.capture_displayMediaWithCropTarget,
+      DocPIPRenderType.capture_displayMediaWithRestrictionTarget,
       // DocPIPRenderType.capture_tabCapture,
       DocPIPRenderType.capture_captureStreamWithWebRTC,
       // DocPIPRenderType.injectMediaSource,
@@ -104,13 +111,18 @@ export const docPIPConfig = {
   }),
   notSameOriginIframeCaptureModePriority: config({
     label: 'Not same origin iframe capture mode priority',
-    defaultValue: DocPIPRenderType.capture_displayMedia,
+    defaultValue: DocPIPRenderType.capture_displayMediaWithCropTarget,
     type: 'group',
     group: [
       {
         label: 'Use web record API',
-        value: DocPIPRenderType.capture_displayMedia,
+        value: DocPIPRenderType.capture_displayMediaWithCropTarget,
         desc: 'Better performance, but cannot hide browser sharing top bar',
+      },
+      {
+        label: 'Use web improve record API',
+        value: DocPIPRenderType.capture_displayMediaWithRestrictionTarget,
+        desc: 'Better than `Use web record API`, but need to turn on feature in `chrome://flags/#element-capture`',
       },
       // {
       //   label: 'Use chrome extension API',

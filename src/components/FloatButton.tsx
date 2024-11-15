@@ -113,45 +113,52 @@ const FloatButton: FC<Props> = (props) => {
     if (!videoEl) return
     videoRef.current = videoEl
 
-    const postCaptureModeDataMsg = async () => {
+    const postCaptureModeDataMsg = async (renderType: DocPIPRenderType) => {
       const rect = videoEl.getBoundingClientRect()
-      postMessageToTop(PostMessageEvent.startPIPCaptureDisplayMedia, {
-        cropTarget: await window.CropTarget.fromElement(videoEl),
-        duration: videoEl.duration,
-        currentTime: videoEl.currentTime,
-        isPause: videoEl.paused,
-        x: rect.x,
-        y: rect.y,
-        w: rect.width,
-        h: rect.height,
-        vw: videoEl.videoWidth,
-        vh: videoEl.videoHeight,
-        id,
+      postMessageToTop(PostMessageEvent.startPIPFromFloatButton, {
+        cropTarget:
+          renderType === DocPIPRenderType.capture_displayMediaWithCropTarget
+            ? await CropTarget.fromElement(videoEl)
+            : undefined,
+        restrictionTarget:
+          renderType ===
+          DocPIPRenderType.capture_displayMediaWithRestrictionTarget
+            ? await RestrictionTarget.fromElement(videoEl)
+            : undefined,
+        posData: {
+          x: rect.x,
+          y: rect.y,
+          w: rect.width,
+          h: rect.height,
+          vw: videoEl.videoWidth,
+          vh: videoEl.videoHeight,
+        },
+        videoState: {
+          id,
+          duration: videoEl.duration,
+          currentTime: videoEl.currentTime,
+          isPause: videoEl.paused,
+        },
+        renderType,
       })
     }
 
     // 检测可否访问top
-    const [cannotAccessTop] = await tryCatch(() => top!.document)
+    const [cannotAccessTop] = tryCatch(() => top!.document)
     if (cannotAccessTop) {
-      console.log('🟡 非同源iframe，将启用其他模式')
+      const type = configStore.notSameOriginIframeCaptureModePriority
+      console.log(`🟡 非同源iframe，将启用其他模式 ${type}`)
 
-      const [isErrorInOtherMode] = await tryCatch(() => {
-        switch (configStore.notSameOriginIframeCaptureModePriority) {
-          case DocPIPRenderType.capture_displayMedia:
-          case DocPIPRenderType.capture_tabCapture:
-            postCaptureModeDataMsg()
-            break
+      // 走非同源iframe捕获模式
+      const [isErrorInOtherMode] = await tryCatch(async () => {
+        switch (type) {
           case DocPIPRenderType.capture_captureStreamWithWebRTC:
             const stream = videoEl.captureStream()
             const {} = sendMediaStreamInSender({ stream })
-            postMessageToTop(PostMessageEvent.startPIPWithWebRTC, {
-              id,
-              currentTime: videoEl.currentTime,
-              duration: videoEl.duration,
-              isPause: videoEl.paused,
-            })
             break
         }
+
+        await postCaptureModeDataMsg(type)
       })
 
       if (isErrorInOtherMode) {
@@ -166,22 +173,19 @@ const FloatButton: FC<Props> = (props) => {
       return true
     }
 
-    // 强制模式
-    switch (configStore.docPIP_renderType) {
-      case DocPIPRenderType.capture_displayMedia:
-      case DocPIPRenderType.capture_tabCapture:
-        postCaptureModeDataMsg()
-        break
-      case DocPIPRenderType.capture_captureStreamWithWebRTC:
-        const stream = videoEl.captureStream()
-        const {} = sendMediaStreamInSender({ stream })
-        break
-      default: {
-        postMessageToTop(PostMessageEvent.startPIPFromButtonClick, {
-          id,
-        })
-      }
+    // 检测该video是不是在同源的iframe里
+    const isInIframeVideo = videoEl.ownerDocument !== top?.document
+    // blob:开头的视频不能用replaceVideoEl模式
+    const isBlobSrc = videoEl.src.startsWith('blob:')
+    if (isInIframeVideo && isBlobSrc) {
+      const type = configStore.sameOriginIframeCaptureModePriority
+      console.log(`🟡 同源iframe，将启用其他模式 ${type}`)
+      postCaptureModeDataMsg(type)
+      return true
     }
+
+    // 如果都没用上面的模式，则走默认的设置的优先模式
+    postCaptureModeDataMsg(configStore.docPIP_renderType)
     return true
   })
 
