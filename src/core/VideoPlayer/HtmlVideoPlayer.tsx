@@ -22,6 +22,9 @@ const styleEl = createElement('div', {
     }),
   ],
 })
+const docPIPStyleEl = createElement('style', {
+  innerText: 'html, body { height: 100% }',
+})
 
 export class HtmlVideoPlayer extends VideoPlayerBase {
   playerRootEl?: HTMLElement
@@ -66,9 +69,12 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
   protected async renderReactVideoPlayer() {
     let vpRef: VideoPlayerHandle
-    const root = createElement('div')
+    const root = createElement('div', {
+      className: 'h-full',
+    })
     this.playerRootEl = createElement('div', {
-      children: [root, styleEl],
+      className: 'h-full',
+      children: [root, styleEl, docPIPStyleEl],
     })
     const reactRoot = createRoot(root)
 
