@@ -4,7 +4,6 @@ enum PostMessageEvent {
   startPIPFromFloatButton = 'startPIPFromFloatButton',
   startPIPWithWebRTC = 'startPIPWithWebRTC',
   updateVideoState = 'updateVideoState',
-  startPIPFromButtonClick = 'startPIPFromButtonClick',
   detectVideo_req = 'detectVideo_req',
   detectVideo_resp = 'detectVideo_resp',
   requestVideoPIP = 'requestVideoPIP',
@@ -51,7 +50,6 @@ export interface PostMessageProtocolMap {
     isMute: boolean
     isPlaying: boolean
   }[]
-  [PostMessageEvent.startPIPFromButtonClick]: { id: string }
   [PostMessageEvent.startPIPWithWebRTC]: BaseVideoState
   [PostMessageEvent.requestVideoPIP]: { id: string }
   [PostMessageEvent.openSettingPanel]: void

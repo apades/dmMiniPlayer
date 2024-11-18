@@ -1,30 +1,23 @@
-import _getWebProvider from '../web-provider/getWebProvider'
-import { onMessage as onBgMessage } from 'webext-bridge/content-script'
-import { onMessage } from '@root/inject/contentSender'
-import {
-  createElement,
-  dq,
-  dq1Adv,
-  getAllNotSameOriginIframesWindow,
-} from '@root/utils'
+import { PlayerEvent } from '@root/core/event'
 import { WebProvider } from '@root/core/WebProvider'
-import './floatButton'
-import { pick } from 'lodash-es'
 import isTop from '@root/shared/isTop'
+import PostMessageEvent, {
+  BaseVideoState,
+  PostMessageProtocolMap,
+} from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
+import { DocPIPRenderType } from '@root/store/config'
+import playerConfig from '@root/store/playerConfig'
+import { createElement, dq, dq1Adv } from '@root/utils'
+import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import {
   onPostMessage,
   postMessageToChild,
   postMessageToTop,
 } from '@root/utils/windowMessages'
-import PostMessageEvent, {
-  BaseVideoState,
-  PostMessageProtocolMap,
-} from '@root/shared/postMessageEvent'
-import { PlayerEvent } from '@root/core/event'
-import { getMediaStreamInGetter } from '@root/utils/webRTC'
-import playerConfig from '@root/store/playerConfig'
-import { DocPIPRenderType } from '@root/store/config'
+import { onMessage as onBgMessage } from 'webext-bridge/content-script'
+import _getWebProvider from '../web-provider/getWebProvider'
+import './floatButton'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -33,7 +26,6 @@ if (isTop) {
 } else {
   // 处理top发来的请求检测video标签
   onPostMessage(PostMessageEvent.detectVideo_req, () => {
-    console.log('post', location.href, dq('video'))
     postMessageToTop(
       PostMessageEvent.detectVideo_resp,
       dq('video').map((v, i) => {
@@ -85,8 +77,7 @@ function main() {
     isWaiting = false
   }
 
-  // 从popup点击过来的消息，这种是粗略查找最大视频
-  onBgMessage(WebextEvent.requestVideoPIP, async (req) => {
+  const requestVideoPIP = async () => {
     let hasVideo = !!dq1Adv('video')
     let isIframeMode = false
 
@@ -154,15 +145,13 @@ function main() {
 
     openPlayer()
     return { state: 'ok' }
-  })
+  }
 
+  // 从popup点击的请求PIP，这种是粗略查找最大视频
+  onBgMessage(WebextEvent.requestVideoPIP, requestVideoPIP)
+  // 从popup点击的弹出设置
   onBgMessage(WebextEvent.openSetting, () => {
     window.openSettingPanel()
-  })
-
-  // 从子iframe里过来的消息
-  onPostMessage(PostMessageEvent.startPIPFromButtonClick, (data) => {
-    openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${data.id}"]`) })
   })
 
   const getTime = () => new Date().getTime()
@@ -246,7 +235,7 @@ function main() {
     }
   }
 
-  // 下面2个是从非同源iframe发起的PIP启动数据
+  // 从floatButton发起的启动PIP
   onPostMessage(
     PostMessageEvent.startPIPFromFloatButton,
     async (data, captureSource) => {
@@ -316,13 +305,15 @@ function main() {
       }
     }
   )
-
+  // 从floatButton发起的启动设置面板
   onPostMessage(PostMessageEvent.openSettingPanel, () => {
     window.openSettingPanel()
   })
+
+  // chrome右上角媒体控制的启动画中画按钮
   try {
-    navigator.mediaSession.setActionHandler('enterpictureinpicture', () => {
-      getProvider()?.openPlayer()
+    navigator.mediaSession.setActionHandler('enterpictureinpicture', (e) => {
+      requestVideoPIP()
     })
   } catch (error) {
     console.log('🟡 No support mediaSession action enterpictureinpicture')
