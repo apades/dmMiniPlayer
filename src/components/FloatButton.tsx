@@ -7,7 +7,7 @@ import PostMessageEvent from '@root/shared/postMessageEvent'
 import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
 import configStore, { DocPIPRenderType } from '@root/store/config'
 import { FloatButtonPos } from '@root/store/config/floatButton'
-import { dq, throttle, tryCatch, uuid } from '@root/utils'
+import { createElement, dq, throttle, tryCatch, uuid } from '@root/utils'
 import { useBrowserSyncStorage } from '@root/utils/storage'
 import { useMemoizedFn, useSize } from 'ahooks'
 import classNames from 'classnames'
@@ -115,16 +115,39 @@ const FloatButton: FC<Props> = (props) => {
 
     const postCaptureModeDataMsg = async (renderType: DocPIPRenderType) => {
       const rect = videoEl.getBoundingClientRect()
+      const isRestriction =
+        renderType ===
+        DocPIPRenderType.capture_displayMediaWithRestrictionTarget
+
+      let restrictionTarget: RestrictionTarget | undefined
+
+      const isolateId = 'isolate-id'
+      if (
+        isRestriction &&
+        videoEl.parentElement &&
+        videoEl.parentElement.id !== isolateId
+      ) {
+        // restrictionTarget限制是isolation: isolate的元素
+        const container = createElement('div', {
+          style: {
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+            isolation: 'isolate',
+          },
+          id: isolateId,
+        })
+        videoEl.parentElement.appendChild(container)
+        container.appendChild(videoEl)
+        restrictionTarget = await RestrictionTarget.fromElement(container)
+      }
+
       postMessageToTop(PostMessageEvent.startPIPFromFloatButton, {
         cropTarget:
           renderType === DocPIPRenderType.capture_displayMediaWithCropTarget
             ? await CropTarget.fromElement(videoEl)
             : undefined,
-        restrictionTarget:
-          renderType ===
-          DocPIPRenderType.capture_displayMediaWithRestrictionTarget
-            ? await RestrictionTarget.fromElement(videoEl)
-            : undefined,
+        restrictionTarget,
         posData: {
           x: rect.x,
           y: rect.y,

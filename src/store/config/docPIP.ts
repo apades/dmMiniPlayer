@@ -47,7 +47,9 @@ export enum DocPIPRenderType {
   /**
    * 该模式需要`chrome://flags/#element-capture`开启，{@link https://developer.chrome.com/docs/web-platform/element-capture developer.chrome文章}
    *
-   * 与 {@link DocPIPRenderType.capture_displayMediaWithCropTarget capture_displayMediaWithCropTarget} 类似，但裁剪方案由 {@link window.CropTarget CropTarget} 改成了 {@link window.RestrictionTarget RestrictionTarget}
+   * 与 {@link DocPIPRenderType.capture_displayMediaWithCropTarget capture_displayMediaWithCropTarget} 类似，但裁剪方案由 {@link window.CropTarget CropTarget} 改成了 {@link window.RestrictionTarget RestrictionTarget}。这个不会录制到视频的其他元素，例如源播放器的控制器。但目前体验下来性能很差，且看上去不支持iframe中的视频
+   *
+   * 和 {@link DocPIPRenderType.capture_displayMediaWithCropTarget capture_displayMediaWithCropTarget} 一样，因为是录制tab的，该tab就没法动了
    */
   capture_displayMediaWithRestrictionTarget = 'capture_displayMediaWithRestrictionTarget',
   /**

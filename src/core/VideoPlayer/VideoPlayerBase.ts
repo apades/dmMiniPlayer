@@ -6,6 +6,7 @@ import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import configStore, { DocPIPRenderType } from '@root/store/config'
+import playerConfig from '@root/store/playerConfig'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
@@ -75,10 +76,15 @@ export default class VideoPlayerBase
 
     await this.onInit()
 
-    if (
-      configStore.docPIP_renderType !==
-      DocPIPRenderType.capture_displayMediaWithCropTarget
-    ) {
+    const renderMode =
+      playerConfig.forceDocPIPRenderType || configStore.docPIP_renderType
+    const supportOnVideoChange = [
+      DocPIPRenderType.replaceVideoEl,
+      DocPIPRenderType.capture_captureStreamWithCanvas,
+      DocPIPRenderType.capture_captureStream,
+    ].includes(renderMode)
+
+    if (supportOnVideoChange) {
       this.unobserveVideoElChange = observeVideoEl(
         this.webVideoEl,
         (newVideoEl) => {
