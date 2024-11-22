@@ -11,6 +11,7 @@ enum PostMessageEvent {
   webRTC_offer = 'webRTCOffer',
   webRTC_answer = 'webRTCAnswer',
   webRTC_candidate = 'webRTCCandidate',
+  webRTC_close = 'webRTCClose',
 }
 
 export type BaseVideoState = {
@@ -56,6 +57,7 @@ export interface PostMessageProtocolMap {
   [PostMessageEvent.webRTC_offer]: RTCSessionDescriptionInit
   [PostMessageEvent.webRTC_answer]: RTCSessionDescriptionInit
   [PostMessageEvent.webRTC_candidate]: RTCIceCandidateInit
+  [PostMessageEvent.webRTC_close]: void
 }
 
 export default PostMessageEvent

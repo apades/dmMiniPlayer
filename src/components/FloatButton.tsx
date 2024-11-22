@@ -9,7 +9,7 @@ import configStore, { DocPIPRenderType } from '@root/store/config'
 import { FloatButtonPos } from '@root/store/config/floatButton'
 import { createElement, dq, throttle, tryCatch, uuid } from '@root/utils'
 import { useBrowserSyncStorage } from '@root/utils/storage'
-import { useMemoizedFn, useSize } from 'ahooks'
+import { useMemoizedFn, useSize, useUnmount } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { FC, useMemo, useRef, useState } from 'react'
@@ -103,6 +103,10 @@ const FloatButton: FC<Props> = (props) => {
     container
   )
 
+  // webRTC unmount
+  const webRTCUnmountRef = useRef(() => {})
+  useUnmount(webRTCUnmountRef.current)
+
   const handleStartPIP = useMemoizedFn(async () => {
     const videoEl =
       container instanceof HTMLVideoElement
@@ -177,7 +181,17 @@ const FloatButton: FC<Props> = (props) => {
         switch (type) {
           case DocPIPRenderType.capture_captureStreamWithWebRTC:
             const stream = videoEl.captureStream()
-            const {} = sendMediaStreamInSender({ stream })
+            const { unMount } = sendMediaStreamInSender({ stream })
+
+            const handleUnmount = () => {
+              unMount()
+              unListen()
+            }
+            const unListen = onPostMessage(
+              PostMessageEvent.webRTC_close,
+              handleUnmount
+            )
+            webRTCUnmountRef.current = handleUnmount
             break
         }
 

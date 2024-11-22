@@ -289,6 +289,11 @@ function main() {
               unMountMediaStream()
               unMount()
               playerConfig.clear()
+              postMessageToChild(
+                PostMessageEvent.webRTC_close,
+                undefined,
+                captureSource
+              )
             })
           } else {
             openPlayer({ videoEl })

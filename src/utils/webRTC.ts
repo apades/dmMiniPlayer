@@ -49,6 +49,7 @@ export const getMediaStreamInGetter = (props?: { target?: Window }) => {
   return {
     mediaStream,
     unMount: () => {
+      pc.current.close()
       unListens.forEach((unListen) => unListen())
     },
   }
@@ -101,7 +102,9 @@ export const sendMediaStreamInSender = (props: {
   return {
     mediaStream,
     unMount: () => {
+      pc.current.close()
       unListens.forEach((unListen) => unListen())
+      mediaStream.getTracks().forEach((track) => track.stop())
     },
   }
 }
