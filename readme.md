@@ -55,6 +55,7 @@
 - [real-url](https://github.com/wbt5/real-url/blob/master/danmu/danmaku/cc.py)
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 - [rc-slider](http://github.com/react-component/slider)
+- [js-cookie](https://github.com/js-cookie/js-cookie)
 
 ## 🍔 投喂
 如果您很喜欢这个项目, 欢迎打赏, 金额随意. 您的支持是我们的动力(=・ω・=)
