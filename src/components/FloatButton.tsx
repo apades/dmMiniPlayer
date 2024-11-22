@@ -30,8 +30,6 @@ type Props = {
 const FloatButton: FC<Props> = (props) => {
   const { container, vel, fixedPos } = props
 
-  const videoIsContainer = vel === container
-
   const videoRef = useRef<HTMLVideoElement>()
 
   useOnce(
@@ -41,7 +39,7 @@ const FloatButton: FC<Props> = (props) => {
     })
   )
 
-  const [id, setId] = useState(() => uuid())
+  const [id] = useState(() => uuid())
 
   useOnce(() => {
     vel.setAttribute('data-dm-vid', id)
@@ -54,9 +52,12 @@ const FloatButton: FC<Props> = (props) => {
   // fixed会受到 transform、perspective、filter 或 backdrop-filter 影响上下文
   // @see https://developer.mozilla.org/zh-CN/docs/Web/CSS/position#fixed
   const setFixedPosIn = useMemoizedFn(() => {
-    const { left, top } = container.getBoundingClientRect()
-    ;(floatBtn as any).style = `left:${left + 5}px !important;top:${
-      top + 5
+    if (!floatBtn.current) return
+    const { left, top } = vel.getBoundingClientRect()
+    ;(floatBtn.current as any).style = `left:${
+      left + configStore.floatButtonX
+    }px !important;top:${
+      top + configStore.floatButtonY
     }px !important;position:fixed !important;`
   })
 
@@ -73,21 +74,17 @@ const FloatButton: FC<Props> = (props) => {
   const startShowFloatBtn = useMemoizedFn(() => {
     run(showFloatBtn)
   })
-  const setFixedPosInMove = useMemoizedFn(throttle(setFixedPosIn, 1000))
+  const setFixedPosInMove = useMemoizedFn(throttle(setFixedPosIn, 500))
 
   useOnce(() => {
     if (fixedPos) {
-      if (!videoIsContainer) {
-        container.style.position = 'relative'
-      } else {
-        setFixedPosIn()
-      }
+      setFixedPosIn()
     }
   })
   useTargetEventListener(
     'mousemove',
     () => {
-      if (fixedPos && videoIsContainer) {
+      if (fixedPos) {
         setFixedPosInMove()
       }
       startShowFloatBtn()
