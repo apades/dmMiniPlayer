@@ -76,6 +76,7 @@ const FloatButton: FC<Props> = (props) => {
   })
   const setFixedPosInMove = useMemoizedFn(throttle(setFixedPosIn, 500))
 
+  const mouseTarget = fixedPos ? vel : container
   useOnce(() => {
     if (fixedPos) {
       setFixedPosIn()
@@ -89,7 +90,7 @@ const FloatButton: FC<Props> = (props) => {
       }
       startShowFloatBtn()
     },
-    container
+    mouseTarget
   )
   useTargetEventListener(
     'mouseleave',
@@ -97,7 +98,7 @@ const FloatButton: FC<Props> = (props) => {
       clear()
       hiddenFloatBtn()
     },
-    container
+    mouseTarget
   )
 
   // webRTC unmount
@@ -359,7 +360,7 @@ const FloatButton: FC<Props> = (props) => {
           <div
             ref={floatBtn}
             className={classNames(
-              'f-i-center w-fit absolute z-[100] h-[28px] text-[14px] text-white text-center rounded cursor-pointer opacity-100 transition-opacity [&.hidden]:opacity-0 overflow-hidden'
+              'f-i-center w-fit absolute z-[100] h-[28px] text-[14px] text-white text-center rounded cursor-pointer opacity-100 transition-opacity [&.hidden]:opacity-0 overflow-hidden hidden'
             )}
             onMouseEnter={() => {
               clear()
