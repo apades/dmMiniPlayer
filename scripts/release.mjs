@@ -3,8 +3,9 @@ import packageData from '../package.json' assert { type: 'json' }
 import fs from 'fs-extra'
 import { spawn, pr } from './utils.mjs'
 import archiver from 'archiver'
+import chalk from 'chalk'
 
-const version = packageData.version
+const nowVersion = packageData.version
 
 const getBuildName = (ver) => `chrome-mv3-prod-${ver}.zip`
 const codeBuildOutDir = pr('../dist')
@@ -13,39 +14,53 @@ if (!fs.existsSync(zipOutDir)) {
   fs.mkdirSync(zipOutDir)
 }
 
-const verSplit = version.split('.')
+const verSplit = nowVersion.split('.')
 let toVersion =
   verSplit.slice(0, verSplit.length - 1).join('.') +
   `.${+verSplit[verSplit.length - 1] + 1}`
 
-enquirer
-  .prompt([
+;(async () => {
+  const { version } = await enquirer.prompt([
     {
       type: 'input',
       name: 'version',
-      message: `release version (now ${version})`,
+      message: `release version (now ${nowVersion})`,
       initial: toVersion,
     },
   ])
-  .then(async (val) => {
-    const version = val.version
-    packageData.version = version
-    await fs.writeJSON(pr('../package.json'), packageData, { spaces: 2 })
-    await spawn('npm', ['run', 'build'])
 
-    // 打包zip
-    const archive = archiver('zip', {
-      zlib: { level: 9 },
-    })
-    archive.pipe(fs.createWriteStream(pr(zipOutDir, getBuildName(version))))
-    archive.directory(codeBuildOutDir, false)
+  console.log(`修改changeLog文件 ${chalk.green('docs/changeLog-zh.md')}`)
+  console.log(`修改changeLog文件 ${chalk.green('docs/changeLog.md')}`)
+  // fs.openSync(pr('../docs/changeLog.md'), 'r')
 
-    await archive.finalize()
+  const { confirm } = await enquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'confirm',
+      message: `release ${version} ?`,
+      initial: true,
+    },
+  ])
 
-    // git
-    await spawn('git', ['add', '.'])
-    await spawn('git', ['commit', '-m', `"release: ${version}"`])
-    await spawn('git', ['tag', `v${version}`])
-    await spawn('git', ['push'])
-    await spawn('git', ['push', '--tags'])
+  if (!confirm) return
+
+  packageData.version = version
+  await fs.writeJSON(pr('../package.json'), packageData, { spaces: 2 })
+  await spawn('npm', ['run', 'build'])
+
+  // 打包zip
+  const archive = archiver('zip', {
+    zlib: { level: 9 },
   })
+  archive.pipe(fs.createWriteStream(pr(zipOutDir, getBuildName(version))))
+  archive.directory(codeBuildOutDir, false)
+
+  await archive.finalize()
+
+  // git
+  await spawn('git', ['add', '.'])
+  await spawn('git', ['commit', '-m', `"release: ${version}"`])
+  await spawn('git', ['tag', `v${version}`])
+  await spawn('git', ['push'])
+  await spawn('git', ['push', '--tags'])
+})()

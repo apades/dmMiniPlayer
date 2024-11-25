@@ -4,6 +4,9 @@
         "src/locales-ext",
         "src/popup/index.html",
         "scripts/tsup.shared.ts",
-        "scripts/tsup.dev.ts"
+        "scripts/tsup.dev.ts",
+        "nodemon.json",
+        "docs",
+        "package.json"
     ]
 }

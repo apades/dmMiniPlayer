@@ -20,4 +20,6 @@ export const DRAG_POS = key<{
   yType: 'top' | 'bottom'
 }>('DRAG_POS')
 
+export const LATEST_SAVE_VERSION = key<string>('LATEST_SAVE_VERSION')
+
 export const LOCALE = key<Language>('LOCALE')

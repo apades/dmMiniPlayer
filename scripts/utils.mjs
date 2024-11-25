@@ -1,4 +1,5 @@
 import { spawn as _spawn } from 'child_process'
+import fs from 'fs-extra'
 import path from 'path'
 import * as url from 'url'
 export const __filename = url.fileURLToPath(import.meta.url)
@@ -23,4 +24,13 @@ export function spawn(...args) {
 
 export function pr(...args) {
   return path.resolve(__dirname, ...args)
+}
+
+export function getChangeLog(ver, lang) {
+  const targetFile =
+    lang === 'zh' ? pr('../docs/changeLog-zh.md') : pr('../docs/changeLog.md')
+
+  const regex = new RegExp(`## v${ver}\\s*([\\s\\S]*?)(?=## v|$)`)
+
+  return fs.readFileSync(targetFile, 'utf-8').match(regex)[1].trim()
 }

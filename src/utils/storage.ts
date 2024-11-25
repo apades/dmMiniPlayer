@@ -1,6 +1,8 @@
+import { LATEST_SAVE_VERSION } from '@root/shared/storeKey'
 import Browser from 'webextension-polyfill'
 
 Browser.storage.local.onChanged.addListener((changes) => {
+  console.log('onChanged', localCallbacksMap, changes)
   Object.keys(changes).forEach((key) => {
     localCallbacksMap[key]?.forEach?.((cb) => cb(changes[key].newValue))
   })
@@ -14,6 +16,7 @@ export function useBrowserLocalStorage<
     val: (T extends string & { __key: any } ? T['__key'] : any) | undefined
   ) => void
 ) {
+  if (key === LATEST_SAVE_VERSION) console.trace('useBrowserLocalStorage')
   if (!localCallbacksMap[key]) {
     localCallbacksMap[key] = []
   }
@@ -22,6 +25,7 @@ export function useBrowserLocalStorage<
     callback(val)
   })
   return () => {
+    if (key === LATEST_SAVE_VERSION) console.log('remove')
     localCallbacksMap[key].slice(localCallbacksMap[key].indexOf(callback), 1)
   }
 }

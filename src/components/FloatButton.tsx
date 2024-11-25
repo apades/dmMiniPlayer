@@ -4,11 +4,15 @@ import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import isPluginEnv from '@root/shared/isPluginEnv'
 import PostMessageEvent from '@root/shared/postMessageEvent'
-import { FLOAT_BTN_HIDDEN } from '@root/shared/storeKey'
+import { FLOAT_BTN_HIDDEN, LATEST_SAVE_VERSION } from '@root/shared/storeKey'
 import configStore, { DocPIPRenderType } from '@root/store/config'
 import { FloatButtonPos } from '@root/store/config/floatButton'
 import { createElement, dq, throttle, tryCatch, uuid } from '@root/utils'
-import { useBrowserSyncStorage } from '@root/utils/storage'
+import {
+  setBrowserLocalStorage,
+  useBrowserLocalStorage,
+  useBrowserSyncStorage,
+} from '@root/utils/storage'
 import { useMemoizedFn, useSize, useUnmount } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -19,6 +23,9 @@ import icon from '../../assets/icon.png'
 import ShadowRootContainer from './ShadowRootContainer'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 import { sendMediaStreamInSender } from '@root/utils/webRTC'
+import { getIsZh } from '@root/utils/i18n'
+import env from '@root/shared/env'
+import { useReactBrowserLocalStorage } from '@root/hook/browserStorage'
 
 type Props = {
   container: HTMLElement
@@ -32,10 +39,18 @@ const FloatButton: FC<Props> = (props) => {
 
   const videoRef = useRef<HTMLVideoElement>()
 
-  useOnce(
+  useOnce(() =>
     useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (hidden) => {
       if (!floatBtn.current) return
       floatBtn.current.style.visibility = !hidden ? 'visible' : 'hidden'
+    })
+  )
+
+  const [isUpgradeShow, setUpgradeShow] = useState(false)
+
+  useOnce(() =>
+    useBrowserLocalStorage(LATEST_SAVE_VERSION, (ver) => {
+      setUpgradeShow(ver !== env.version)
     })
   )
 
@@ -63,12 +78,14 @@ const FloatButton: FC<Props> = (props) => {
 
   const floatBtn = useRef<HTMLDivElement>(null)
   const isLockRef = useRef(false)
+  const isHoverLockRef = useRef(false)
   const hiddenFloatBtn = useMemoizedFn(() => {
     if (isLockRef.current) return
-    floatBtn.current?.classList.add('hidden')
+    if (isHoverLockRef.current) return
+    floatBtn.current?.classList.add('hidden-btn')
   })
   const showFloatBtn = useMemoizedFn(() => {
-    floatBtn.current?.classList.remove('hidden')
+    floatBtn.current?.classList.remove('hidden-btn')
   })
   const { clear, run } = useDebounceTimeoutCallback(hiddenFloatBtn, 2000)
   const startShowFloatBtn = useMemoizedFn(() => {
@@ -360,51 +377,81 @@ const FloatButton: FC<Props> = (props) => {
           <div
             ref={floatBtn}
             className={classNames(
-              'f-i-center w-fit absolute z-[100] h-[28px] text-[14px] text-white text-center rounded cursor-pointer opacity-100 transition-opacity [&.hidden]:opacity-0 overflow-hidden hidden'
+              'group absolute z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn'
             )}
+            style={posStyle}
             onMouseEnter={() => {
+              isHoverLockRef.current = true
               clear()
               showFloatBtn()
             }}
-            style={posStyle}
+            onMouseLeave={() => {
+              isHoverLockRef.current = false
+            }}
           >
-            <div
-              className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
-              onClick={(e) => {
-                e.stopPropagation()
-                handleStartPIP()
-              }}
-              onMouseEnter={() => {
-                clear()
-              }}
-            >
-              <img
-                className="wh-[16px]"
-                src={
-                  isPluginEnv
-                    ? `${Browser.runtime.getURL('/assets/icon.png')}`
-                    : icon
-                }
-              />
-            </div>
-            <div
-              className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
+            <div className="f-i-center w-fit overflow-hidden rounded h-[28px]">
+              <div
+                className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleStartPIP()
+                }}
+              >
+                <img
+                  className="wh-[16px]"
+                  src={
+                    isPluginEnv
+                      ? `${Browser.runtime.getURL('/assets/icon.png')}`
+                      : icon
+                  }
+                />
+              </div>
+              <div
+                className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
 
-                isLockRef.current = true
-                clear()
-                showFloatBtn()
-                setTimeout(() => {
-                  isLockRef.current = false
-                }, 500)
+                  isLockRef.current = true
+                  clear()
+                  showFloatBtn()
+                  setTimeout(() => {
+                    isLockRef.current = false
+                  }, 500)
 
-                handleOpenSetting()
-              }}
-            >
-              <SettingOutlined />
+                  handleOpenSetting()
+                }}
+              >
+                <SettingOutlined />
+              </div>
             </div>
+
+            {isUpgradeShow && (
+              <>
+                <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
+                <div className="absolute top-[calc(100%+4px)] max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded">
+                  <div className="p-1 text-left">
+                    NEW: {getIsZh() ? env.upgrade_zh : env.upgrade_en}
+                    <div className="f-i-center">
+                      <div
+                        className="ml-auto cursor-pointer bg-bg-hover px-1 rounded"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          setBrowserLocalStorage(
+                            LATEST_SAVE_VERSION,
+                            env.version
+                          )
+                          setUpgradeShow(false)
+                        }}
+                      >
+                        OK
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
           {/* </DraggerContainer> */}
         </ShadowRootContainer>,

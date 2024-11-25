@@ -4,7 +4,11 @@ import { inlineImport } from './plugin/inlineImport'
 import fs from 'fs-extra'
 import { manifest } from '../src/manifest'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
+import { getChangeLog } from './utils.mjs'
+import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
+import packageJson from '../package.json'
 
+const version = packageJson.version
 export const pr = (...p: any) => path.resolve(__dirname, ...p)
 
 export const tsconfig = pr('../tsconfig.json')
@@ -80,8 +84,21 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
     'process.env.NODE_ENV': process.env.NODE_ENV
       ? `"${process.env.NODE_ENV}"`
       : '"development"',
+    ...getDefinesObject('dev', {
+      upgrade_en: getChangeLog(version),
+      upgrade_zh: getChangeLog(version, 'zh'),
+      version,
+    }),
   },
   platform: 'browser',
 }
+
+console.log(
+  getDefinesObject('dev', {
+    upgrade_en: getChangeLog(version),
+    upgrade_zh: getChangeLog(version, 'zh'),
+    version,
+  })
+)
 
 export { manifest }
