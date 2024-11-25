@@ -54,7 +54,7 @@ const i18nMap: Record<Language, any> = {
 
 export const defaultLang = Language.English
 
-export type I18nKeys = DeepLeafKeys<typeof zhCN>
+export type I18nKeys = DeepLeafKeys<typeof en>
 
 const formatLang = (lang: string) => lang.replace('-', '_') as any
 const langKeys = Object.values(Language)

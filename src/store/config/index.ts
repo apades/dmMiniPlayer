@@ -7,7 +7,7 @@ import {
   useBrowserSyncStorage,
 } from '@root/utils/storage'
 import * as mobx from 'mobx'
-import { docPIPConfig, DocPIPRenderType } from './docPIP'
+import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
@@ -28,10 +28,6 @@ import {
 import isPluginEnv from '@root/shared/isPluginEnv'
 import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
-import { sendMessage as sendMessageInCs } from 'webext-bridge/content-script'
-import { sendMessage as sendMessageInBg } from 'webext-bridge/background'
-import isBG from '@root/shared/isBG'
-import WebextEvent from '@root/shared/webextEvent'
 
 export { DocPIPRenderType } from './docPIP'
 
