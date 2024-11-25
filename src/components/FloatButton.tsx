@@ -430,8 +430,10 @@ const FloatButton: FC<Props> = (props) => {
               <>
                 <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
                 <div className="absolute top-[calc(100%+4px)] max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded">
-                  <div className="p-1 text-left">
-                    NEW: {getIsZh() ? env.upgrade_zh : env.upgrade_en}
+                  <div className="p-1 text-left whitespace-pre-line">
+                    NEW:
+                    <br />
+                    {getIsZh() ? env.upgrade_zh : env.upgrade_en}
                     <div className="f-i-center">
                       <div
                         className="ml-auto cursor-pointer bg-bg-hover px-1 rounded"

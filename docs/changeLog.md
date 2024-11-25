@@ -1,3 +1,7 @@
+## v0.6.15
+1. Add docPIP webRTC mode
+2. Fixed float button position not correct in single video container
+
 ## v0.6.14
 Urgently fix the PIP black screen problem caused by the latest version of chrome and edge
 
