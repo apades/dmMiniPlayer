@@ -1,3 +1,4 @@
+import { WebProvider } from './core/WebProvider'
 import { Language } from './utils/i18n'
 
 declare module 'react' {
@@ -30,6 +31,7 @@ declare global {
     }
     openSettingPanel: () => void
     __LOCALE: Language
+    provider?: WebProvider
 
     // RestrictionTarget: {
     //   fromElement: (el: HTMLElement) => RestrictionTarget

@@ -13,6 +13,7 @@ import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
 import config_bilibili from './bilibili'
 import config_subtitle from './subtitle'
+import config_autoPIP from './autoPIP'
 import {
   getIsZh,
   Language,
@@ -38,6 +39,7 @@ export enum videoBorderType {
 }
 
 export const baseConfigMap = {
+  ...config_autoPIP,
   ...config_floatButton,
   ...config_danmaku,
   ...config_bilibili,
