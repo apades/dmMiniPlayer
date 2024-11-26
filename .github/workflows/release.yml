@@ -29,12 +29,15 @@ jobs:
       - run: node scripts/getChangeLog.mjs > CHANGELOG.txt
       - run: pnpm i
       - name: Start build
-        run: pnpm run build
+        run: pnpm run build --metafile
+      - run: mv dist/metafile-*.json metafile.json
       - name: Archive dist
         run: pnpm run archive
       - name: Github release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/*.zip
+          files: |
+            build/*.zip
+            metafile.json
           token: ${{ secrets.GITHUB_TOKEN }}
           body_path: CHANGELOG.txt
