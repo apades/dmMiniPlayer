@@ -12,9 +12,16 @@ How to trigger it, it would be better to have screenshots
 怎么触发，有截图更好
 
 **Browser/浏览器**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - OS:
+   - [ ] Windows
+   - [ ] Mac
+   - [ ] Ubuntu
+   - [ ] Ohter, input your OS ______
+ - Browser
+   - [ ] Chrome
+   - [ ] Edge
+   - [ ] Ohter, input your browser ______
+ - Version [e.g. 131.0.6778.86]
 
 **Environment/环境**
  - [ ] 是否关闭其他插件/Have you close other extensions?
