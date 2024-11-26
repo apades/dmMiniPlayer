@@ -26,6 +26,7 @@ jobs:
           node-version: 18
           cache: 'pnpm'
 
+      - run: node scripts/getChangeLog.mjs > CHANGELOG.txt
       - run: pnpm i
       - name: Start build
         run: pnpm run build
@@ -36,3 +37,4 @@ jobs:
         with:
           files: build/*.zip
           token: ${{ secrets.GITHUB_TOKEN }}
+          body_path: CHANGELOG.txt
