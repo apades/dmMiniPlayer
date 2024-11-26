@@ -103,7 +103,8 @@
     "openSetting": "Open setting"
   },
   "floatButton": {
-    "closeTips": "You can reopen float button in extension menu"
+    "closeTips": "You can reopen float button in extension menu",
+    "smallUpdate": "Small update"
   },
   "vp": {
     "speed": "Speed >>",

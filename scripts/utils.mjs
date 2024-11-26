@@ -32,5 +32,5 @@ export function getChangeLog(ver, lang) {
 
   const regex = new RegExp(`## v${ver}\\s*([\\s\\S]*?)(?=## v|$)`)
 
-  return fs.readFileSync(targetFile, 'utf-8').match(regex)[1].trim()
+  return fs.readFileSync(targetFile, 'utf-8').match(regex)?.[1].trim?.()
 }

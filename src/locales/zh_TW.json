@@ -103,7 +103,8 @@
     "openSetting": "開啟設定"
   },
   "floatButton": {
-    "closeTips": "您可以在擴充功能表中重新開啟浮動按鈕"
+    "closeTips": "您可以在擴充功能表中重新開啟浮動按鈕",
+    "smallUpdate": "小更新"
   },
   "vp": {
     "speed": "倍速中 >>",

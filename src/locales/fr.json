@@ -103,7 +103,8 @@
     "openSetting": "Ouvrir les paramètres"
   },
   "floatButton": {
-    "closeTips": "Vous pouvez rouvrir le bouton flottant dans le menu d'extension"
+    "closeTips": "Vous pouvez rouvrir le bouton flottant dans le menu d'extension",
+    "smallUpdate": "Petite mise à jour"
   },
   "vp": {
     "speed": "Double vitesse >>",

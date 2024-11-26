@@ -103,7 +103,8 @@
     "openSetting": "Configuración abierta"
   },
   "floatButton": {
-    "closeTips": "Puedes volver a abrir el botón flotante en el menú de extensión"
+    "closeTips": "Puedes volver a abrir el botón flotante en el menú de extensión",
+    "smallUpdate": "Pequeña actualización"
   },
   "vp": {
     "speed": "Velocidad >>",

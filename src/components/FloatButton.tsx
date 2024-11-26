@@ -23,9 +23,8 @@ import icon from '../../assets/icon.png'
 import ShadowRootContainer from './ShadowRootContainer'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 import { sendMediaStreamInSender } from '@root/utils/webRTC'
-import { getIsZh } from '@root/utils/i18n'
+import { getIsZh, t } from '@root/utils/i18n'
 import env from '@root/shared/env'
-import { useReactBrowserLocalStorage } from '@root/hook/browserStorage'
 
 type Props = {
   container: HTMLElement
@@ -38,6 +37,10 @@ const FloatButton: FC<Props> = (props) => {
   const { container, vel, fixedPos } = props
 
   const videoRef = useRef<HTMLVideoElement>()
+  const [changeLog] = useState(() => {
+    const log = getIsZh() ? env.upgrade_zh : env.upgrade_en
+    return log || t('floatButton.smallUpdate')
+  })
 
   useOnce(() =>
     useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (hidden) => {
@@ -433,7 +436,7 @@ const FloatButton: FC<Props> = (props) => {
                   <div className="p-1 text-left whitespace-pre-line">
                     NEW:
                     <br />
-                    {getIsZh() ? env.upgrade_zh : env.upgrade_en}
+                    {changeLog}
                     <div className="f-i-center">
                       <div
                         className="ml-auto cursor-pointer bg-bg-hover px-1 rounded"

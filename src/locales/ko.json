@@ -103,7 +103,8 @@
     "openSetting": "설정 열기"
   },
   "floatButton": {
-    "closeTips": "확장 메뉴에서 플로팅 버튼을 다시 열 수 있습니다"
+    "closeTips": "확장 메뉴에서 플로팅 버튼을 다시 열 수 있습니다",
+    "smallUpdate": "작은 업데이트"
   },
   "vp": {
     "speed": "2배 속도 >>",
