@@ -87,8 +87,8 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
       : '"development"',
     ...omit(
       getDefinesObject('dev', {
-        upgrade_en: getChangeLog(version).replaceAll('\n', '\\n'),
-        upgrade_zh: getChangeLog(version, 'zh').replaceAll('\n', '\\n'),
+        upgrade_en: getChangeLog(version)?.replaceAll('\n', '\\n'),
+        upgrade_zh: getChangeLog(version, 'zh')?.replaceAll('\n', '\\n'),
         version,
       }),
       ['____env____']
