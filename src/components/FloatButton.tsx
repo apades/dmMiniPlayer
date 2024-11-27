@@ -448,6 +448,7 @@ const FloatButton: FC<Props> = (props) => {
                             env.version
                           )
                           setUpgradeShow(false)
+                          isHoverLockRef.current = false
                         }}
                       >
                         OK
