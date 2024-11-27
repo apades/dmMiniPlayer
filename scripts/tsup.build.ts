@@ -8,7 +8,7 @@ export default defineConfig({
   minify: true,
   sourcemap: false,
   define: {
-    ...(shareConfig as any).define,
+    ...shareConfig.define,
     ...getDefinesObject('prod'),
   },
 })

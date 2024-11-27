@@ -15,7 +15,7 @@ export const pr = (...p: any) => path.resolve(__dirname, ...p)
 export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
 
-export const shareConfig: Parameters<typeof defineConfig>[0] = {
+export const shareConfig = {
   esbuildPlugins: [inlineImport({}), (esbuildMetaUrl as any)({})],
   esbuildOptions(options, ctx) {
     options.alias ??= {}
@@ -95,6 +95,6 @@ export const shareConfig: Parameters<typeof defineConfig>[0] = {
     ),
   },
   platform: 'browser',
-}
+} satisfies Parameters<typeof defineConfig>[0]
 
 export { manifest }

@@ -9,7 +9,7 @@ export default defineConfig({
   watch: true,
   sourcemap: 'inline',
   define: {
-    ...(shareConfig as any).define,
+    ...shareConfig.define,
     ...getDefinesObject('dev'),
   },
   splitting: false,
