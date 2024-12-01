@@ -432,7 +432,27 @@ const FloatButton: FC<Props> = (props) => {
             {isUpgradeShow && (
               <>
                 <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
-                <div className="absolute top-[calc(100%+4px)] max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded">
+                <div
+                  className={classNames(
+                    'absolute max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded',
+                    {
+                      'left-[--x] top-[--y]':
+                        configStore.floatButtonPos === FloatButtonPos.leftTop,
+                      'left-[--x] bottom-[--y]':
+                        configStore.floatButtonPos ===
+                        FloatButtonPos.leftBottom,
+                      'right-[--x] top-[--y]':
+                        configStore.floatButtonPos === FloatButtonPos.rightTop,
+                      'right-[--x] bottom-[--y]':
+                        configStore.floatButtonPos ===
+                        FloatButtonPos.rightBottom,
+                    }
+                  )}
+                  style={{
+                    '--y': 'calc(100% + 4px)',
+                    '--x': '0',
+                  }}
+                >
                   <div className="p-1 text-left whitespace-pre-line">
                     NEW:
                     <br />
