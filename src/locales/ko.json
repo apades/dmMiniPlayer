@@ -92,7 +92,11 @@
     "rightBottom": "오른쪽 하단",
     "visible": "표시할지 여부",
     "disableSites": "사이트 비활성화",
-    "disableSitesTips": "\"/regex/\" 형식의 정규식 지원"
+    "disableSitesTips": "\"/regex/\" 형식의 정규식 지원",
+    "autoPIPInPageHide": "페이지 숨기기의 자동 PIP",
+    "autoPIPInPageHideDesc": "음소거 해제된 비디오 및 동일한 출처의 iframe 비디오만 지원",
+    "autoPIPInScroll": "스크롤의 자동 PIP",
+    "autoPIPInScrollDesc": "이 비디오가 보이지 않을 때까지 페이지를 스크롤한 다음 PIP를 켜십시오."
   },
   "popup": {
     "tips": "Picture-in-Picture 재생을 시작하려면 다음 페이지를 클릭해야 합니다",

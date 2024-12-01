@@ -24,11 +24,11 @@ if (canRun && !hasInit) {
   document.addEventListener('visibilitychange', () => {
     const isHidden = document.visibilityState === 'hidden'
 
+    if (!configStore.autoPIP_inPageHide) return
     if (window.provider?.active) return
     if (!activeVideoEl) return
-    if (isHidden) {
-      postStartPIPDataMsg(configStore.docPIP_renderType, activeVideoEl)
-    }
+    if (!isHidden) return
+    postStartPIPDataMsg(configStore.docPIP_renderType, activeVideoEl)
   })
 
   hasInit = true

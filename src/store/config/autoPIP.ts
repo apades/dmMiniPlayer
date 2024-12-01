@@ -14,21 +14,24 @@ export enum AutoPIPPos {
 
 const config_autoPIP = {
   autoPIP_inPageHide: config({
+    label: t('settingPanel.autoPIPInPageHide'),
     defaultValue: false,
-    desc: 'Auto PIP in page hide, only support unmuted video, and same origin iframe video',
+    desc: t('settingPanel.autoPIPInPageHideDesc'),
   }),
   autoPIP_inScrollToInvisible: config({
+    label: t('settingPanel.autoPIPInScroll'),
     defaultValue: false,
-    desc: 'Scroll page and video is invisible, then auto PIP',
+    desc: t('settingPanel.autoPIPInScrollDesc'),
   }),
-  autoPIP_forcePosition: config<AutoPIPPos>({
-    defaultValue: AutoPIPPos.default,
-    desc: 'Default position is your last saved position, set this to force autoPIP position',
-  }),
-  autoPIP_forceWidth: config({
-    defaultValue: 0,
-    desc: 'Default width is your last saved width, set this to force autoPIP width, 0 is saved width',
-  }),
+  // TODO alert tab permissions
+  // autoPIP_forcePosition: config<AutoPIPPos>({
+  //   defaultValue: AutoPIPPos.default,
+  //   desc: 'Default position is your last saved position, set this to force autoPIP position',
+  // }),
+  // autoPIP_forceWidth: config({
+  //   defaultValue: 0,
+  //   desc: 'Default width is your last saved width, set this to force autoPIP width, 0 is saved width',
+  // }),
 }
 
 export default config_autoPIP

@@ -92,7 +92,11 @@
     "rightBottom": "Right bottom",
     "visible": "Visible",
     "disableSites": "Disable sites",
-    "disableSitesTips": "Support regex with format \"/regex/\""
+    "disableSitesTips": "Support regex with format \"/regex/\"",
+    "autoPIPInPageHide": "Auto PIP in page hide",
+    "autoPIPInPageHideDesc": "Only support unmuted video, and same origin iframe video",
+    "autoPIPInScroll": "Auto PIP in scroll",
+    "autoPIPInScrollDesc": "Scroll page until this video is invisible, then turn on PIP"
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

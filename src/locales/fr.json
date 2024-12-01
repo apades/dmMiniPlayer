@@ -92,7 +92,11 @@
     "rightBottom": "en bas à droite",
     "visible": "S'il faut afficher",
     "disableSites": "Désactiver les sites",
-    "disableSitesTips": "Prise en charge des regex au format \"/regex/\""
+    "disableSitesTips": "Prise en charge des regex au format \"/regex/\"",
+    "autoPIPInPageHide": "PIP automatique dans le masquage de la page",
+    "autoPIPInPageHideDesc": "Ne prend en charge que la vidéo non muette et la vidéo iframe de même origine",
+    "autoPIPInScroll": "PIP automatique en défilement",
+    "autoPIPInScrollDesc": "Faites défiler la page jusqu'à ce que cette vidéo soit invisible, puis activez PIP"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",

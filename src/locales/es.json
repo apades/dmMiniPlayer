@@ -92,7 +92,11 @@
     "rightBottom": "abajo derecho",
     "visible": "Si mostrar o no",
     "disableSites": "Deshabilitar sitios",
-    "disableSitesTips": "Admite expresiones regulares con formato \"/regex/\""
+    "disableSitesTips": "Admite expresiones regulares con formato \"/regex/\"",
+    "autoPIPInPageHide": "PIP automático en ocultar página",
+    "autoPIPInPageHideDesc": "Solo admite videos no silenciados y videos iframe del mismo origen",
+    "autoPIPInScroll": "PIP automático en desplazamiento",
+    "autoPIPInScrollDesc": "Desplácese por la página hasta que este video sea invisible, luego active PIP"
   },
   "popup": {
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",
