@@ -92,7 +92,11 @@
     "rightBottom": "右下",
     "visible": "是否顯示",
     "disableSites": "停用站點",
-    "disableSitesTips": "支援格式為“/regex/”的正規表示式"
+    "disableSitesTips": "支援格式為“/regex/”的正規表示式",
+    "autoPIPInPageHide": "頁面隱藏時自動畫中畫",
+    "autoPIPInPageHideDesc": "僅支援未靜音的視頻和同源iframe視頻",
+    "autoPIPInScroll": "滾動頁面時自動畫中畫",
+    "autoPIPInScrollDesc": "捲動頁面直到該影片不可見，然後開啟 PIP"
   },
   "popup": {
     "tips": "需要點擊下頁面才能觸發畫中畫播放",

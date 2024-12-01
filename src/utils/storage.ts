@@ -16,7 +16,6 @@ export function useBrowserLocalStorage<
     val: (T extends string & { __key: any } ? T['__key'] : any) | undefined
   ) => void
 ) {
-  if (key === LATEST_SAVE_VERSION) console.trace('useBrowserLocalStorage')
   if (!localCallbacksMap[key]) {
     localCallbacksMap[key] = []
   }

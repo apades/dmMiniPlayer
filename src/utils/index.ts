@@ -522,3 +522,5 @@ export function tryCatch<Return>(
 
 export const objectKeys = <T>(obj: Record<string, T>) =>
   Object.keys(obj) as (keyof T)[]
+
+export const canAccessTop = () => !tryCatch(() => top!.document)[0]

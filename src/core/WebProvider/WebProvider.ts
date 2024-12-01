@@ -27,6 +27,7 @@ export default abstract class WebProvider
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
   isLive?: boolean
+  active = false
 
   private _webVideo?: HTMLVideoElement
   get webVideo() {
@@ -71,6 +72,7 @@ export default abstract class WebProvider
     this.subtitleManager = new SubtitleManager()
 
     this.onInit()
+    this.active = true
   }
   onInit(): void {}
 
@@ -86,11 +88,15 @@ export default abstract class WebProvider
     this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
     this.onUnloadFn.length = 0
+    setTimeout(() => {
+      this.active = false
+    }, 0)
   }
   onUnload() {}
 
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
+    if (!navigator.userActivation.isActive) return
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.injectVideoEventsListener(this.webVideo)
