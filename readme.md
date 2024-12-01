@@ -8,7 +8,8 @@
 
 - [chrome商店](https://chrome.google.com/webstore/detail/%E5%BC%B9%E5%B9%95%E7%94%BB%E4%B8%AD%E7%94%BB%E6%92%AD%E6%94%BE%E5%99%A8/nahbabjlllhocabmecfjmcblchhpoclj)
 - [edge商店](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
-- [FAQ](https://github.com/apades/dmMiniPlayer/wiki/FAQ%E2%80%90zh)
+
+在提问前可以先搜索issue是否有类似的问题，或者先看看[FAQ](https://github.com/apades/dmMiniPlayer/wiki/FAQ%E2%80%90zh)
 
 如果你有什么问题或者功能提议，请到[issues](https://github.com/apades/dmMiniPlayer/issues)里提出
 
