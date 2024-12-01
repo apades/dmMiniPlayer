@@ -69,7 +69,25 @@ export enum DocPIPRenderType {
   injectMediaSource = 'injectMediaSource',
 }
 
+export enum AutoPIPPos {
+  default = 'default',
+  'top-left' = 'top-left',
+  'top-right' = 'top-right',
+  'bottom-left' = 'bottom-left',
+  'bottom-right' = 'bottom-right',
+}
+
 export const docPIPConfig = {
+  autoPIP_inPageHide: config({
+    label: t('settingPanel.autoPIPInPageHide'),
+    defaultValue: false,
+    desc: t('settingPanel.autoPIPInPageHideDesc'),
+  }),
+  autoPIP_inScrollToInvisible: config({
+    label: t('settingPanel.autoPIPInScroll'),
+    defaultValue: false,
+    desc: t('settingPanel.autoPIPInScrollDesc'),
+  }),
   useDocPIP: config({
     defaultValue: !!window?.documentPictureInPicture,
     label: t('settingPanel.useDocPIP'),
