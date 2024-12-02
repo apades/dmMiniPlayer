@@ -423,8 +423,9 @@ export async function readTextFromFile(file: File) {
 export const onceLog = onceCall((...e: any) => {
   console.log(...e)
 })
-export function getDeepPrototype<T = any>(from: any, equal: T): T {
+export function getDeepPrototype<T = any>(from: any, equal: T): T | null {
   const root = Object.getPrototypeOf(from)
+  if (!root) return null
   if (root.constructor === equal) return from
   return getDeepPrototype(root, equal)
 }

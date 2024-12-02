@@ -144,3 +144,11 @@ export function isElementInViewport(el: HTMLElement) {
     rect.right <= (win.innerWidth || document.documentElement.clientWidth)
   )
 }
+
+export function getDomAbsolutePosition(el: HTMLElement) {
+  const rect = el.getBoundingClientRect()
+  return {
+    left: rect.left + window.scrollX,
+    top: rect.top - document.body.getBoundingClientRect().top,
+  }
+}

@@ -101,6 +101,8 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       switch (renderMode) {
         case DocPIPRenderType.replaceVideoEl:
           return <VideoPlayerV2 {...commonProps} useWebVideo />
+        case DocPIPRenderType.replaceWebVideoDom:
+          return <VideoPlayerV2 {...commonProps} useWebVideo showCloseButton />
         case DocPIPRenderType.capture_captureStreamWithCanvas:
           return (
             <VideoPlayerV2

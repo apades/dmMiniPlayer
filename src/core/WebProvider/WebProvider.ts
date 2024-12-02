@@ -1,7 +1,7 @@
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
-import configStore from '@root/store/config'
+import configStore, { DocPIPRenderType } from '@root/store/config'
 import { createElement, dq, getDeepPrototype } from '@root/utils'
-import { CanvasPIPWebProvider, DocPIPWebProvider } from '.'
+import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
 import {
   CanvasDanmakuEngine,
   DanmakuEngine,
@@ -16,6 +16,13 @@ import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import { checkIsLive } from '@root/utils/video'
 import EventSwitcher from '@root/utils/EventSwitcher'
+
+// ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
+const FEAT_PROVIDER_LIST = [
+  DocPIPWebProvider,
+  CanvasPIPWebProvider,
+  ReplacerWebProvider,
+]
 
 export default abstract class WebProvider
   extends EventBus
@@ -40,25 +47,29 @@ export default abstract class WebProvider
   }
 
   miniPlayer!: VideoPlayerBase
-  protected MiniPlayer!: typeof VideoPlayerBase
+  protected abstract MiniPlayer: typeof VideoPlayerBase
 
   constructor() {
     super()
     if (
-      [DocPIPWebProvider, CanvasPIPWebProvider].find((v) => this instanceof v)
-    ) {
+      [DocPIPWebProvider, CanvasPIPWebProvider, ReplacerWebProvider].includes(
+        Object.getPrototypeOf(this).constructor
+      )
+    )
       return this
-    }
 
     const provider = (() => {
-      if (configStore.useDocPIP) {
-        return new DocPIPWebProvider()
-      } else {
-        return new CanvasPIPWebProvider()
-      }
+      if (configStore.docPIP_renderType === DocPIPRenderType.replaceWebVideoDom)
+        return new ReplacerWebProvider()
+      if (configStore.useDocPIP) return new DocPIPWebProvider()
+      return new CanvasPIPWebProvider()
     })()
 
-    const rootPrototype = getDeepPrototype(this, WebProvider)
+    const rootPrototype =
+      getDeepPrototype(this, DocPIPWebProvider) ||
+      getDeepPrototype(this, CanvasPIPWebProvider) ||
+      getDeepPrototype(this, ReplacerWebProvider) ||
+      getDeepPrototype(this, WebProvider)
     Object.setPrototypeOf(rootPrototype, provider)
     return this
   }

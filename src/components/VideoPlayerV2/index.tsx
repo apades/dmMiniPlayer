@@ -36,8 +36,9 @@ import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
 import { hasParent } from '@root/utils/dom'
 import PlaybackRateSelection from './PlaybackRateSelection'
 import { ownerWindow } from '@root/utils'
-import { LeftOutlined } from '@ant-design/icons'
+import { CloseOutlined, LeftOutlined } from '@ant-design/icons'
 import DanmakuSettingBtn from './DanmakuSettingBtn'
+import { PlayerEvent } from '@root/core/event'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -49,6 +50,7 @@ export type VideoPlayerHandle = {
 
 type Props = {
   className?: string
+  showCloseButton?: boolean
 } & Omit<ContextData, 'eventBus'>
 
 type VpInnerProps = Props & {
@@ -321,6 +323,17 @@ const VideoPlayerV2Inner = observer(
                 )}
               />
             </div>
+          </div>
+        )}
+
+        {props.showCloseButton && (
+          <div
+            className="rounded-full wh-[40px] cursor-pointer right-[20px] top-0 absolute z-20 text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all group-[&.action-area-active]:top-[20px] opacity-0 group-[&.action-area-active]:opacity-100"
+            onClick={() => {
+              props.videoPlayer.emit(PlayerEvent.close)
+            }}
+          >
+            <CloseOutlined />
           </div>
         )}
       </div>

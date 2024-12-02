@@ -25,7 +25,7 @@ export type ContextData = {
 
 export const defaultVpContext: ContextData = {
   eventBus,
-  videoPlayer: null as any
+  videoPlayer: null as any,
 }
 
 const vpContext = createContext<ContextData>(defaultVpContext)

@@ -67,6 +67,8 @@ export enum DocPIPRenderType {
    * 该模式是针对目标video不在同源iframe中设计的
    */
   injectMediaSource = 'injectMediaSource',
+
+  replaceWebVideoDom = 'replaceWebVideoDom',
 }
 
 export enum AutoPIPPos {
@@ -124,6 +126,7 @@ export const docPIPConfig = {
         value: DocPIPRenderType.capture_captureStreamWithWebRTC,
         label: t('settingPanel.captureStreamWithWebRTC'),
       },
+      DocPIPRenderType.replaceWebVideoDom,
       // DocPIPRenderType.injectMediaSource,
     ],
     relateBy: 'useDocPIP',
