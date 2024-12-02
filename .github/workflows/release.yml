@@ -29,8 +29,8 @@ jobs:
       - run: node scripts/getChangeLog.mjs > CHANGELOG.txt
       - run: pnpm i
       - name: Start build
-        run: pnpm run build --metafile
-      - run: mv dist/metafile-*.json metafile.json
+        run: pnpm run build
+      - run: mv dist/metafile-*.json ./
       - name: Archive dist
         run: pnpm run archive
       - name: Github release
@@ -38,6 +38,6 @@ jobs:
         with:
           files: |
             build/*.zip
-            metafile.json
+            metafile-*.json
           token: ${{ secrets.GITHUB_TOKEN }}
           body_path: CHANGELOG.txt
