@@ -16,6 +16,7 @@ if (canRun && !hasInit) {
     const videoEl = entry.target as HTMLVideoElement
 
     if (window.provider?.active) return
+    if (videoEl.muted || videoEl.paused) return
     if (scrollInInvisible) {
       postStartPIPDataMsg(configStore.docPIP_renderType, videoEl)
     }
@@ -28,6 +29,7 @@ if (canRun && !hasInit) {
     if (window.provider?.active) return
     if (!activeVideoEl) return
     if (!isHidden) return
+    if (activeVideoEl.muted || activeVideoEl.paused) return
     postStartPIPDataMsg(configStore.docPIP_renderType, activeVideoEl)
   })
 
