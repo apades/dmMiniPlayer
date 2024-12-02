@@ -20,7 +20,7 @@ const config_subtitle = {
   }),
   subtitle_fontSize: config({
     label: t('settingPanel.subtitleFontSize'),
-    defaultValue: 14,
+    defaultValue: 16,
   }),
   subtitle_fontColor: config({
     label: t('settingPanel.subtitleFontColor'),
@@ -29,7 +29,7 @@ const config_subtitle = {
   }),
   subtitle_fontWeight: config({
     label: t('settingPanel.subtitleFontWeight'),
-    defaultValue: 400,
+    defaultValue: 600,
   }),
   subtitle_fontOpacity: config({
     label: t('settingPanel.subtitleFontOpacity'),
