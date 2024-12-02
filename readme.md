@@ -65,3 +65,6 @@
 如果您很喜欢这个项目, 欢迎打赏, 金额随意. 您的支持是我的动力(=・ω・=)
 
 [爱发电](https://afdian.com/a/apades)
+
+## 📜 License
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
