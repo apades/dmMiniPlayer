@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "nodemon --exec \"pnpm dev:start\"",
     "dev:start": "tsup --config scripts/tsup.dev.ts",
-    "build": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.ts ",
+    "build": "run-s build:*",
+    "build:all-js": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.ts",
+    "build:world-js": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.world.ts",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs",
     "archive": "node ./scripts/archive.mjs",

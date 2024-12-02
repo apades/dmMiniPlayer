@@ -43,7 +43,7 @@ export const manifest: chrome.runtime.ManifestV3 = {
       matches: ['<all_urls>'],
     },
     {
-      js: ['assets/lib/entry-world.js'],
+      js: ['world.js'],
       run_at: 'document_start',
       world: 'MAIN',
       matches: ['<all_urls>'],

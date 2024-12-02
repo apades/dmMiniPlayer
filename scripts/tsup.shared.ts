@@ -41,7 +41,7 @@ export const shareConfig = {
     // 包含player的cs
     main: pr('../src/contents/main.ts'),
     // 注入world: main的脚本
-    world: pr('../src/contents/inject.ts'),
+    inject: pr('../src/contents/inject.ts'),
     // 修改cs的clog脚本
     clogInject: pr('../src/contents/clogInject.ts'),
     // popup的脚本
