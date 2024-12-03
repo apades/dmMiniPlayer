@@ -59,3 +59,5 @@ keys.json
 sample-mp4-file.mp4
 
 !.vscode/launch.json
+
+metafile-*.json

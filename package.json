@@ -12,7 +12,7 @@
     "build": "run-s build:*",
     "build:main-js": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.ts --metafile && mv ./dist/metafile-esm.json ./dist/metafile-main.json",
     "build:world-js": "cross-env NODE_ENV=production tsup --config scripts/tsup.build.world.ts --metafile && mv ./dist/metafile-esm.json ./dist/metafile-world.json",
-    "build:clean": "rm ./dist/icon-* && rm ./dist/tailwind*",
+    "build:clean": "rm ./dist/icon-* && rm ./dist/tailwind* && mv dist/metafile-*.json ./",
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs",
     "archive": "node ./scripts/archive.mjs",
