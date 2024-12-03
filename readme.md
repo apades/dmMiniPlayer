@@ -1,4 +1,11 @@
 # 弹幕画中画播放器
+<style>
+.li{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+</style>
 
 <p align="center" style="margin-bottom: 0px !important;">
 <img width="800" src="./docs/assets/view.png"><br/>
@@ -6,8 +13,11 @@
 
 支持最新的画中画API功能，可以播放、发送弹幕，支持字幕，键盘控制进度，更好的画中画播放体验的浏览器插件
 
-- [chrome商店](https://chrome.google.com/webstore/detail/%E5%BC%B9%E5%B9%95%E7%94%BB%E4%B8%AD%E7%94%BB%E6%92%AD%E6%94%BE%E5%99%A8/nahbabjlllhocabmecfjmcblchhpoclj)
-- [edge商店](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
+- [<div class="li">chrome商店<img src="https://img.shields.io/chrome-web-store/v/nahbabjlllhocabmecfjmcblchhpoclj?label=chrome" /></div>](https://chrome.google.com/webstore/detail/nahbabjlllhocabmecfjmcblchhpoclj)
+- [<div class="li">edge商店<img src="https://img.shields.io/badge/dynamic/json?label=edge&query=%24.version&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fhohfhljppjpiemblilibldgppjpclfbl" />更新比较慢，如果有什么紧急bug修复一般都要一周后才能上架</div>](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
+- [crx搜搜](https://www.crxsoso.com/webstore/detail/nahbabjlllhocabmecfjmcblchhpoclj)
+- [<div class="li">最新发布<img src="https://img.shields.io/github/v/release/apades/dmMiniPlayer?color=green" /></div>](https://github.com/apades/dmMiniPlayer/releases/latest)
+
 
 在提问前可以先搜索issue是否有类似的问题，或者先看看[FAQ](https://github.com/apades/dmMiniPlayer/wiki/FAQ%E2%80%90zh)
 
