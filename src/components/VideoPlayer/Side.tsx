@@ -40,6 +40,7 @@ export type Props = {
 const VideoPlayerSide: FC<Props> = (props) => {
   // const videoChanger = useRef(new VideoChanger(props.webProvider))
   const [activeMap, setActiveMap] = useState<Rec<number>>({})
+  const [activeEl, setActiveEl] = useState<HTMLLIElement>()
 
   // 更新active数据
   useEffect(() => {
@@ -51,10 +52,15 @@ const VideoPlayerSide: FC<Props> = (props) => {
       activeMap[i] = activeIndex
     })
 
-    console.log('侧边栏传入数据', activeMap, props.sideSwitcher.videoList)
+    // console.log('侧边栏传入数据', activeMap, props.sideSwitcher.videoList)
 
     setActiveMap(activeMap)
   }, [props.sideSwitcher.videoList])
+
+  useEffect(() => {
+    if (!activeEl) return
+    activeEl.scrollIntoView({ behavior: 'smooth' })
+  }, [activeEl])
 
   return (
     <div className="side-outer-container h-full">
@@ -76,6 +82,10 @@ const VideoPlayerSide: FC<Props> = (props) => {
                         isCoverItem && 'cover-title f-i-center gap-1'
                       )}
                       title={item.title}
+                      ref={(el) => {
+                        if (!el) return
+                        if (activeMap[vi] == ii) setActiveEl(el)
+                      }}
                       onClick={() => {
                         props.onClick?.(item)
                         if (list.isSpa === false) {

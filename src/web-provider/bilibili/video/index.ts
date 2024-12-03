@@ -78,6 +78,9 @@ export default class BilibiliVideoProvider extends WebProvider {
       // https://www.bilibili.com/video/BV1Yh4y1j7ko 用的这个，是不是瓦比赛那套改了不得而知
       const l2 = dq('.list-box li .clickitem', getCtxDocument())
       if (l2.length) return l2
+      // 新网页的选择器
+      const l3 = dq('.video-pod__item .simple-base-item', getCtxDocument())
+      if (l3.length) return l3
       // 目前看到瓦的比赛视频分p用的这个
       return dq('.list-box li a', getCtxDocument())
     }
@@ -86,7 +89,8 @@ export default class BilibiliVideoProvider extends WebProvider {
       !!(
         el.querySelector('.video-episode-card__info-playing') ||
         el.querySelector('.video-episode-card__info-title-playing') ||
-        el.classList.contains('on')
+        el.classList.contains('on') ||
+        el.classList.contains('active')
       )
 
     // 视频分p
