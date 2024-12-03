@@ -56,16 +56,16 @@ let toVersion =
 
   await archive.finalize()
 
-  const { releaseC } = await enquirer.prompt([
+  const { release } = await enquirer.prompt([
     {
       type: 'confirm',
-      name: 'confirm',
+      name: 'release',
       message: `release ${version} ?`,
       initial: true,
     },
   ])
 
-  if (!releaseC) return
+  if (!release) return
 
   // git
   await spawn('git', ['add', '.'])
