@@ -1,3 +1,5 @@
+import { windows } from 'webextension-polyfill'
+
 export function getTopParent(el: HTMLElement) {
   let p = el
   while (true) {
@@ -128,4 +130,17 @@ export function hasParent(el: HTMLElement, parent: HTMLElement) {
     }
     p = p.parentElement
   }
+}
+
+export function isElementInViewport(el: HTMLElement) {
+  const rect = el.getBoundingClientRect()
+  const win = el.ownerDocument.defaultView || window
+  const document = el.ownerDocument
+
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (win.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (win.innerWidth || document.documentElement.clientWidth)
+  )
 }

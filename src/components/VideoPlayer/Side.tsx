@@ -3,7 +3,8 @@ import { formatTime, formatView, isNumber } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { Fragment, useEffect, useRef, useState, type FC } from 'react'
+import { useEffect, useRef, useState, type FC } from 'react'
+import scrollIntoView from 'scroll-into-view'
 
 export type VideoItem = {
   /**spa点击切换路由的link元素 */
@@ -41,6 +42,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
   // const videoChanger = useRef(new VideoChanger(props.webProvider))
   const [activeMap, setActiveMap] = useState<Rec<number>>({})
   const [activeEl, setActiveEl] = useState<HTMLLIElement>()
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // 更新active数据
   useEffect(() => {
@@ -59,11 +61,13 @@ const VideoPlayerSide: FC<Props> = (props) => {
 
   useEffect(() => {
     if (!activeEl) return
-    activeEl.scrollIntoView({ behavior: 'smooth' })
+    scrollIntoView(activeEl, {
+      align: { top: 0.2 },
+    })
   }, [activeEl])
 
   return (
-    <div className="side-outer-container h-full">
+    <div className="side-outer-container h-full" ref={containerRef}>
       <div className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white text-sm bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]">
         {props.sideSwitcher.videoList.map((list, vi) => {
           if (!list.items?.length) return null
