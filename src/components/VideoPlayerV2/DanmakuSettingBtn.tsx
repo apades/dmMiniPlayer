@@ -1,4 +1,4 @@
-import { FC, useContext, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 import Dropdown from '../Dropdown'
 import { useMemoizedFn } from 'ahooks'
 import vpContext from './context'
@@ -19,6 +19,13 @@ import { getAnyObjToString } from '@root/utils'
 import { parserBilibiliDanmuFromXML } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 import AssParser from '@root/utils/AssParser'
 import { t } from '@root/utils/i18n'
+import { useReactBrowserSyncStorage } from '@root/hook/browserStorage'
+import { DANMAKU_VISIBLE } from '@root/shared/storeKey'
+import {
+  getBrowserSyncStorage,
+  setBrowserSyncStorage,
+} from '@root/utils/storage'
+import { isUndefined } from 'lodash-es'
 
 const Menu: FC = observer((props) => {
   const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
@@ -29,6 +36,7 @@ const Menu: FC = observer((props) => {
   const [isDownloaded, setDownloaded] = useState(false)
   const [error, setError] = useState('')
   const getDanmakuId = useRef('')
+  const [isInitd, setInitd] = useState(false)
 
   useOnce(() => {
     const unListenGetDanmaku = onMessage(WebextEvent.getDanmaku, ({ data }) => {
@@ -68,6 +76,21 @@ const Menu: FC = observer((props) => {
     })
     setDownloading(true)
   })
+
+  useReactBrowserSyncStorage(DANMAKU_VISIBLE, (val) => {
+    if (isUndefined(val)) return
+    runInAction(() => {
+      danmakuEngine.visible = val
+    })
+  })
+
+  useEffect(() => {
+    if (!isInitd) {
+      setInitd(true)
+      return
+    }
+    setBrowserSyncStorage(DANMAKU_VISIBLE, danmakuEngine.visible)
+  }, [danmakuEngine.visible])
 
   return (
     <div className="bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
