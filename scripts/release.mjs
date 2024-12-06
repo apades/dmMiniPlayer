@@ -29,6 +29,17 @@ let toVersion =
     },
   ])
 
+  const changeLogZhFile = pr('../docs/changeLog-zh.md'),
+    changeLogFile = pr('../docs/changeLog.md')
+
+  ;[changeLogZhFile, changeLogFile].forEach((file) => {
+    if (!fs.existsSync(file)) return
+    const content = fs.readFileSync(file, 'utf-8')
+    const startText = `## v${version}\n\n`
+    if (content.startsWith(startText)) return
+    fs.writeFileSync(file, `## v${version}\n\n` + fs.readFileSync(file))
+  })
+
   console.log(`修改changeLog文件 ${chalk.green('docs/changeLog-zh.md')}`)
   console.log(`修改changeLog文件 ${chalk.green('docs/changeLog.md')}`)
   // fs.openSync(pr('../docs/changeLog.md'), 'r')
