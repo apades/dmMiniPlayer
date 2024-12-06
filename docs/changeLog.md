@@ -1,3 +1,7 @@
+## v0.6.19
+1. Fixed the issue of abnormal display of sidebar videos with episodes
+2. Save the danmaku visible settings
+
 ## v0.6.18
 Fixed an issue where the previous version update caused abnormalities on some websites
 
