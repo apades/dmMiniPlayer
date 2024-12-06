@@ -14,6 +14,7 @@ export default defineConfig({
   sourcemap: false,
   splitting: false,
   clean: false,
+  format: 'iife',
   define: {
     ...shareConfig.define,
     ...getDefinesObject('prod'),
