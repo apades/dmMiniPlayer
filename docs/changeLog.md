@@ -1,3 +1,6 @@
+## v0.6.18
+Fixed an issue where the previous version update caused abnormalities on some websites
+
 ## v0.6.17
 1. Fixed bilibili episode list not displayed in side
 2. Optimizing js injection files will cause some websites to fail to load.
