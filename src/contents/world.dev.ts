@@ -1,6 +1,7 @@
+import { ATTR_DISABLE, ATTR_URL } from '@root/shared/config'
 ;(() => {
-  const extBaseUrl = document.documentElement.getAttribute('dm-url')
-  if (document.documentElement.getAttribute('dm-disable')) return
+  const extBaseUrl = document.documentElement.getAttribute(ATTR_URL)
+  if (document.documentElement.getAttribute(ATTR_DISABLE)) return
 
   console.log('⚡ run world script')
   ;(async () => {

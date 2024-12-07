@@ -5,6 +5,9 @@
         "src/popup/index.html",
         "scripts/tsup.shared.ts",
         "scripts/tsup.dev.ts",
+        "scripts/tsup.dev.*.ts",
+        "scripts/tsup.build.ts",
+        "scripts/tsup.build.*.ts",
         "nodemon.json",
         "docs",
         "package.json"

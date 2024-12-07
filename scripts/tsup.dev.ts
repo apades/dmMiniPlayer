@@ -13,9 +13,6 @@ export default defineConfig({
   minify: false,
   watch: true,
   sourcemap: 'inline',
-  define: {
-    ...shareConfig.define,
-    ...getDefinesObject('dev'),
-  },
   splitting: false,
+  clean: false,
 })

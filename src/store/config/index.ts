@@ -28,6 +28,7 @@ import {
 import isPluginEnv from '@root/shared/isPluginEnv'
 import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
+import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
 
 export { DocPIPRenderType } from './docPIP'
 
@@ -176,18 +177,12 @@ export const baseConfigMap = {
   dragArea_cornerPercentW: config({ defaultValue: 30, notRecommended: true }),
   dragArea_cornerPercentH: config({ defaultValue: 30, notRecommended: true }),
   disable_sites: config({
-    defaultValue: [],
+    defaultValue: [] as string[],
     label: t('settingPanel.disableSites'),
     desc: t('settingPanel.disableSitesTips'),
   }),
   eventInject_sites: config({
-    defaultValue: [
-      '/https:\\/\\/live\\.douyin\\.com\\/.*/',
-      '/https:\\/\\/www\\.twitch\\.com\\/.*/',
-      '/https:\\/\\/www\\.youtube\\.com\\/.*/',
-      '/https:\\/\\/www\\.douyu\\.com\\/.*/',
-      '/https:\\/\\/www\\.bilibili\\.com\\/.*/',
-    ],
+    defaultValue: DEFAULT_EVENT_INJECT_SITE,
     notRecommended: true,
   }),
   ...docPIPConfig,
