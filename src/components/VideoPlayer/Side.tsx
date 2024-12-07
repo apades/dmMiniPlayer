@@ -1,5 +1,7 @@
 import { SideSwitcher } from '@root/core/SideSwitcher'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { formatTime, formatView, isNumber } from '@root/utils'
+import { isElementInViewport } from '@root/utils/dom'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -43,6 +45,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
   const [activeMap, setActiveMap] = useState<Rec<number>>({})
   const [activeEl, setActiveEl] = useState<HTMLLIElement>()
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isActiveElInitd, setActiveElInitd] = useState(false)
 
   // 更新active数据
   useEffect(() => {
@@ -59,16 +62,35 @@ const VideoPlayerSide: FC<Props> = (props) => {
     setActiveMap(activeMap)
   }, [props.sideSwitcher.videoList])
 
+  useTargetEventListener(
+    'mouseenter',
+    () => {
+      if (isActiveElInitd) return
+      setActiveElInitd(true)
+      if (!activeEl) return
+      containerRef.current?.scrollTo({
+        top: activeEl.offsetTop - 40,
+        behavior: 'smooth',
+      })
+    },
+    containerRef.current
+  )
+
   useEffect(() => {
     if (!activeEl) return
-    scrollIntoView(activeEl, {
-      align: { top: 0.2 },
+    if (!isActiveElInitd) return
+    containerRef.current?.scrollTo({
+      top: activeEl.offsetTop - 40,
+      behavior: 'smooth',
     })
   }, [activeEl])
 
   return (
-    <div className="side-outer-container h-full" ref={containerRef}>
-      <div className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white text-sm bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]">
+    <div className="side-outer-container h-full">
+      <div
+        className="side-inner-container w-[var(--side-width)] h-full ml-auto p-[8px] overflow-auto text-white text-sm bg-[#0007] bor-l-[#fff7] custom-scrollbar flex-col gap-[8px]"
+        ref={containerRef}
+      >
         {props.sideSwitcher.videoList.map((list, vi) => {
           if (!list.items?.length) return null
           return (

@@ -6,6 +6,7 @@ import { dq1, type noop } from '@root/utils'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import equal from 'fast-deep-equal'
 import { eventHackerEnableSites } from './eventHacker.config'
+import { isUndefined } from 'lodash-es'
 
 function main() {
   console.log('💀 event hacker running')
@@ -23,36 +24,46 @@ function main() {
       ((tar as any) == document && key == 'document')
 
     const isWindow = (tar as any) == window
+    const isDocument = (tar as any) == document
 
-    tar.addEventListener = function (...val: any) {
+    tar.addEventListener = function (
+      this: any,
+      key: string,
+      fn: () => void,
+      state: any
+    ) {
       const getEventMap = () => {
         if (isWindow) return window.eventMap
+        if (isDocument) return (document as any).eventMap
         return this.eventMap
       }
 
       try {
         if (isWindow) {
           window.eventMap = getEventMap() || {}
-          window.eventMap[val[0]] = getEventMap()[val[0]] || []
+          window.eventMap[key] = getEventMap()[key] || []
+        } else if (isDocument) {
+          ;(document as any).eventMap = getEventMap() || {}
+          ;(document as any).eventMap[key] = getEventMap()[key] || []
         } else {
           this.eventMap = getEventMap() || {}
-          this.eventMap[val[0]] = getEventMap()[val[0]] || []
+          this.eventMap[key] = getEventMap()[key] || []
         }
       } catch (error) {
         console.error(error, tar)
       }
 
-      let eventList = getEventMap()?.[val[0]] as any[]
-      let event = val[0]
+      let eventList = getEventMap()?.[key] as any[]
+      let event = key
       try {
         // 判断监听触发事件
         let onEventMatch = Object.entries(onEventAddMap).find(
-          ([key, val]) => isDocOrWin(key) || tar.matches?.(key)
+          ([key, val]) => isDocOrWin(key) || (tar as any).matches?.(key)
         )
         if (onEventMatch && onEventMatch[1].includes(event)) {
           sendMessage_inject('event-hacker:onEventAdd', {
             qs: onEventMatch[0],
-            event,
+            event: key as any,
           })
         }
 
@@ -63,11 +74,11 @@ function main() {
         if (disableMatch && disableMatch[1].includes(event)) {
           console.log('匹配到禁用query', disableMap, tar)
         } else {
-          var rs = originalAdd.call(this, ...val)
+          var rs = originalAdd.call(this, key, fn)
         }
         const addEvent = {
-          fn: val[1],
-          state: val[2],
+          fn,
+          state,
         }
         // 重复挂载事件的情况
         if (eventList.find((ev) => equal(ev, addEvent))) return
@@ -80,19 +91,27 @@ function main() {
 
     let originalRemove = tar.removeEventListener
 
-    tar.removeEventListener = function (...val: any) {
+    tar.removeEventListener = function (
+      this: any,
+      key: string,
+      fn: () => void,
+      state: any
+    ) {
       const getEventMap = () => {
         if (isWindow) return window.eventMap
+        if (isDocument) return (document as any).eventMap
         return this.eventMap
       }
 
       try {
-        let eventList = getEventMap()?.[val[0]] ?? []
-        var rs = originalRemove.call(this, ...val)
-        let index = eventList.findIndex(
-          (ev: any) => ev.fn === val[1] && ev.state == val[2]
+        const eventList = getEventMap()?.[key] ?? []
+        var rs = originalRemove.call(this, key, fn, state)
+        const index = eventList.findIndex(
+          (ev: any) => ev.fn === fn && ev.state === state
         )
-        eventList.splice(index, 1)
+        if (index !== -1) {
+          eventList.splice(index, 1)
+        }
       } catch (error) {
         console.error(error)
       }
@@ -117,7 +136,7 @@ function main() {
     function rmEv(tar: any, fn: noop) {
       let eventList = (tar as any).eventMap?.[event] ?? []
       eventList.forEach((ev: any) => {
-        if (ev.state) fn.call(tar, event, ev.fn, ev.state)
+        if (!isUndefined(ev.state)) fn.call(tar, event, ev.fn, ev.state)
         else fn.call(tar, event, ev.fn)
       })
     }
@@ -142,10 +161,11 @@ function main() {
   onMessage_inject('event-hacker:enable', ({ qs, event }) => {
     console.log('开始启用事件', qs, event)
     if (!disableMap[qs]) return false
-    disableMap[qs].slice(
-      disableMap[qs].findIndex((e) => e == event),
-      1
-    )
+    const index = disableMap[qs].findIndex((e) => e == event)
+    if (index !== -1) {
+      disableMap[qs].splice(index, 1)
+    }
+
     function addEv(tar: any, fn: noop) {
       let eventList = (tar as any).eventMap?.[event] ?? []
       eventList.forEach((ev: any) => {
@@ -177,6 +197,13 @@ function main() {
   })
 }
 
-if (eventHackerEnableSites.find((site) => site.test(location.href))) {
+if (
+  eventHackerEnableSites.find((site: any) => {
+    const isRegex = site.startsWith('/') && site.endsWith('/')
+    if (isRegex)
+      return new RegExp(site.match(/^\/(.*)\/$/)[1]).test(window.location.href)
+    return window.location.href.includes(site)
+  })
+) {
   main()
 }

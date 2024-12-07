@@ -1,5 +1,10 @@
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import { addEventListener, createElement, throttle } from '@root/utils'
+import {
+  addEventListener,
+  createElement,
+  throttle,
+  tryCatch,
+} from '@root/utils'
 import { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
 import CanvasVideo from '../CanvasVideo'
@@ -223,6 +228,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
       if (!supportOnVideoChange) return
       switch (renderMode) {
+        case DocPIPRenderType.replaceWebVideoDom:
         case DocPIPRenderType.replaceVideoEl: {
           vpRef.updateVideo(newVideoEl)
           // 控制要不要把上一个还原
@@ -259,14 +265,18 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     // 用来把video元素还原回原本位置的方法
     let restoreWebVideoPlayerElState = () => {}
 
-    if (renderMode === DocPIPRenderType.replaceVideoEl) {
+    if (
+      renderMode === DocPIPRenderType.replaceVideoEl ||
+      renderMode === DocPIPRenderType.replaceWebVideoDom
+    ) {
       restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
         this.webVideoEl
       )
     }
 
     this.on(PlayerEvent.close, () => {
-      reactRoot.unmount()
+      // ReplacerWebProvider里套的一层container root unmount好像会传染到这个组件？这里再unmount会报错
+      tryCatch(() => reactRoot.unmount())
       this.playerRootEl = undefined
       restoreWebVideoPlayerElState()
       this.unloadPreCanvasVideoStream()

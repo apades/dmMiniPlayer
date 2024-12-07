@@ -62,9 +62,6 @@ importers:
       react-draggable:
         specifier: ^4.4.6
         version: 4.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      scroll-into-view:
-        specifier: ^1.16.2
-        version: 1.16.2
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -120,9 +117,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.24
         version: 18.2.24
-      '@types/scroll-into-view':
-        specifier: ^1.16.4
-        version: 1.16.4
       '@types/uuid':
         specifier: ^9.0.1
         version: 9.0.8
@@ -1293,9 +1287,6 @@ packages:
 
   '@types/react@18.2.75':
     resolution: {integrity: sha512-+DNnF7yc5y0bHkBTiLKqXFe+L4B3nvOphiMY3tuA5X10esmjqk7smyBZzbGTy2vsiy/Bnzj8yFIBL8xhRacoOg==}
-
-  '@types/scroll-into-view@1.16.4':
-    resolution: {integrity: sha512-f2Rw8aA9gj7+M6uWhNx/mRAWyC4tYsvG2uA/cMEkXUyfMXYgTRJCM8CD8kTkoQlX8STQVgTQL0SmmM1VPZQmsg==}
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
@@ -2932,9 +2923,6 @@ packages:
     resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
     engines: {node: '>=0.10.0'}
 
-  scroll-into-view@1.16.2:
-    resolution: {integrity: sha512-vyTE0i27o6eldt9xinjHec41Dw05y+faoI+s2zNKJAVOdbA5M2XZrYq/obJ8E+QDQulJ2gDjgui9w9m9RZSRng==}
-
   semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
     hasBin: true
@@ -4287,8 +4275,6 @@ snapshots:
     dependencies:
       '@types/prop-types': 15.7.11
       csstype: 3.1.3
-
-  '@types/scroll-into-view@1.16.4': {}
 
   '@types/semver@7.5.8': {}
 
@@ -6069,8 +6055,6 @@ snapshots:
       loose-envify: 1.4.0
 
   screenfull@5.2.0: {}
-
-  scroll-into-view@1.16.2: {}
 
   semver@5.7.2: {}
 

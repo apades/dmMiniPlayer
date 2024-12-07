@@ -1,13 +1,27 @@
 import type { ProtocolWithReturn } from '@root/utils/Messager'
 
+type EventHackerProps =
+  | {
+      qs: 'document'
+      event: keyof DocumentEventMap
+    }
+  | {
+      qs: 'window'
+      event: keyof WindowEventMap
+    }
+  | {
+      qs: string
+      event: keyof HTMLElementEventMap
+    }
+
 // TODO 修改messager结构，现在onMessage都需要返回肯定不行
 // 这里定义那些event
 export type TProtocolMap = {
   /**去除某一个dom的所有事件 */
-  'event-hacker:disable': { qs: string; event: string }
-  'event-hacker:listenEventAdd': { qs: string; event: string }
-  'event-hacker:onEventAdd': { qs: string; event: string }
-  'event-hacker:enable': { qs: string; event: string }
+  'event-hacker:disable': EventHackerProps
+  'event-hacker:listenEventAdd': EventHackerProps
+  'event-hacker:onEventAdd': EventHackerProps
+  'event-hacker:enable': EventHackerProps
 
   'fetch-hacker:add': RegExp
   'fetch-hacker:remove': RegExp

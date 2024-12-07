@@ -34,7 +34,6 @@
     "@types/pako": "^2.0.0",
     "@types/react": "^18.2.75",
     "@types/react-dom": "^18.2.24",
-    "@types/scroll-into-view": "^1.16.4",
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -85,7 +84,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-draggable": "^4.4.6",
-    "scroll-into-view": "^1.16.2",
     "uuid": "^9.0.0",
     "webext-bridge": "^6.0.1",
     "webextension-polyfill": "^0.10.0"

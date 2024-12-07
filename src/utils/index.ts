@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import type { AsyncFn, Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
 import _throttle from './feat/throttle'
+import { getTopParentsWithSameRect } from './dom'
 // export * as debounce from './feat/debounce'
 
 export const throttle = _throttle
@@ -525,3 +526,29 @@ export const objectKeys = <T>(obj: Record<string, T>) =>
   Object.keys(obj) as (keyof T)[]
 
 export const canAccessTop = () => !tryCatch(() => top!.document)[0]
+
+export const getVideoElInitFloatButtonData = (
+  videoTarget: HTMLVideoElement
+): [HTMLElement, HTMLVideoElement, boolean?] => {
+  // 有些视频播放器移动鼠标的target并不会在video上，而是在另一个覆盖了容器的子dom上
+  // 这里是为了选到跟video大小相同的最外层容器，以该容器移动鼠标触发浮动按钮
+  const topParents = getTopParentsWithSameRect(videoTarget)
+  const topParentWithPosition = topParents.findLast(
+    (el) =>
+      ((el?.computedStyleMap?.()?.get?.('position') as any)?.value ?? '') !=
+      'static'
+  )
+
+  // 所有父容器都没有position属性的，创建的浮动按钮要根据视频位置调整fixed pos
+  if (!topParentWithPosition) {
+    // 也有单标签的video的，container就用videoTarget.parentElement
+    const container =
+      topParents[topParents.length - 1] ?? videoTarget.parentElement
+    return [container, videoTarget, true]
+  }
+  if (topParentWithPosition instanceof HTMLVideoElement) {
+    // console.log('top的', topParentWithPosition)
+    return [topParentWithPosition, topParentWithPosition]
+  }
+  return [topParentWithPosition, videoTarget]
+}

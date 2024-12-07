@@ -180,6 +180,16 @@ export const baseConfigMap = {
     label: t('settingPanel.disableSites'),
     desc: t('settingPanel.disableSitesTips'),
   }),
+  eventInject_sites: config({
+    defaultValue: [
+      '/https:\\/\\/live\\.douyin\\.com\\/.*/',
+      '/https:\\/\\/www\\.twitch\\.com\\/.*/',
+      '/https:\\/\\/www\\.youtube\\.com\\/.*/',
+      '/https:\\/\\/www\\.douyu\\.com\\/.*/',
+      '/https:\\/\\/www\\.bilibili\\.com\\/.*/',
+    ],
+    notRecommended: true,
+  }),
   ...docPIPConfig,
 }
 

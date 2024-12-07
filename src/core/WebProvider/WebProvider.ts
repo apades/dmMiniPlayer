@@ -47,7 +47,7 @@ export default abstract class WebProvider
   }
 
   miniPlayer!: VideoPlayerBase
-  protected abstract MiniPlayer: typeof VideoPlayerBase
+  protected MiniPlayer!: typeof VideoPlayerBase
 
   constructor() {
     super()
