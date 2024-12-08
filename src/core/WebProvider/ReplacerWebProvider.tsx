@@ -89,7 +89,7 @@ export default class ReplacerWebProvider extends WebProvider {
               top: isFixedPos ? rect.top : 0,
               width: isFixedPos ? size?.width : '100%',
               height: isFixedPos ? size?.height : '100%',
-              zIndex: 99999999,
+              zIndex: 9999,
             }}
           >
             <div

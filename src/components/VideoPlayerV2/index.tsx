@@ -353,7 +353,7 @@ const VideoPlayerV2Inner = observer(
                 {props.showCloseButton && (
                   <>
                     <div
-                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors ml-[6px]"
                       onClick={() => setFullInWeb((v) => !v)}
                     >
                       {isFullInWeb ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
