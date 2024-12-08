@@ -1,12 +1,21 @@
-import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
+import {
+  ArrowsAltOutlined,
+  CloseOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
+  LeftOutlined,
+  ShrinkOutlined,
+} from '@ant-design/icons'
+import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import configStore from '@root/store/config'
+import { ownerWindow } from '@root/utils'
+import { hasParent } from '@root/utils/dom'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import {
-  FC,
   forwardRef,
   useContext,
   useEffect,
@@ -15,31 +24,31 @@ import {
   useRef,
   useState,
 } from 'react'
+import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
+import ShadowRootContainer from '../ShadowRootContainer'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
 import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
 import vpContext, { ContextData, defaultVpContext } from './context'
 import DanmakuContainer from './DanmakuContainer'
+import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
+import DanmakuSettingBtn from './DanmakuSettingBtn'
 import {
   useInWindowKeydown,
   useTogglePlayState,
   useWebVideoEventsInit,
 } from './hooks'
 import LoadingIcon from './LoadingIcon'
+import PlaybackRateSelection from './PlaybackRateSelection'
 import PlayedTime from './PlayedTime'
 import PlayerProgressBar from './PlayerProgressBar'
 import SpeedIcon from './SpeedIcon'
 import TogglePlayActionButton from './TogglePlayActionButton'
 import VolumeBar from './VolumeBar'
 import VolumeIcon from './VolumeIcon'
-import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
-import { hasParent } from '@root/utils/dom'
-import PlaybackRateSelection from './PlaybackRateSelection'
-import { ownerWindow } from '@root/utils'
-import { CloseOutlined, LeftOutlined } from '@ant-design/icons'
-import DanmakuSettingBtn from './DanmakuSettingBtn'
-import { PlayerEvent } from '@root/core/event'
+import screenfull from '@root/utils/screenfull'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -52,6 +61,7 @@ export type VideoPlayerHandle = {
 type Props = {
   className?: string
   showCloseButton?: boolean
+  showScreenControlButton?: boolean
 } & Omit<ContextData, 'eventBus'>
 
 type VpInnerProps = Props & {
@@ -64,6 +74,8 @@ const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
     const { isLive } = useContext(vpContext)
+    const [isFullInWeb, setFullInWeb] = useState(false)
+    const [isFullscreen, setFullscreen] = useState(false)
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
@@ -135,7 +147,36 @@ const VideoPlayerV2Inner = observer(
       //     console.error(error)
       //   }
       // }
-    }, [videoRef.current])
+    }, [videoRef.current, isFullInWeb])
+
+    useEffect(() => {
+      if (!isFullInWeb) return
+      const bodyOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = bodyOverflow
+      }
+    }, [isFullInWeb])
+    const handleQuitFullInWebOrFullscreen = useMemoizedFn(
+      (e: KeyboardEvent) => {
+        if (e.key !== 'Escape') return
+        if (isFullInWeb) return setFullInWeb(false)
+        if (screenfull.isFullscreen) {
+          screenfull.exit()
+          setFullscreen(false)
+          return
+        }
+      }
+    )
+
+    useTargetEventListener(
+      'dblclick',
+      () => {
+        screenfull.isEnabled && screenfull.request(videoPlayerRef.current)
+        setFullscreen(true)
+      },
+      videoPlayerRef.current
+    )
 
     const updateVideoRef = useMemoizedFn((video: HTMLVideoElement) => {
       // console.trace('updateVideoRef', video)
@@ -168,7 +209,9 @@ const VideoPlayerV2Inner = observer(
     const togglePlayState = useTogglePlayState()
 
     // 初始化
-    useInWindowKeydown()
+    useInWindowKeydown((e) => {
+      handleQuitFullInWebOrFullscreen(e)
+    })
     useWebVideoEventsInit()
 
     const setCurrentTime = useMemoizedFn((time: number, pause?: boolean) => {
@@ -202,7 +245,7 @@ const VideoPlayerV2Inner = observer(
       }
     })
 
-    return (
+    const el = (
       <div
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
@@ -235,20 +278,20 @@ const VideoPlayerV2Inner = observer(
           <div ref={videoInsertRef}></div>
           <style>
             {`.video-player-v2 video {
-        position: absolute !important;
-        top: initial !important;
-        right: initial !important;
-        bottom: initial !important;
-        left: initial !important;
-        width: 100% !important;
-        height: 100% !important;
-        margin: 0 auto !important;
-        cursor: pointer !important;
-        ${configStore.videoSharpening ? `filter: contrast(1) !important;` : ''}
-        pointer-events: none !important;
-        transform: initial !important;
-        z-index: initial !important;
-      }`}
+    position: absolute !important;
+    top: initial !important;
+    right: initial !important;
+    bottom: initial !important;
+    left: initial !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    cursor: pointer !important;
+    ${configStore.videoSharpening ? `filter: contrast(1) !important;` : ''}
+    pointer-events: none !important;
+    transform: initial !important;
+    z-index: initial !important;
+  }`}
           </style>
           {!props.useWebVideo && (
             <video
@@ -305,8 +348,37 @@ const VideoPlayerV2Inner = observer(
                 <PlaybackRateSelection />
               </div>
 
-              <div className="right ml-auto">
+              <div className="right ml-auto f-i-center gap-1">
                 <VolumeBar />
+                {props.showCloseButton && (
+                  <>
+                    <div
+                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+                      onClick={() => setFullInWeb((v) => !v)}
+                    >
+                      {isFullInWeb ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
+                    </div>
+                    <div
+                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+                      onClick={() => {
+                        if (screenfull.isFullscreen) {
+                          screenfull.exit()
+                          setFullscreen(false)
+                        } else {
+                          screenfull.isEnabled &&
+                            screenfull.request(videoPlayerRef.current)
+                          setFullscreen(true)
+                        }
+                      }}
+                    >
+                      {isFullscreen ? (
+                        <FullscreenExitOutlined />
+                      ) : (
+                        <FullscreenOutlined />
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -341,32 +413,17 @@ const VideoPlayerV2Inner = observer(
         )}
       </div>
     )
-  })
-)
 
-const DanmakuVisibleToggleBtn: FC<{ danmakuEngine?: DanmakuEngine }> = observer(
-  (props) => {
-    if (!props.danmakuEngine) return null
-    const visible = props.danmakuEngine.visible
-    return (
-      props.danmakuEngine && (
-        <div
-          className={classNames(
-            'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors',
-            !visible && 'opacity-50'
-          )}
-          onClick={() => {
-            props.danmakuEngine?.changeVisible()
-          }}
-        >
-          <Iconfont
-            size={18}
-            type={visible ? 'danmaku_open' : 'danmaku_close'}
-          />
-        </div>
+    if (isFullInWeb)
+      return createPortal(
+        <ShadowRootContainer>
+          <div className="fixed top-0 left-0 size-full z-[9999]">{el}</div>
+        </ShadowRootContainer>,
+        document.body
       )
-    )
-  }
+
+    return el
+  })
 )
 
 const VideoPlayerV2 = forwardRef<VideoPlayerHandle, Props>((props, ref) => {

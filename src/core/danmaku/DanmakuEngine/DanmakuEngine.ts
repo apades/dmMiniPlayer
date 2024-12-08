@@ -84,8 +84,9 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
   // seek + 第一次进入视频时确定startIndex位置
   hasSeek = true
   offsetStartTime = 10
-  initd = false
+  resized = false
 
+  initd = false
   /**弹幕时间差 */
   timeOffset = 0
 
@@ -121,6 +122,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     this.tunnelManager.unload()
     this.resizeObserver.disconnect()
     this.unloadCallbacks.forEach((cb) => cb())
+    this.initd = false
   }
 
   // 监听container大小变化
@@ -129,11 +131,12 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
       if (!target.clientWidth || !target.clientHeight) return
       this.containerWidth = target.clientWidth
       this.containerHeight = target.clientHeight
-      this.initd = true
+      this.resized = true
     })
   })
 
   init(props: DanmakuEngineInitProps) {
+    if (this.initd) return
     this.resizeObserver.unobserve(this.container)
     // 处理弹幕偏移时间
     this.unloadCallbacks.push(
@@ -152,6 +155,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     this.onInit(props)
 
     this.resizeObserver.observe(this.container)
+    this.initd = true
   }
 
   runningDanmakus = new Set<DanmakuBase>()

@@ -67,7 +67,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   private hasDraw = false
   // 绘制弹幕文本
   draw() {
-    if (!this.initd) return
+    if (!this.resized) return
     if (!this.danmakus.length) return
     if (!this.media) throw Error('需要先调用init()')
     if (!this.hasDraw) {
@@ -98,7 +98,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
   }
   // 绘制第一帧的弹幕，在时间变动时需要用的
   drawInSeek() {
-    if (!this.initd) return
+    if (!this.resized) return
     if (!this.danmakus.length) return
     if (!this.media) throw Error('需要先调用init()')
     this.hasDraw = true

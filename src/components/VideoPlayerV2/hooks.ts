@@ -39,7 +39,7 @@ export const useTogglePlayState = () => {
 }
 
 /**监听docPIP全局键盘 */
-export const useInWindowKeydown = () => {
+export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
   const { webVideo, eventBus, isLive, keydownWindow } = useContext(vpContext)
   const togglePlayState = useTogglePlayState()
 
@@ -57,7 +57,7 @@ export const useInWindowKeydown = () => {
         tar.contentEditable === 'true'
       )
         return
-      // e.stopPropagation()
+      onKeydown?.(e)
       switch (e.code) {
         case 'ArrowDown': {
           e.preventDefault()
