@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import remToPx from 'tailwindcss-rem-to-px'
 
 module.exports = {
   content: ['./src/**/*.{html,tsx,jsx,ejs}'],
@@ -168,6 +169,7 @@ module.exports = {
         },
       })
     },
+    remToPx(),
   ],
   corePlugins: {
     preflight: false,
