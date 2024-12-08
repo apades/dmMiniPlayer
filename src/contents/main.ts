@@ -288,7 +288,6 @@ function main() {
             provider?.on(PlayerEvent.close, () => {
               unMountMediaStream()
               unMount()
-              playerConfig.clear()
               postMessageToChild(
                 PostMessageEvent.webRTC_close,
                 undefined,
@@ -299,7 +298,6 @@ function main() {
             openPlayer({ videoEl })
             provider?.on(PlayerEvent.close, () => {
               unMount()
-              playerConfig.clear()
             })
           }
           return

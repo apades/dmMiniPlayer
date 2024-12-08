@@ -26,6 +26,8 @@ import { sendMediaStreamInSender } from '@root/utils/webRTC'
 import { getIsZh, t } from '@root/utils/i18n'
 import env from '@root/shared/env'
 import useAutoPIPHandler from '@root/hook/useAutoPIPHandler'
+import getWebProvider from '@root/web-provider/getWebProvider'
+import playerConfig from '@root/store/playerConfig'
 
 const VIDEO_ID_ATTR = 'data-dm-vid'
 
@@ -429,10 +431,10 @@ const FloatButton: FC<Props> = (props) => {
 
                     if (!videoEl) return
                     videoRef.current = videoEl
-                    postStartPIPDataMsg(
-                      DocPIPRenderType.replaceWebVideoDom,
-                      videoEl
-                    )
+                    playerConfig.forceDocPIPRenderType =
+                      DocPIPRenderType.replaceWebVideoDom
+                    const provider = getWebProvider()
+                    provider.openPlayer({ videoEl })
                   }}
                 >
                   <YoutubeOutlined />

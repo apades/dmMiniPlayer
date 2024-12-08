@@ -139,7 +139,7 @@ export default abstract class WebProvider
 
     sendMessage('PIP-active', { name: 'PIP-active' })
 
-    const unListenOnClose = this.miniPlayer.on2(PlayerEvent.close, () => {
+    this.miniPlayer.on(PlayerEvent.close, () => {
       this.unload()
       if (configStore.pauseInClose_video) {
         const video = this.webVideo
@@ -151,8 +151,8 @@ export default abstract class WebProvider
 
       this.offAll()
 
-      unListenOnClose()
       unListenVideoChanged()
+      playerConfig.clear()
     })
   }
 
