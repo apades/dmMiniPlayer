@@ -65,7 +65,7 @@ export default class DanmakuSender {
     this.listens.push(
       addEventListener(this.webTextInput, (webTextInput) => {
         webTextInput.addEventListener('input', (e) => {
-          let val = (e.target as HTMLInputElement).value
+          const val = webTextInput.value
           this.textInput.value = val
         })
       })
@@ -75,7 +75,7 @@ export default class DanmakuSender {
       addEventListener(this.textInput, (textInput) => {
         textInput.addEventListener('input', async (e) => {
           await wait()
-          let val = (e.target as HTMLInputElement).value
+          const val = textInput.value
           this.setWebTextInputValue(val)
           if (!(e as any).isComposing) {
             this.onWebTextInputGetEvents().then(() => {

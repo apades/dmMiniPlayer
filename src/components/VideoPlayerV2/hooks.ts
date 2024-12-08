@@ -49,7 +49,8 @@ export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
       isSpeedMode = false
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!webVideo) return
-      // if (window.videoPlayers.focusIndex !== index) return
+      // TODO 以后尽量把e.target去掉，因为shadowRoot下接收到冒泡的event.target是shadowRoot，不会是keydown实际的target😅
+      // ? 或者搞个polyfill，支持shadowRoot的event通过一层转发。但会导致isTrusted:false
       const tar = e.target as HTMLElement
       if (
         tar.tagName === 'TEXTAREA' ||

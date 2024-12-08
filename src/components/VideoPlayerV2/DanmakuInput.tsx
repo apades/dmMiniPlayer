@@ -115,10 +115,12 @@ const DanmakuInputInner: FC<Props> = (props) => {
         }}
         onKeyDown={(e) => {
           if (e.code == 'Escape') {
+            e.stopPropagation()
             danmakuInputRef.current?.blur()
           }
 
           if (e.key === 'Enter') {
+            e.stopPropagation()
             e.preventDefault()
             props.danmakuSender?.send()
           }
