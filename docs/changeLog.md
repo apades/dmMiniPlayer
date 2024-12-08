@@ -1,3 +1,6 @@
+## v0.6.20
+Added the function of replacing web videos into extension players, which needs to be turned on in settings.
+
 ## v0.6.19
 1. Fixed the issue of abnormal display of sidebar videos with episodes
 2. Save the danmaku visible settings
