@@ -96,7 +96,9 @@
     "autoPIPInPageHide": "Auto PIP in page hide",
     "autoPIPInPageHideDesc": "Only support unmuted video, and same origin iframe video",
     "autoPIPInScroll": "Auto PIP in scroll",
-    "autoPIPInScrollDesc": "Scroll page until this video is invisible, then turn on PIP"
+    "autoPIPInScrollDesc": "Scroll page until this video is invisible, then turn on PIP",
+    "showReplacerBtn": "Show replace video button",
+    "showReplacerBtnDesc": "Replace the video player in the web page with the extension video player"
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

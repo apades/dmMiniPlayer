@@ -1,4 +1,4 @@
-import { SettingOutlined } from '@ant-design/icons'
+import { SettingOutlined, YoutubeOutlined } from '@ant-design/icons'
 import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
@@ -417,6 +417,27 @@ const FloatButton: FC<Props> = (props) => {
                   }
                 />
               </div>
+              {configStore.showReplacerBtn && (
+                <div
+                  className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    const videoEl =
+                      container instanceof HTMLVideoElement
+                        ? container
+                        : container.querySelector('video')
+
+                    if (!videoEl) return
+                    videoRef.current = videoEl
+                    postStartPIPDataMsg(
+                      DocPIPRenderType.replaceWebVideoDom,
+                      videoEl
+                    )
+                  }}
+                >
+                  <YoutubeOutlined />
+                </div>
+              )}
               <div
                 className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
                 onClick={(e) => {

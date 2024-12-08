@@ -16,6 +16,7 @@ import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import { checkIsLive } from '@root/utils/video'
 import EventSwitcher from '@root/utils/EventSwitcher'
+import playerConfig from '@root/store/playerConfig'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 const FEAT_PROVIDER_LIST = [
@@ -59,7 +60,10 @@ export default abstract class WebProvider
       return this
 
     const provider = (() => {
-      if (configStore.docPIP_renderType === DocPIPRenderType.replaceWebVideoDom)
+      if (
+        (playerConfig.forceDocPIPRenderType ||
+          configStore.docPIP_renderType) === DocPIPRenderType.replaceWebVideoDom
+      )
         return new ReplacerWebProvider()
       if (configStore.useDocPIP) return new DocPIPWebProvider()
       return new CanvasPIPWebProvider()

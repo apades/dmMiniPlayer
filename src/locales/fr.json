@@ -96,7 +96,9 @@
     "autoPIPInPageHide": "PIP automatique dans le masquage de la page",
     "autoPIPInPageHideDesc": "Ne prend en charge que la vidéo non muette et la vidéo iframe de même origine",
     "autoPIPInScroll": "PIP automatique en défilement",
-    "autoPIPInScrollDesc": "Faites défiler la page jusqu'à ce que cette vidéo soit invisible, puis activez PIP"
+    "autoPIPInScrollDesc": "Faites défiler la page jusqu'à ce que cette vidéo soit invisible, puis activez PIP",
+    "showReplacerBtn": "Afficher le bouton de remplacement de la vidéo",
+    "showReplacerBtnDesc": "Remplacez le lecteur vidéo de la page Web par l'extension lecteur vidéo"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",

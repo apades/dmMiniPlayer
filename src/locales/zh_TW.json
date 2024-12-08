@@ -96,7 +96,9 @@
     "autoPIPInPageHide": "頁面隱藏時自動畫中畫",
     "autoPIPInPageHideDesc": "僅支援未靜音的視頻和同源iframe視頻",
     "autoPIPInScroll": "滾動頁面時自動畫中畫",
-    "autoPIPInScrollDesc": "捲動頁面直到該影片不可見，然後開啟 PIP"
+    "autoPIPInScrollDesc": "捲動頁面直到該影片不可見，然後開啟 PIP",
+    "showReplacerBtn": "顯示替換影片按鈕",
+    "showReplacerBtnDesc": "將網頁中的影片播放器替換為擴展影片播放器"
   },
   "popup": {
     "tips": "需要點擊下頁面才能觸發畫中畫播放",

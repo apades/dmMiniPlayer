@@ -96,7 +96,9 @@
     "autoPIPInPageHide": "ページ非表示時の自動 PIP",
     "autoPIPInPageHideDesc": "ミュートされていないビデオと、同じオリジンの iframe ビデオのみをサポートします",
     "autoPIPInScroll": "スクロール時の自動 PIP",
-    "autoPIPInScrollDesc": "このビデオが表示されなくなるまでページをスクロールし、PIP をオンにします"
+    "autoPIPInScrollDesc": "このビデオが表示されなくなるまでページをスクロールし、PIP をオンにします",
+    "showReplacerBtn": "「ビデオを置換」ボタンを表示",
+    "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。"
   },
   "popup": {
     "tips": "ピクチャーインピクチャー再生をトリガーするには,次のページをクリックする必要があります",

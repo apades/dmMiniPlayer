@@ -186,6 +186,11 @@ export const baseConfigMap = {
   //   notRecommended: true,
   // }),
   ...docPIPConfig,
+  showReplacerBtn: config({
+    defaultValue: false,
+    label: t('settingPanel.showReplacerBtn'),
+    desc: t('settingPanel.showReplacerBtnDesc'),
+  }),
 }
 
 export const {

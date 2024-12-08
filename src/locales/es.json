@@ -96,7 +96,9 @@
     "autoPIPInPageHide": "PIP automático en ocultar página",
     "autoPIPInPageHideDesc": "Solo admite videos no silenciados y videos iframe del mismo origen",
     "autoPIPInScroll": "PIP automático en desplazamiento",
-    "autoPIPInScrollDesc": "Desplácese por la página hasta que este video sea invisible, luego active PIP"
+    "autoPIPInScrollDesc": "Desplácese por la página hasta que este video sea invisible, luego active PIP",
+    "showReplacerBtn": "Mostrar botón de reemplazo de video",
+    "showReplacerBtnDesc": "Reemplace el reproductor de video en la página web con el reproductor de video de extensión"
   },
   "popup": {
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",
