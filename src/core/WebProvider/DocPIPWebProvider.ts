@@ -92,25 +92,5 @@ canvas{
 }`,
     })
     playerEl.appendChild(docPIPRootStyle)
-
-    // 弹幕器相关
-    if (this.danmakuEngine) {
-      const danmakuContainer = createElement('div', {
-        style: {
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
-          pointerEvents: 'none',
-        },
-      })
-      playerEl.appendChild(danmakuContainer)
-      this.danmakuEngine.init({
-        media: this.webVideo,
-        container: danmakuContainer,
-      })
-    }
   }
 }

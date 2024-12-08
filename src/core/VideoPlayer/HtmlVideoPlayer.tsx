@@ -10,7 +10,6 @@ import { createRoot } from 'react-dom/client'
 import CanvasVideo from '../CanvasVideo'
 import { PlayerEvent } from '../event'
 import VideoPlayerBase from './VideoPlayerBase'
-// import style from '@root/components/VideoPlayer/index.less?inline'
 import VideoPlayerV2, {
   VideoPlayerHandle,
 } from '@root/components/VideoPlayerV2'
@@ -20,15 +19,6 @@ import WebextEvent from '@root/shared/webextEvent'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import playerConfig from '@root/store/playerConfig'
 
-const styleEl = createElement('div', {
-  className: 'style-list',
-  children: [
-    createElement('link', {
-      rel: 'stylesheet',
-      href: Browser.runtime.getURL('/css.css'),
-    }),
-  ],
-})
 const docPIPStyleEl = createElement('style', {
   innerText: 'html, body { height: 100% }',
 })
@@ -81,7 +71,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     })
     this.playerRootEl = createElement('div', {
       className: 'h-full',
-      children: [root, styleEl, docPIPStyleEl],
+      children: [root, docPIPStyleEl],
     })
     const reactRoot = createRoot(root)
 

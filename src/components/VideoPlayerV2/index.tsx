@@ -15,11 +15,12 @@ import {
   useRef,
   useState,
 } from 'react'
-import Iconfont from '../Iconfont'
+import Browser from 'webextension-polyfill'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
 import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
 import vpContext, { ContextData, defaultVpContext } from './context'
+import DanmakuContainer from './DanmakuContainer'
 import {
   useInWindowKeydown,
   useTogglePlayState,
@@ -221,6 +222,7 @@ const VideoPlayerV2Inner = observer(
           handleChangeActionArea(false)
         }}
       >
+        <link rel="stylesheet" href={Browser.runtime.getURL('/css.css')} />
         <div
           className="video-container relative h-full bg-black cursor-pointer"
           onClick={() => {
@@ -311,6 +313,7 @@ const VideoPlayerV2Inner = observer(
         </div>
 
         <DanmakuInput danmakuSender={props.danmakuSender} />
+        <DanmakuContainer />
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (

@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useRef } from 'react'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { WebProvider } from '.'
 import { createPortal } from 'react-dom'
-import { createElement, getVideoElInitFloatButtonData } from '@root/utils'
+import { createElement, dq1, getVideoElInitFloatButtonData } from '@root/utils'
 import { PlayerEvent } from '../event'
 import { createRoot } from 'react-dom/client'
 import { useSize, useUpdate } from 'ahooks'
@@ -63,29 +63,6 @@ export default class ReplacerWebProvider extends WebProvider {
             qs: 'document',
           })
           sendMessage('event-hacker:enable', { event: 'keyup', qs: 'document' })
-        }
-      })
-
-      useOnce(() => {
-        if (!containerRef.current) return
-        // 弹幕器相关
-        if (this.danmakuEngine) {
-          const danmakuContainer = createElement('div', {
-            style: {
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              overflow: 'hidden',
-              pointerEvents: 'none',
-            },
-          })
-          containerRef.current.appendChild(danmakuContainer)
-          this.danmakuEngine.init({
-            media: this.webVideo,
-            container: danmakuContainer,
-          })
         }
       })
 
