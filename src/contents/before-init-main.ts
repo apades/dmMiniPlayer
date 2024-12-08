@@ -17,13 +17,13 @@ getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG).then((config) => {
       return new RegExp(site.match(/^\/(.*)\/$/)?.[1] ?? '').test(location.href)
     return location.href.includes(site)
   })
-  const eventInjectSites = btoa(
-    JSON.stringify(config?.eventInject_sites ?? DEFAULT_EVENT_INJECT_SITE)
-  )
-  document.documentElement.setAttribute(
-    ATTR_EVENT_INJECT_SITES,
-    eventInjectSites
-  )
+  // const eventInjectSites = btoa(
+  //   JSON.stringify(config?.eventInject_sites ?? DEFAULT_EVENT_INJECT_SITE)
+  // )
+  // document.documentElement.setAttribute(
+  //   ATTR_EVENT_INJECT_SITES,
+  //   eventInjectSites
+  // )
 
   if (!isDisable) return
   document.documentElement.setAttribute(ATTR_DISABLE, 'true')

@@ -106,6 +106,12 @@ export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
       }
     }
     keydownWindow.addEventListener('keydown', handleKeyDown)
+    // 这是给replacer模式监听的，keydown keyup已经被阻止了，通过一层代理转发和监听
+    const handleKeyDownCustom = (e: KeyboardEvent) => {
+      const detail = e.detail
+      handleKeyDown(detail as any)
+    }
+    keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (!webVideo) return
@@ -158,10 +164,18 @@ export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
       }
     }
     keydownWindow.addEventListener('keyup', handleKeyUp)
+    const handleKeyUpCustom = (e: KeyboardEvent) => {
+      const detail = e.detail
+      handleKeyUp(detail as any)
+    }
+    keydownWindow.addEventListener('dm-keyup' as any, handleKeyUpCustom)
 
     return () => {
       keydownWindow.removeEventListener('keydown', handleKeyDown)
       keydownWindow.removeEventListener('keyup', handleKeyUp)
+
+      keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
+      keydownWindow.addEventListener('dm-keyup' as any, handleKeyUpCustom)
     }
   }, [keydownWindow, isLive])
 }

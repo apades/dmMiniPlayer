@@ -181,10 +181,10 @@ export const baseConfigMap = {
     label: t('settingPanel.disableSites'),
     desc: t('settingPanel.disableSitesTips'),
   }),
-  eventInject_sites: config({
-    defaultValue: DEFAULT_EVENT_INJECT_SITE,
-    notRecommended: true,
-  }),
+  // eventInject_sites: config({
+  //   defaultValue: DEFAULT_EVENT_INJECT_SITE,
+  //   notRecommended: true,
+  // }),
   ...docPIPConfig,
 }
 

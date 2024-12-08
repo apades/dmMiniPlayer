@@ -39,30 +39,31 @@ export default class ReplacerWebProvider extends WebProvider {
       }, [size])
 
       useOnce(() => {
-        sendMessage('event-hacker:disable', { event: 'keydown', qs: 'window' })
-        sendMessage('event-hacker:disable', { event: 'keyup', qs: 'window' })
-        sendMessage('event-hacker:disable', { event: 'keypress', qs: 'window' })
-        sendMessage('event-hacker:disable', {
-          event: 'keydown',
-          qs: 'document',
+        const stopPropagationKeyEvent = (e: Event) => {
+          e.stopPropagation()
+
+          window.dispatchEvent(
+            new CustomEvent(`dm-${e.type}`, {
+              detail: e,
+              bubbles: true,
+            })
+          )
+        }
+        const events: (keyof WindowEventMap)[] = [
+          'keydown',
+          'keyup',
+          'keypress',
+        ]
+
+        events.forEach((event) => {
+          // 发现只需要在body上阻止冒泡就可以让window上挂载的keydown事件监听不生效了
+          document.body.addEventListener(event, stopPropagationKeyEvent)
         })
-        sendMessage('event-hacker:disable', { event: 'keyup', qs: 'document' })
-        setTimeout(() => {
-          forceUpdate()
-        }, 0)
 
         return () => {
-          sendMessage('event-hacker:enable', { event: 'keydown', qs: 'window' })
-          sendMessage('event-hacker:enable', { event: 'keyup', qs: 'window' })
-          sendMessage('event-hacker:enable', {
-            event: 'keypress',
-            qs: 'window',
+          events.forEach((event) => {
+            document.body.removeEventListener(event, stopPropagationKeyEvent)
           })
-          sendMessage('event-hacker:enable', {
-            event: 'keydown',
-            qs: 'document',
-          })
-          sendMessage('event-hacker:enable', { event: 'keyup', qs: 'document' })
         }
       })
 
