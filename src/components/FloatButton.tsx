@@ -423,6 +423,7 @@ const FloatButton: FC<Props> = (props) => {
                 <div
                   className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
                   onClick={(e) => {
+                    e.preventDefault()
                     e.stopPropagation()
                     const videoEl =
                       container instanceof HTMLVideoElement

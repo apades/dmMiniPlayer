@@ -9,8 +9,8 @@ import {
 import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
-import configStore from '@root/store/config'
-import { ownerWindow } from '@root/utils'
+import configStore, { ReplacerDbClickAction } from '@root/store/config'
+import { isIframe, ownerWindow } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
@@ -49,6 +49,8 @@ import VolumeBar from './VolumeBar'
 import VolumeIcon from './VolumeIcon'
 import screenfull from '@root/utils/screenfull'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { postMessageToTop } from '@root/utils/windowMessages'
+import PostMessageEvent from '@root/shared/postMessageEvent'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -60,8 +62,8 @@ export type VideoPlayerHandle = {
 
 type Props = {
   className?: string
+  isReplacerMode?: boolean
   showCloseButton?: boolean
-  showScreenControlButton?: boolean
 } & Omit<ContextData, 'eventBus'>
 
 type VpInnerProps = Props & {
@@ -149,6 +151,30 @@ const VideoPlayerV2Inner = observer(
       // }
     }, [videoRef.current, isFullInWeb])
 
+    const toggleFullInWeb = useMemoizedFn(() => {
+      setFullInWeb((v) => {
+        const toFullInWeb = !v
+        console.log('isIframe', isIframe())
+        if (isIframe()) {
+          postMessageToTop(
+            toFullInWeb
+              ? PostMessageEvent.fullInWeb_request
+              : PostMessageEvent.fullInWeb_close
+          )
+        }
+        return toFullInWeb
+      })
+    })
+    const toggleFullscreen = useMemoizedFn(() => {
+      if (screenfull.isFullscreen) {
+        screenfull.exit()
+        setFullscreen(false)
+      } else {
+        screenfull.isEnabled && screenfull.request(videoPlayerRef.current)
+        setFullscreen(true)
+      }
+    })
+
     useEffect(() => {
       if (!isFullInWeb) return
       const bodyOverflow = document.body.style.overflow
@@ -157,23 +183,24 @@ const VideoPlayerV2Inner = observer(
         document.body.style.overflow = bodyOverflow
       }
     }, [isFullInWeb])
-    const handleQuitFullInWebOrFullscreen = useMemoizedFn(
-      (e: KeyboardEvent) => {
-        if (e.key !== 'Escape') return
-        if (isFullInWeb) return setFullInWeb(false)
-        if (screenfull.isFullscreen) {
-          screenfull.exit()
-          setFullscreen(false)
-          return
-        }
-      }
-    )
+    const quitFullMode = useMemoizedFn(() => {
+      if (isFullInWeb) return toggleFullInWeb()
+      if (screenfull.isFullscreen) return toggleFullscreen()
+    })
 
     useTargetEventListener(
       'dblclick',
       () => {
-        screenfull.isEnabled && screenfull.request(videoPlayerRef.current)
-        setFullscreen(true)
+        if (configStore.replacerDbClickAction === ReplacerDbClickAction.none)
+          return
+        switch (configStore.replacerDbClickAction) {
+          case ReplacerDbClickAction.fullScreen: {
+            toggleFullscreen()
+          }
+          case ReplacerDbClickAction.fullInWeb: {
+            toggleFullInWeb()
+          }
+        }
       },
       videoPlayerRef.current
     )
@@ -210,7 +237,9 @@ const VideoPlayerV2Inner = observer(
 
     // 初始化
     useInWindowKeydown((e) => {
-      handleQuitFullInWebOrFullscreen(e)
+      if (e.key === 'Escape') {
+        quitFullMode()
+      }
     })
     useWebVideoEventsInit()
 
@@ -350,26 +379,17 @@ const VideoPlayerV2Inner = observer(
 
               <div className="right ml-auto f-i-center gap-1">
                 <VolumeBar />
-                {props.showCloseButton && (
+                {props.isReplacerMode && (
                   <>
                     <div
                       className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors ml-[6px]"
-                      onClick={() => setFullInWeb((v) => !v)}
+                      onClick={toggleFullInWeb}
                     >
                       {isFullInWeb ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
                     </div>
                     <div
                       className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
-                      onClick={() => {
-                        if (screenfull.isFullscreen) {
-                          screenfull.exit()
-                          setFullscreen(false)
-                        } else {
-                          screenfull.isEnabled &&
-                            screenfull.request(videoPlayerRef.current)
-                          setFullscreen(true)
-                        }
-                      }}
+                      onClick={toggleFullscreen}
                     >
                       {isFullscreen ? (
                         <FullscreenExitOutlined />
@@ -401,7 +421,7 @@ const VideoPlayerV2Inner = observer(
           </div>
         )}
 
-        {props.showCloseButton && (
+        {props.isReplacerMode && (
           <div
             className="rounded-full wh-[40px] cursor-pointer right-[20px] top-0 absolute z-20 text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all group-[&.action-area-active]:top-[20px] opacity-0 group-[&.action-area-active]:opacity-100"
             onClick={() => {

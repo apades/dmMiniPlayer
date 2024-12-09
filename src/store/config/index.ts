@@ -38,6 +38,12 @@ export enum videoBorderType {
   height = 'height',
 }
 
+export enum ReplacerDbClickAction {
+  none = 'none',
+  fullScreen = 'fullScreen',
+  fullInWeb = 'fullInWeb',
+}
+
 export const baseConfigMap = {
   ...config_floatButton,
   ...config_danmaku,
@@ -190,6 +196,13 @@ export const baseConfigMap = {
     defaultValue: false,
     label: t('settingPanel.showReplacerBtn'),
     desc: t('settingPanel.showReplacerBtnDesc'),
+  }),
+  replacerDbClickAction: config<ReplacerDbClickAction>({
+    defaultValue: ReplacerDbClickAction.fullScreen,
+    type: 'group',
+    group: Object.values(ReplacerDbClickAction),
+    relateBy: 'showReplacerBtn',
+    relateByValue: true,
   }),
 }
 

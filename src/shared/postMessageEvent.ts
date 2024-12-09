@@ -12,6 +12,9 @@ enum PostMessageEvent {
   webRTC_answer = 'webRTCAnswer',
   webRTC_candidate = 'webRTCCandidate',
   webRTC_close = 'webRTCClose',
+  fullInWeb_request = 'fullInWeb_request',
+  fullInWeb_close = 'fullInWeb_close',
+  fullInWeb_eventProxy = 'fullInWeb_eventProxy',
 }
 
 export type BaseVideoState = {
@@ -58,6 +61,13 @@ export interface PostMessageProtocolMap {
   [PostMessageEvent.webRTC_answer]: RTCSessionDescriptionInit
   [PostMessageEvent.webRTC_candidate]: RTCIceCandidateInit
   [PostMessageEvent.webRTC_close]: void
+  [PostMessageEvent.fullInWeb_request]: void
+  [PostMessageEvent.fullInWeb_close]: void
+  [PostMessageEvent.fullInWeb_eventProxy]: {
+    target: { tagName: string; contentEditable: string }
+    code: string
+    type: string
+  }
 }
 
 export default PostMessageEvent

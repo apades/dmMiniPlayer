@@ -8,7 +8,7 @@ import PostMessageEvent, {
 import WebextEvent from '@root/shared/webextEvent'
 import { DocPIPRenderType } from '@root/store/config'
 import playerConfig from '@root/store/playerConfig'
-import { createElement, dq, dq1Adv } from '@root/utils'
+import { createElement, dq, dq1Adv, getIframeElFromSource } from '@root/utils'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import {
   onPostMessage,
@@ -261,9 +261,7 @@ function main() {
           const isIframe = captureSource !== window
 
           if (isIframe) {
-            const targetIframeEl = dq('iframe').find(
-              (iframeEl) => iframeEl.contentWindow === captureSource
-            )
+            const targetIframeEl = getIframeElFromSource(captureSource)
             if (!targetIframeEl) {
               console.error('captureSource', captureSource)
               throw Error('找不到captureSource iframe')
@@ -311,6 +309,61 @@ function main() {
   // 从floatButton发起的启动设置面板
   onPostMessage(PostMessageEvent.openSettingPanel, () => {
     window.openSettingPanel()
+  })
+
+  // iframe里发起的fullInWeb，把该iframe也撑满全屏
+  onPostMessage(PostMessageEvent.fullInWeb_request, (_, source) => {
+    const iframe = getIframeElFromSource(source)
+    if (!iframe) {
+      console.error('fullInWeb_request找不到iframe元素')
+      return
+    }
+
+    const bodyOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const originStyle = iframe.getAttribute('style') || ''
+    iframe.setAttribute(
+      'style',
+      'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;'
+    )
+
+    // 转发top的按键输入事件到tar iframe里
+    const stopPropagationKeyEventAndSendProxyEventToIframe = (e: any) => {
+      e.stopPropagation()
+      postMessageToChild(
+        PostMessageEvent.fullInWeb_eventProxy,
+        {
+          code: e.code,
+          target: {
+            contentEditable: e.target.contentEditable,
+            tagName: e.target.tagName,
+          },
+          type: e.type,
+        },
+        source
+      )
+    }
+    const events: (keyof WindowEventMap)[] = ['keydown', 'keyup', 'keypress']
+    events.forEach((event) => {
+      // 发现只需要在body上阻止冒泡就可以让window上挂载的keydown事件监听不生效了
+      document.body.addEventListener(
+        event,
+        stopPropagationKeyEventAndSendProxyEventToIframe
+      )
+    })
+
+    const unListen = onPostMessage(PostMessageEvent.fullInWeb_close, () => {
+      unListen()
+      document.body.style.overflow = bodyOverflow
+      events.forEach((event) => {
+        document.body.removeEventListener(
+          event,
+          stopPropagationKeyEventAndSendProxyEventToIframe
+        )
+      })
+      iframe.setAttribute('style', originStyle)
+    })
   })
 
   // chrome右上角媒体控制的启动画中画按钮

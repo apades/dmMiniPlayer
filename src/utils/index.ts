@@ -552,3 +552,10 @@ export const getVideoElInitFloatButtonData = (
   }
   return [topParentWithPosition, videoTarget]
 }
+
+export const isIframe = (tar = window.self) => window.top !== tar
+
+export const getIframeElFromSource = (source: Window) => {
+  const iframe = dq('iframe').find((d) => d.contentWindow === source)
+  return iframe
+}
