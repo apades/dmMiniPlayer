@@ -16,11 +16,6 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
 
     // 注入js
     sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
-    sendMessage('event-hacker:enable', { qs: 'document', event: 'pagehide' })
-    sendMessage('event-hacker:enable', {
-      qs: 'window',
-      event: 'visibilitychange',
-    })
     sendMessage('event-hacker:enable', {
       qs: 'document',
       event: 'visibilitychange',
@@ -75,11 +70,6 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
   onUnload() {
     this.stopObserveHtmlDanmaku()
     sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
-    sendMessage('event-hacker:enable', { qs: 'document', event: 'pagehide' })
-    sendMessage('event-hacker:enable', {
-      qs: 'window',
-      event: 'visibilitychange',
-    })
     sendMessage('event-hacker:enable', {
       qs: 'document',
       event: 'visibilitychange',

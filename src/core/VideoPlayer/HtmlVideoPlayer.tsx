@@ -9,7 +9,7 @@ import { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
 import CanvasVideo from '../CanvasVideo'
 import { PlayerEvent } from '../event'
-import VideoPlayerBase from './VideoPlayerBase'
+import VideoPlayerBase, { supportOnVideoChangeTypes } from './VideoPlayerBase'
 import VideoPlayerV2, {
   VideoPlayerHandle,
 } from '@root/components/VideoPlayerV2'
@@ -213,11 +213,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     reactRoot.render(playerComponent)
 
-    const supportOnVideoChange = [
-      DocPIPRenderType.replaceVideoEl,
-      DocPIPRenderType.capture_captureStreamWithCanvas,
-      DocPIPRenderType.capture_captureStream,
-    ].includes(renderMode)
+    const supportOnVideoChange = supportOnVideoChangeTypes.includes(renderMode)
 
     this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
       console.log('observeVideoElChange', newVideoEl)

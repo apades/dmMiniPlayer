@@ -20,6 +20,13 @@ export type BaseComponent = {
   webVideoEl: HTMLVideoElement
 }
 
+export const supportOnVideoChangeTypes = [
+  DocPIPRenderType.replaceVideoEl,
+  DocPIPRenderType.capture_captureStreamWithCanvas,
+  DocPIPRenderType.capture_captureStream,
+  DocPIPRenderType.replaceWebVideoDom,
+]
+
 export type MiniPlayerProps = ExtendComponent & BaseComponent
 
 export default class VideoPlayerBase
@@ -78,11 +85,7 @@ export default class VideoPlayerBase
 
     const renderMode =
       playerConfig.forceDocPIPRenderType || configStore.docPIP_renderType
-    const supportOnVideoChange = [
-      DocPIPRenderType.replaceVideoEl,
-      DocPIPRenderType.capture_captureStreamWithCanvas,
-      DocPIPRenderType.capture_captureStream,
-    ].includes(renderMode)
+    const supportOnVideoChange = supportOnVideoChangeTypes.includes(renderMode)
 
     if (supportOnVideoChange) {
       this.unobserveVideoElChange = observeVideoEl(
