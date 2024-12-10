@@ -3,7 +3,7 @@
     "message": "彈幕畫中畫播放器"
   },
   "appDesc": {
-    "message": "支援最新的畫中畫API功能，並且可以在 視訊/直播 中 播放/發送 彈幕"
+    "message": "增強畫中畫影片播放器，支援所有影片控制、字幕、彈幕、PIP側邊欄變更Youtube/bilibili影片、取代網頁影片播放器等。"
   },
   "back": {
     "message": "後退"

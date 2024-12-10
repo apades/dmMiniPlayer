@@ -3,7 +3,7 @@
     "message": "Reproductor de imagen en imagen Danmaku"
   },
   "appDesc": {
-    "message": "Admite la última función API de imagen en imagen y puede reproducir/enviar bombardeos en videos/transmisiones en vivo"
+    "message": "Reproductor de video de imagen en imagen mejorado, admite todos los controles de video, subtítulos, danmaku, cambia el video de Youtube/bilibili en la barra lateral PIP, reemplaza el reproductor de video web, etc."
   },
   "back": {
     "message": "Volver"

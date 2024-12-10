@@ -3,7 +3,7 @@
     "message": "Danmaku mini player - picture-in-picture video player"
   },
   "appDesc": {
-    "message": "Supports the latest picture-in-picture API function, and can play/send danmaku in video/live"
+    "message": "Enhanced picture in picture video player, support all video controls, subtitle, danmaku, change Youtube/bilibili video in PIP sidebar, replace web video player, etc."
   },
   "back":{
     "message":"backward"
