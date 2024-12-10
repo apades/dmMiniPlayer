@@ -561,4 +561,7 @@ export const getIframeElFromSource = (source: Window) => {
 }
 
 export const isDocPIP = (tar = window) =>
-  window.top !== tar && window.top?.documentPictureInPicture?.window === tar
+  !!tryCatch(
+    () =>
+      window.top !== tar && window.top?.documentPictureInPicture?.window === tar
+  )[1]
