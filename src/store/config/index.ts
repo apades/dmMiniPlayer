@@ -6,7 +6,8 @@ import {
   setBrowserSyncStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
-import * as mobx from 'mobx'
+import { autorun, makeAutoObservable, observe as mobxObserve } from 'mobx'
+import { observer } from 'mobx-react'
 import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import en from '@apad/setting-panel/i18n/en.json'
@@ -214,7 +215,7 @@ export const {
 } = initSetting({
   settings: baseConfigMap,
   saveInLocal: !isPluginEnv,
-  mobx,
+  mobx: { makeAutoObservable, observer, observe: mobxObserve },
   i18n: getIsZh() ? zh : en,
   async onSave(newConfig) {
     if (newConfig.language) {
@@ -304,7 +305,7 @@ window.openSettingPanel = openSettingPanel
 
 let firstChange = true
 // 同步icon栏的修改隐藏floatButton
-mobx.autorun(() => {
+autorun(() => {
   const val = !configStore.floatButtonVisible
   // 第一次的值是不对的
   if (firstChange) {
