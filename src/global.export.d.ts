@@ -1,5 +1,6 @@
 import { WebProvider } from './core/WebProvider'
 import { Language } from './utils/i18n'
+import type { openSettingPanel } from '@root/store/config'
 
 declare module 'react' {
   interface CSSProperties {
@@ -29,7 +30,7 @@ declare global {
       /**被focus过的视频 */
       focusIndex: string | number
     }
-    openSettingPanel: () => void
+    openSettingPanel: typeof openSettingPanel
     __LOCALE: Language
     provider?: WebProvider
 

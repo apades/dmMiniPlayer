@@ -294,8 +294,8 @@ if (isPluginEnv) {
   }
 }
 
-export function openSettingPanel() {
-  _openSettingPanel()
+export function openSettingPanel(renderTarget?: HTMLElement) {
+  _openSettingPanel(renderTarget)
   setTimeout(updateConfig, 50)
 }
 

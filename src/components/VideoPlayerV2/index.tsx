@@ -4,13 +4,14 @@ import {
   FullscreenExitOutlined,
   FullscreenOutlined,
   LeftOutlined,
+  SettingOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons'
 import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
-import { isIframe, ownerWindow } from '@root/utils'
+import { isDocPIP, isIframe, ownerWindow } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
@@ -196,9 +197,11 @@ const VideoPlayerV2Inner = observer(
         switch (configStore.replacerDbClickAction) {
           case ReplacerDbClickAction.fullScreen: {
             toggleFullscreen()
+            break
           }
           case ReplacerDbClickAction.fullInWeb: {
             toggleFullInWeb()
+            break
           }
         }
       },
@@ -271,6 +274,18 @@ const VideoPlayerV2Inner = observer(
         updateVideo,
         updateVideoStream,
         ref: videoRef,
+      }
+    })
+
+    const handleOpenSetting = useMemoizedFn(() => {
+      const tarWin =
+        (videoPlayerRef.current?.ownerDocument.defaultView as any) ?? window
+      // 全屏模式和docPIP内需要
+      if (isFullscreen || isDocPIP(tarWin)) {
+        if (!videoPlayerRef.current) return
+        window.openSettingPanel(videoPlayerRef.current)
+      } else {
+        postMessageToTop(PostMessageEvent.openSettingPanel)
       }
     })
 
@@ -375,6 +390,13 @@ const VideoPlayerV2Inner = observer(
                 <DanmakuInputIcon danmakuSender={props.danmakuSender} />
 
                 <PlaybackRateSelection />
+
+                <div
+                  className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+                  onClick={handleOpenSetting}
+                >
+                  <SettingOutlined />
+                </div>
               </div>
 
               <div className="right ml-auto f-i-center gap-1">

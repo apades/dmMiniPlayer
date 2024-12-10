@@ -559,3 +559,6 @@ export const getIframeElFromSource = (source: Window) => {
   const iframe = dq('iframe').find((d) => d.contentWindow === source)
   return iframe
 }
+
+export const isDocPIP = (tar = window) =>
+  window.top !== tar && window.top?.documentPictureInPicture?.window === tar
