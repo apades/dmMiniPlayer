@@ -98,7 +98,13 @@
     "autoPIPInScroll": "スクロール時の自動 PIP",
     "autoPIPInScrollDesc": "このビデオが表示されなくなるまでページをスクロールし、PIP をオンにします",
     "showReplacerBtn": "「ビデオを置換」ボタンを表示",
-    "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。"
+    "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。",
+    "replacerDbClickAction": "ダブルクリックアクション"
+  },
+  "shortcut": {
+    "fullscreen": "全画面表示",
+    "fullpage": "全ページ",
+    "none": "なし"
   },
   "popup": {
     "tips": "ピクチャーインピクチャー再生をトリガーするには,次のページをクリックする必要があります",

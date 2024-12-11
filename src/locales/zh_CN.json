@@ -98,7 +98,13 @@
     "autoPIPInScroll": "滚动页面时自动画中画",
     "autoPIPInScrollDesc": "滚动页面直到该视频不可见，然后打开PIP",
     "showReplacerBtn": "显示替换视频按钮",
-    "showReplacerBtnDesc": "将网页中的视频播放器替换成插件的视频播放器"
+    "showReplacerBtnDesc": "将网页中的视频播放器替换成插件的视频播放器",
+    "replacerDbClickAction": "双击动作"
+  },
+  "shortcut": {
+    "fullscreen": "全屏",
+    "fullpage": "整页",
+    "none": "无操作"
   },
   "popup": {
     "tips": "需要点击下页面才能触发画中画播放",

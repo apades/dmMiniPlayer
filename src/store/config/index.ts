@@ -41,8 +41,8 @@ export enum videoBorderType {
 
 export enum ReplacerDbClickAction {
   none = 'none',
-  fullScreen = 'fullScreen',
-  fullInWeb = 'fullInWeb',
+  fullscreen = 'fullscreen',
+  fullpage = 'fullpage',
 }
 
 export const baseConfigMap = {
@@ -199,9 +199,17 @@ export const baseConfigMap = {
     desc: t('settingPanel.showReplacerBtnDesc'),
   }),
   replacerDbClickAction: config<ReplacerDbClickAction>({
-    defaultValue: ReplacerDbClickAction.fullScreen,
+    label: t('settingPanel.replacerDbClickAction'),
+    defaultValue: ReplacerDbClickAction.fullscreen,
     type: 'group',
-    group: Object.values(ReplacerDbClickAction),
+    group: [
+      { value: ReplacerDbClickAction.none, label: t('shortcut.none') },
+      {
+        value: ReplacerDbClickAction.fullscreen,
+        label: t('shortcut.fullscreen'),
+      },
+      { value: ReplacerDbClickAction.fullpage, label: t('shortcut.fullpage') },
+    ],
     relateBy: 'showReplacerBtn',
     relateByValue: true,
   }),

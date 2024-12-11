@@ -195,11 +195,11 @@ const VideoPlayerV2Inner = observer(
         if (configStore.replacerDbClickAction === ReplacerDbClickAction.none)
           return
         switch (configStore.replacerDbClickAction) {
-          case ReplacerDbClickAction.fullScreen: {
+          case ReplacerDbClickAction.fullscreen: {
             toggleFullscreen()
             break
           }
-          case ReplacerDbClickAction.fullInWeb: {
+          case ReplacerDbClickAction.fullpage: {
             toggleFullInWeb()
             break
           }

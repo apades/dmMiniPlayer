@@ -98,7 +98,13 @@
     "autoPIPInScroll": "PIP automatique en défilement",
     "autoPIPInScrollDesc": "Faites défiler la page jusqu'à ce que cette vidéo soit invisible, puis activez PIP",
     "showReplacerBtn": "Afficher le bouton de remplacement de la vidéo",
-    "showReplacerBtnDesc": "Remplacez le lecteur vidéo de la page Web par l'extension lecteur vidéo"
+    "showReplacerBtnDesc": "Remplacez le lecteur vidéo de la page Web par l'extension lecteur vidéo",
+    "replacerDbClickAction": "Action de double-clic"
+  },
+  "shortcut": {
+    "fullscreen": "Plein écran",
+    "fullpage": "Pleine page",
+    "none": "Aucun"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",
