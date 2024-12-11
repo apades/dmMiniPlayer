@@ -1,3 +1,9 @@
+## v0.6.21
+1. Optimize the replacement web video function
+   1. Optimize the full-page function of videos embedded in iframes on web pages
+   2. Add double-click to select full-screen or full-page setting
+2. Upgrade the underlying code of the settings panel
+
 ## v0.6.20
 Added the function of replacing web videos into extension players, which needs to be turned on in settings.
 
