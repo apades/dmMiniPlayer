@@ -392,7 +392,10 @@ const VideoPlayerV2Inner = observer(
                 <PlaybackRateSelection />
 
                 <div
-                  className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+                  className={classNames(
+                    'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors md:block',
+                    !props.isReplacerMode && 'hidden'
+                  )}
                   onClick={handleOpenSetting}
                 >
                   <SettingOutlined />
