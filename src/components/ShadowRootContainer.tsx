@@ -26,6 +26,13 @@ const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
           })
         )
       })
+    } else {
+      root.shadowRoot!.append(
+        createElement('link', {
+          rel: 'stylesheet',
+          href: Browser.runtime.getURL('/css.css'),
+        })
+      )
     }
     return root
   }, [])

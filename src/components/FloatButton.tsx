@@ -485,7 +485,7 @@ const FloatButton: FC<Props> = (props) => {
                     '--x': '0',
                   }}
                 >
-                  <div className="p-1 text-left whitespace-pre-line">
+                  <div className="p-1 text-left whitespace-pre">
                     NEW:
                     <br />
                     {changeLog}

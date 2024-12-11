@@ -102,8 +102,8 @@
     "replacerDbClickAction": "Double click action"
   },
   "shortcut": {
-    "fullscreen": "Fullscreen",
-    "fullpage": "Fullpage",
+    "fullscreen": "Full-screen",
+    "fullpage": "Full-page",
     "none": "None"
   },
   "popup": {
