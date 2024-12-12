@@ -102,6 +102,7 @@ const FloatButton: FC<Props> = (props) => {
     const log = getIsZh() ? env.upgrade_zh : env.upgrade_en
     return log || t('floatButton.smallUpdate')
   })
+  const [savedVer, setSavedVer] = useState('')
 
   useOnce(() =>
     useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (hidden) => {
@@ -115,6 +116,7 @@ const FloatButton: FC<Props> = (props) => {
   useOnce(() =>
     useBrowserLocalStorage(LATEST_SAVE_VERSION, (ver) => {
       setUpgradeShow(ver !== env.version)
+      if (ver) setSavedVer(ver)
     })
   )
 
@@ -486,8 +488,20 @@ const FloatButton: FC<Props> = (props) => {
                   }}
                 >
                   <div className="p-1 text-left whitespace-pre-wrap">
-                    NEW:
-                    <br />
+                    <p className="f-i-center mb-1">
+                      NEW: {savedVer || ''} -&gt; {env.version}{' '}
+                      <a
+                        href={
+                          'https://github.com/apades/dmMiniPlayer/blob/main/docs/changeLog' +
+                          `${getIsZh() ? '-zh' : ''}` +
+                          `.md#v${env.version.replaceAll('.', '')}`
+                        }
+                        target="_blank"
+                        className="ml-auto text-blue-500"
+                      >
+                        More
+                      </a>
+                    </p>
                     {changeLog}
                     <div className="f-i-center">
                       <div
