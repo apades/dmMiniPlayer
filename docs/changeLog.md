@@ -1,3 +1,6 @@
+## v0.6.22
+Fixed the problem of incorrect display when reopening the settings panel of the previous version
+
 ## v0.6.21
 1. Optimize the replacement web video function
    1. Optimize the full-page function of videos embedded in iframes on web pages
