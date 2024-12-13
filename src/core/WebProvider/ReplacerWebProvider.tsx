@@ -108,7 +108,7 @@ export default class ReplacerWebProvider extends WebProvider {
       return (
         <ShadowRootContainer>
           <div
-            className="absolute"
+            className="absolute scale-100"
             style={{
               left: isFixedPos ? rect.left : 0,
               top: isFixedPos ? rect.top : 0,

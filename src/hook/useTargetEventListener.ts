@@ -3,6 +3,7 @@ import { useLatest } from 'ahooks'
 import { BasicTarget } from 'ahooks/lib/utils/domTarget'
 import useEffectWithTarget from 'ahooks/lib/utils/useEffectWithTarget'
 import { getTargetElement } from 'ahooks/lib/utils/domTarget'
+import { useEffect } from 'react'
 
 export type Target =
   | BasicTarget<HTMLElement | Element | Window | Document>
@@ -59,5 +60,19 @@ function useTargetEventListener(
     [eventName],
     target,
   )
+
+  useEffect(() => {
+    // 替换模式下document.body的keydown都被屏蔽了，需要走代理
+    if (!(target instanceof Window)) return
+    if (!['keydown', 'keyup', 'keypress'].includes(eventName)) return
+    const handleKeyDownCustom: any = (e: KeyboardEvent) => {
+      const detail = e.detail
+      handlerRef.current(detail as any)
+    }
+    target.addEventListener('dm-' + eventName, handleKeyDownCustom)
+    return () => {
+      target.removeEventListener('dm-' + eventName, handleKeyDownCustom)
+    }
+  }, [target, handlerRef.current])
 }
 export default useTargetEventListener
