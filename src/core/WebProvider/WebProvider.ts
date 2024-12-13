@@ -14,9 +14,9 @@ import VideoPlayerBase, {
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
-import { checkIsLive } from '@root/utils/video'
 import EventSwitcher from '@root/utils/EventSwitcher'
 import playerConfig from '@root/store/playerConfig'
+import { checkIsLive } from '@root/utils/video'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 const FEAT_PROVIDER_LIST = [
@@ -116,6 +116,7 @@ export default abstract class WebProvider
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.injectVideoEventsListener(this.webVideo)
     this.bindCommandsEvent()
+    this.isLive ??= checkIsLive(this.webVideo)
 
     const MiniPlayer = (Object.getPrototypeOf(this) as WebProvider).MiniPlayer
     this.miniPlayer = new MiniPlayer({
@@ -143,8 +144,7 @@ export default abstract class WebProvider
       this.unload()
       if (configStore.pauseInClose_video) {
         const video = this.webVideo
-        const isLive = checkIsLive(video)
-        if (configStore.pauseInClose_live || !isLive) {
+        if (!this.isLive) {
           video.pause()
         }
       }

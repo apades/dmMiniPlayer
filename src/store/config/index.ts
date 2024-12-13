@@ -67,11 +67,6 @@ export const baseConfigMap = {
     notRecommended: true,
   }),
 
-  videoNoJudgeDurInLive: config({
-    desc: t('settingPanel.videoNoJudgeDurationInLiveDesc'),
-    defaultValue: false,
-    notRecommended: true,
-  }),
   videoSharpening: config({
     defaultValue: false,
     label: t('settingPanel.videoSharpening'),
@@ -128,13 +123,13 @@ export const baseConfigMap = {
     defaultValue: true,
     label: t('settingPanel.pauseInClose_video'),
   }),
-  pauseInClose_live: config({
-    defaultValue: false,
-    label: t('settingPanel.pauseInClose_live'),
-    desc: t('settingPanel.pauseInClose_liveDesc'),
-    relateBy: 'pauseInClose_video',
-    relateByValue: true,
-  }),
+  // pauseInClose_live: config({
+  //   defaultValue: false,
+  //   label: t('settingPanel.pauseInClose_live'),
+  //   desc: t('settingPanel.pauseInClose_liveDesc'),
+  //   relateBy: 'pauseInClose_video',
+  //   relateByValue: true,
+  // }),
   // debug
   useIframeToDetectIsLiveOnYoutube: config({
     defaultValue: false,

@@ -23,6 +23,7 @@ export default class ReplacerWebProvider extends WebProvider {
   protected MiniPlayer = HtmlVideoPlayer
 
   async onOpenPlayer() {
+    const paused = this.webVideo.paused
     await this.miniPlayer.init()
 
     const videoEl = this.webVideo
@@ -145,5 +146,16 @@ export default class ReplacerWebProvider extends WebProvider {
         replacerParent.removeChild(root)
       })
     }
+
+    // 有出现播放中替换播放器会导致播放器暂停的问题
+    setTimeout(() => {
+      if (this.webVideo.paused !== paused) {
+        if (paused) {
+          this.webVideo.pause()
+        } else {
+          this.webVideo.play()
+        }
+      }
+    }, 50)
   }
 }

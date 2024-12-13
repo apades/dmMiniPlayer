@@ -4,6 +4,7 @@ import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
 import { dq1Adv } from '@root/utils'
 
 export default class BilibiliLiveProvider extends WebProvider {
+  isLive = true
   onInit(): void {
     this.danmakuSender = new DanmakuSender()
     this.danmakuSender.setData({
