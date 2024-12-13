@@ -5,7 +5,7 @@ const str = (v, o, c) =>
   String.fromCharCode(...new Uint8Array(v.buffer, v.byteOffset + o, c))
 const rts = (v, o, c, s) =>
   new Uint8Array(v.buffer, v.byteOffset + o, c).set(
-    s.split('').map((str) => str.charCodeAt(0))
+    s.split('').map((str) => str.charCodeAt(0)),
   )
 const pst = (v, o, c) => str(v, o + 1, Math.min(v.getUint8(o), c - 1))
 const tsp = (v, o, c, s) => {

@@ -33,7 +33,7 @@ const VIDEO_ID_ATTR = 'data-dm-vid'
 
 export const postStartPIPDataMsg = async (
   renderType: DocPIPRenderType,
-  videoEl: HTMLVideoElement
+  videoEl: HTMLVideoElement,
 ) => {
   const id = videoEl.getAttribute(VIDEO_ID_ATTR)!
   const rect = videoEl.getBoundingClientRect()
@@ -108,7 +108,7 @@ const FloatButton: FC<Props> = (props) => {
     useBrowserSyncStorage(FLOAT_BTN_HIDDEN, (hidden) => {
       if (!floatBtn.current) return
       floatBtn.current.style.visibility = !hidden ? 'visible' : 'hidden'
-    })
+    }),
   )
 
   const [isUpgradeShow, setUpgradeShow] = useState(false)
@@ -117,7 +117,7 @@ const FloatButton: FC<Props> = (props) => {
     useBrowserLocalStorage(LATEST_SAVE_VERSION, (ver) => {
       setUpgradeShow(ver !== env.version)
       if (ver) setSavedVer(ver)
-    })
+    }),
   )
 
   const [id] = useState(() => uuid())
@@ -175,7 +175,7 @@ const FloatButton: FC<Props> = (props) => {
       }
       startShowFloatBtn()
     },
-    mouseTarget
+    mouseTarget,
   )
   useTargetEventListener(
     'mouseleave',
@@ -183,7 +183,7 @@ const FloatButton: FC<Props> = (props) => {
       clear()
       hiddenFloatBtn()
     },
-    mouseTarget
+    mouseTarget,
   )
 
   // webRTC unmount
@@ -219,7 +219,7 @@ const FloatButton: FC<Props> = (props) => {
             }
             const unListen = onPostMessage(
               PostMessageEvent.webRTC_close,
-              handleUnmount
+              handleUnmount,
             )
             webRTCUnmountRef.current = handleUnmount
             break
@@ -231,7 +231,7 @@ const FloatButton: FC<Props> = (props) => {
       if (isErrorInOtherMode) {
         console.error(
           '🔴 其他模式也不可用，启动保底的旧画中画',
-          isErrorInOtherMode
+          isErrorInOtherMode,
         )
         videoEl.requestPictureInPicture()
         throw Error('该视频可能在非同源的iframe中，目前不支持非同源iframe')
@@ -274,14 +274,14 @@ const FloatButton: FC<Props> = (props) => {
       if (data.currentTime !== undefined) {
         video.currentTime = data.currentTime
       }
-    })
+    }),
   )
   // 处理top发来的请求PIP
   useOnce(() =>
     onPostMessage(PostMessageEvent.requestVideoPIP, (data) => {
       if (data.id !== id) return
       handleStartPIP()
-    })
+    }),
   )
 
   const containerSize = useSize(container)
@@ -355,7 +355,7 @@ const FloatButton: FC<Props> = (props) => {
               )
             })}
           </div>,
-          container
+          container,
         )}
 
       {createPortal(
@@ -392,7 +392,7 @@ const FloatButton: FC<Props> = (props) => {
           <div
             ref={floatBtn}
             className={classNames(
-              'group absolute z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn'
+              'group absolute z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn',
             )}
             style={posStyle}
             onMouseEnter={() => {
@@ -480,7 +480,7 @@ const FloatButton: FC<Props> = (props) => {
                       'right-[--x] bottom-[--y]':
                         configStore.floatButtonPos ===
                         FloatButtonPos.rightBottom,
-                    }
+                    },
                   )}
                   style={{
                     '--y': 'calc(100% + 4px)',
@@ -511,7 +511,7 @@ const FloatButton: FC<Props> = (props) => {
                           e.preventDefault()
                           setBrowserLocalStorage(
                             LATEST_SAVE_VERSION,
-                            env.version
+                            env.version,
                           )
                           setUpgradeShow(false)
                           isHoverLockRef.current = false
@@ -527,7 +527,7 @@ const FloatButton: FC<Props> = (props) => {
           </div>
           {/* </DraggerContainer> */}
         </ShadowRootContainer>,
-        container
+        container,
       )}
     </>
   )

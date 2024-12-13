@@ -43,7 +43,7 @@ export class CanvasVideoPlayer extends VideoPlayerBase {
             this.x,
             this.y,
             this.width,
-            this.height
+            this.height,
           )
           if (this.hasSeek) {
             this.danmakuEngine.drawInSeek()

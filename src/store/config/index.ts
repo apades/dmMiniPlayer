@@ -266,7 +266,7 @@ export const {
     if (!isPluginEnv) return config
     // 这里去掉as any会触发ts的循环type错误
     const savedConfig = (await getBrowserSyncStorage(
-      DM_MINI_PLAYER_CONFIG
+      DM_MINI_PLAYER_CONFIG,
     )) as any
 
     const loadedConfig = { ...config, ...(savedConfig ?? {}) }

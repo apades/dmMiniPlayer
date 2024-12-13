@@ -13,7 +13,7 @@ const polyfillPlugin = {
         return {
           path: path.resolve(__dirname, './browser/index.ts'),
         }
-      }
+      },
     )
   },
 }

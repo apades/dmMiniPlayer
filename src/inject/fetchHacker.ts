@@ -1,4 +1,3 @@
-/* eslint-disable prefer-rest-params */
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 
 // ? bilibili的/x/v2/dm/web接口还是用的XMLHttpRequest，用不用替换这个

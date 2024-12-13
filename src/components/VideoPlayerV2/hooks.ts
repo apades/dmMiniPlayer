@@ -134,7 +134,7 @@ export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
 
           speedModeTimer = null
           // https://github.com/apades/dmMiniPlayer/issues/9
-          // eslint-disable-next-line no-self-assign
+
           webVideo.currentTime = webVideo.currentTime
           // const onSeeked = () => {
           //   eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
@@ -186,16 +186,16 @@ export const useWebVideoEventsInit = () => {
   useTargetEventListener(
     'seeked',
     () => eventBus.emit(PlayerEvent.seeked),
-    webVideo
+    webVideo,
   )
   useTargetEventListener(
     'play',
     () => eventBus.emit(PlayerEvent.play),
-    webVideo
+    webVideo,
   )
   useTargetEventListener(
     'pause',
     () => eventBus.emit(PlayerEvent.pause),
-    webVideo
+    webVideo,
   )
 }

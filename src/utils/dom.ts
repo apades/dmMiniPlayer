@@ -10,15 +10,17 @@ export function getTopParent(el: HTMLElement) {
 }
 
 export const dq1Parent: {
-  <K extends keyof HTMLElementTagNameMap>(el: HTMLElement, selectors: K):
-    | HTMLElementTagNameMap[K]
-    | null
-  <K extends keyof SVGElementTagNameMap>(el: HTMLElement, selectors: K):
-    | SVGElementTagNameMap[K]
-    | null
+  <K extends keyof HTMLElementTagNameMap>(
+    el: HTMLElement,
+    selectors: K,
+  ): HTMLElementTagNameMap[K] | null
+  <K extends keyof SVGElementTagNameMap>(
+    el: HTMLElement,
+    selectors: K,
+  ): SVGElementTagNameMap[K] | null
   <E extends Element = HTMLDivElement>(
     el: HTMLElement,
-    selectors: string
+    selectors: string,
   ): E | null
 } = (el: HTMLElement, selectors: string) => {
   if (!el) return null
@@ -39,10 +41,14 @@ export const dq1Parent: {
 }
 
 export const dqParents: {
-  <K extends keyof HTMLElementTagNameMap>(el: HTMLElement, selectors: K):
-    | HTMLElementTagNameMap[K][]
-  <K extends keyof SVGElementTagNameMap>(el: HTMLElement, selectors: K):
-    | SVGElementTagNameMap[K][]
+  <K extends keyof HTMLElementTagNameMap>(
+    el: HTMLElement,
+    selectors: K,
+  ): HTMLElementTagNameMap[K][]
+  <K extends keyof SVGElementTagNameMap>(
+    el: HTMLElement,
+    selectors: K,
+  ): SVGElementTagNameMap[K][]
   <E extends Element = HTMLDivElement>(el: HTMLElement, selectors: string): E[]
 } = (el: HTMLElement, selectors: string) => {
   if (!el || !el.parentElement) return []
@@ -64,7 +70,7 @@ export function getTopParentsWithSameRect(
   /**例如video,img标签会出现自身高度略小于容器高度 */
   offset = 3,
   /**如果有一个absolute+h-full挂在relative下，可能会使relative的height为0 */
-  skipHeight0 = true
+  skipHeight0 = true,
 ) {
   const rs: HTMLElement[] = []
   let p = el
@@ -98,7 +104,7 @@ enum BackType {
 }
 export function getTopParentWithCallback(
   el: HTMLElement,
-  fn: (parent: HTMLElement, el: HTMLElement) => BackType
+  fn: (parent: HTMLElement, el: HTMLElement) => BackType,
 ) {
   let p = el
   while (true) {

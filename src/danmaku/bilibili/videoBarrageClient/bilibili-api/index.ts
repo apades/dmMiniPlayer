@@ -25,10 +25,10 @@ const IGNORE_TYPES = new Set<string>([
  * @link https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/danmaku/danmaku_xml.md#%E8%8E%B7%E5%8F%96%E5%AE%9E%E6%97%B6%E5%BC%B9%E5%B9%951
  */
 export async function getBiliBiliVideoDanmu(
-  cid: string
+  cid: string,
 ): Promise<DanmakuInitData[]> {
   const xmlText = await fetch(
-    `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`
+    `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`,
   ).then((res) => res.text())
 
   const parser = new DOMParser()

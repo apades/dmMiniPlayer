@@ -1,5 +1,5 @@
 export default class AsyncLock {
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   checkingAsyncQueue: Function[] = []
   isOk = false
 
@@ -9,6 +9,7 @@ export default class AsyncLock {
       this.checkingAsyncQueue.push(resolve)
     })
   }
+
   ok = () => {
     this.isOk = true
     this.checkingAsyncQueue.forEach((fn) => fn())

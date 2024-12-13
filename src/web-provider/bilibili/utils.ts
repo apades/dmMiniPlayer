@@ -15,7 +15,7 @@ const videoInfoReqCache = new Map<string, any>()
 
 const cacheFetch: (
   input: RequestInfo | URL,
-  init?: RequestInit
+  init?: RequestInit,
 ) => Promise<any> = async (...args) => {
   const url = args[0].toString()
   if (videoInfoReqCache.has(url)) {
@@ -41,14 +41,14 @@ interface Body {
   content: string
 }
 export async function getSubtitles(
-  url = location.href
+  url = location.href,
 ): Promise<SubtitleItem[]> {
   const { aid, cid } = await getVideoInfoFromUrl(url)
   const infoData = await fetch(
     `https://api.bilibili.com/x/player/v2?aid=${aid}&cid=${cid}`,
     {
       credentials: 'include',
-    }
+    },
   )
     .then((res) => res.json())
     .then((res) => res.data)
@@ -71,7 +71,7 @@ export const getDanmakus = onceCall(async (aid: string, cid: string) => {
     // 走bili-evaolved的
     let danmuContent = await getTextByType(
       configStore.biliVideoPakkuFilter ? 'ass' : 'originJson',
-      { aid, cid }
+      { aid, cid },
     )
 
     if (configStore.biliVideoPakkuFilter) {
@@ -136,7 +136,7 @@ export async function getVideoInfoFromUrl(_url: string) {
       }=${id}`,
       {
         credentials: 'include',
-      }
+      },
     ).then((res) => res.json())
 
     const tarId = isEp ? id : res.result.user_status.progress.last_ep_id

@@ -72,7 +72,7 @@ export function getBagGiftData(): Promise<IGiftData> {
       {
         method: 'GET',
         credentials: 'include',
-      }
+      },
     )
       .then((res) => {
         return res.text()
@@ -80,7 +80,7 @@ export function getBagGiftData(): Promise<IGiftData> {
       .then((ret) => {
         let json: any = ret.substring(
           String('DYConfigCallback(').length,
-          ret.length
+          ret.length,
         )
         json = json.substring(0, json.lastIndexOf(')'))
         json = JSON.parse(json)
@@ -125,7 +125,7 @@ export function getRandom(min: number, max: number): number {
 export function getStrMiddle(
   str: string,
   before: string,
-  after: string
+  after: string,
 ): string {
   let m = str.match(new RegExp(before + '(.*?)' + after))
   return m ? m[1] : ''
@@ -183,7 +183,7 @@ export function formatObj(obj: any, objTemplate: any) {
 // format timestamp
 export function formatTime(
   timestamp: number | string,
-  format = 'yyyy-MM-dd hh:mm:ss'
+  format = 'yyyy-MM-dd hh:mm:ss',
 ) {
   let date = new Date(Number(timestamp))
   let o: any = {
@@ -198,14 +198,16 @@ export function formatTime(
   if (/(y+)/.test(format)) {
     format = format.replace(
       RegExp.$1,
-      (date.getFullYear() + '').substr(4 - RegExp.$1.length)
+      (date.getFullYear() + '').substr(4 - RegExp.$1.length),
     )
   }
   for (let k in o) {
     if (new RegExp('(' + k + ')').test(format)) {
       format = format.replace(
         RegExp.$1,
-        RegExp.$1.length === 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
+        RegExp.$1.length === 1
+          ? o[k]
+          : ('00' + o[k]).substr(('' + o[k]).length),
       )
     }
   }
@@ -214,7 +216,7 @@ export function formatTime(
 
 export function getSuperchatOption(
   options: ISuperchatOption[],
-  price: number
+  price: number,
 ): ISuperchatOption | null {
   // 请确保options里的minPrice是从大到小排列
   if (price >= 0) {

@@ -19,7 +19,7 @@ const PlaybackRateSelection: FC = (props) => {
       if (!webVideo) return
       setPlaybackRate(webVideo.playbackRate)
     },
-    webVideo
+    webVideo,
   )
 
   const handleChangePlaybackRate = (rate: number) => {
@@ -40,7 +40,7 @@ const PlaybackRateSelection: FC = (props) => {
             key={rate}
             className={classNames(
               'h-[24px] px-[4px] rounded-[4px] text-ellipsis text-center cursor-pointer hover:bg-gray-800 w-full transition-colors whitespace-nowrap overflow-hidden leading-[24px]',
-              rate === playbackRate && 'text-[var(--color-main)]'
+              rate === playbackRate && 'text-[var(--color-main)]',
             )}
             onClick={() => {
               handleChangePlaybackRate(rate)

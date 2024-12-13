@@ -15,7 +15,7 @@ function resolveText(inputText: string) {
 
     const configBlock = inputText.slice(
       inputText.indexOf('{') + 1,
-      inputText.indexOf('}')
+      inputText.indexOf('}'),
     )
 
     const configBlocks = configBlock.split('\\')

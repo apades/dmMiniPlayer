@@ -36,7 +36,7 @@ export default class DanmakuBase implements DanmakuInitData, PlayerComponent {
   constructor(
     props: DanmakuInitData & {
       danmakuEngine: DanmakuEngine
-    }
+    },
   ) {
     props.id = props.id || uuid()
     this.id = props.id

@@ -37,7 +37,7 @@ declare class Ex_WebSocket_UnLogin {
   constructor(
     rid: string,
     msgHandler: (msg: string) => void,
-    closeHandler?: () => void
+    closeHandler?: () => void,
   )
   public close(): void
 }

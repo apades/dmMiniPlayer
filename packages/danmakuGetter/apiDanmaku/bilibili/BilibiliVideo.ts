@@ -29,7 +29,7 @@ const IGNORE_TYPES = new Set<string>([
  */
 async function getBiliBiliVideoDanmu(cid: string): Promise<DanmakuInitData[]> {
   const xmlText = await fetch(
-    `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`
+    `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`,
   ).then((res) => res.text())
 
   return parserBilibiliDanmuFromXML(xmlText)
@@ -78,7 +78,7 @@ export function parserBilibiliDanmuFromXML(xmlText: string): DanmakuInitData[] {
 const videoInfoReqCache = new Map<string, any>()
 const cacheFetch: (
   input: RequestInfo | URL,
-  init?: RequestInit
+  init?: RequestInit,
 ) => Promise<any> = async (...args) => {
   const url = args[0].toString()
   if (videoInfoReqCache.has(url)) {
@@ -130,7 +130,7 @@ async function getVideoInfoFromUrl(_url: string) {
       }=${id}`,
       {
         credentials: 'include',
-      }
+      },
     ).then((res) => res.json())
 
     const tarId = isEp ? id : res.result.user_status.progress.last_ep_id
@@ -190,7 +190,7 @@ export default class BilibiliVideo extends DanmakuGetter {
   onInit = async () => {
     try {
       const { aid, cid, duration } = await getVideoInfoFromUrl(
-        this.url.toString()
+        this.url.toString(),
       )
 
       const danmakus = await getBiliBiliVideoDanmu(cid)

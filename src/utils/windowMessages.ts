@@ -10,7 +10,7 @@ const ID = 'dmMiniPlayer'
 
 export function postMessageToTop<
   T extends PostMessageEvent,
-  data extends PostMessageProtocolMap[T]
+  data extends PostMessageProtocolMap[T],
 >(...[type, data]: data extends undefined ? [T] : [T, data]) {
   return top?.postMessage(
     {
@@ -18,13 +18,13 @@ export function postMessageToTop<
       type,
       data,
     },
-    '*'
+    '*',
   )
 }
 
 export function postMessageToChild<
   T extends PostMessageEvent,
-  data extends PostMessageProtocolMap[T]
+  data extends PostMessageProtocolMap[T],
 >(
   ...[type, data, target]: data extends undefined
     ? [T, undefined?, Window?]
@@ -45,7 +45,7 @@ export function postMessageToChild<
           type,
           data,
         },
-        '*'
+        '*',
       )
       sendOk.push(target)
     } catch (error) {}
@@ -64,9 +64,9 @@ window.addEventListener('message', (event) => {
 
 export function onPostMessage<T extends PostMessageEvent>(
   type: T,
-  callback: (data: PostMessageProtocolMap[T], source: Window) => void
+  callback: (data: PostMessageProtocolMap[T], source: Window) => void,
 ) {
   return eventSource.on2(type as any, ({ data, source }: any) =>
-    callback(data, source)
+    callback(data, source),
   )
 }

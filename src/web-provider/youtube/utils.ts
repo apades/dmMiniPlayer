@@ -9,17 +9,17 @@ export async function getVideoInfo(url = location.href) {
 
   try {
     return JSON.parse(
-      '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};var/)?.[1] + '}'
+      '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};var/)?.[1] + '}',
     )
   } catch (error) {
     return JSON.parse(
-      '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};/)?.[1] + '}'
+      '{' + htmlText.match(/ytInitialPlayerResponse = \{(.*)\};/)?.[1] + '}',
     )
   }
 }
 
 export async function getSubtitles(
-  url = location.href
+  url = location.href,
 ): Promise<SubtitleItem[]> {
   const videoInfo = await getVideoInfo(url)
 

@@ -159,7 +159,7 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
   startRenderAsCanvas() {
     try {
       this.animationFrameSignal = requestAnimationFrame(() =>
-        this.frameUpdate()
+        this.frameUpdate(),
       )
       return true
     } catch (error) {
@@ -205,7 +205,7 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
       this.x,
       this.y,
       this.videoWidth,
-      this.videoHeight
+      this.videoHeight,
     )
   }
 

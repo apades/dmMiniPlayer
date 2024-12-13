@@ -18,7 +18,7 @@ const VolumeIcon: FC = (props) => {
       setVolume(~~(webVideo.muted ? 0 : webVideo.volume * 100))
       run(() => setVisible(true))
     },
-    webVideo
+    webVideo,
   )
 
   return (

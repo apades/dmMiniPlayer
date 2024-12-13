@@ -41,7 +41,7 @@ const ProgressBar: FC<Props> = (props) => {
   let [isProgressDragging, setProgressDragging] = useState(false)
   useEffect(() => {
     if (isProgressDragging) {
-      progressDragTimmer.current && clearTimeout(progressDragTimmer.current)
+      clearTimeout(progressDragTimmer.current)
       progressDragTimmer.current = setTimeout(() => {
         setProgressDragging(false)
       }, 1000)
@@ -55,12 +55,12 @@ const ProgressBar: FC<Props> = (props) => {
         'progress-bar',
         className,
         isProgressDragging && 'is-dragging',
-        props.disableHoverStyle && 'disable-hover'
+        props.disableHoverStyle && 'disable-hover',
       )}
       vertical={direction === 'v'}
-      onChange={(v: number) => {
+      onChange={(v) => {
         setProgressDragging(true)
-        onClick(v)
+        onClick(v as number)
       }}
       style={
         {

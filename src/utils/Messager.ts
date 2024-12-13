@@ -1,5 +1,5 @@
 export function createMessager<
-  TProtocolMap = Record<string, ProtocolWithReturn<any, any>>
+  TProtocolMap = Record<string, ProtocolWithReturn<any, any>>,
 >(props: { sendType: string; listenType: string }) {
   window.addEventListener(props.listenType, (e: any) => {
     const data = e.detail
@@ -13,15 +13,15 @@ export function createMessager<
 
   const eventTarget = new EventTarget()
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   const cbMap = new Map<Function, Function>()
 
   function onMessage<TType extends keyof TProtocolMap>(
     type: TType,
     cb: (
-      data: GetDataType<TProtocolMap[TType]>
+      data: GetDataType<TProtocolMap[TType]>,
     ) => GetReturnType<TProtocolMap[TType]>,
-    noCallback = false
+    noCallback = false,
   ) {
     const reCb = async (e: any) => {
       let res = await cb(e.detail)
@@ -39,8 +39,8 @@ export function createMessager<
   function offMessage<TType extends keyof TProtocolMap>(
     type: TType,
     cb: (
-      data: GetDataType<TProtocolMap[TType]>
-    ) => GetReturnType<TProtocolMap[TType]>
+      data: GetDataType<TProtocolMap[TType]>,
+    ) => GetReturnType<TProtocolMap[TType]>,
   ) {
     const reCb = cbMap.get(cb)
 
@@ -50,7 +50,7 @@ export function createMessager<
 
   function onMessageOnce<TType extends keyof TProtocolMap>(
     type: TType,
-    noCallback = false
+    noCallback = false,
   ): Promise<GetReturnType<TProtocolMap[TType]>> {
     return new Promise((res, rej) => {
       const cb = (data: any) => {
@@ -65,7 +65,7 @@ export function createMessager<
 
   function sendMessage<TType extends keyof TProtocolMap>(
     type: TType,
-    data?: GetDataType<TProtocolMap[TType]>
+    data?: GetDataType<TProtocolMap[TType]>,
   ): Promise<GetReturnType<TProtocolMap[TType]>> {
     const event = new CustomEvent(props.sendType, { detail: { type, data } })
     window.dispatchEvent(event)
@@ -93,8 +93,8 @@ type GetDataType<T> = T extends (...args: infer Args) => any
     ? Args[0]
     : never
   : T extends ProtocolWithReturn<any, any>
-  ? T['BtVgCTPYZu']
-  : T
+    ? T['BtVgCTPYZu']
+    : T
 
 /**
  * Given a function declaration, `ProtocolWithReturn`, or a value, return the message's return type.
@@ -102,5 +102,5 @@ type GetDataType<T> = T extends (...args: infer Args) => any
 type GetReturnType<T> = T extends (...args: any[]) => infer R
   ? R
   : T extends ProtocolWithReturn<any, any>
-  ? T['RrhVseLgZW']
-  : void
+    ? T['RrhVseLgZW']
+    : void

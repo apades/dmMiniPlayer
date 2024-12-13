@@ -13,18 +13,17 @@ const getRoomid = async (short: number) => {
   const {
     data: { room_id },
   } = await fetch(
-    `https://api.live.bilibili.com/room/v1/Room/mobileRoomInit?id=${short}`
+    `https://api.live.bilibili.com/room/v1/Room/mobileRoomInit?id=${short}`,
   ).then((w) => w.json())
   return room_id
 }
 
 export const getConf = async (roomid: number) => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const raw = await fetch(
     `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomid}&type=0`,
     {
       credentials: 'include',
-    }
+    },
   ).then((w) => w.json())
   const {
     data: {

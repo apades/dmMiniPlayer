@@ -5,7 +5,7 @@ export function useOnce(
   cb: (stats: {
     /**在async中可以通过这个判断await过后的代码要不要继续执行 */
     readonly isUnmounted: boolean
-  }) => OrPromise<void | (() => void)>
+  }) => OrPromise<void | (() => void)>,
 ): void {
   return useEffect(() => {
     let isUnmounted = false

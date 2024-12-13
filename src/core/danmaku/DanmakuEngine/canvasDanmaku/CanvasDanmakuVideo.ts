@@ -16,7 +16,7 @@ export default class CanvasDanmakuVideo extends CanvasVideo {
   constructor(
     props: ConstructorParameters<typeof CanvasVideo>[0] & {
       danmakuEngine: CanvasDanmakuEngine
-    }
+    },
   ) {
     super(props)
     this.danmakuEngine = props.danmakuEngine

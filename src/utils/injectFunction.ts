@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { isArray } from '.'
 import type { KeyOfType } from './typeUtils'
 
 export function injectFunction<
   T extends object,
-  K extends KeyOfType<T, Function>
+  K extends KeyOfType<T, Function>,
 >(
   origin: T,
   keys: K[] | K,
-  cb: (...args: any) => void
+  cb: (...args: any) => void,
 ): {
   originKeysValue: Record<K, T[K]>
   /**还原所有方法 */
@@ -17,10 +17,13 @@ export function injectFunction<
 } {
   if (!isArray(keys)) keys = [keys]
 
-  let originKeysValue = keys.reduce((obj, key) => {
-    obj[key] = origin[key]
-    return obj
-  }, {} as Record<K, T[K]>)
+  let originKeysValue = keys.reduce(
+    (obj, key) => {
+      obj[key] = origin[key]
+      return obj
+    },
+    {} as Record<K, T[K]>,
+  )
 
   keys.map((k) => origin[k])
 

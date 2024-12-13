@@ -16,14 +16,14 @@ const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
         root.shadowRoot!.append(
           createElement('style', {
             innerHTML: data.default,
-          })
+          }),
         )
       })
       import('../style/tailwindBase.css?inline').then((data) => {
         root.shadowRoot!.append(
           createElement('style', {
             innerHTML: data.default,
-          })
+          }),
         )
       })
     } else {
@@ -31,7 +31,7 @@ const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
         createElement('link', {
           rel: 'stylesheet',
           href: Browser.runtime.getURL('/css.css'),
-        })
+        }),
       )
     }
     return root

@@ -61,7 +61,7 @@ export class AssDanmakuDocument {
     title: string,
     fontStyles: FontStyles,
     blockTypes: BlockTypes,
-    resolution: Resolution
+    resolution: Resolution,
   ) {
     this.danmakus = danmakus
     this.title = title

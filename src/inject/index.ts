@@ -47,7 +47,7 @@ try {
           args,
           event: 'history',
         })
-      }
+      },
     )
 
     History.prototype.pushState = history.pushState

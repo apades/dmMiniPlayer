@@ -68,7 +68,7 @@ onMessage(WebextEvent.startTabCapture, (req) => {
     if (!hasPermission) return res({ error: 'no permission' })
     chrome.tabCapture.getMediaStreamId(
       { targetTabId: tabId, consumerTabId: tabId },
-      (streamId) => res({ streamId })
+      (streamId) => res({ streamId }),
     )
   })
 })
@@ -90,7 +90,7 @@ onMessage(WebextEvent.setGetDanmaku, (req) => {
       {
         tabId: senderId,
         context: 'content-script',
-      }
+      },
     )
   })
   danmakuGetter.on('config', (config) =>
@@ -100,8 +100,8 @@ onMessage(WebextEvent.setGetDanmaku, (req) => {
       {
         tabId: senderId,
         context: 'content-script',
-      }
-    )
+      },
+    ),
   )
   danmakuGetter.on('error', (err) =>
     sendMessage(
@@ -110,8 +110,8 @@ onMessage(WebextEvent.setGetDanmaku, (req) => {
       {
         tabId: senderId,
         context: 'content-script',
-      }
-    )
+      },
+    ),
   )
 
   danmakuGetterCacheMap.set(id, danmakuGetter)

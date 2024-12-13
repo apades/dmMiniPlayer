@@ -19,7 +19,7 @@ const TogglePlayActionButton: FC = (props) => {
       if (!webVideo) return
       setPlaying(true)
     },
-    webVideo
+    webVideo,
   )
   useTargetEventListener(
     'pause',
@@ -27,7 +27,7 @@ const TogglePlayActionButton: FC = (props) => {
       if (!webVideo) return
       setPlaying(false)
     },
-    webVideo
+    webVideo,
   )
 
   const togglePlayState = useTogglePlayState()

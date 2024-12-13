@@ -160,7 +160,7 @@ const VideoPlayerV2Inner = observer(
           postMessageToTop(
             toFullInWeb
               ? PostMessageEvent.fullInWeb_request
-              : PostMessageEvent.fullInWeb_close
+              : PostMessageEvent.fullInWeb_close,
           )
         }
         return toFullInWeb
@@ -205,7 +205,7 @@ const VideoPlayerV2Inner = observer(
           }
         }
       },
-      videoPlayerRef.current
+      videoPlayerRef.current,
     )
 
     const updateVideoRef = useMemoizedFn((video: HTMLVideoElement) => {
@@ -233,7 +233,7 @@ const VideoPlayerV2Inner = observer(
           clear()
           videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
         }
-      }
+      },
     )
 
     const togglePlayState = useTogglePlayState()
@@ -294,7 +294,7 @@ const VideoPlayerV2Inner = observer(
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,
-          configStore.vpActionAreaLock && ACTION_AREA_ACTIVE
+          configStore.vpActionAreaLock && ACTION_AREA_ACTIVE,
         )}
         style={{
           '--color-main': '#0669ff',
@@ -363,7 +363,7 @@ const VideoPlayerV2Inner = observer(
           className={classNames(
             'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 ',
             // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
-            `group-[&.action-area-active]:bottom-0`
+            `group-[&.action-area-active]:bottom-0`,
           )}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
@@ -394,7 +394,7 @@ const VideoPlayerV2Inner = observer(
                 <div
                   className={classNames(
                     'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors md:block',
-                    !props.isReplacerMode && 'hidden'
+                    !props.isReplacerMode && 'hidden',
                   )}
                   onClick={handleOpenSetting}
                 >
@@ -439,7 +439,7 @@ const VideoPlayerV2Inner = observer(
             <div className="side-dragger group-hover/side:opacity-100 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center">
               <LeftOutlined
                 className={classNames(
-                  'group-hover/side:rotate-180 rotate-0 text-xs'
+                  'group-hover/side:rotate-180 rotate-0 text-xs',
                 )}
               />
             </div>
@@ -464,11 +464,11 @@ const VideoPlayerV2Inner = observer(
         <ShadowRootContainer>
           <div className="fixed top-0 left-0 size-full z-[9999]">{el}</div>
         </ShadowRootContainer>,
-        document.body
+        document.body,
       )
 
     return el
-  })
+  }),
 )
 
 const VideoPlayerV2 = forwardRef<VideoPlayerHandle, Props>((props, ref) => {

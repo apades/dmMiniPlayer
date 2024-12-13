@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 // 防止出现调用没用改到的api抛出错误
 import type Browser from 'webextension-polyfill'
 import type { Tabs } from 'webextension-polyfill'
@@ -7,20 +8,17 @@ import { objectDeepProxy } from '../utils'
 import { getPort } from './items'
 import storage from './storage'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
 export const eventsCallbackMap: Record<string, Function[]> = {}
 window.eventsCallbackMap = eventsCallbackMap
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
 export function addCallback(type: string, callback: Function) {
   eventsCallbackMap[type] = eventsCallbackMap[type] || []
   eventsCallbackMap[type].push(callback)
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
 export function removeCallback(type: string, callback: Function) {
   if (!eventsCallbackMap[type]) return
   eventsCallbackMap[type].splice(
     eventsCallbackMap[type].findIndex((cb) => cb == callback),
-    1
+    1,
   )
 }
 export function executeCallback(type: string, ...data: any) {

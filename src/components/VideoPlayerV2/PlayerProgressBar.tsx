@@ -23,7 +23,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
       if (!webVideo) return
       setDuration(webVideo.duration)
     },
-    webVideo
+    webVideo,
   )
   useTargetEventListener(
     'timeupdate',
@@ -31,7 +31,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
       if (!webVideo) return
       setPlayedPercent((webVideo.currentTime / webVideo.duration) * 100)
     },
-    webVideo
+    webVideo,
   )
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
       ref={containerRef}
       className={classNames(
         'played-progress-bar',
-        configStore.videoProgress_show && 'use-bottom-progress'
+        configStore.videoProgress_show && 'use-bottom-progress',
       )}
       style={{
         '--bottom-progress-color': configStore.videoProgress_color,
@@ -106,14 +106,14 @@ const HandleWithToolTips: FC<
     () => {
       setVisible(false)
     },
-    handleRef.current
+    handleRef.current,
   )
   useTargetEventListener(
     'mouseenter',
     () => {
       setVisible(true)
     },
-    handleRef.current
+    handleRef.current,
   )
 
   return (
@@ -128,7 +128,7 @@ const HandleWithToolTips: FC<
         className={classNames(
           isVisible || props.dragging ? 'opacity-100' : 'opacity-0',
           'handle-tooltips pointer-events-none',
-          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] text-white text-[12px]'
+          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] text-white text-[12px]',
         )}
       >
         {formatTime(props.duration * (props.value / 100))}
@@ -162,28 +162,28 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
       // containerRef.current.style.setProperty('--percent', `${percent}%`)
       setPercent(percent)
     },
-    containerRef.current
+    containerRef.current,
   )
   useTargetEventListener(
     'mouseleave',
     () => {
       setVisible(false)
     },
-    containerRef.current
+    containerRef.current,
   )
   useTargetEventListener(
     'mousedown',
     () => {
       setVisible(false)
     },
-    containerRef.current
+    containerRef.current,
   )
 
   return (
     <div
       className={classNames(
         isVisible ? 'opacity-100' : 'opacity-0',
-        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none text-white text-[12px]'
+        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none text-white text-[12px]',
       )}
       style={{
         left: `${percent}%`,

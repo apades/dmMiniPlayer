@@ -68,7 +68,7 @@ export default class DanmakuSender {
           const val = webTextInput.value
           this.textInput.value = val
         })
-      })
+      }),
     )
 
     this.listens.push(
@@ -89,7 +89,7 @@ export default class DanmakuSender {
             this.textInput.value = this.webTextValue
           })
         })
-      })
+      }),
     )
   }
 
@@ -131,7 +131,7 @@ export default class DanmakuSender {
       this.webSendButton.dispatchEvent(
         new MouseEvent('click', {
           bubbles: true,
-        })
+        }),
       )
     }
 
@@ -146,12 +146,14 @@ export default class DanmakuSender {
     }
     try {
       // react 的onChange特有的修改setter
-      const valueSetter = Object.getOwnPropertyDescriptor(element, 'value')!
-        .set!
+      const valueSetter = Object.getOwnPropertyDescriptor(
+        element,
+        'value',
+      )!.set!
       const prototype = Object.getPrototypeOf(element)
       const prototypeValueSetter = Object.getOwnPropertyDescriptor(
         prototype,
-        'value'
+        'value',
       )!.set!
 
       if (valueSetter && valueSetter !== prototypeValueSetter) {

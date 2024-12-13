@@ -47,7 +47,7 @@ export default class DouyuLiveProvider extends WebProvider {
             type: 'right',
           },
         ])
-      })
+      }),
     )
   }
 

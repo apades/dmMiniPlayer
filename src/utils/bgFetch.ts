@@ -6,7 +6,7 @@ const bgFetch = (
   options?: RequestInit & {
     /**默认json */
     type?: 'json' | 'text' | 'blob'
-  }
+  },
 ) => {
   return sendMessage(WebextEvent.bgFetch, {
     url,

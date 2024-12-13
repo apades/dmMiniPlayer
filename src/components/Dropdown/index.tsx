@@ -37,7 +37,7 @@ const Dropdown: FC<Props> = (props) => {
       <div
         className={classNames(
           'absolute bottom-full left-[-12px] pb-[4px] transition-all origin-bottom',
-          isVisible ? 'scale-y-100' : 'scale-y-0'
+          isVisible ? 'scale-y-100' : 'scale-y-0',
         )}
       >
         {props.menuRender()}

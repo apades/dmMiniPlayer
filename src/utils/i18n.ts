@@ -7,15 +7,17 @@ import ja from '../locales/ja.json'
 import ko from '../locales/ko.json'
 import { get, onceCall } from '.'
 
-type DeepKeys<T> = T extends Record<string, unknown>
-  ? {
-      [K in keyof T]-?: `${K & string}` | Concat<K & string, DeepKeys<T[K]>>
-    }[keyof T]
-  : ''
+type DeepKeys<T> =
+  T extends Record<string, unknown>
+    ? {
+        [K in keyof T]-?: `${K & string}` | Concat<K & string, DeepKeys<T[K]>>
+      }[keyof T]
+    : ''
 
-type DeepLeafKeys<T> = T extends Record<string, unknown>
-  ? { [K in keyof T]-?: Concat<K & string, DeepKeys<T[K]>> }[keyof T]
-  : ''
+type DeepLeafKeys<T> =
+  T extends Record<string, unknown>
+    ? { [K in keyof T]-?: Concat<K & string, DeepKeys<T[K]>> }[keyof T]
+    : ''
 
 type Concat<K extends string, P extends string> = `${K}${'' extends P
   ? ''
@@ -63,8 +65,8 @@ const getLangFromNavigator = onceCall(
   (): Language =>
     formatLang(
       navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
-        Language.English
-    )
+        Language.English,
+    ),
 )
 
 export const getNowLang = (): Language =>

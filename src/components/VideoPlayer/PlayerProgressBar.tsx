@@ -61,7 +61,7 @@ const HandleWithToolTips: FC<
       if (!handleRef.current) return
       setVisible(false)
     },
-    { target: handleRef.current }
+    { target: handleRef.current },
   )
   useEventListener(
     'mouseenter',
@@ -70,7 +70,7 @@ const HandleWithToolTips: FC<
       if (!handleRef.current) return
       setVisible(true)
     },
-    { target: handleRef.current }
+    { target: handleRef.current },
   )
 
   return (
@@ -85,7 +85,7 @@ const HandleWithToolTips: FC<
         className={classNames(
           isVisible || props.dragging ? 'opacity-100' : 'opacity-0',
           'handle-tooltips pointer-events-none',
-          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#fff3] rounded-[2px] px-[4px] py-[2px]'
+          'absolute bottom-[calc(100%+2px)] left-1/2 -translate-x-1/2 bg-[#fff3] rounded-[2px] px-[4px] py-[2px]',
         )}
       >
         {formatTime(props.duration * (props.value / 100))}
@@ -122,7 +122,7 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
       // containerRef.current.style.setProperty('--percent', `${percent}%`)
       setPercent(percent)
     },
-    { target: containerRef.current }
+    { target: containerRef.current },
   )
   useEventListener('mouseleave', () => [setVisible(false)], {
     target: containerRef.current,
@@ -134,14 +134,14 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
       if (!containerRef.current) return
       setVisible(false)
     },
-    { target: containerRef.current }
+    { target: containerRef.current },
   )
 
   return (
     <div
       className={classNames(
         isVisible ? 'opacity-100' : 'opacity-0',
-        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#fff3] rounded-[2px] px-[4px] py-[2px] pointer-events-none'
+        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#fff3] rounded-[2px] px-[4px] py-[2px] pointer-events-none',
       )}
       style={{
         left: `${percent}%`,

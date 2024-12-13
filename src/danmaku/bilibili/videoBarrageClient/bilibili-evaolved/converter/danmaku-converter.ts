@@ -63,7 +63,7 @@ export class DanmakuConverter {
       font,
       resolution,
       duration,
-      bottomMarginPercent
+      bottomMarginPercent,
     )
   }
   get fontStyles() {
@@ -112,7 +112,7 @@ export class DanmakuConverter {
       }
       const [startTime, endTime] = convertTimeByDuration(
         xmlDanmaku.startTime,
-        this.duration(xmlDanmaku)
+        this.duration(xmlDanmaku),
       )
       assDanmakus.push(
         new AssDanmaku({
@@ -124,7 +124,7 @@ export class DanmakuConverter {
           color: xmlDanmaku.color.toString(),
           typeTag: this.convertType(xmlDanmaku),
           colorTag: convertHexColorForDialogue(xmlDanmaku.color.toString(16)),
-        })
+        }),
       )
     }
     return new AssDanmakuDocument(
@@ -132,13 +132,13 @@ export class DanmakuConverter {
       this.title,
       this.fontStyles,
       this.blockTypes,
-      this.resolution
+      this.resolution,
     )
   }
   xmlStringToAssDocument(xml: string) {
     const xmlDanmakuDocument = new XmlDanmakuDocument(xml)
     return this.xmlDanmakuToAssDocument(
-      xmlDanmakuDocument.danmakus.sort(ascendingSort((it) => it.startTime))
+      xmlDanmakuDocument.danmakus.sort(ascendingSort((it) => it.startTime)),
     )
   }
   convertType(danmaku: Danmaku) {

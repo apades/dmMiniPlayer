@@ -85,7 +85,7 @@ const DraggerContainer: FC<Props> = (props) => {
           mouseDowTarget.dispatchEvent(
             new MouseEvent('click', {
               bubbles: true,
-            })
+            }),
           )
         }
         setDragging(false)
@@ -96,7 +96,7 @@ const DraggerContainer: FC<Props> = (props) => {
       defaultClassName={classNames(
         props.defaultClassName,
         mouseDowTarget && 'pointer-events-none select-none',
-        isDragging && 'cursor-grabbing'
+        isDragging && 'cursor-grabbing',
       )}
     >
       {cloneElement(Children.only(props.children) as any, {

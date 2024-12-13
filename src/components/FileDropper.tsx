@@ -56,7 +56,7 @@ const FileDropper: FC<Props> = (props) => {
       if (isGlobal) return
       setRect(getClientRect(target))
     },
-    target
+    target,
   )
 
   useTargetEventListener(
@@ -67,7 +67,7 @@ const FileDropper: FC<Props> = (props) => {
         setDragover(false)
       }, 50)
     },
-    target
+    target,
   )
   useTargetEventListener(
     'dragover',
@@ -76,7 +76,7 @@ const FileDropper: FC<Props> = (props) => {
       e.preventDefault()
       clearTimeout(leaveTimer.current)
     },
-    target
+    target,
   )
 
   useTargetEventListener(
@@ -97,7 +97,7 @@ const FileDropper: FC<Props> = (props) => {
       // }
       props.handleDrop?.(e.dataTransfer, e)
     },
-    target
+    target,
   )
 
   if (isArray(props.children)) throw new Error('不要传数组children给该组件')
@@ -122,7 +122,7 @@ const FileDropper: FC<Props> = (props) => {
           >
             {props.dragoverRender}
           </div>,
-          dBody
+          dBody,
         )}
       {Children.map(props.children, (child, index) =>
         cloneElement(child as any, {
@@ -130,7 +130,7 @@ const FileDropper: FC<Props> = (props) => {
             if (!ref) return
             childRef.current = ref
           },
-        })
+        }),
       )}
     </>
   )

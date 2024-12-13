@@ -92,7 +92,7 @@ export default class VideoPlayerBase
         this.webVideoEl,
         (newVideoEl) => {
           this.emit(PlayerEvent.webVideoChanged, newVideoEl as any)
-        }
+        },
       )
     }
 
@@ -126,7 +126,7 @@ export default class VideoPlayerBase
     }
 
     const originInParentIndex = [...videoEl.parentElement.children].findIndex(
-        (child) => child == videoEl
+        (child) => child == videoEl,
       ),
       hasController = videoEl.controls,
       originStyle = videoEl.getAttribute('style')
@@ -139,7 +139,7 @@ export default class VideoPlayerBase
       } else {
         originParent.insertBefore(
           videoEl,
-          originParent.childNodes[originInParentIndex]
+          originParent.childNodes[originInParentIndex],
         )
       }
     }

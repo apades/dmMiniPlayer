@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import struct from './struct.mjs'
 
 function ui8ToArrayBuffer(ui8: Uint8Array) {
@@ -9,13 +9,16 @@ function ui8ToArrayBuffer(ui8: Uint8Array) {
 }
 export class CCMsgDecode {
   offset = 0
-  constructor(public buffer: ArrayBuffer, public ui8: Uint8Array) {}
+  constructor(
+    public buffer: ArrayBuffer,
+    public ui8: Uint8Array,
+  ) {}
   de_init = (t: Uint8Array) => {
     // debugger
     const r = t[this.offset]
     this.offset += 1
     const n = this.n(r)
-    return n(t)
+    return n && n(t)
   }
 
   n = (e: number) => {
@@ -110,7 +113,7 @@ export class CCMsgDecode {
 
   de_str = (t: Uint8Array, e: any) => {
     let s = new TextDecoder('utf-8').decode(
-      t.slice(this.offset, this.offset + e)
+      t.slice(this.offset, this.offset + e),
     )
     this.offset += e
     return s

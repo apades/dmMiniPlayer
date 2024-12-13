@@ -48,7 +48,7 @@ export default class BilibiliVideoProvider extends WebProvider {
         this.initDanmakus()
         this.subtitleManager.init(this.webVideo)
         this.initSideSwitcherData()
-      })
+      }),
     )
   }
 
@@ -110,9 +110,7 @@ export default class BilibiliVideoProvider extends WebProvider {
 
     async function getRecommendVideos() {
       const relateVideos = await API_bilibili.getRelateVideos(
-        (
-          await getVideoInfoFromUrl(location.href)
-        ).aid
+        (await getVideoInfoFromUrl(location.href)).aid,
       )
       const recommendElList = dq('.video-page-card-small')
 

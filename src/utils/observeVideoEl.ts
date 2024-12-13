@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { wait } from '.'
 import { dqParents } from './dom'
 
 export function observeVideoEl(
   videoEl: HTMLVideoElement,
-  onChange: (videoEl: HTMLVideoElement) => void
+  onChange: (videoEl: HTMLVideoElement) => void,
 ) {
   console.log('observeVideoEl', videoEl)
   let t = 0,
@@ -19,9 +20,10 @@ export function observeVideoEl(
         const child = parents[i + 1] || videoEl
         const observer = new MutationObserver((list, observer) => {
           if (child == videoEl) {
-            let addVideoNode: HTMLElement
+            let addVideoNode: HTMLElement | null = null
             list.find((l) => {
-              return [...l.addedNodes].find((n: HTMLElement) => {
+              return [...l.addedNodes].find((n) => {
+                if (!(n instanceof HTMLElement)) return
                 if (n?.tagName == 'VIDEO') {
                   addVideoNode = n
                   return true
@@ -68,7 +70,7 @@ export function observeVideoEl(
       if (t == 3) throw Error('短时间内videoEl刷新次数过多，紧急停止监听守护')
       await wait()
       console.log('newParent', newParent)
-      videoEl = newParent.querySelector('video')
+      videoEl = newParent.querySelector('video')!
       if (!videoEl) throw Error('无法找到新的videoEl')
       onChange(videoEl)
     }

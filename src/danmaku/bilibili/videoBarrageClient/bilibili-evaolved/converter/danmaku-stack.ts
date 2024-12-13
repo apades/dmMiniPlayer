@@ -39,12 +39,12 @@ interface TagData {
   willOverlay: (
     trackItem: TrackItem,
     trackNumber: number,
-    width: number
+    width: number,
   ) => boolean
   getTrackItem: (
     trackNumber: number,
     width: number,
-    visibleTime: number
+    visibleTime: number,
   ) => TrackItem
   getTag: (info: { trackNumber: number; x: number; y: number }) => string
 }
@@ -80,7 +80,7 @@ export class DanmakuStack {
     font: string,
     resolution: Resolution,
     duration: Duration,
-    bottomMarginPercent: number
+    bottomMarginPercent: number,
   ) {
     this.horizontalStack = []
     this.horizontalTrack = []
@@ -108,8 +108,8 @@ export class DanmakuStack {
     this.trackCount = parseInt(
       fixed(
         (this.resolution.y * (1 - this.bottomMarginPercent)) / this.trackHeight,
-        0
-      )
+        0,
+      ),
     )
   }
   getTextSize(danmaku: Danmaku) {
@@ -128,7 +128,7 @@ export class DanmakuStack {
       willOverlay,
       getTrackItem,
       getTag,
-    }: TagData
+    }: TagData,
   ) {
     const [x, y] = this.getTextSize(danmaku)
     const width = x * 2
@@ -205,7 +205,7 @@ export class DanmakuStack {
           visible: danmaku.startTime + visibleTime,
           end: danmaku.startTime + this.duration(danmaku),
           trackNumber,
-        } as HorizontalTrackItem),
+        }) as HorizontalTrackItem,
       getTag: ({ trackNumber, x, y }) =>
         `\\move(${this.resolution.x + x},${
           trackNumber * this.trackHeight + DanmakuStack.margin + y

@@ -159,7 +159,7 @@ class SubtitleManager
     this.activeSubtitleLabel = subtitleItemsLabel
     let subtitleData = this.subtitleCache.get(subtitleItemsLabel)
     const subtitleItemsValue = this.subtitleItems.find(
-      (item) => item.label === subtitleItemsLabel
+      (item) => item.label === subtitleItemsLabel,
     )?.value
 
     if (!subtitleData && subtitleItemsValue) {

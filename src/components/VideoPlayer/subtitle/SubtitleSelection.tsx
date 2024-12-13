@@ -25,7 +25,7 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
             if (!subtitleManager.activeSubtitleLabel) {
               if (subtitleManager.subtitleItems.length) {
                 subtitleManager.useSubtitle(
-                  subtitleManager.subtitleItems[0].label
+                  subtitleManager.subtitleItems[0].label,
                 )
                 subtitleManager.showSubtitle = true
               } else {
@@ -90,7 +90,7 @@ const Menu: FC<Props> = observer((props) => {
           className={classNames(
             'h-[24px] px-[4px] rounded-[4px] text-ellipsis text-center cursor-pointer hover:bg-gray-800 w-full transition-colors whitespace-nowrap overflow-hidden leading-[24px]',
             v.isActive && 'text-[var(--color-main)]',
-            i !== 0 && 'mt-1'
+            i !== 0 && 'mt-1',
           )}
           onClick={v.onClick}
         >

@@ -8,7 +8,7 @@ export default class DanmakuFilter {
   static white = 16777215 // Dec color of white danmaku
 
   constructor(
-    public config: Awaited<ReturnType<typeof getUserDanmakuConfig>>
+    public config: Awaited<ReturnType<typeof getUserDanmakuConfig>>,
   ) {}
 
   filterJsonDanamku(danamkus: JsonDanmaku['jsonDanmakus']) {
@@ -24,7 +24,7 @@ export default class DanmakuFilter {
         continue
       }
       let xmlDanmaku = new XmlDanmaku(
-        this.transJsonDanmakuToXmlDanmaku(danmaku)
+        this.transJsonDanmakuToXmlDanmaku(danmaku),
       )
       // 应用传入的过滤器
       if (config.blockFilter ? !config.blockFilter(xmlDanmaku) : false) {

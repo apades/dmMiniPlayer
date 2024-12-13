@@ -19,7 +19,7 @@ export default class CCLiveProvider extends WebProvider {
             type: 'right',
           },
         ])
-      })
+      }),
     )
   }
 

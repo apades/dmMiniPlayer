@@ -54,7 +54,7 @@ export default abstract class WebProvider
     super()
     if (
       [DocPIPWebProvider, CanvasPIPWebProvider, ReplacerWebProvider].includes(
-        Object.getPrototypeOf(this).constructor
+        Object.getPrototypeOf(this).constructor,
       )
     )
       return this
@@ -131,7 +131,7 @@ export default abstract class WebProvider
       PlayerEvent.webVideoChanged,
       (newVideoEl) => {
         this.webVideo = newVideoEl
-      }
+      },
     )
 
     await this.onOpenPlayer()
@@ -173,7 +173,7 @@ export default abstract class WebProvider
           }, 0)
         }),
         eventSwitcher.unload,
-      ]
+      ],
     )
   }
 
@@ -185,7 +185,7 @@ export default abstract class WebProvider
         .map((iframe) => {
           try {
             return Array.from(
-              iframe.contentWindow?.document.querySelectorAll('video') ?? []
+              iframe.contentWindow?.document.querySelectorAll('video') ?? [],
             )
           } catch (error) {
             return null
@@ -250,7 +250,7 @@ export default abstract class WebProvider
             break
           }
         }
-      })
+      }),
     )
   }
 }

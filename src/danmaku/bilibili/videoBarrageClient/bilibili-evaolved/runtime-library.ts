@@ -11,7 +11,7 @@ export class RuntimeLibrary<LibraryType> implements PromiseLike<LibraryType> {
 
   async then<Resolve = LibraryType, Reject = never>(
     resolve?: (value: LibraryType) => Resolve | PromiseLike<Resolve>,
-    reject?: (reason: any) => Reject | PromiseLike<Reject>
+    reject?: (reason: any) => Reject | PromiseLike<Reject>,
   ) {
     try {
       const { url, getModule } = this.config
@@ -20,7 +20,7 @@ export class RuntimeLibrary<LibraryType> implements PromiseLike<LibraryType> {
           console.log(`[Runtime Library] Start download from ${url}`)
           const code: string = await fetch(url).then((res) => res.text())
           console.log(
-            `[Runtime Library] Downloaded from ${url} , length = ${code.length}`
+            `[Runtime Library] Downloaded from ${url} , length = ${code.length}`,
           )
           let scriptEl = document.createElement('script')
           scriptEl.innerText = code

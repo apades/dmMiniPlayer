@@ -6,7 +6,7 @@ const normalizeMap = {
   '&#39;': "'",
 }
 const escapeMap = Object.fromEntries(
-  Object.entries(normalizeMap).map((entry) => entry.reverse())
+  Object.entries(normalizeMap).map((entry) => entry.reverse()),
 )
 const replace = (content: string, map: Record<string, string>) => {
   for (const [key, value] of Object.entries(map)) {

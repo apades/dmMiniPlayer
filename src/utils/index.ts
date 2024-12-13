@@ -56,7 +56,7 @@ export function getTextWidth(text: string, style: CSSProperties): number {
 type WaitLoop = {
   (
     cb: () => boolean /* | Promise<boolean> */,
-    limitTime?: number
+    limitTime?: number,
   ): Promise<boolean>
   // TODO waitLoopCallback高级option
   (
@@ -65,7 +65,7 @@ type WaitLoop = {
       intervalTime: number
       intervalCount: number
       limitTime: number
-    }>
+    }>,
   ): Promise<boolean>
 }
 export let waitLoopCallback: WaitLoop = (cb, option = 5000) => {
@@ -104,15 +104,15 @@ type DqTarType =
 export const dq: {
   <K extends keyof HTMLElementTagNameMap>(
     selectors: K,
-    tar?: DqTarType
+    tar?: DqTarType,
   ): HTMLElementTagNameMap[K][]
   <K extends keyof SVGElementTagNameMap>(
     selectors: K,
-    tar?: DqTarType
+    tar?: DqTarType,
   ): SVGElementTagNameMap[K][]
   <K extends keyof MathMLElementTagNameMap>(
     selectors: K,
-    tar?: DqTarType
+    tar?: DqTarType,
   ): MathMLElementTagNameMap[K][]
   <E extends Element = HTMLDivElement>(selectors: string, tar?: DqTarType): E[]
 } = (selector: string, tar = window.document as DqTarType) => {
@@ -120,15 +120,18 @@ export const dq: {
 }
 
 export const dq1: {
-  <K extends keyof HTMLElementTagNameMap>(selectors: K, tar?: DqTarType):
-    | HTMLElementTagNameMap[K]
-    | undefined
-  <K extends keyof SVGElementTagNameMap>(selectors: K, tar?: DqTarType):
-    | SVGElementTagNameMap[K]
-    | undefined
-  <E extends Element = HTMLDivElement>(selectors: string, tar?: DqTarType):
-    | E
-    | undefined
+  <K extends keyof HTMLElementTagNameMap>(
+    selectors: K,
+    tar?: DqTarType,
+  ): HTMLElementTagNameMap[K] | undefined
+  <K extends keyof SVGElementTagNameMap>(
+    selectors: K,
+    tar?: DqTarType,
+  ): SVGElementTagNameMap[K] | undefined
+  <E extends Element = HTMLDivElement>(
+    selectors: string,
+    tar?: DqTarType,
+  ): E | undefined
 } = (selector: string, tar = window.document as DqTarType) => {
   let dom = tar?.querySelector(selector) || undefined
   return dom
@@ -137,7 +140,7 @@ export const dq1: {
 /**包含iframe内部查找 */
 export const dq1Adv: typeof dq1 = (
   selector: string,
-  tar = window.document as DqTarType
+  tar = window.document as DqTarType,
 ) => {
   const top = dq1(selector, tar)
   if (top) {
@@ -172,7 +175,7 @@ export function splitArray<T>(arr: T[], count: number): T[][] {
   return result
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function isPromiseFunction(fn: Function): boolean {
   return (
     (fn as any).__proto__.constructor ==
@@ -222,7 +225,7 @@ export function oncePromise<T extends noop>(fn: T): T {
 
 export function createElement<
   T extends HTMLElement,
-  TAG extends keyof HTMLElementTagNameMap
+  TAG extends keyof HTMLElementTagNameMap,
 >(
   tag: TAG,
   option?: Partial<Omit<T, 'style' | 'dataset' | 'children'>> & {
@@ -233,7 +236,7 @@ export function createElement<
     /**传入子DOM */
     children?: HTMLElement[]
     [k: string]: any
-  }
+  },
 ): HTMLElementTagNameMap[typeof tag] {
   const { children, dataset, style, ...op } = { ...option }
   const el = document.createElement(tag)
@@ -332,11 +335,11 @@ export function addEventListener<
   T extends {
     addEventListener: (k: string, fn: noop, ...more: any[]) => void
     removeEventListener: (k: string, fn: noop, ...more: any[]) => void
-  }
+  },
 >(target: T, fn: (target: T) => void): () => void {
   const _addEventListener = target.addEventListener
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   const fnMap: Rec<(Function | { fn: Function; more: any[] })[]> = {}
   target.addEventListener = (key: string, fn: noop, ...more: any[]) => {
     fnMap[key] = fnMap[key] ?? []
@@ -371,19 +374,20 @@ export function formatView(view: number): string {
 /**过滤数组，callback里返回true的都放在[left,right]的left里，其余的在right */
 export function filterList<T>(
   list: T[],
-  callback: (data: T) => boolean
+  callback: (data: T) => boolean,
 ): [T[], T[]] {
   let left: T[] = [],
     right: T[] = []
   list.forEach((l) => {
     let v = callback(l)
+
     v ? left.push(l) : right.push(l)
   })
   return [left, right]
 }
 
 export function getClientRect<T extends HTMLElement>(
-  dom: T
+  dom: T,
 ): DOMRect | undefined {
   let rect: DOMRect | undefined
   try {
@@ -470,7 +474,7 @@ export function getPrototypeGetter<T>(obj: T, key: keyof T) {
 
 /** 多次请求时，如果上一个还没结束，这次的promise会覆盖上一个的promise请求 */
 export function switchLatest<Args extends readonly unknown[], Return>(
-  asyncFn: AsyncFn<Args, Return>
+  asyncFn: AsyncFn<Args, Return>,
 ) {
   let lastKey: symbol
   return async function (...args: Args): Promise<Return> {
@@ -478,7 +482,7 @@ export function switchLatest<Args extends readonly unknown[], Return>(
       const key = (lastKey = Symbol())
       asyncFn(...args).then(
         (data) => lastKey === key && res(data),
-        (err) => lastKey === key && rej(err)
+        (err) => lastKey === key && rej(err),
       )
     })
   }
@@ -504,7 +508,7 @@ export function getAllNotSameOriginIframesWindow() {
 export { v4 as uuid } from 'uuid'
 
 export function tryCatch<Return>(
-  fn: () => Return
+  fn: () => Return,
 ): Return extends Promise<any>
   ? Promise<[undefined, Awaited<Return>] | [Error, undefined]>
   : [undefined, Return] | [Error, undefined] {
@@ -528,7 +532,7 @@ export const objectKeys = <T>(obj: Record<string, T>) =>
 export const canAccessTop = () => !tryCatch(() => top!.document)[0]
 
 export const getVideoElInitFloatButtonData = (
-  videoTarget: HTMLVideoElement
+  videoTarget: HTMLVideoElement,
 ): [HTMLElement, HTMLVideoElement, boolean?] => {
   // 有些视频播放器移动鼠标的target并不会在video上，而是在另一个覆盖了容器的子dom上
   // 这里是为了选到跟video大小相同的最外层容器，以该容器移动鼠标触发浮动按钮
@@ -536,7 +540,7 @@ export const getVideoElInitFloatButtonData = (
   const topParentWithPosition = topParents.findLast(
     (el) =>
       ((el?.computedStyleMap?.()?.get?.('position') as any)?.value ?? '') !=
-      'static'
+      'static',
   )
 
   // 所有父容器都没有position属性的，创建的浮动按钮要根据视频位置调整fixed pos
@@ -563,5 +567,6 @@ export const getIframeElFromSource = (source: Window) => {
 export const isDocPIP = (tar = window) =>
   !!tryCatch(
     () =>
-      window.top !== tar && window.top?.documentPictureInPicture?.window === tar
+      window.top !== tar &&
+      window.top?.documentPictureInPicture?.window === tar,
   )[1]

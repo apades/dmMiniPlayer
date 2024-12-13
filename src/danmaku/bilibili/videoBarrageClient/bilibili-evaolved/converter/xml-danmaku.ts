@@ -76,10 +76,10 @@ export class XmlDanmakuDocument {
     this.xml = xml
     const document = new DOMParser().parseFromString(
       xml,
-      'application/xml'
+      'application/xml',
     ).documentElement
     this.danmakus = [...document.querySelectorAll('d[p]')].map((it) =>
-      XmlDanmaku.parse(it)
+      XmlDanmaku.parse(it),
     )
   }
 }

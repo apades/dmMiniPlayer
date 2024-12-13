@@ -77,7 +77,7 @@ export default class CCWs {
   async get_ws_info() {
     const res = await fetch(
       `https://api.cc.163.com/v1/activitylives/anchor/lives?anchor_ccid=${this.cid}`,
-      { mode: 'cors' }
+      { mode: 'cors' },
     ).then((res) => {
       console.log('res', res)
       return res.json()
@@ -125,7 +125,7 @@ export default class CCWs {
     }
     let reg_data = combineArrayBuffer(
       struct('<HHI').pack(sid, cid, 0),
-      this.encode_dict(data)
+      this.encode_dict(data),
     )
     return reg_data
   }
@@ -135,7 +135,7 @@ export default class CCWs {
     let data = {}
     let beat_data = combineArrayBuffer(
       struct('<HHI').pack(sid, cid, 0),
-      this.encode_dict(data)
+      this.encode_dict(data),
     )
     return beat_data
   }
@@ -149,7 +149,7 @@ export default class CCWs {
     }
     let join_data = combineArrayBuffer(
       struct('<HHI').pack(sid, cid, 0),
-      this.encode_dict(data)
+      this.encode_dict(data),
     )
     return join_data
   }
@@ -275,7 +275,7 @@ export default class CCWs {
   }
 
   decode_msg(
-    e: ArrayBuffer
+    e: ArrayBuffer,
   ): { content: string; name: string; color: string }[] {
     const [n, r, p] = struct('<HHI').unpack(e.slice(0, 8))
     const i = `tcp-${n}-${r}`
@@ -342,7 +342,7 @@ export default class CCWs {
             console.log(
               `${name}:${content}`,
               `color? ${data[35]} ${color}`,
-              data
+              data,
             )
             return { name, content, color }
           })

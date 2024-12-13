@@ -33,7 +33,7 @@ type ExtMediaSessionAction = MediaSessionAction | 'enterpictureinpicture'
 interface MediaSession {
   setActionHandler(
     action: ExtMediaSessionAction,
-    handler: MediaSessionActionHandler | null
+    handler: MediaSessionActionHandler | null,
   ): void
 }
 

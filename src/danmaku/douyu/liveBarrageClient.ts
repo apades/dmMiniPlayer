@@ -20,7 +20,7 @@ export default class DouyuLiveBarrageClient extends BarrageClient {
         if (this.isClose) return
         this.ws.close()
         this.initWs()
-      }
+      },
     )
   }
 

@@ -15,7 +15,7 @@ function main() {
     T extends {
       addEventListener: (k: string, fn: noop, ...more: any[]) => void
       removeEventListener: (k: string, fn: noop, ...more: any[]) => void
-    }
+    },
   >(tar: T) {
     let originalAdd = tar.addEventListener
 
@@ -30,7 +30,7 @@ function main() {
       this: any,
       key: string,
       fn: () => void,
-      state: any
+      state: any,
     ) {
       const getEventMap = () => {
         if (isWindow) return window.eventMap
@@ -58,7 +58,7 @@ function main() {
       try {
         // 判断监听触发事件
         let onEventMatch = Object.entries(onEventAddMap).find(
-          ([key, val]) => isDocOrWin(key) || (tar as any).matches?.(key)
+          ([key, val]) => isDocOrWin(key) || (tar as any).matches?.(key),
         )
         if (onEventMatch && onEventMatch[1].includes(event)) {
           sendMessage_inject('event-hacker:onEventAdd', {
@@ -68,7 +68,7 @@ function main() {
         }
 
         let disableMatch = Object.entries(disableMap).find(
-          ([key, val]) => isDocOrWin(key) || this.matches?.(key)
+          ([key, val]) => isDocOrWin(key) || this.matches?.(key),
         )
         // 判断是否禁用
         if (disableMatch && disableMatch[1].includes(event)) {
@@ -95,7 +95,7 @@ function main() {
       this: any,
       key: string,
       fn: () => void,
-      state: any
+      state: any,
     ) {
       const getEventMap = () => {
         if (isWindow) return window.eventMap
@@ -107,7 +107,7 @@ function main() {
         const eventList = getEventMap()?.[key] ?? []
         var rs = originalRemove.call(this, key, fn, state)
         const index = eventList.findIndex(
-          (ev: any) => ev.fn === fn && ev.state === state
+          (ev: any) => ev.fn === fn && ev.state === state,
         )
         if (index !== -1) {
           eventList.splice(index, 1)

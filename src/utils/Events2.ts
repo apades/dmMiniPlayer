@@ -11,7 +11,7 @@ export default class Events2<Events extends Record<string, unknown>> {
   }
   on2<Key extends keyof Events>(
     type: Key,
-    handler: Handler<Events[Key]>
+    handler: Handler<Events[Key]>,
   ): () => void {
     this.mitt.on(type as any, handler as any)
     return () => {
@@ -21,7 +21,7 @@ export default class Events2<Events extends Record<string, unknown>> {
 
   emit<Key extends keyof Events>(type: Key, event: Events[Key]): void
   emit<Key extends keyof Events>(
-    type: undefined extends Events[Key] ? Key : never
+    type: undefined extends Events[Key] ? Key : never,
   ): void
   emit(type: any, event?: any) {
     return this.mitt.emit(type, event)

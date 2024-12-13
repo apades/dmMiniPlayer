@@ -3,11 +3,7 @@ import VideoPlayerV2 from '@root/components/VideoPlayerV2'
 import { useOnce } from '@root/hook'
 import { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
-import {
-  useRef,
-  useState,
-  type FC,
-} from 'react'
+import { useRef, useState, type FC } from 'react'
 import './videoPlayer_App.less'
 import { listSelector } from '@root/utils/listSelector'
 import parser from '@root/core/SubtitleManager/subtitleParser/srt'

@@ -27,7 +27,7 @@ const VolumeBar: FC<Props> = (props) => {
       setVolume(webVideo.volume * 100)
       setMuted(webVideo.muted)
     },
-    webVideo
+    webVideo,
   )
 
   const className = classNames([

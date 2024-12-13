@@ -278,7 +278,7 @@ const decode = (type: string) => {
     const buffer = new Uint8Array(
       'arrayBuffer' in Blob.prototype
         ? await blob.arrayBuffer()
-        : await new Response(blob).arrayBuffer()
+        : await new Response(blob).arrayBuffer(),
     )
 
     await loadLib('protobuf.js')
@@ -289,7 +289,7 @@ const decode = (type: string) => {
     function run(
       _proto: typeof proto,
       _type: typeof type,
-      _buffer: typeof buffer
+      _buffer: typeof buffer,
     ) {
       const root = window.protobuf.Root.fromJSON(_proto)
       const reply = root.lookupType(_type)

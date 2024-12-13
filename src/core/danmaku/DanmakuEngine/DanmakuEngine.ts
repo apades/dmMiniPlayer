@@ -55,7 +55,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     const clampSize = minmax(
       tarSize,
       configStore.fontSize,
-      configStore.adjustFontsizeMaxSize
+      configStore.adjustFontsizeMaxSize,
     )
     return clampSize
   }
@@ -148,7 +148,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
         setTimeout(() => {
           this.forceRerenderDanmaku()
         }, 0)
-      })
+      }),
     )
 
     Object.assign(this, props)
@@ -167,7 +167,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
           time: dan.time ?? this.media?.currentTime,
           danmakuEngine: this,
         })
-      })
+      }),
     )
   }
 

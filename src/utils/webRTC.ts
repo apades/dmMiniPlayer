@@ -33,7 +33,7 @@ export const getMediaStreamInGetter = (props?: { target?: Window }) => {
         postMessageToChild(
           PostMessageEvent.webRTC_answer,
           answer,
-          props?.target
+          props?.target,
         )
       }
     }),
@@ -78,13 +78,13 @@ export const sendMediaStreamInSender = (props: {
       if (!isTop) {
         postMessageToTop(
           PostMessageEvent.webRTC_candidate,
-          JSON.parse(JSON.stringify(event.candidate))
+          JSON.parse(JSON.stringify(event.candidate)),
         )
       } else {
         postMessageToChild(
           PostMessageEvent.webRTC_candidate,
           JSON.parse(JSON.stringify(event.candidate)),
-          target
+          target,
         )
       }
     }

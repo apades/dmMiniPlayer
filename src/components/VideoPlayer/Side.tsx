@@ -73,7 +73,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
         behavior: 'smooth',
       })
     },
-    containerRef.current
+    containerRef.current,
   )
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
                       className={classNames(
                         'px-[8px] py-[2px] overflow-hidden whitespace-nowrap overflow-ellipsis bor-[#fff7] rounded-[2px] cursor-pointer',
                         activeMap[vi] == ii && 'active bg-[#80bfff]',
-                        isCoverItem && 'cover-title f-i-center gap-1'
+                        isCoverItem && 'cover-title f-i-center gap-1',
                       )}
                       title={item.title}
                       ref={(el) => {

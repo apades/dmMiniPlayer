@@ -14,7 +14,7 @@ const INIT_ATTR = 'rc-f-init'
 async function initVideoFloatBtn(
   container: HTMLElement,
   vel: HTMLVideoElement,
-  fixedPos?: boolean
+  fixedPos?: boolean,
 ) {
   if (container == vel) container = container.parentElement!
   if (container.getAttribute(INIT_ATTR) === 'true') return
@@ -34,7 +34,7 @@ async function initVideoFloatBtn(
         x: initPos?.x || 0,
         y: initPos?.y || 0,
       }}
-    />
+    />,
   )
 }
 

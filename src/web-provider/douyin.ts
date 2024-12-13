@@ -39,7 +39,7 @@ export default class DouyinProvider extends HtmlDanmakuProvider {
   getObserveHtmlDanmakuConfig() {
     return {
       container: dq1<HTMLDivElement>(
-        '.webcast-chatroom___items>div:first-child'
+        '.webcast-chatroom___items>div:first-child',
       )!,
       child: '.webcast-chatroom___item',
       text: '.webcast-chatroom___content-with-emoji-text',
@@ -48,7 +48,7 @@ export default class DouyinProvider extends HtmlDanmakuProvider {
   getDanmakuSenderConfig() {
     return {
       webTextInput: dq1<HTMLInputElement>(
-        '.webcast-chatroom___input-container textarea'
+        '.webcast-chatroom___input-container textarea',
       )!,
       webSendButton: '.webcast-chatroom___send-btn',
     }

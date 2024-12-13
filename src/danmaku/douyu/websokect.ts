@@ -14,16 +14,16 @@ class Ex_WebSocket_UnLogin {
   constructor(
     rid: string | number,
     msgHandler: (msg: string) => void,
-    closeHandler: () => void
+    closeHandler: () => void,
   ) {
     if ('WebSocket' in window) {
       this.ws = new WebSocket(
-        'wss://danmuproxy.douyu.com:850' + String(getRandom(2, 5))
+        'wss://danmuproxy.douyu.com:850' + String(getRandom(2, 5)),
       ) // 负载均衡 8502~8504都可以用
       this.ws.onopen = () => {
         this.ws.send(WebSocket_Packet('type@=loginreq/roomid@=' + rid))
         this.ws.send(
-          WebSocket_Packet('type@=joingroup/rid@=' + rid + '/gid@=-9999/')
+          WebSocket_Packet('type@=joingroup/rid@=' + rid + '/gid@=-9999/'),
         )
         // this.ws.send(WebSocket_Packet("type@=sub/mt@=asr_caption/"));
         this.timer = setInterval(() => {
@@ -84,7 +84,6 @@ function WebSocket_Packet(str: string) {
 }
 
 function stringToByte(str: string) {
-  // eslint-disable-next-line no-array-constructor
   let bytes = []
   let len, c
   len = str.length

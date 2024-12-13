@@ -10,12 +10,12 @@ Browser.storage.local.onChanged.addListener((changes) => {
 })
 const localCallbacksMap: Record<string, ((v: any) => void)[]> = {}
 export function useBrowserLocalStorage<
-  T extends (string & { __key: any }) | string
+  T extends (string & { __key: any }) | string,
 >(
   key: T,
   callback: (
-    val: (T extends string & { __key: any } ? T['__key'] : any) | undefined
-  ) => void
+    val: (T extends string & { __key: any } ? T['__key'] : any) | undefined,
+  ) => void,
 ) {
   if (!localCallbacksMap[key]) {
     localCallbacksMap[key] = []
@@ -31,13 +31,13 @@ export function useBrowserLocalStorage<
 }
 
 export function setBrowserLocalStorage<
-  T extends (string & { __key: any }) | string
+  T extends (string & { __key: any }) | string,
 >(key: T, value: T extends string & { __key: any } ? T['__key'] : any) {
   return Browser.storage.local.set({ [key]: value })
 }
 
 export function getBrowserLocalStorage<
-  T extends (string & { __key: any }) | string
+  T extends (string & { __key: any }) | string,
 >(key: T) {
   return Browser.storage.local
     .get(key)
@@ -45,7 +45,7 @@ export function getBrowserLocalStorage<
       ({ [key as any]: val }) =>
         val as
           | (T extends string & { __key: any } ? T['__key'] : any)
-          | undefined
+          | undefined,
     )
 }
 
@@ -56,12 +56,12 @@ Browser.storage.sync.onChanged.addListener((changes) => {
 })
 const syncCallbacksMap: Record<string, ((v: any) => void)[]> = {}
 export function useBrowserSyncStorage<
-  T extends (string & { __key: any }) | string
+  T extends (string & { __key: any }) | string,
 >(
   key: T,
   callback: (
-    val: (T extends string & { __key: any } ? T['__key'] : any) | undefined
-  ) => void
+    val: (T extends string & { __key: any } ? T['__key'] : any) | undefined,
+  ) => void,
 ) {
   if (!syncCallbacksMap[key]) {
     syncCallbacksMap[key] = []
@@ -76,13 +76,13 @@ export function useBrowserSyncStorage<
 }
 
 export function setBrowserSyncStorage<
-  T extends (string & { __key: any }) | string
+  T extends (string & { __key: any }) | string,
 >(key: T, value: T extends string & { __key: any } ? T['__key'] : any) {
   return Browser.storage.sync.set({ [key]: value })
 }
 
 export function getBrowserSyncStorage<
-  T extends (string & { __key: any }) | string
+  T extends (string & { __key: any }) | string,
 >(key: T) {
   return Browser.storage.sync
     .get(key)
@@ -90,6 +90,6 @@ export function getBrowserSyncStorage<
       ({ [key as any]: val }) =>
         val as
           | (T extends string & { __key: any } ? T['__key'] : any)
-          | undefined
+          | undefined,
     )
 }

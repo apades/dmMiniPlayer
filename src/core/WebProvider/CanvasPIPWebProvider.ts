@@ -43,7 +43,7 @@ export default class CanvasPIPWebProvider extends WebProvider {
           pipVideoEl.addEventListener('leavepictureinpicture', () => {
             this.onPIPClose()
           })
-        }
+        },
       )
     }
   }

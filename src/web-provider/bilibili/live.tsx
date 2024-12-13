@@ -39,7 +39,7 @@ export default class BilibiliLiveProvider extends WebProvider {
             type: 'right',
           },
         ])
-      })
+      }),
     )
   }
 

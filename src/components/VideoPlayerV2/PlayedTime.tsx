@@ -13,7 +13,7 @@ const PlayedTime: FC = (props) => {
       if (!webVideo) return
       setCurrentTime(webVideo.currentTime)
     },
-    webVideo
+    webVideo,
   )
   useEffect(() => {
     if (!webVideo) return

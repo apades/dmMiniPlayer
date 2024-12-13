@@ -21,7 +21,7 @@ browser.commands.onCommand.addListener(async (command, tab) => {
       {
         tabId: activeTabId,
         context: 'content-script',
-      }
+      },
     )
     // sendToContentScript({
     //   name: 'PIP-action',

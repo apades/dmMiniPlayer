@@ -9,9 +9,8 @@ declare module 'react' {
 }
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface CropTarget {}
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+
   interface RestrictionTarget {}
   interface Window {
     documentPictureInPicture: {

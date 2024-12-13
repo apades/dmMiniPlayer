@@ -66,7 +66,7 @@ const svgMap = {
 } as const
 
 function withPortal<T>(
-  Components: React.FC<T>
+  Components: React.FC<T>,
 ): React.FC<T & { container: Element }> {
   Components = memo(Components) as any
   return (props: T & { container: Element }) => {

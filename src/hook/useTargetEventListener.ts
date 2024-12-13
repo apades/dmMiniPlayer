@@ -10,22 +10,22 @@ export type Target =
 function useTargetEventListener<K extends keyof HTMLElementEventMap>(
   eventName: K,
   handler: (ev: HTMLElementEventMap[K]) => void,
-  target: Target
+  target: Target,
 ): void
 function useTargetEventListener<K extends keyof ElementEventMap>(
   eventName: K,
   handler: (ev: ElementEventMap[K]) => void,
-  target: Target
+  target: Target,
 ): void
 function useTargetEventListener<K extends keyof DocumentEventMap>(
   eventName: K,
   handler: (ev: DocumentEventMap[K]) => void,
-  target: Target
+  target: Target,
 ): void
 function useTargetEventListener<K extends keyof WindowEventMap>(
   eventName: K,
   handler: (ev: WindowEventMap[K]) => void,
-  target: Target
+  target: Target,
 ): void
 /**
  * 相比起ahooks的useEventListener，改进了target没有时不要传window进去，就不挂载事件
@@ -35,7 +35,7 @@ function useTargetEventListener<K extends keyof WindowEventMap>(
 function useTargetEventListener(
   eventName: string,
   handler: noop,
-  target: Target
+  target: Target,
 ) {
   const handlerRef = useLatest(handler)
 
@@ -57,7 +57,7 @@ function useTargetEventListener(
       }
     },
     [eventName],
-    target
+    target,
   )
 }
 export default useTargetEventListener

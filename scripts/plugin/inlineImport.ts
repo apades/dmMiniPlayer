@@ -40,7 +40,7 @@ export const inlineImport = (props: Props): EsbuildPlugin => {
       // debugger
       const alias = Object.entries(build.initialOptions.alias ?? {}) as [
         `${string}`,
-        `${string}`
+        `${string}`,
       ][]
       build.onResolve({ filter }, async (args) => {
         // 处理alias
@@ -55,7 +55,7 @@ export const inlineImport = (props: Props): EsbuildPlugin => {
         } catch {
           filePath = path.resolve(
             args.resolveDir,
-            inputPath.replace(filter, '')
+            inputPath.replace(filter, ''),
           )
         }
 

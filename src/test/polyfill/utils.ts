@@ -22,7 +22,7 @@ export function objectDeepProxy<T = any>(
   originKey: string,
   option?: Partial<{
     onNull: (type: string, key: string) => void
-  }>
+  }>,
 ): T {
   return new Proxy(target as any, {
     get: (parent, key: string): any => {

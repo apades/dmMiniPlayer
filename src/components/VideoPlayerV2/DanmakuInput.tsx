@@ -68,7 +68,7 @@ const DanmakuInputInner: FC<Props> = (props) => {
         return
       eventBus.emit('visible')
     },
-    keydownWindow
+    keydownWindow,
   )
 
   useOnce(() => {
@@ -104,7 +104,7 @@ const DanmakuInputInner: FC<Props> = (props) => {
     <div
       className={classNames(
         'fixed transition-all z-[20] left-0 w-full bg-[#0007] px-5 py-2 duration-500',
-        isVisible ? 'bottom-0 opacity-100' : '-bottom-10 opacity-0'
+        isVisible ? 'bottom-0 opacity-100' : '-bottom-10 opacity-0',
       )}
     >
       <input

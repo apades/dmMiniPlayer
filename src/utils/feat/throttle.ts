@@ -52,7 +52,7 @@ import debounce from './debounce.js'
 function throttle<T extends noop>(
   func: T,
   wait: number,
-  options?: Partial<{ leading: boolean; trailing: boolean }>
+  options?: Partial<{ leading: boolean; trailing: boolean }>,
 ): T {
   let leading = true
   let trailing = true

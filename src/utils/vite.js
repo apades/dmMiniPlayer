@@ -8,7 +8,7 @@ export function plasmoUrlReplace() {
       for (let match of matches) {
         text = text.replace(
           match[0],
-          `import ${match[1]} from "${match[2]}?url"`
+          `import ${match[1]} from "${match[2]}?url"`,
         )
       }
       return text
@@ -26,7 +26,7 @@ export function plasmoDataTextReplace() {
       for (let match of matches) {
         text = text.replace(
           match[0],
-          `import ${match[1]} from "${match[2]}?row"`
+          `import ${match[1]} from "${match[2]}?row"`,
         )
       }
       return text

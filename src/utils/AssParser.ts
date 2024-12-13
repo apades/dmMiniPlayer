@@ -58,7 +58,7 @@ export default class AssParser {
           // value = this.resolveDialogueTime(value as string)
         } else if (key == 'text') {
           let { color, danMoveType, text } = this.resolveText(
-            dialogue.Text.raw as string
+            dialogue.Text.raw as string,
           )
           value = text
 
@@ -83,7 +83,7 @@ export default class AssParser {
 
     let configBlock = inputText.slice(
       inputText.indexOf('{') + 1,
-      inputText.indexOf('}')
+      inputText.indexOf('}'),
     )
 
     let configBlocks = configBlock.split('\\')

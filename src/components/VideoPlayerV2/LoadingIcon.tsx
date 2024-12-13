@@ -17,7 +17,7 @@ const LoadingIcon: FC = (props) => {
         : checkJumpInBufferArea(webVideo.buffered, webVideo.currentTime)
       setLoading(!isCanPlay)
     },
-    webVideo
+    webVideo,
   )
   useTargetEventListener(
     'canplay',
@@ -25,7 +25,7 @@ const LoadingIcon: FC = (props) => {
       // if (!webVideo) return
       setLoading(false)
     },
-    webVideo
+    webVideo,
   )
 
   return (

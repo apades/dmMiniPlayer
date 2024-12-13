@@ -186,7 +186,7 @@ const DanmakuSettingBtn: FC = (props) => {
       <div
         className={classNames(
           'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors',
-          !visible && 'opacity-50'
+          !visible && 'opacity-50',
         )}
         onClick={() => {
           danmakuEngine.changeVisible()

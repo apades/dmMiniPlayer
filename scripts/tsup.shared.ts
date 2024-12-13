@@ -55,7 +55,7 @@ export const shareConfig = {
       if (locale === '.translated.json') return
       fs.copySync(
         pr('../src/locales-ext', locale),
-        pr(outDir, `./_locales/${locale.replace('.json', '')}/messages.json`)
+        pr(outDir, `./_locales/${locale.replace('.json', '')}/messages.json`),
       )
     })
     fs.copySync(pr('../assets'), pr(outDir, './assets'))
@@ -77,7 +77,7 @@ export const shareConfig = {
       .readFileSync(popupHtmlFile, 'utf-8')
       .replace(
         '<script src="./index.tsx" type="module"></script>',
-        '<script src="./popup.js" type="module"></script>'
+        '<script src="./popup.js" type="module"></script>',
       )
     fs.writeFileSync(pr(outDir, './popup.html'), popupHtmlText, 'utf-8')
   },
@@ -91,7 +91,7 @@ export const shareConfig = {
         upgrade_zh: getChangeLog(version, 'zh')?.replaceAll('\n', '\\n'),
         version,
       }),
-      ['____env____']
+      ['____env____'],
     ),
   },
   platform: 'browser',

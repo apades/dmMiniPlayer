@@ -8,10 +8,10 @@ export const { offMessage, onMessage, onMessageOnce, sendMessage } =
     sendType: 'inject-request',
   })
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// @typescript-eslint/no-unsafe-function-type
 export function runCodeInTopWindow<T extends (...args: any) => void>(
   fn: T,
-  args: Parameters<T>
+  args: Parameters<T>,
 ) {
   return sendMessage('run-code', { function: fn.toString(), args })
 }

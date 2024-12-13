@@ -9,12 +9,12 @@ import Resources from './resources'
  * @returns {*} - 值
  */
 function setValue(value, defaultValue, type) {
-    let returnValue;
-    if (isEmpty(value)) returnValue = clone(defaultValue);
-    else returnValue = clone(value);
-    if (!isEmpty(type)) checkType(returnValue, type);
-    else if (!isEmpty(defaultValue)) checkType(returnValue, _typeof(defaultValue));
-    return returnValue;
+  let returnValue
+  if (isEmpty(value)) returnValue = clone(defaultValue)
+  else returnValue = clone(value)
+  if (!isEmpty(type)) checkType(returnValue, type)
+  else if (!isEmpty(defaultValue)) checkType(returnValue, _typeof(defaultValue))
+  return returnValue
 }
 
 /**
@@ -26,15 +26,19 @@ function setValue(value, defaultValue, type) {
  * @returns {object} - 值
  */
 function setValues(values, defaultValues, types, clone = true) {
-    let returnValues = clone ? setValue(values, {}) : defaultValues;
-    let _values = clone ? returnValues : setValue(values, {});
-    for (let key in defaultValues) {
-        if (_typeof(defaultValues[key]) === 'object')
-            returnValues[key] = setValues(_values[key], defaultValues[key], types[key]);
-        else
-            returnValues[key] = setValue(_values[key], defaultValues[key], types[key]);
-    }
-    return returnValues;
+  let returnValues = clone ? setValue(values, {}) : defaultValues
+  let _values = clone ? returnValues : setValue(values, {})
+  for (let key in defaultValues) {
+    if (_typeof(defaultValues[key]) === 'object')
+      returnValues[key] = setValues(
+        _values[key],
+        defaultValues[key],
+        types[key],
+      )
+    else
+      returnValues[key] = setValue(_values[key], defaultValues[key], types[key])
+  }
+  return returnValues
 }
 
 /**
@@ -45,19 +49,22 @@ function setValues(values, defaultValues, types, clone = true) {
  * @param {boolean} canBeNull - 可以为空
  */
 function checkType(value, type, canBeNull = true) {
-    if (typeof type != 'string' && _typeof(type) != 'array') throw new TypeError(Resources.PARAMETERS_TYPE_ERROR);
-    if (canBeNull && isEmpty(value)) return;
-    if (_typeof(type) === 'array') {
-        let flat = false;
-        for (let item of type) {
-            if (typeof item != 'string') throw new TypeError(Resources.PARAMETERS_TYPE_ERROR);
-            if (_typeof(value) === item) {
-                flat = true;
-                break;
-            }
-        }
-        if (!flat) throw new TypeError(Resources.PARAMETERS_TYPE_ERROR);
-    } else if (_typeof(value) != type) throw new TypeError(Resources.PARAMETERS_TYPE_ERROR);
+  if (typeof type != 'string' && _typeof(type) != 'array')
+    throw new TypeError(Resources.PARAMETERS_TYPE_ERROR)
+  if (canBeNull && isEmpty(value)) return
+  if (_typeof(type) === 'array') {
+    let flat = false
+    for (let item of type) {
+      if (typeof item != 'string')
+        throw new TypeError(Resources.PARAMETERS_TYPE_ERROR)
+      if (_typeof(value) === item) {
+        flat = true
+        break
+      }
+    }
+    if (!flat) throw new TypeError(Resources.PARAMETERS_TYPE_ERROR)
+  } else if (_typeof(value) != type)
+    throw new TypeError(Resources.PARAMETERS_TYPE_ERROR)
 }
 
 /**
@@ -68,13 +75,11 @@ function checkType(value, type, canBeNull = true) {
  * @returns {object} - 值
  */
 function checkTypes(values, types, canBeNull = true) {
-    if (canBeNull && isEmpty(values)) return;
-    for (let key in types) {
-        if (_typeof(types[key]) === 'object')
-            checkTypes(values[key], types[key]);
-        else
-            checkType(values[key], types[key], canBeNull);
-    }
+  if (canBeNull && isEmpty(values)) return
+  for (let key in types) {
+    if (_typeof(types[key]) === 'object') checkTypes(values[key], types[key])
+    else checkType(values[key], types[key], canBeNull)
+  }
 }
 
 /**
@@ -83,9 +88,11 @@ function checkTypes(values, types, canBeNull = true) {
  * @param {*} value - 值
  */
 function isEmpty(value) {
-    return typeof value === 'undefined' ||
-        (typeof value === 'number' && isNaN(value)) ||
-        value === null
+  return (
+    typeof value === 'undefined' ||
+    (typeof value === 'number' && isNaN(value)) ||
+    value === null
+  )
 }
 
 /**
@@ -94,33 +101,34 @@ function isEmpty(value) {
  * @param {*} object - 对象
  */
 function _typeof(object) {
-    //eg: [Object Function] -> Function -> function
-    return Object.prototype.toString.call(object).slice(8, -1).toLowerCase();
+  //eg: [Object Function] -> Function -> function
+  return Object.prototype.toString.call(object).slice(8, -1).toLowerCase()
 }
 
 /**
  * 克隆对象
- * @param {*} object 
+ * @param {*} object
  */
 function clone(object) {
-    let result, type = _typeof(object);
-    //确定result的类型
-    if (type === 'object') result = {};
-    else if (type === 'array') result = [];
-    else return object;
-    for (let key in object) {
-        result[key] = clone(object[key]); //递归调用
-    }
-    return result;
+  let result,
+    type = _typeof(object)
+  //确定result的类型
+  if (type === 'object') result = {}
+  else if (type === 'array') result = []
+  else return object
+  for (let key in object) {
+    result[key] = clone(object[key]) //递归调用
+  }
+  return result
 }
 
 /**
  * 清空元素
- * @param {Element} element 
+ * @param {Element} element
  */
 function cleanElement(element) {
-    let lastChild;
-    while ((lastChild = element.lastChild) != null) element.removeChild(lastChild);
+  let lastChild
+  while ((lastChild = element.lastChild) != null) element.removeChild(lastChild)
 }
 
 /**
@@ -128,11 +136,16 @@ function cleanElement(element) {
  * @param {boolean} showWarn - 显示警告
  */
 function getDevicePixelRatio(showWarn = false) {
-    if (typeof window.devicePixelRatio === 'number') return window.devicePixelRatio;
-    if (typeof window.screen.deviceXDPI === 'number' && typeof window.screen.logicalXDPI === 'number') return screen.deviceXDPI / screen.logicalXDPI;
-    //不支持 devicePixelRatio 的警告
-    if(showWarn) console.warn(Resources.DEVICEPIXELRATIO_NOT_SUPPORT_WARN);
-    return 1;
+  if (typeof window.devicePixelRatio === 'number')
+    return window.devicePixelRatio
+  if (
+    typeof window.screen.deviceXDPI === 'number' &&
+    typeof window.screen.logicalXDPI === 'number'
+  )
+    return screen.deviceXDPI / screen.logicalXDPI
+  //不支持 devicePixelRatio 的警告
+  if (showWarn) console.warn(Resources.DEVICEPIXELRATIO_NOT_SUPPORT_WARN)
+  return 1
 }
 
 /**
@@ -142,13 +155,13 @@ function getDevicePixelRatio(showWarn = false) {
  * @returns {bool} - 相等为 true，不等为 false
  */
 function shallowEqual(objectA, objectB) {
-    if (objectA === objectB) return true;
-    if (typeof objectA === 'object' && typeof objectB === 'object') {
-        for (let key in objectA)
-            if (!shallowEqual(objectA[key], objectB[key])) return false;
-        return true;
-    }
-    return false;
+  if (objectA === objectB) return true
+  if (typeof objectA === 'object' && typeof objectB === 'object') {
+    for (let key in objectA)
+      if (!shallowEqual(objectA[key], objectB[key])) return false
+    return true
+  }
+  return false
 }
 
 /**
@@ -156,15 +169,15 @@ function shallowEqual(objectA, objectB) {
  * @namespace
  */
 const Helper = {
-    setValue: setValue,
-    setValues: setValues,
-    checkType: checkType,
-    checkTypes: checkTypes,
-    isEmpty: isEmpty,
-    _typeof: _typeof,
-    clone: clone,
-    cleanElement: cleanElement,
-    getDevicePixelRatio: getDevicePixelRatio,
-    shallowEqual: shallowEqual
+  setValue: setValue,
+  setValues: setValues,
+  checkType: checkType,
+  checkTypes: checkTypes,
+  isEmpty: isEmpty,
+  _typeof: _typeof,
+  clone: clone,
+  cleanElement: cleanElement,
+  getDevicePixelRatio: getDevicePixelRatio,
+  shallowEqual: shallowEqual,
 }
 export default Helper

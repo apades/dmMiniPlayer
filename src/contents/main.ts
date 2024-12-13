@@ -36,7 +36,7 @@ if (isTop) {
           isMute: v.muted,
           isPlaying: !v.paused,
         }
-      })
+      }),
     )
   })
 }
@@ -68,7 +68,7 @@ function main() {
   let isWaiting = false
 
   const openPlayer = async (
-    props?: Parameters<WebProvider['openPlayer']>[0]
+    props?: Parameters<WebProvider['openPlayer']>[0],
   ) => {
     // 避免多次open
     if (isWaiting) return
@@ -101,7 +101,7 @@ function main() {
               if (respCount === postedWindows.length) {
                 res()
               }
-            }
+            },
           )
         }),
         new Promise<void>((res) => {
@@ -126,7 +126,7 @@ function main() {
           {
             id: targetVideo.id,
           },
-          targetVideo.source
+          targetVideo.source,
         )
         return { state: 'ok' }
       }
@@ -167,7 +167,7 @@ function main() {
       postMessageToChild(
         PostMessageEvent.updateVideoState,
         { ...data, id },
-        captureSource
+        captureSource,
       )
     }
 
@@ -273,7 +273,7 @@ function main() {
 
           const { videoEl, unMount } = getSimulateVideoEl(
             data.videoState,
-            captureSource
+            captureSource,
           )
 
           // webRTC模式
@@ -289,7 +289,7 @@ function main() {
               postMessageToChild(
                 PostMessageEvent.webRTC_close,
                 undefined,
-                captureSource
+                captureSource,
               )
             })
           } else {
@@ -304,7 +304,7 @@ function main() {
           return openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${id}"]`) })
         }
       }
-    }
+    },
   )
   // 从floatButton发起的启动设置面板
   onPostMessage(PostMessageEvent.openSettingPanel, () => {
@@ -325,7 +325,7 @@ function main() {
     const originStyle = iframe.getAttribute('style') || ''
     iframe.setAttribute(
       'style',
-      'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;'
+      'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;',
     )
 
     // 转发top的按键输入事件到tar iframe里
@@ -341,7 +341,7 @@ function main() {
           },
           type: e.type,
         },
-        source
+        source,
       )
     }
     const events: (keyof WindowEventMap)[] = ['keydown', 'keyup', 'keypress']
@@ -349,7 +349,7 @@ function main() {
       // 发现只需要在body上阻止冒泡就可以让window上挂载的keydown事件监听不生效了
       document.body.addEventListener(
         event,
-        stopPropagationKeyEventAndSendProxyEventToIframe
+        stopPropagationKeyEventAndSendProxyEventToIframe,
       )
     })
 
@@ -359,7 +359,7 @@ function main() {
       events.forEach((event) => {
         document.body.removeEventListener(
           event,
-          stopPropagationKeyEventAndSendProxyEventToIframe
+          stopPropagationKeyEventAndSendProxyEventToIframe,
         )
       })
       iframe.setAttribute('style', originStyle)

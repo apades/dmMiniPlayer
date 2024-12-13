@@ -47,7 +47,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
             this.subtitleManager.init(this.webVideo)
             this.initSideSwitcherData()
           }, 0)
-        })
+        }),
       )
     }
   }
@@ -56,7 +56,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
     return {
       container: dq1<HTMLElement>(
         '#items.yt-live-chat-item-list-renderer',
-        getIframe()?.contentDocument
+        getIframe()?.contentDocument,
       )!,
       child: 'yt-live-chat-text-message-renderer',
       text: '#message',
@@ -67,11 +67,11 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
     return {
       webTextInput: dq1<HTMLInputElement>(
         '#input.yt-live-chat-text-input-field-renderer',
-        dqTar
+        dqTar,
       ),
       webSendButton: dq1(
         '.yt-live-chat-message-input-renderer .yt-spec-button-shape-next',
-        dqTar
+        dqTar,
       ),
     }
   }
@@ -83,7 +83,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
     }
 
     const playListItems: VideoItem[] = dq(
-      'ytd-playlist-panel-video-renderer'
+      'ytd-playlist-panel-video-renderer',
     ).map((el) => {
       const title = (dq1('#video-title', el)?.textContent ?? '').trim()
       return {
@@ -100,7 +100,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
     })
 
     const recommendedListItems: VideoItem[] = dq(
-      'ytd-compact-video-renderer'
+      'ytd-compact-video-renderer',
     ).map((el) => {
       const title = (dq1('#video-title', el)?.textContent ?? '').trim()
       return {

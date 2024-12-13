@@ -62,12 +62,12 @@ function _sendMessage(category: string, _content: any) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 const messageMap: Record<string, Function[]> = {}
 window.messageMap = messageMap
 export function onMessage(
   category: string,
-  callback: (content: MessageContent) => void
+  callback: (content: MessageContent) => void,
 ) {
   messageMap[category] = messageMap[category] || []
   messageMap[category].push(callback)
@@ -75,12 +75,12 @@ export function onMessage(
 
 export function offMessage(
   category: string,
-  callback: (content: MessageContent) => void
+  callback: (content: MessageContent) => void,
 ) {
   if (!messageMap[category]) return
   messageMap[category].splice(
     messageMap[category].findIndex((cb) => cb == callback),
-    1
+    1,
   )
 }
 
@@ -92,7 +92,7 @@ window.dispatchMessage = dispatchMessage
 
 export function sendMessageWaitResp(
   category: string,
-  content: MessageContent
+  content: MessageContent,
 ): Promise<any> {
   try {
     _sendMessage(category, content)

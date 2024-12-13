@@ -104,7 +104,7 @@ var screenfull = {
         if (returnPromise instanceof Promise) {
           returnPromise.then(onFullScreenEntered).catch(reject)
         }
-      }.bind(this)
+      }.bind(this),
     )
   },
   exit: function () {
@@ -134,7 +134,7 @@ var screenfull = {
         if (returnPromise instanceof Promise) {
           returnPromise.then(onFullScreenExit).catch(reject)
         }
-      }.bind(this)
+      }.bind(this),
     )
   },
   toggle: function (element, options) {

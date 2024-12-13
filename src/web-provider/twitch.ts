@@ -6,7 +6,7 @@ export default class TwitchProvider extends HtmlDanmakuProvider {
   getObserveHtmlDanmakuConfig() {
     return {
       container: dq1<HTMLDivElement>(
-        '.chat-scrollable-area__message-container'
+        '.chat-scrollable-area__message-container',
       )!,
       child: '*',
       text: '.chat-line__message-container .chat-line__username-container ~ span:last-of-type',

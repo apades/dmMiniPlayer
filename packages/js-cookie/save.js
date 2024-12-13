@@ -8,7 +8,7 @@ const defaultConverter = {
   write: function (value) {
     return encodeURIComponent(value).replace(
       /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
-      decodeURIComponent
+      decodeURIComponent,
     )
   },
 }
@@ -105,7 +105,7 @@ function init(converter, defaultAttributes) {
           '',
           assign({}, attributes, {
             expires: -1,
-          })
+          }),
         )
       },
       withAttributes: function (attributes) {
@@ -118,7 +118,7 @@ function init(converter, defaultAttributes) {
     {
       attributes: { value: Object.freeze(defaultAttributes) },
       converter: { value: Object.freeze(converter) },
-    }
+    },
   )
 }
 

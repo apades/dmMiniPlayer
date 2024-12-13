@@ -17,6 +17,6 @@ const providerConfig = {
 export default providerConfig
 export function getProviderConfig(url: string) {
   return Object.entries(providerConfig).find(([key, value]) =>
-    value.some((reg) => reg.test(url))
+    value.some((reg) => reg.test(url)),
   )?.[0] as keyof typeof providerConfig | undefined
 }

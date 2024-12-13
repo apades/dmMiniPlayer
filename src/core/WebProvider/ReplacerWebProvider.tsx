@@ -53,7 +53,7 @@ export default class ReplacerWebProvider extends WebProvider {
             new CustomEvent(`dm-${e.type}`, {
               detail: e,
               bubbles: true,
-            })
+            }),
           )
         }
         const events: (keyof WindowEventMap)[] = [
@@ -86,7 +86,7 @@ export default class ReplacerWebProvider extends WebProvider {
                 preventDefault: () => {},
               },
               bubbles: true,
-            })
+            }),
           )
         })
       })
@@ -97,7 +97,7 @@ export default class ReplacerWebProvider extends WebProvider {
         if (!playerEl) {
           console.error(
             '不正常的miniPlayer.init()，没有 playerEl',
-            this.miniPlayer
+            this.miniPlayer,
           )
           throw Error('不正常的miniPlayer.init()')
         }

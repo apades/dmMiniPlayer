@@ -116,7 +116,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
           if (!playerConfig.cropTarget && !playerConfig.restrictionTarget)
             throw Error(
-              `没有定义数据 cropTarget:${!playerConfig.cropTarget} restrictionTarget:${!playerConfig.restrictionTarget}`
+              `没有定义数据 cropTarget:${!playerConfig.cropTarget} restrictionTarget:${!playerConfig.restrictionTarget}`,
             )
           const stream = await navigator.mediaDevices.getDisplayMedia({
             preferCurrentTab: true,
@@ -256,7 +256,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       renderMode === DocPIPRenderType.replaceWebVideoDom
     ) {
       restoreWebVideoPlayerElState = this.initWebVideoPlayerElState(
-        this.webVideoEl
+        this.webVideoEl,
       )
     }
 

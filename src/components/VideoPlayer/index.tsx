@@ -34,7 +34,7 @@ import VideoPlayerSide from './Side'
 type EventBase = Omit<
   {
     [k in keyof React.DOMAttributes<HTMLVideoElement>]?: (
-      event: React.SyntheticEvent<HTMLVideoElement, Event>
+      event: React.SyntheticEvent<HTMLVideoElement, Event>,
     ) => void
   },
   'children' | 'dangerouslySetInnerHTML'
@@ -123,7 +123,7 @@ const VideoPlayer = observer(
     >([])
     const [eventListenMap, setEventListenMap] = useState<{
       [k in keyof HTMLMediaElementEventMap]?: ((
-        event: HTMLMediaElementEventMap[k]
+        event: HTMLMediaElementEventMap[k],
       ) => void)[]
     }>({})
 
@@ -211,7 +211,7 @@ const VideoPlayer = observer(
             videoRef.current.currentTime = time
             let isInBuffer = checkJumpInBufferArea(
               videoRef.current.buffered,
-              time
+              time,
             )
             if (!isInBuffer) setLoading(true)
             if (isPause) videoRef.current.pause()
@@ -233,7 +233,7 @@ const VideoPlayer = observer(
           // }
         },
         ref: videoRef,
-      })
+      }),
     )
 
     // 多个播放器标识
@@ -390,7 +390,7 @@ const VideoPlayer = observer(
         },
         videoEl: () =>
           document.querySelector(
-            `.video-player[data-vid="${index}"] video`
+            `.video-player[data-vid="${index}"] video`,
           ) as HTMLVideoElement,
         onTimeupdate(cb: (time: number) => void) {
           setTimeupdateQueue((q) => {
@@ -400,7 +400,7 @@ const VideoPlayer = observer(
         },
         addEventListener<K extends keyof HTMLMediaElementEventMap>(
           event: K,
-          cb: (e?: HTMLMediaElementEventMap[K]) => void
+          cb: (e?: HTMLMediaElementEventMap[K]) => void,
         ) {
           setEventListenMap({
             ...eventListenMap,
@@ -548,7 +548,7 @@ const VideoPlayer = observer(
       Object.keys(eventBase).forEach((key: keyof EventBase) => {
         let realEventKey = key.slice(2).toLowerCase()
         let fnArr: ((
-          event: React.SyntheticEvent<HTMLVideoElement, Event>
+          event: React.SyntheticEvent<HTMLVideoElement, Event>,
         ) => void)[] = []
 
         fnArr.push(eventBase[key])
@@ -763,7 +763,7 @@ const VideoPlayer = observer(
         )}
       </div>
     )
-  })
+  }),
 )
 
 const RenderVideoNoti = (
@@ -771,7 +771,7 @@ const RenderVideoNoti = (
     state: boolean
     el: ReactElement
     className?: string
-  }[]
+  }[],
 ) => {
   const showIndex = props.findIndex((d) => d.state === true),
     isShow = showIndex !== -1,
@@ -801,7 +801,7 @@ const DanmakuVisibleToggleBtn: FC<{ danmakuEngine?: DanmakuEngine }> = observer(
         />
       )
     )
-  }
+  },
 )
 
 export default memo(VideoPlayer)

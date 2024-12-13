@@ -16,7 +16,7 @@ function injectCreateElement() {
 
   const createElement: typeof originCreateElement = (
     tag: string,
-    options: any
+    options: any,
   ) => {
     const dom = originCreateElement.call(document, tag, options)
 

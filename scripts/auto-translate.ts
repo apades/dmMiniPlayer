@@ -10,7 +10,7 @@ const proxyUrl = `http://127.0.0.1:${proxyPort}`
 const proxyAgent = new HttpsProxyAgent(proxyUrl)
 
 const transForLangs = Object.values(Language).filter(
-  (v) => v !== Language.English
+  (v) => v !== Language.English,
 )
 
 const googleTranslate = (textArr: string[], target: string) => {
@@ -40,7 +40,7 @@ async function main(props: { targetDir: string; sourceFile: string }) {
     for (const lang of transForLangs) {
       const translateTargetFile = path.resolve(
         targetDir,
-        `./${lang.replace('-', '_')}.json`
+        `./${lang.replace('-', '_')}.json`,
       )
       const translateTargetJson = fs.readJsonSync(translateTargetFile)
       const copySource = cloneDeep(sourceJson)
@@ -78,7 +78,7 @@ async function main(props: { targetDir: string; sourceFile: string }) {
       if (needTranslateEntries.length > 0) {
         const translateResult = await googleTranslate(
           Object.values(needTranslateMap),
-          lang
+          lang,
         )
 
         needTranslateEntries.forEach(([deepKey, val], index) => {

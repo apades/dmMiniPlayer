@@ -30,7 +30,10 @@ export class JsonDanmaku {
     pool: number
     attr: number
   }[] = []
-  constructor(public aid: number | string, public cid: number | string) {}
+  constructor(
+    public aid: number | string,
+    public cid: number | string,
+  ) {}
   // get segmentCount() {
   //   return Math.ceil(this.duration / JsonDanmaku.SegmentSize)
   // }
@@ -54,7 +57,7 @@ export class JsonDanmaku {
       return response.blob()
     }
     const viewBlob = await fetchBlob(
-      `https://api.bilibili.com/x/v2/dm/web/view?type=1&oid=${this.cid}&pid=${this.aid}`
+      `https://api.bilibili.com/x/v2/dm/web/view?type=1&oid=${this.cid}&pid=${this.aid}`,
     )
     if (!viewBlob) {
       throw new Error('获取弹幕信息失败')
@@ -63,7 +66,7 @@ export class JsonDanmaku {
     const { total } = view.dmSge
     if (total === undefined) {
       throw new Error(
-        `获取弹幕分页数失败: ${JSON.stringify(omit(view, ['flag']))}`
+        `获取弹幕分页数失败: ${JSON.stringify(omit(view, ['flag']))}`,
       )
     }
     // console.log('segment count =', total)
@@ -72,7 +75,7 @@ export class JsonDanmaku {
         const blob = await fetchBlob(
           `https://api.bilibili.com/x/v2/dm/web/seg.so?type=1&oid=${
             this.cid
-          }&pid=${this.aid}&segment_index=${index + 1}`
+          }&pid=${this.aid}&segment_index=${index + 1}`,
         )
         if (!blob) {
           throw new Error(`弹幕片段${index + 1}下载失败`)
@@ -80,7 +83,7 @@ export class JsonDanmaku {
         // console.log(`received blob for segment ${index + 1}`, blob)
         const result = await decodeDanmakuSegment(blob)
         return result.elems ?? []
-      })
+      }),
     )
     this.jsonDanmakus = segments
       .flat()
@@ -230,7 +233,7 @@ export const getUserDanmakuConfig = async () => {
     // 字体直接从 HTML 里取了, localStorage 里是 font-family 解析更麻烦些
     config.font = (
       dq1(
-        ':is(.bilibili-player-video-danmaku-setting-right-font, .bpx-player-dm-setting-right-font-content-fontfamily) .bui-select-result'
+        ':is(.bilibili-player-video-danmaku-setting-right-font, .bpx-player-dm-setting-right-font-content-fontfamily) .bui-select-result',
       ) as HTMLElement
     ).innerText
   } catch (error) {
@@ -259,7 +262,7 @@ export const convertToAss = async (xml: string) => {
 export const convertToAssFromJson = async (danmaku: JsonDanmaku) => {
   const converter = new DanmakuConverter(await getUserDanmakuConfig())
   const assDocument = converter.xmlDanmakuToAssDocument(
-    danmaku.xmlDanmakus.map((x) => new XmlDanmaku(x))
+    danmaku.xmlDanmakus.map((x) => new XmlDanmaku(x)),
   )
   return assDocument.generateAss()
 }
@@ -286,7 +289,7 @@ export const getTextByType = async (
   input: {
     aid: string
     cid: string
-  }
+  },
 ) => {
   const { aid, cid } = input
   const danmaku = await new JsonDanmaku(aid, cid).fetchInfo()

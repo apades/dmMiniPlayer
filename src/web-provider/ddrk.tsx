@@ -15,7 +15,7 @@ export default class DdrkProvider extends WebProvider {
     this.addOnUnloadFn(
       onRouteChange(() => {
         this.clickButtonToAppendSrcInVideoTag()
-      })
+      }),
     )
   }
 

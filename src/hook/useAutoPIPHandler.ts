@@ -63,6 +63,6 @@ export default function useAutoPIPHandler(videoEl: HTMLVideoElement) {
       videoEl.addEventListener('volumechange', () => {
         observeVideo(videoEl)
       })
-    })
+    }),
   )
 }
