@@ -32,10 +32,10 @@ const LoadingIcon: FC = (props) => {
     isLoading && (
       <div className="vp-loading z-3 ab-center pointer-events-none">
         <div
-          className="f-center relative vp-cover-icon-bg rounded-full animate-spin p-2"
-          style={{ animationDuration: '3s' }}
+          className="f-center relative vp-cover-icon-bg rounded-full animate-spin mb:p-2 p-4"
+          style={{ animationDuration: '10s' }}
         >
-          <LoadingOutlined className="text-[120px] mb:text-[40px] text-main" />
+          <LoadingOutlined className="text-[80px] mb:text-[40px] text-main" />
         </div>
       </div>
     )

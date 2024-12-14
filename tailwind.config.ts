@@ -1,25 +1,21 @@
-/** @type {import('tailwindcss').Config} */
 import remToPx from 'tailwindcss-rem-to-px'
+import containerQuery from './packages/container-queries'
 
-module.exports = {
-  content: ['./src/**/*.{html,tsx,jsx,ejs}'],
+/** @type {import('tailwindcss').Config} */
+const config = {
+  content: ['./src/**/*.{html,tsx,jsx}'],
   theme: {
-    screens: {
-      xs: '390px',
-      sm: '640px',
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
-      '2xl': '1536px',
-      '3xl': '1920px',
-    },
     extend: {
       boxShadow: {
         'btn-shadow': 'var(--btn-shadow, 0px 2px 4px rgba(55, 60, 68, 0.2))',
       },
       screens: {
         dp: '768px',
-        mb: { max: '768px' },
+        mb: { raw: '((max-height:1024px) or (max-width:768px))' },
+      },
+      containers: {
+        dp: '768px',
+        mb: { raw: '(height > 300px)' },
       },
       colors: {
         main: 'var(--main, #0669ff)',
@@ -169,9 +165,12 @@ module.exports = {
         },
       })
     },
-    remToPx(),
+    remToPx({}),
+    containerQuery,
   ],
   corePlugins: {
     preflight: false,
   },
 }
+
+module.exports = config

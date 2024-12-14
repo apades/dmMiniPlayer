@@ -55,6 +55,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@root': pr('../'),
+      '@pkgs': pr('../../packages'),
       'webextension-polyfill': pr('./polyfill/browser/index.ts'),
     },
   },
