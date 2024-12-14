@@ -66,7 +66,7 @@ const SubtitleText: FC<Props> = (props) => {
               opacity: configStore.subtitle_fontOpacity,
               fontWeight: configStore.subtitle_fontWeight,
               fontFamily: configStore.subtitle_fontFamily,
-              fontSize: configStore.subtitle_fontSize,
+              fontSize: configStore.subtitle_fontSize + 'px',
             }}
           >
             {row.text}
