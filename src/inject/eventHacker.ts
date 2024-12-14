@@ -74,7 +74,7 @@ function main() {
         if (disableMatch && disableMatch[1].includes(event)) {
           console.log('匹配到禁用query', disableMap, tar)
         } else {
-          var rs = originalAdd.call(this, key, fn)
+          var rs = originalAdd.call(this, key, fn, state)
         }
         const addEvent = {
           fn,
