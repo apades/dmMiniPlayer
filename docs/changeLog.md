@@ -1,3 +1,7 @@
+## v0.6.23
+1. Fixed the problem that the video will be paused in the replacement mode of live broadcast.
+2. Fixed the problem that in the replacement mode, the danmaku input cannot pop up when pressing the enter key.
+
 ## v0.6.22
 Fixed the problem of incorrect display when reopening the settings panel of the previous version
 
