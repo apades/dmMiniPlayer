@@ -6,13 +6,8 @@ import { dq1Adv } from '@root/utils'
 
 export default class DouyuLiveProvider extends WebProvider {
   onInit(): void {
-    sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
-    sendMessage('event-hacker:enable', { qs: 'document', event: 'pagehide' })
-    sendMessage('event-hacker:enable', {
-      qs: 'window',
-      event: 'visibilitychange',
-    })
-    sendMessage('event-hacker:enable', {
+    sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
+    sendMessage('event-hacker:disable', {
       qs: 'document',
       event: 'visibilitychange',
     })
@@ -53,13 +48,8 @@ export default class DouyuLiveProvider extends WebProvider {
 
   onUnload(): void {
     this.danmakuWs?.close()
-    sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
-    sendMessage('event-hacker:disable', { qs: 'document', event: 'pagehide' })
-    sendMessage('event-hacker:disable', {
-      qs: 'window',
-      event: 'visibilitychange',
-    })
-    sendMessage('event-hacker:disable', {
+    sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
+    sendMessage('event-hacker:enable', {
       qs: 'document',
       event: 'visibilitychange',
     })

@@ -15,8 +15,8 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     this.danmakuSender.setData(this.getDanmakuSenderConfig())
 
     // 注入js
-    sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
-    sendMessage('event-hacker:enable', {
+    sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
+    sendMessage('event-hacker:disable', {
       qs: 'document',
       event: 'visibilitychange',
     })
