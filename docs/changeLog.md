@@ -1,3 +1,8 @@
+## v0.6.24
+1. Fixed the problem of invalid subtitle size setting
+2. Fixed the problem that Douyu live video will get stuck after a few minutes
+3. Fixed the scrolling problem that may occur on Youtube in some cases
+
 ## v0.6.23
 1. Fixed the problem that the video will be paused in the replacement mode of live broadcast.
 2. Fixed the problem that in the replacement mode, the danmaku input cannot pop up when pressing the enter key.
