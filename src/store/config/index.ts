@@ -6,7 +6,12 @@ import {
   setBrowserSyncStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
-import { autorun, makeAutoObservable, observe as mobxObserve } from 'mobx'
+import {
+  autorun,
+  makeAutoObservable,
+  observe as mobxObserve,
+  configure,
+} from 'mobx'
 import { observer } from 'mobx-react'
 import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
@@ -30,7 +35,13 @@ import isPluginEnv from '@root/shared/isPluginEnv'
 import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
 import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
+import isDev from '@root/shared/isDev'
 
+if (isDev) {
+  configure({
+    enforceActions: 'never',
+  })
+}
 export { DocPIPRenderType } from './docPIP'
 
 export enum videoBorderType {
@@ -212,9 +223,10 @@ export const baseConfigMap = {
 
 export const {
   configStore,
-  openSettingPanel: _openSettingPanel,
+  openSettingPanel,
   closeSettingPanel,
   observe,
+  updateConfig: _updateConfig,
 } = initSetting({
   settings: baseConfigMap,
   saveInLocal: !isPluginEnv,
@@ -275,12 +287,7 @@ let oldConfig: typeof configStore
 const updateConfig = async (config?: typeof configStore) => {
   config ??= await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
   if (!config) return
-  Object.entries(config).forEach(([key, value]) => {
-    ;(configStore as any)[key] = value
-  })
-  if (window.__spSetSavedConfig) {
-    window.__spSetSavedConfig(config)
-  }
+  _updateConfig(config)
 }
 
 // 同步多个tab的config
@@ -296,11 +303,6 @@ if (isPluginEnv) {
   if (document.visibilityState === 'visible') {
     unListenUpdate = useBrowserSyncStorage(DM_MINI_PLAYER_CONFIG, updateConfig)
   }
-}
-
-export function openSettingPanel(renderTarget?: HTMLElement) {
-  _openSettingPanel(renderTarget)
-  setTimeout(updateConfig, 50)
 }
 
 window.configStore = configStore
@@ -319,13 +321,7 @@ autorun(() => {
 })
 useBrowserSyncStorage(FLOAT_BTN_HIDDEN, async (val) => {
   if (isUndefined(val)) return
-  const config = await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
-
-  if (!config) return
-  configStore.floatButtonVisible = !val
-  if (window.__spSetSavedConfig) {
-    window.__spSetSavedConfig({ ...config, floatButtonVisible: !val })
-  }
+  updateConfig()
 })
 
 export default configStore

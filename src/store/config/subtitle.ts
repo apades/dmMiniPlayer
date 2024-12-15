@@ -8,6 +8,8 @@ const config_subtitle = {
   subtitle_opacity: config({
     label: t('settingPanel.subtitleOpacity'),
     defaultValue: 1,
+    type: 'range',
+    range: [0, 1],
   }),
   subtitle_bg: config({
     label: t('settingPanel.subtitleBg'),
@@ -17,10 +19,15 @@ const config_subtitle = {
   subtitle_bgOpacity: config({
     label: t('settingPanel.subtitleBgOpacity'),
     defaultValue: 0.3,
+    type: 'range',
+    range: [0, 1],
   }),
   subtitle_fontSize: config({
     label: t('settingPanel.subtitleFontSize'),
     defaultValue: 16,
+    type: 'range',
+    range: [12, 32],
+    rangeStep: 1,
   }),
   subtitle_fontColor: config({
     label: t('settingPanel.subtitleFontColor'),
@@ -34,6 +41,8 @@ const config_subtitle = {
   subtitle_fontOpacity: config({
     label: t('settingPanel.subtitleFontOpacity'),
     defaultValue: 1,
+    type: 'range',
+    range: [0, 1],
   }),
   subtitle_fontFamily: config({
     label: t('settingPanel.subtitleFontFamily'),

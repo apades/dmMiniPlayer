@@ -43,11 +43,15 @@ const config_danmaku = {
   opacity: config({
     defaultValue: 1,
     label: t('settingPanel.opacity'),
-    desc: t('settingPanel.opacityDesc'),
+    type: 'range',
+    range: [0, 1],
   }),
   fontSize: config({
     defaultValue: 16,
     label: t('settingPanel.fontSize'),
+    type: 'range',
+    range: [12, 32],
+    rangeStep: 1,
   }),
   fontWeight: config({
     defaultValue: 600,
