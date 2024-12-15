@@ -11,7 +11,7 @@ const config = {
       },
       screens: {
         dp: '768px',
-        mb: { raw: '((max-height:1024px) or (max-width:768px))' },
+        mb: { max: '768px' },
       },
       containers: {
         dp: '768px',

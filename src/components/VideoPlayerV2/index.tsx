@@ -393,8 +393,7 @@ const VideoPlayerV2Inner = observer(
 
                 <div
                   className={classNames(
-                    'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors mb:block',
-                    !props.isReplacerMode && 'hidden',
+                    'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors mb:hidden',
                   )}
                   onClick={handleOpenSetting}
                 >
