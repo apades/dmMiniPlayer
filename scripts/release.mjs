@@ -35,8 +35,7 @@ let toVersion =
   ;[changeLogZhFile, changeLogFile].forEach((file) => {
     if (!fs.existsSync(file)) return
     const content = fs.readFileSync(file, 'utf-8')
-    const startText = `## v${version}\n\n`
-    if (content.startsWith(startText)) return
+    if (content.startsWith(`## v${version}`)) return
     fs.writeFileSync(file, `## v${version}\n\n` + fs.readFileSync(file))
   })
 
