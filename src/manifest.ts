@@ -24,7 +24,6 @@ export const manifest: chrome.runtime.ManifestV3 = {
       '64': 'assets/icon64.png',
       '128': 'assets/icon128.png',
     },
-    default_popup: 'popup.html',
   },
   host_permissions: ['<all_urls>'],
   permissions: [
@@ -40,12 +39,6 @@ export const manifest: chrome.runtime.ManifestV3 = {
     {
       js: ['before-init-main.js'],
       run_at: 'document_start',
-      matches: ['<all_urls>'],
-    },
-    {
-      js: ['world.js'],
-      run_at: 'document_start',
-      world: 'MAIN',
       matches: ['<all_urls>'],
     },
     {

@@ -8,6 +8,10 @@
   },
   "scripts": {
     "dev": "nodemon --exec \"run-p dev:*\"",
+    "dev2": "run-p dev2:*",
+    "dev2:main": "vite --config scripts/vite.dev.ts",
+    "dev2:bg": "tsup --config scripts/tsup.dev.bg.ts",
+
     "dev:main": "tsup --config scripts/tsup.dev.ts",
     "dev:iife": "tsup --config scripts/tsup.dev.iife.ts",
     "build": "run-s build:*",
@@ -38,7 +42,7 @@
     "@types/react-dom": "^18.2.24",
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
-    "@vitejs/plugin-react": "^4.0.4",
+    "@vitejs/plugin-react": "^4.2.1",
     "archiver": "^7.0.1",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
