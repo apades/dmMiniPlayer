@@ -19,11 +19,11 @@ import playerConfig from '@root/store/playerConfig'
 import { checkIsLive } from '@root/utils/video'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
-const FEAT_PROVIDER_LIST = [
-  DocPIPWebProvider,
-  CanvasPIPWebProvider,
-  ReplacerWebProvider,
-]
+// const FEAT_PROVIDER_LIST = [
+//   DocPIPWebProvider,
+//   CanvasPIPWebProvider,
+//   ReplacerWebProvider,
+// ]
 
 export default abstract class WebProvider
   extends EventBus

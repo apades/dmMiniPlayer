@@ -151,4 +151,5 @@ const BrowserProxy = objectDeepProxy(BrowserPolyfill, 'BrowserPolyfill', {
 
 window.BrowserPolyfill = BrowserPolyfill
 window.Browser = BrowserProxy
+;(window as any).chrome = BrowserProxy
 export default BrowserProxy
