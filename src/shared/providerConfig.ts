@@ -6,7 +6,6 @@ const providerConfig = {
   ],
   'bilibili-live': [/https:\/\/live.bilibili.com\/.*/],
   douyu: [/https:\/\/www\.douyu\.com\/.*/],
-  cc: [/https:\/\/cc\.163\.com\/.*/],
   ddrk: [/https:\/\/ddys\.(art|pro)\/.*/],
   douyin: [/https:\/\/live\.douyin\.com\/.*/],
   donghuafeng: [/https:\/\/ani\.gamer\.com\.tw\/.*/],

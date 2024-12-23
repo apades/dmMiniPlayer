@@ -28,7 +28,6 @@
 - 弹幕播放和发送
   - bilibili视频 + 直播
   - 斗鱼直播
-  - CC直播
   - 动画疯
   - youtube直播 *
   - twitch直播 *
@@ -65,7 +64,6 @@
 
 - [bilibili-evaolved](https://github.com/the1812/Bilibili-Evolved)
 - [douyu-monitor](https://github.com/qianjiachun/douyu-monitor)
-- [real-url](https://github.com/wbt5/real-url/blob/master/danmu/danmaku/cc.py)
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 - [rc-slider](http://github.com/react-component/slider)
 - [js-cookie](https://github.com/js-cookie/js-cookie)
