@@ -23,6 +23,7 @@ async function initVideoFloatBtn(
 
   container.setAttribute(INIT_ATTR, 'true')
 
+  console.log('create floatButton', container, vel, fixedPos)
   const initPos = await getBrowserSyncStorage(DRAG_POS)
   const reactRoot = createElement('div')
   createRoot(reactRoot).render(
@@ -45,7 +46,7 @@ const handleMousemove = throttle((e: MouseEvent) => {
   //    └─同大小的top container
   //       ├─videoEl
   //       └─coverEl
-  const target = getTopParentsWithSameRect(_target).pop()
+  const target = getTopParentsWithSameRect(_target).pop() ?? _target
   if (!target) return
 
   const videoTarget =
