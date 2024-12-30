@@ -1,9 +1,10 @@
 import { useContext, useEffect } from 'react'
 import vpContext from './context'
-import { minmax, ownerWindow } from '@root/utils'
+import { isDocPIP, minmax, ownerWindow } from '@root/utils'
 import configStore from '@root/store/config'
 import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { Key } from '@root/types/key'
 
 export const useTogglePlayState = () => {
   const { webVideo, isLive } = useContext(vpContext)
@@ -39,7 +40,7 @@ export const useTogglePlayState = () => {
 }
 
 /**监听docPIP全局键盘 */
-export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
+export const useInWindowKeydown = () => {
   const { webVideo, eventBus, isLive, keydownWindow } = useContext(vpContext)
   const togglePlayState = useTogglePlayState()
 
@@ -58,8 +59,7 @@ export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
         tar.contentEditable === 'true'
       )
         return
-      onKeydown?.(e)
-      switch (e.code) {
+      switch (e.code as Key) {
         case 'ArrowDown': {
           e.preventDefault()
           const v = webVideo.volume
@@ -176,6 +176,41 @@ export const useInWindowKeydown = (onKeydown?: (e: KeyboardEvent) => void) => {
 
       keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
       keydownWindow.addEventListener('dm-keyup' as any, handleKeyUpCustom)
+    }
+  }, [keydownWindow, isLive, webVideo])
+}
+
+export const useKeydown = (
+  onKeydown?: (key: Key, e: KeyboardEvent) => void,
+) => {
+  const { webVideo, isLive, keydownWindow } = useContext(vpContext)
+  useEffect(() => {
+    if (!keydownWindow) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!webVideo) return
+      // TODO 以后尽量把e.target去掉，因为shadowRoot下接收到冒泡的event.target是shadowRoot，不会是keydown实际的target😅
+      // ? 或者搞个polyfill，支持shadowRoot的event通过一层转发。但会导致isTrusted:false
+      const tar = e.target as HTMLElement
+      if (
+        tar.tagName === 'TEXTAREA' ||
+        tar.tagName === 'INPUT' ||
+        tar.contentEditable === 'true'
+      )
+        return
+      onKeydown?.(e.key as Key, e)
+    }
+    keydownWindow.addEventListener('keydown', handleKeyDown)
+    // 这是给replacer模式监听的，keydown keyup已经被阻止了，通过一层代理转发和监听
+    const handleKeyDownCustom = (e: KeyboardEvent) => {
+      const detail = e.detail
+      handleKeyDown(detail as any)
+    }
+    keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
+
+    return () => {
+      keydownWindow.removeEventListener('keydown', handleKeyDown)
+
+      keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
     }
   }, [keydownWindow, isLive])
 }

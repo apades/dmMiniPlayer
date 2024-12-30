@@ -37,6 +37,7 @@ import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
 import DanmakuSettingBtn from './DanmakuSettingBtn'
 import {
   useInWindowKeydown,
+  useKeydown,
   useTogglePlayState,
   useWebVideoEventsInit,
 } from './hooks'
@@ -52,6 +53,7 @@ import screenfull from '@root/utils/screenfull'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { postMessageToTop } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
+import { Key } from '@root/types/key'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -98,25 +100,6 @@ const VideoPlayerV2Inner = observer(
     const videoRef = useRef<HTMLVideoElement>()
     /**这个专属于vp的ref，videoRef是专属于传入的webVideo */
     const inVpVideoRef = useRef<HTMLVideoElement>()
-    useEffect(() => {
-      if (!videoRef.current) return
-      const video = videoRef.current
-      const isLive = props.isLive || video.duration === Infinity
-
-      const keydownWindow = props.useWebVideo
-        ? ownerWindow(video)
-        : ownerWindow(videoPlayerRef.current)
-      props.setContext((v) => ({
-        ...v,
-        isLive,
-        webVideo: video,
-        keydownWindow,
-      }))
-
-      if (!props.useWebVideo && props.videoStream) {
-        updateVideoStream(props.videoStream)
-      }
-    }, [videoRef.current])
 
     useEffect(() => {
       if (!props.webVideo) return
@@ -155,7 +138,6 @@ const VideoPlayerV2Inner = observer(
     const toggleFullInWeb = useMemoizedFn(() => {
       setFullInWeb((v) => {
         const toFullInWeb = !v
-        console.log('isIframe', isIframe())
         if (isIframe()) {
           postMessageToTop(
             toFullInWeb
@@ -215,6 +197,22 @@ const VideoPlayerV2Inner = observer(
         subtitleManager.init(video)
       }
       subtitleManager.video = video
+
+      const isLive = props.isLive || video.duration === Infinity
+
+      const keydownWindow = props.useWebVideo
+        ? ownerWindow(video)
+        : ownerWindow(videoPlayerRef.current)
+      props.setContext((v) => ({
+        ...v,
+        isLive,
+        webVideo: video,
+        keydownWindow,
+      }))
+
+      if (!props.useWebVideo && props.videoStream) {
+        updateVideoStream(props.videoStream)
+      }
       forceUpdate()
     })
 
@@ -239,12 +237,14 @@ const VideoPlayerV2Inner = observer(
     const togglePlayState = useTogglePlayState()
 
     // 初始化
-    useInWindowKeydown((e) => {
-      if (e.key === 'Escape') {
+    useInWindowKeydown()
+    useWebVideoEventsInit()
+
+    useKeydown((key) => {
+      if (key === 'Escape') {
         quitFullMode()
       }
     })
-    useWebVideoEventsInit()
 
     const setCurrentTime = useMemoizedFn((time: number, pause?: boolean) => {
       if (!videoRef.current) return
@@ -341,9 +341,7 @@ const VideoPlayerV2Inner = observer(
             <video
               ref={(ref) => {
                 if (!ref) return
-                if (!props.webVideo) {
-                  updateVideoRef(ref)
-                }
+                updateVideoRef(ref)
 
                 inVpVideoRef.current = ref
               }}
