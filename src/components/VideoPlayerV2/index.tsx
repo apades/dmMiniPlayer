@@ -102,6 +102,11 @@ const VideoPlayerV2Inner = observer(
     const inVpVideoRef = useRef<HTMLVideoElement>()
 
     useEffect(() => {
+      if (!videoPlayerRef.current) return
+      videoPlayerRef.current.focus()
+    }, [videoPlayerRef.current])
+
+    useEffect(() => {
       if (!props.webVideo) return
       if (!videoRef.current) {
         videoRef.current = props.webVideo
@@ -291,6 +296,7 @@ const VideoPlayerV2Inner = observer(
 
     const el = (
       <div
+        tabIndex={1}
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,
