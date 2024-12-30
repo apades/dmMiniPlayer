@@ -10,7 +10,6 @@ export const useTogglePlayState = () => {
   const { webVideo, isLive } = useContext(vpContext)
 
   const togglePlayState = async (type?: 'play' | 'pause') => {
-    if (isLive) return
     if (!webVideo) return
     // 第一次进来没有can-pause attr，忽略判断能否pause
     const canPauseAttr = webVideo.getAttribute('can-pause')

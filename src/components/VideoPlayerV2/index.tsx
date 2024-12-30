@@ -317,9 +317,12 @@ const VideoPlayerV2Inner = observer(
       >
         <link rel="stylesheet" href={Browser.runtime.getURL('/css.css')} />
         <div
-          className="video-container relative h-full bg-black cursor-pointer"
+          className={classNames(
+            'video-container relative h-full bg-black',
+            !isLive && 'cursor-pointer',
+          )}
           onClick={() => {
-            togglePlayState()
+            !isLive && togglePlayState()
           }}
           onMouseMove={() => {
             handleChangeActionArea(true)

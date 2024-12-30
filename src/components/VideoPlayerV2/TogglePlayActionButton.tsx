@@ -32,17 +32,20 @@ const TogglePlayActionButton: FC = (props) => {
 
   const togglePlayState = useTogglePlayState()
 
-  if (isLive)
-    return <span className="live-dot wh-[12px] bg-red-700 rounded-full"></span>
   return (
-    <div
-      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors -ml-1"
-      onClick={() => togglePlayState()}
-    >
-      <Iconfont
-        type={isPlaying ? 'iconicon_player_pause' : 'iconicon_player_play'}
-      />
-    </div>
+    <>
+      {isLive && (
+        <div className="live-dot wh-[12px] bg-red-700 rounded-full mt-0.5"></div>
+      )}
+      <div
+        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors -ml-1"
+        onClick={() => togglePlayState()}
+      >
+        <Iconfont
+          type={isPlaying ? 'iconicon_player_pause' : 'iconicon_player_play'}
+        />
+      </div>
+    </>
   )
 }
 
