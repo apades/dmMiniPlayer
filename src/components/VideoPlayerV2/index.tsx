@@ -179,6 +179,7 @@ const VideoPlayerV2Inner = observer(
     useTargetEventListener(
       'dblclick',
       () => {
+        if (!props.isReplacerMode) return
         if (configStore.replacerDbClickAction === ReplacerDbClickAction.none)
           return
         switch (configStore.replacerDbClickAction) {
