@@ -37,7 +37,7 @@ const CurrentTimeTooltipsWithKeydown: FC<{}> = (props) => {
       )}
     >
       <div className="bg-gradient-to-t from-[#000] opacity-70 h-full w-full absolute z-[1]"></div>
-      {isVisible ? <Inner /> : '00:00'}
+      {isVisible && <Inner />}
     </div>
   )
 }
@@ -46,7 +46,7 @@ const Inner: FC = (props) => {
   const { webVideo } = useContext(vpContext)
   if (!webVideo) return null
   return (
-    <div className={classNames('px-[4px] text-white')}>
+    <div className={classNames('pl-[12px] text-white relative z-[2]')}>
       {formatTime(webVideo.currentTime)} / {formatTime(webVideo.duration)}
     </div>
   )
