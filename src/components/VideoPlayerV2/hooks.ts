@@ -80,9 +80,11 @@ export const useInWindowKeydown = () => {
           if (webVideo.paused) {
             togglePlayState('play').then(() => {
               webVideo.currentTime = getNewTime()
+              eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
             })
           } else {
             webVideo.currentTime = getNewTime()
+            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
           }
           break
         }
@@ -154,9 +156,11 @@ export const useInWindowKeydown = () => {
             if (webVideo.paused) {
               togglePlayState('play').then(() => {
                 webVideo.currentTime = getNewTime()
+                eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
               })
             } else {
               webVideo.currentTime = getNewTime()
+              eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
             }
           }
         }
