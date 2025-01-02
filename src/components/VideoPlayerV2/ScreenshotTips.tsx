@@ -4,6 +4,7 @@ import vpContext from './context'
 import { useKeydown } from './hooks'
 import { tryCatch } from '@root/utils'
 import { screenshotVideo, downloadImage } from '@root/utils/screenshot'
+import { t } from '@root/utils/i18n'
 
 const ScreenshotTips: FC = () => {
   const [isVisible, setVisible] = useState(false)
@@ -25,7 +26,7 @@ const ScreenshotTips: FC = () => {
         )
       } else {
         console.error(err)
-        setErrorText('Not support in this video')
+        setErrorText(t('shortcut.notSupport'))
         run(() => setVisible(true))
       }
     }

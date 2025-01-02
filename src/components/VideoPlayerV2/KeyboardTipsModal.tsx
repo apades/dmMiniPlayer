@@ -5,6 +5,7 @@ import { runInAction } from 'mobx'
 import { observer } from 'mobx-react'
 import { Fragment } from 'react'
 import Modal from '../Modal'
+import { t } from '@root/utils/i18n'
 
 type keyDataItem = {
   key: string | string[]
@@ -15,27 +16,27 @@ const KeyboardTipsModal = createIsolationModal((props) => {
   const keydataList: keyDataItem[] = [
     {
       key: 'Space',
-      text: '播放/暂停',
+      text: t('shortcut.play/pause'),
     },
     {
       key: '←',
-      text: '快退5秒',
+      text: t('shortcut.rewind'),
     },
     {
       key: '→',
-      text: '快进5秒',
-    },
-    {
-      key: ['Shift', '→'],
-      text: '快进1帧',
+      text: t('shortcut.forward'),
     },
     {
       key: ['Shift', '←'],
-      text: '快退1帧',
+      text: t('shortcut.rewind_fine'),
     },
     {
-      key: ['长按', '→'],
-      text: '倍速模式',
+      key: ['Shift', '→'],
+      text: t('shortcut.forward_fine'),
+    },
+    {
+      key: [t('shortcut.longPress'), '→'],
+      text: t('shortcut.speedMode'),
     },
     // {
     //   key: ['ctrl', '→'],
@@ -47,43 +48,43 @@ const KeyboardTipsModal = createIsolationModal((props) => {
     // },
     {
       key: '↑',
-      text: '音量+',
+      text: t('shortcut.volumeUp'),
     },
     {
       key: '↓',
-      text: '音量-',
+      text: t('shortcut.volumeDown'),
     },
     {
       key: 'M',
-      text: '静音/取消静音',
+      text: t('shortcut.mute/unmute'),
     },
     {
       key: '0',
-      text: '倍速模式/倍速重置',
-    },
-    {
-      key: '-',
-      text: '倍速-0.25',
+      text: t('shortcut.speedMode/normal'),
     },
     {
       key: '=',
-      text: '倍速+0.25',
+      text: t('shortcut.speedUp'),
+    },
+    {
+      key: '-',
+      text: t('shortcut.speedDown'),
     },
     {
       key: 'Enter',
-      text: '弹出弹幕输入框',
+      text: t('shortcut.popupDanmakuInput'),
     },
     {
       key: ['Shift', 'P'],
-      text: '截图',
+      text: t('shortcut.screenshot'),
     },
     {
       key: 'D',
-      text: '显示/隐藏弹幕',
+      text: t('shortcut.show/hideDanmaku'),
     },
     {
       key: 'S',
-      text: '显示/隐藏字幕',
+      text: t('shortcut.show/hideSubtitle'),
     },
   ]
 
@@ -100,13 +101,13 @@ const KeyboardTipsModal = createIsolationModal((props) => {
               saveConfig()
             }}
           />
-          显示键盘提示
+          {t('shortcut.showShortcutTips')}
         </div>
         <table border={1}>
           <thead>
             <tr>
-              <th>快捷键</th>
-              <th>功能</th>
+              <th>{t('shortcut.shortcut')}</th>
+              <th>{t('shortcut.feat')}</th>
             </tr>
           </thead>
           <tbody>
