@@ -408,7 +408,7 @@ const VideoPlayerV2Inner = observer(
                   )}
                   onClick={handleOpenSetting}
                 >
-                  <SettingOutlined />
+                  <SettingOutlined className="block" />
                 </div>
               </div>
 

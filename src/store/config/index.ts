@@ -280,7 +280,7 @@ export const {
     oldConfig = loadedConfig
     return loadedConfig
   },
-  useShadowDom: true,
+  useShadowDom: isPluginEnv,
 })
 let oldConfig: typeof configStore
 

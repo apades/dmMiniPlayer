@@ -23,7 +23,7 @@ export function spawn(...args) {
 }
 
 export function pr(...args) {
-  return path.resolve(__dirname, ...args)
+  return path.resolve(__dirname, ...args).replaceAll('\\', '/')
 }
 
 export function getChangeLog(ver, lang) {

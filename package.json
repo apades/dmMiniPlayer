@@ -17,6 +17,7 @@
     "test": "sh ./scripts/run-test.sh",
     "release": "node ./scripts/release.mjs",
     "archive": "node ./scripts/archive.mjs",
+    "sizetest": "pnpm build && pnpm archive --size-test",
     "translate": "tsx ./scripts/auto-translate.ts",
     "eslint": "npx eslint"
   },

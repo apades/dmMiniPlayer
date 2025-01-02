@@ -195,9 +195,8 @@ const App = () => {
             // if (val.length > 3) val = val.slice(0, 3)
             setEditInput(val)
           }}
-        >
-          edit
-        </div>
+          dangerouslySetInnerHTML={{ __html: 'edit' }}
+        ></div>
         <button
           className="btn2"
           onClick={() => {
