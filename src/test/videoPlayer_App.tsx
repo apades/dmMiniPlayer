@@ -143,7 +143,7 @@ const App = () => {
           sideSwitcher={sideSwitcher.current}
         />
       </div> */}
-      <div style={{ height: 200 }}>
+      <div style={{ height: 200 }} rc-f-init="true">
         {videoRef.current && videoPlayerRef.current && (
           <VideoPlayerV2
             // uri="https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"

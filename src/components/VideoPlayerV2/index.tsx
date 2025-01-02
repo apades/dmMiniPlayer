@@ -4,6 +4,8 @@ import {
   FullscreenExitOutlined,
   FullscreenOutlined,
   LeftOutlined,
+  QuestionCircleFilled,
+  QuestionOutlined,
   SettingOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons'
@@ -55,6 +57,8 @@ import { postMessageToTop } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
 import { Key } from '@root/types/key'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
+import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
+import KeyboardTipsModal from './KeyboardTipsModal'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -90,6 +94,9 @@ const VideoPlayerV2Inner = observer(
     useUnmount(() => {
       subtitleManager.unload()
     })
+
+    const [keyboardTipsModal, keyboardTipsModalContext] =
+      useOpenIsolationModal(KeyboardTipsModal)
 
     const { run, clear } = useDebounceTimeoutCallback(() => {
       videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
@@ -317,6 +324,7 @@ const VideoPlayerV2Inner = observer(
           handleChangeActionArea(false)
         }}
       >
+        {keyboardTipsModalContext}
         <link rel="stylesheet" href={Browser.runtime.getURL('/css.css')} />
         <div
           className={classNames(
@@ -444,6 +452,21 @@ const VideoPlayerV2Inner = observer(
         <div className="group-[&.active]:opacity-0 transition-all">
           <CurrentTimeTooltipsWithKeydown />
         </div>
+        {configStore.keyboardTips_show && (
+          <QuestionCircleFilled
+            className={classNames(
+              'absolute top-5 left-5',
+              'text-white cursor-pointer hover:text-[#fffa] transition-all',
+              'group-[&.active]:opacity-100 opacity-0',
+              'text-[20px]',
+            )}
+            onMouseEnter={(e) => handleChangeActionArea(true, true)}
+            onMouseLeave={() => {
+              handleChangeActionArea(false)
+            }}
+            onClick={keyboardTipsModal.openModal}
+          />
+        )}
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (

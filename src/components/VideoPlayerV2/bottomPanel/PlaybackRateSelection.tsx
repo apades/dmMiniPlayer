@@ -46,7 +46,7 @@ const PlaybackRateSelection: FC = (props) => {
               handleChangePlaybackRate(rate)
             }}
           >
-            {rate.toFixed(1)}x
+            {rate.toFixed(2)}x
           </div>
         )
       })}
