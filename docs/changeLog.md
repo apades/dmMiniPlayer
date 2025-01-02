@@ -1,3 +1,9 @@
+## v0.6.25
+1. Fixed the problem of invalid shortcut keys after switching videos
+2. Add multiple video shortcut key functions
+3. Adjust the live broadcast to also display the pause button
+4. Optimizing the floating button can cause a shaking issue on the page.
+
 ## v0.6.24
 1. Fixed the problem of invalid subtitle size setting
 2. Fixed the problem that Douyu live video will get stuck after a few minutes
