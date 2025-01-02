@@ -414,6 +414,8 @@ const FloatButton: FC<Props> = (props) => {
               >
                 <img
                   className="wh-[16px]"
+                  width={16}
+                  height={16}
                   src={
                     isPluginEnv
                       ? `${Browser.runtime.getURL('/assets/icon.png')}`
