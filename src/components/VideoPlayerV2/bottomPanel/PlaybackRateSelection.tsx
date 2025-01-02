@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useState } from 'react'
-import vpContext from './context'
+import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
-import Dropdown from '../Dropdown'
+import Dropdown from '../../Dropdown'
 import classNames from 'classnames'
 
 const PlaybackRateSelection: FC = (props) => {

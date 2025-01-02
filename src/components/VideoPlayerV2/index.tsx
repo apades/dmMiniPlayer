@@ -34,7 +34,7 @@ import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
 import vpContext, { ContextData, defaultVpContext } from './context'
 import DanmakuContainer from './DanmakuContainer'
 import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
-import DanmakuSettingBtn from './DanmakuSettingBtn'
+import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
 import {
   useInWindowKeydown,
   useKeydown,
@@ -42,12 +42,12 @@ import {
   useWebVideoEventsInit,
 } from './hooks'
 import LoadingIcon from './LoadingIcon'
-import PlaybackRateSelection from './PlaybackRateSelection'
-import PlayedTime from './PlayedTime'
-import PlayerProgressBar from './PlayerProgressBar'
+import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
+import PlayedTime from './bottomPanel/PlayedTime'
+import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
 import SpeedIcon from './SpeedIcon'
-import TogglePlayActionButton from './TogglePlayActionButton'
-import VolumeBar from './VolumeBar'
+import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
+import VolumeBar from './bottomPanel/VolumeBar'
 import VolumeIcon from './VolumeIcon'
 import screenfull from '@root/utils/screenfull'
 import useTargetEventListener from '@root/hook/useTargetEventListener'

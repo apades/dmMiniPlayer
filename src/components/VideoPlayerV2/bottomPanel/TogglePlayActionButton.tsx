@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useState } from 'react'
-import vpContext from './context'
-import { useTogglePlayState } from './hooks'
-import Iconfont from '../Iconfont'
+import vpContext from '../context'
+import { useTogglePlayState } from '../hooks'
+import Iconfont from '../../Iconfont'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 
 const TogglePlayActionButton: FC = (props) => {
