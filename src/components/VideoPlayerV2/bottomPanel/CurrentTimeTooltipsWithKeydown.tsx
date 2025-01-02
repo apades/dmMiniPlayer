@@ -11,6 +11,7 @@ import { useUpdate } from 'ahooks'
 const CurrentTimeTooltipsWithKeydown: FC<{}> = (props) => {
   const { eventBus } = useContext(vpContext)
   const [isVisible, setVisible] = useState(false)
+  const [isFine, setFine] = useState(false)
   const update = useUpdate()
 
   const { run, clear } = useDebounceTimeoutCallback(
@@ -22,6 +23,17 @@ const CurrentTimeTooltipsWithKeydown: FC<{}> = (props) => {
     eventBus.on2(PlayerEvent.changeCurrentTimeByKeyboard, () => {
       run(() => {
         setVisible(true)
+        setFine(false)
+        update()
+      })
+    }),
+  )
+
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.changeCurrentTimeByKeyboard_fine, () => {
+      run(() => {
+        setVisible(true)
+        setFine(true)
         update()
       })
     }),
@@ -37,17 +49,20 @@ const CurrentTimeTooltipsWithKeydown: FC<{}> = (props) => {
       )}
     >
       <div className="bg-gradient-to-t from-[#000] opacity-70 h-full w-full absolute z-[1]"></div>
-      {isVisible && <Inner />}
+      {isVisible && <Inner isFine={isFine} />}
     </div>
   )
 }
 
-const Inner: FC = (props) => {
+const Inner: FC<{ isFine?: boolean }> = (props) => {
   const { webVideo } = useContext(vpContext)
   if (!webVideo) return null
   return (
     <div className={classNames('pl-[12px] text-white relative z-[2]')}>
-      {formatTime(webVideo.currentTime)} / {formatTime(webVideo.duration)}
+      {formatTime(webVideo.currentTime)}
+      {props.isFine &&
+        `.${webVideo.currentTime.toString().split('.')[1] || '00'}`}{' '}
+      / {formatTime(webVideo.duration)}
     </div>
   )
 }

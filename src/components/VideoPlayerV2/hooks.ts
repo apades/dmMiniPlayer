@@ -58,6 +58,10 @@ export const useInWindowKeydown = () => {
         tar.contentEditable === 'true'
       )
         return
+      const isShift = e.shiftKey,
+        isCtrl = e.ctrlKey
+
+      const oneFrame = 1 / 60
       switch (e.code as Key) {
         case 'ArrowDown': {
           e.preventDefault()
@@ -74,6 +78,16 @@ export const useInWindowKeydown = () => {
         case 'ArrowLeft': {
           if (isLive) return
           e.preventDefault()
+
+          if (isShift) {
+            const getNewTime = () =>
+              minmax(webVideo.currentTime - oneFrame, 0, webVideo.duration)
+
+            webVideo.currentTime = getNewTime()
+            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
+            break
+          }
+
           let getNewTime = () =>
             minmax(webVideo.currentTime - 5, 0, webVideo.duration)
 
@@ -91,6 +105,16 @@ export const useInWindowKeydown = () => {
         case 'ArrowRight': {
           if (isLive) return
           if (speedModeTimer) return
+
+          if (isShift) {
+            const getNewTime = () =>
+              minmax(webVideo.currentTime + oneFrame, 0, webVideo.duration)
+
+            webVideo.currentTime = getNewTime()
+            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
+            break
+          }
+
           speedModeTimer = setTimeout(() => {
             isSpeedMode = true
             webVideo.playbackRate = configStore.playbackRate
@@ -125,10 +149,14 @@ export const useInWindowKeydown = () => {
         return
       e.stopPropagation()
 
+      const isShift = e.shiftKey,
+        isCtrl = e.ctrlKey
+
       switch (e.code) {
         case 'ArrowRight': {
           if (isLive) return
           e.preventDefault()
+          if (isShift) return
           if (speedModeTimer) {
             clearTimeout(speedModeTimer)
           }

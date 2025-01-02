@@ -26,6 +26,7 @@ import {
   setBrowserSyncStorage,
 } from '@root/utils/storage'
 import { isUndefined } from 'lodash-es'
+import { useKeydown } from '../hooks'
 
 const Menu: FC = observer((props) => {
   const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
@@ -180,6 +181,12 @@ const DanmakuSettingBtn: FC = (props) => {
   if (!danmakuEngine) return
 
   const visible = danmakuEngine.visible
+
+  useKeydown((key) => {
+    if (key === 'd') {
+      danmakuEngine.changeVisible()
+    }
+  })
 
   return (
     <Dropdown menuRender={() => <Menu />}>

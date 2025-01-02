@@ -1313,4 +1313,4 @@ export enum KeyEnum {
   Space = 'Space',
 }
 
-export type Key = `${KeyEnum}`
+export type Key = `${KeyEnum}` | (string & {})

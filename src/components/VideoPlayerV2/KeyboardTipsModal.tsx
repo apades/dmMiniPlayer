@@ -66,7 +66,7 @@ const KeyboardTipsModal = createIsolationModal((props) => {
       text: '倍速-0.25',
     },
     {
-      key: '+',
+      key: '=',
       text: '倍速+0.25',
     },
     {

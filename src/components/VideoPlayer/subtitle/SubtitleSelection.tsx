@@ -2,8 +2,10 @@ import Dropdown from '@root/components/Dropdown'
 import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
 import vpContext from '@root/components/VideoPlayerV2/context'
+import { useKeydown } from '@root/components/VideoPlayerV2/hooks'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import { t } from '@root/utils/i18n'
+import { useMemoizedFn } from 'ahooks'
 import classNames from 'classnames'
 import { runInAction } from 'mobx'
 import { observer } from 'mobx-react'
@@ -16,26 +18,32 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
 
+  const handleChangeVisible = useMemoizedFn(() => {
+    runInAction(() => {
+      if (!subtitleManager.activeSubtitleLabel) {
+        if (subtitleManager.subtitleItems.length) {
+          subtitleManager.useSubtitle(subtitleManager.subtitleItems[0].label)
+          subtitleManager.showSubtitle = true
+        } else {
+          return console.log('No subtitle')
+        }
+      } else {
+        subtitleManager.showSubtitle = !subtitleManager.showSubtitle
+      }
+    })
+  })
+
+  useKeydown((key) => {
+    if (key === 's') {
+      handleChangeVisible()
+    }
+  })
+
   return (
     <Dropdown menuRender={() => <Menu {...props} />}>
       <div
         className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
-        onClick={() => {
-          runInAction(() => {
-            if (!subtitleManager.activeSubtitleLabel) {
-              if (subtitleManager.subtitleItems.length) {
-                subtitleManager.useSubtitle(
-                  subtitleManager.subtitleItems[0].label,
-                )
-                subtitleManager.showSubtitle = true
-              } else {
-                return console.log('No subtitle')
-              }
-            } else {
-              subtitleManager.showSubtitle = !subtitleManager.showSubtitle
-            }
-          })
-        }}
+        onClick={handleChangeVisible}
       >
         <Iconfont
           type="subtitle"

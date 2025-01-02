@@ -11,6 +11,7 @@ export enum PlayerEvent {
   resize = 'resize',
   seeked = 'seeked',
   changeCurrentTimeByKeyboard = 'currentTimeJump',
+  changeCurrentTimeByKeyboard_fine = 'currentTimeJump_fine',
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged = 'webVideoChanged',
 
