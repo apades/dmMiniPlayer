@@ -1,6 +1,6 @@
 import { formatTime } from '@root/utils'
 import { FC, useContext, useEffect, useState } from 'react'
-import vpContext from './context'
+import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 
 const PlayedTime: FC = (props) => {
