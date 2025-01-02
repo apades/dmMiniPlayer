@@ -13,7 +13,7 @@ import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
-import { isDocPIP, isIframe, ownerWindow } from '@root/utils'
+import { isDocPIP, isIframe, ownerWindow, tryCatch } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
@@ -59,6 +59,7 @@ import { Key } from '@root/types/key'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
 import KeyboardTipsModal from './KeyboardTipsModal'
+import ScreenshotTips from './ScreenshotTips'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -375,6 +376,7 @@ const VideoPlayerV2Inner = observer(
           <LoadingIcon />
           <VolumeIcon />
           <SpeedIcon />
+          <ScreenshotTips />
         </div>
 
         {/* 底部操作栏 */}
@@ -421,6 +423,15 @@ const VideoPlayerV2Inner = observer(
               </div>
 
               <div className="right ml-auto f-i-center gap-1">
+                {configStore.keyboardTips_show && (
+                  <QuestionCircleFilled
+                    className={classNames(
+                      'text-white cursor-pointer hover:text-[#fffa] transition-all',
+                      'text-[16px] px-2',
+                    )}
+                    onClick={keyboardTipsModal.openModal}
+                  />
+                )}
                 <VolumeBar />
                 {props.isReplacerMode && (
                   <>
@@ -452,21 +463,6 @@ const VideoPlayerV2Inner = observer(
         <div className="group-[&.active]:opacity-0 transition-all">
           <CurrentTimeTooltipsWithKeydown />
         </div>
-        {configStore.keyboardTips_show && (
-          <QuestionCircleFilled
-            className={classNames(
-              'absolute top-5 left-5',
-              'text-white cursor-pointer hover:text-[#fffa] transition-all',
-              'group-[&.active]:opacity-100 opacity-0',
-              'text-[20px]',
-            )}
-            onMouseEnter={(e) => handleChangeActionArea(true, true)}
-            onMouseLeave={() => {
-              handleChangeActionArea(false)
-            }}
-            onClick={keyboardTipsModal.openModal}
-          />
-        )}
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (

@@ -61,15 +61,15 @@ const App = () => {
     })
     dm.addDanmakus(dans)
 
-    dm.on('danmaku-leave', (danmaku) => {
-      console.log(chalk.red('danmaku-leave'), danmaku)
-    })
-    dm.on('danmaku-enter', (danmaku) => {
-      console.log(chalk.green('danmaku-enter'), danmaku)
-    })
-    dm.on('danmaku-leaveTunnel', (danmaku) => {
-      console.log(chalk.yellow('danmaku-leaveTunnel'), danmaku)
-    })
+    // dm.on('danmaku-leave', (danmaku) => {
+    //   console.log(chalk.red('danmaku-leave'), danmaku)
+    // })
+    // dm.on('danmaku-enter', (danmaku) => {
+    //   console.log(chalk.green('danmaku-enter'), danmaku)
+    // })
+    // dm.on('danmaku-leaveTunnel', (danmaku) => {
+    //   console.log(chalk.yellow('danmaku-leaveTunnel'), danmaku)
+    // })
     danmakuEngineRef.current = dm
 
     // captureStream() 需要用户信任操作才能用

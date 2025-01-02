@@ -4,6 +4,7 @@ import useTargetEventListener from '@root/hook/useTargetEventListener'
 import Dropdown from '../../Dropdown'
 import classNames from 'classnames'
 import { useKeydown } from '../hooks'
+import { useMemoizedFn } from 'ahooks'
 
 const PlaybackRateSelection: FC = (props) => {
   const { webVideo, isLive } = useContext(vpContext)
@@ -33,21 +34,23 @@ const PlaybackRateSelection: FC = (props) => {
     webVideo.playbackRate = rate
   }
 
-  const handleTogglePlaybackRate = () => {
+  const handleTogglePlaybackRate = useMemoizedFn(() => {
     if (playbackRate === 1) {
       handleChangePlaybackRate(lastPlaybackRate)
     } else {
       handleChangePlaybackRate(1)
     }
-  }
+  })
 
   useKeydown((key) => {
     if (!webVideo) return
     switch (key) {
       case '-':
+      case '_':
         webVideo.playbackRate -= 0.25
         break
       case '+':
+      case '=':
         webVideo.playbackRate += 0.25
         break
       case '0':
@@ -84,7 +87,7 @@ const PlaybackRateSelection: FC = (props) => {
         className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors leading-[18px]"
         onClick={handleTogglePlaybackRate}
       >
-        {playbackRate.toFixed(1)}x
+        {playbackRate.toFixed(2)}x
       </div>
     </Dropdown>
   )

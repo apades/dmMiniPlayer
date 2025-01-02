@@ -37,14 +37,14 @@ const KeyboardTipsModal = createIsolationModal((props) => {
       key: ['长按', '→'],
       text: '倍速模式',
     },
-    {
-      key: ['ctrl', '→'],
-      text: '下一个视频',
-    },
-    {
-      key: ['ctrl', '←'],
-      text: '上一个视频',
-    },
+    // {
+    //   key: ['ctrl', '→'],
+    //   text: '下一个视频',
+    // },
+    // {
+    //   key: ['ctrl', '←'],
+    //   text: '上一个视频',
+    // },
     {
       key: '↑',
       text: '音量+',

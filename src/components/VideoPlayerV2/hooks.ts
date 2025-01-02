@@ -87,6 +87,7 @@ export const useInWindowKeydown = () => {
             eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
             break
           }
+          if (isCtrl) return
 
           let getNewTime = () =>
             minmax(webVideo.currentTime - 5, 0, webVideo.duration)
@@ -112,8 +113,10 @@ export const useInWindowKeydown = () => {
 
             webVideo.currentTime = getNewTime()
             eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
-            break
+            return
           }
+
+          if (isCtrl) return
 
           speedModeTimer = setTimeout(() => {
             isSpeedMode = true
@@ -156,7 +159,7 @@ export const useInWindowKeydown = () => {
         case 'ArrowRight': {
           if (isLive) return
           e.preventDefault()
-          if (isShift) return
+          if (isShift || isCtrl) return
           if (speedModeTimer) {
             clearTimeout(speedModeTimer)
           }
@@ -165,11 +168,6 @@ export const useInWindowKeydown = () => {
           // https://github.com/apades/dmMiniPlayer/issues/9
 
           webVideo.currentTime = webVideo.currentTime
-          // const onSeeked = () => {
-          //   eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
-          //   webVideo.removeEventListener('seeked', onSeeked)
-          // }
-          // webVideo.addEventListener('seeked', onSeeked)
           setTimeout(() => {
             eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
           }, 0)
@@ -228,7 +226,9 @@ export const useKeydown = (
         tar.contentEditable === 'true'
       )
         return
-      onKeydown?.(e.key as Key, e)
+      let key = e.key as Key
+      if (key.length === 1) key = key.toLowerCase()
+      onKeydown?.(key, e)
     }
     keydownWindow.addEventListener('keydown', handleKeyDown)
     // 这是给replacer模式监听的，keydown keyup已经被阻止了，通过一层代理转发和监听
