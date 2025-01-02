@@ -54,6 +54,7 @@ import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { postMessageToTop } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
 import { Key } from '@root/types/key'
+import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -73,7 +74,7 @@ type VpInnerProps = Props & {
   setContext: React.Dispatch<React.SetStateAction<ContextData>>
 } & Pick<ContextData, 'eventBus'>
 
-const ACTION_AREA_ACTIVE = 'action-area-active'
+const ACTION_AREA_ACTIVE = 'active'
 
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
@@ -351,7 +352,9 @@ const VideoPlayerV2Inner = observer(
             <video
               ref={(ref) => {
                 if (!ref) return
-                updateVideoRef(ref)
+                if (!props.webVideo) {
+                  updateVideoRef(ref)
+                }
 
                 inVpVideoRef.current = ref
               }}
@@ -369,9 +372,9 @@ const VideoPlayerV2Inner = observer(
         {/* 底部操作栏 */}
         <div
           className={classNames(
-            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 ',
+            'video-action-area w-full transition-all duration-500',
             // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
-            `group-[&.action-area-active]:bottom-0`,
+            `absolute bottom-[calc(-1*(var(--area-height)+5px))] group-[&.active]:bottom-0`,
           )}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
@@ -384,7 +387,7 @@ const VideoPlayerV2Inner = observer(
 
           {!isLive && <PlayerProgressBar />}
 
-          <div className="opacity-0 group-[&.action-area-active]:opacity-100 transition-all duration-500">
+          <div className="opacity-0 group-[&.active]:opacity-100 transition-all duration-500">
             <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
             <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
               <TogglePlayActionButton />
@@ -438,12 +441,15 @@ const VideoPlayerV2Inner = observer(
 
         <DanmakuInput danmakuSender={props.danmakuSender} />
         <DanmakuContainer />
+        <div className="group-[&.active]:opacity-0 transition-all">
+          <CurrentTimeTooltipsWithKeydown />
+        </div>
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (
           <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+15px)] hover:right-0 group/side">
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
-            <div className="side-dragger group-hover/side:opacity-100 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center">
+            <div className="side-dragger group-hover/side:opacity-100 group-[&.active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center">
               <LeftOutlined
                 className={classNames(
                   'group-hover/side:rotate-180 rotate-0 text-xs',
@@ -455,7 +461,11 @@ const VideoPlayerV2Inner = observer(
 
         {props.isReplacerMode && (
           <div
-            className="rounded-full wh-[40px] cursor-pointer right-[20px] top-0 absolute z-20 text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all group-[&.action-area-active]:top-[20px] opacity-0 group-[&.action-area-active]:opacity-100"
+            className={classNames(
+              'absolute right-[20px] top-0 z-20 group-[&.active]:top-[20px]',
+              'opacity-0 group-[&.active]:opacity-100',
+              'rounded-full wh-[40px] cursor-pointer text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all',
+            )}
             onClick={() => {
               props.videoPlayer.emit(PlayerEvent.close)
             }}
