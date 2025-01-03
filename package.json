@@ -90,6 +90,6 @@
     "react-draggable": "^4.4.6",
     "uuid": "^9.0.0",
     "webext-bridge": "^6.0.1",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.9.0"
   }
 }
