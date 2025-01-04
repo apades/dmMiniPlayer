@@ -392,9 +392,9 @@ const FloatButton: FC<Props> = (props) => {
           <div
             ref={floatBtn}
             className={classNames(
-              'group absolute z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn',
+              'group z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn',
             )}
-            style={posStyle}
+            style={{ ...posStyle, position: 'absolute' }}
             onMouseEnter={() => {
               isHoverLockRef.current = true
               clear()
