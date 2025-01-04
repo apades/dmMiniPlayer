@@ -39,6 +39,11 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: others
+    attributes:
+      label: If you are others OS/Browser, please write there/如果是其他系统/浏览器，请写在这里
+
   - type: checkboxes
     id: checkboxes
     attributes:
