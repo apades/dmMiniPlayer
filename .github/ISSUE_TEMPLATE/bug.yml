@@ -34,8 +34,6 @@ body:
       label: Browser/浏览器
       options:
         - Chrome
-        - Firefox
-        - Safari
         - Edge
         - Other
     validations:
