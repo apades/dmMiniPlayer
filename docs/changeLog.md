@@ -1,3 +1,6 @@
+## v0.6.26
+Fixed some small bugs
+
 ## v0.6.25
 1. Fixed the problem of invalid shortcut keys after switching videos
 2. Add multiple video shortcut key functions
