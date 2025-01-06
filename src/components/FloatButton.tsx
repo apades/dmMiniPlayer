@@ -439,6 +439,7 @@ const FloatButton: FC<Props> = (props) => {
                     playerConfig.forceDocPIPRenderType =
                       DocPIPRenderType.replaceWebVideoDom
                     const provider = getWebProvider()
+                    window.provider = provider
                     provider.openPlayer({ videoEl })
                   }}
                 >

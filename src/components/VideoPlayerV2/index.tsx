@@ -13,7 +13,7 @@ import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
-import { isDocPIP, isIframe, ownerWindow, tryCatch } from '@root/utils'
+import { isDocPIP, isIframe, ownerWindow, tryCatch, wait } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
@@ -187,10 +187,14 @@ const VideoPlayerV2Inner = observer(
 
     useTargetEventListener(
       'dblclick',
-      () => {
+      (ev) => {
         if (!props.isReplacerMode) return
+        ev.stopPropagation()
+        ev.preventDefault()
         if (configStore.replacerDbClickAction === ReplacerDbClickAction.none)
           return
+        if (!videoRef.current) return
+        const isPause = videoRef.current.paused
         switch (configStore.replacerDbClickAction) {
           case ReplacerDbClickAction.fullscreen: {
             toggleFullscreen()
@@ -201,6 +205,12 @@ const VideoPlayerV2Inner = observer(
             break
           }
         }
+        wait(10).then(() => {
+          if (!videoRef.current) return
+          if (isPause !== videoRef.current.paused) {
+            togglePlayState()
+          }
+        })
       },
       videoPlayerRef.current,
     )

@@ -17,7 +17,7 @@ const Modal: FC<{
       <div
         className={classNames(
           'absolute z-[2] left-1/2 -translate-x-1/2 top-[var(--top)]',
-          'max-w-[600px] max-h-[calc(100vh-var(--top)*2)] overflow-y-auto custom-scrollbar bg-[#111a] text-white',
+          'max-w-[600px] max-h-[calc(100%-var(--top)*2)] overflow-y-auto custom-scrollbar bg-[#111a] text-white',
         )}
       >
         {props.children}

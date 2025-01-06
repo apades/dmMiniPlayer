@@ -103,7 +103,10 @@ export const baseConfigMap = {
       },
     ],
   }),
-  keyboardTips_show: true,
+  keyboardTips_show: config({
+    defaultValue: true,
+    notRecommended: true,
+  }),
   videoProgress_show: config({
     defaultValue: true,
     label: t('settingPanel.videoProgress_show'),
