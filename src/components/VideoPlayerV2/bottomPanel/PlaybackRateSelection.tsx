@@ -44,6 +44,7 @@ const PlaybackRateSelection: FC = (props) => {
 
   useKeydown((key) => {
     if (!webVideo) return
+    if (isLive) return
     switch (key) {
       case '-':
       case '_':
