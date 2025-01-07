@@ -71,6 +71,7 @@
 - [tsup](https://github.com/egoist/tsup/blob/796fc5030f68f929fecde7c94732e9a586ba7508/src/esbuild/postcss.ts)
 - [tailwindcss-container-queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
 - [ts-key-enum](https://www.npmjs.com/package/ts-key-enum)
+- [@ironkinoko/danmaku](https://github.com/IronKinoko/danmaku)
 
 ## 🍔 投喂
 如果您很喜欢这个项目, 欢迎打赏, 金额随意. 您的支持是我的动力(=・ω・=)

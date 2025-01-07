@@ -50,7 +50,10 @@ const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
   })
 
   return (
-    <div ref={rootRef} style={{ all: 'initial', visibility: 'hidden' }}>
+    <div
+      ref={rootRef}
+      style={{ all: 'initial', visibility: isDev ? undefined : 'hidden' }}
+    >
       {createPortal(props.children, shadowRoot.shadowRoot!)}
     </div>
   )

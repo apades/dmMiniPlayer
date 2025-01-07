@@ -123,6 +123,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     this.resizeObserver.disconnect()
     this.unloadCallbacks.forEach((cb) => cb())
     this.initd = false
+    this.offAll()
   }
 
   // 监听container大小变化
@@ -132,6 +133,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
       this.containerWidth = target.clientWidth
       this.containerHeight = target.clientHeight
       this.resized = true
+      this.emit('container-resize')
     })
   })
 

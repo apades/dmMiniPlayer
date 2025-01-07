@@ -9,6 +9,7 @@ import { listSelector } from '@root/utils/listSelector'
 import parser from '@root/core/SubtitleManager/subtitleParser/srt'
 import '@root/core/danmaku/DanmakuEngine/htmlDanmaku/index.less'
 import { HtmlDanmakuEngine as DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
+import IronKinokoDanmaku from '@root/core/danmaku/DanmakuEngine/IronKinoko/lib/index'
 import { dans } from './data/dans'
 import CanvasVideo from '@root/core/CanvasVideo'
 import chalk from 'chalk'
@@ -46,20 +47,37 @@ const App = () => {
   const [editInput, setEditInput] = useState('edit')
   const danmakuContainerRef = useRef<HTMLDivElement>(null)
   const danmakuSenderRef = useRef<DanmakuSender>()
-  const danmakuEngineRef = useRef<DanmakuEngine>()
+  // const danmakuEngineRef = useRef<DanmakuEngine>()
   const sideSwitcher = useRef<SideSwitcher>()
   const videoPlayerRef = useRef<VideoPlayerBase>()
 
   const forceUpdate = useUpdate()
 
   useOnce(async () => {
-    const dm = new DanmakuEngine()
-    window.dm = dm
-    dm.init({
-      media: videoRef.current!,
+    const dm = new IronKinokoDanmaku({
       container: danmakuContainerRef.current!,
+      media: videoRef.current!,
+      comments: dans.map((d) => {
+        return {
+          time: d.time!,
+          text: d.text,
+          mode:
+            (d.type == 'bottom' && 'bottom') ||
+            (d.type === 'right' && 'rtl') ||
+            (d.type === 'top' && 'top') ||
+            'rtl',
+        }
+      }),
     })
-    dm.addDanmakus(dans)
+    window.dm = dm
+
+    // const dm = new DanmakuEngine()
+    // window.dm = dm
+    // dm.init({
+    //   media: videoRef.current!,
+    //   container: danmakuContainerRef.current!,
+    // })
+    // dm.addDanmakus(dans)
 
     // dm.on('danmaku-leave', (danmaku) => {
     //   console.log(chalk.red('danmaku-leave'), danmaku)
@@ -70,7 +88,7 @@ const App = () => {
     // dm.on('danmaku-leaveTunnel', (danmaku) => {
     //   console.log(chalk.yellow('danmaku-leaveTunnel'), danmaku)
     // })
-    danmakuEngineRef.current = dm
+    // danmakuEngineRef.current = dm
 
     // captureStream() 需要用户信任操作才能用
     await new Promise((res) => (window.onclick = res))
@@ -114,7 +132,7 @@ const App = () => {
 
     videoPlayerRef.current = new VideoPlayerBase({
       webVideoEl: videoRef.current!,
-      danmakuEngine: danmakuEngineRef.current,
+      // danmakuEngine: danmakuEngineRef.current,
       danmakuSender: danmakuSenderRef.current,
       sideSwitcher: sideSwitcher.current,
     })
@@ -151,7 +169,7 @@ const App = () => {
             webVideo={videoRef.current}
             sideSwitcher={sideSwitcher.current}
             danmakuSender={danmakuSenderRef.current}
-            danmakuEngine={danmakuEngineRef.current}
+            // danmakuEngine={danmakuEngineRef.current}
             videoPlayer={videoPlayerRef.current}
             // renderSideActionArea={<Side />}
           />
