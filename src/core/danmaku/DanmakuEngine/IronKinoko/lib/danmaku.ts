@@ -135,9 +135,9 @@ export default class Danmaku {
     return this
   }
 
-  resize() {
-    this._.stage.width = this.container.offsetWidth
-    this._.stage.height = this.container.offsetHeight
+  resize(size?: { width: number, height: number }) {
+    this._.stage.width = size?.width ?? this.container.offsetWidth
+    this._.stage.height = size?.height ?? this.container.offsetHeight
     this._.engine.resize(this._.stage)
     this._.duration = this._.stage.width / this._.speed
     this.refresh()

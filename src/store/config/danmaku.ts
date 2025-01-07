@@ -23,17 +23,16 @@ const config_danmaku = {
   }),
   htmlDanmakuEngine: config<SettingDanmakuEngine>({
     defaultValue: SettingDanmakuEngine.Apades,
+    label: t('settingPanel.htmlDanmakuEngine'),
     type: 'group',
     group: [
       {
         value: SettingDanmakuEngine.Apades,
-        label: SettingDanmakuEngine.Apades,
-        desc: 'Same danmaku speed',
+        desc: t('settingPanel.htmlDanmakuEngine_Apades'),
       },
       {
         value: SettingDanmakuEngine.IronKinoko,
-        label: SettingDanmakuEngine.IronKinoko,
-        desc: 'Longer danmaku, and faster it',
+        desc: t('settingPanel.htmlDanmakuEngine_IronKinoko'),
       },
     ],
   }),
