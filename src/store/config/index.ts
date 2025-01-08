@@ -17,7 +17,7 @@ import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
-import config_bilibili from './bilibili'
+import config_specialWebsites from './specialWebsites'
 import config_subtitle from './subtitle'
 import {
   getIsZh,
@@ -60,7 +60,7 @@ export enum ReplacerDbClickAction {
 export const baseConfigMap = {
   ...config_floatButton,
   ...config_danmaku,
-  ...config_bilibili,
+  ...config_specialWebsites,
   ...config_subtitle,
   language: config<Language>({
     label: 'Language',

@@ -1,16 +1,10 @@
 import { config as _config } from '@apad/setting-panel'
 import { t } from '@root/utils/i18n'
 
-const category = 'bilibili'
+const category = t('settingPanel.specialWebsites')
 const config: typeof _config = (props) => ({ ...props, category })
 
-export enum MaxTunnelType {
-  '1/2' = '1/2',
-  '1/4' = '1/4',
-  full = 'full',
-}
-
-const config_bilibili = {
+const config_specialWebsites = {
   biliVideoDansFromBiliEvaolved: config({
     defaultValue: false,
     label: t('settingPanel.biliVideoDansFromBiliEvaolved'),
@@ -24,6 +18,10 @@ const config_bilibili = {
     relateByValue: true,
   }),
 
+  youtube_mergeSubtitleAtSimilarTimes: config({
+    defaultValue: true,
+    label: t('settingPanel.youtube_mergeSubtitleAtSimilarTimes'),
+  }),
   // biliLiveSide: config({
   //   defaultValue: false,
   //   label: t('settingPanel.biliLiveSide'),
@@ -31,4 +29,4 @@ const config_bilibili = {
   // }),
 }
 
-export default config_bilibili
+export default config_specialWebsites
