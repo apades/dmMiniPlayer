@@ -36,6 +36,7 @@ import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
 import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
 import isDev from '@root/shared/isDev'
+import Browser from 'webextension-polyfill'
 
 if (isDev) {
   configure({
@@ -286,6 +287,8 @@ const {
     return loadedConfig
   },
   useShadowDom: isPluginEnv,
+  styleHref:
+    isPluginEnv && isDev ? Browser.runtime.getURL('/css.css') : undefined,
 })
 let oldConfig: typeof configStore
 
