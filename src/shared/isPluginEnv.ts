@@ -1,1 +1,1 @@
-export default !!chrome?.storage
+export default !!chrome?.storage && !(chrome as any).polyfill

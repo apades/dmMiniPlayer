@@ -23,6 +23,7 @@ export const shareConfig = {
       '@root': pr('../src'),
       '@pkgs': pr('../packages'),
     })
+    options.charset = 'utf8'
   },
   outExtension({ format }) {
     return {

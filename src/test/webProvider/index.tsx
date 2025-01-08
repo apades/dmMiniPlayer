@@ -1,3 +1,4 @@
+import '../polyfill/browser/index'
 import '@root/contents/clogInject'
 import { dq1 } from '@root/utils'
 import App from './App'

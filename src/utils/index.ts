@@ -63,28 +63,28 @@ type WaitLoop = {
     cb: () => boolean /* | Promise<boolean> */,
     option?: Partial<{
       intervalTime: number
-      intervalCount: number
       limitTime: number
     }>,
   ): Promise<boolean>
 }
 export let waitLoopCallback: WaitLoop = (cb, option = 5000) => {
   return new Promise(async (res, rej) => {
-    if (isNumber(option)) {
-      let timer: NodeJS.Timeout
-      let initTime = new Date().getTime()
-      let loop = () => {
-        let rs = cb()
-        if (!rs) {
-          if (!isNull(option) && new Date().getTime() - initTime > option)
-            return res(false)
-          return (timer = setTimeout(() => {
-            loop()
-          }, 500))
-        } else return res(true)
-      }
-      loop()
+    const limitTime = (isNumber(option) ? option : option?.limitTime) ?? 5000,
+      intervalTime = (isObject(option) && option.intervalTime) || 500
+
+    let timer: NodeJS.Timeout
+    let initTime = new Date().getTime()
+    let loop = () => {
+      let rs = cb()
+      if (!rs) {
+        if (!isNull(option) && new Date().getTime() - initTime > limitTime)
+          return res(false)
+        return (timer = setTimeout(() => {
+          loop()
+        }, intervalTime))
+      } else return res(true)
     }
+    loop()
   })
 }
 
@@ -164,6 +164,17 @@ export const onWindowLoad = () => {
       window.removeEventListener('load', fn)
     }
     window.addEventListener('load', fn)
+  })
+}
+
+export const onDOMContentLoaded = () => {
+  return new Promise<void>((res) => {
+    if (document.readyState === 'complete') return res()
+    const fn = () => {
+      res()
+      window.removeEventListener('DOMContentLoaded', fn)
+    }
+    window.addEventListener('DOMContentLoaded', fn)
   })
 }
 
@@ -564,7 +575,7 @@ export const getIframeElFromSource = (source: Window) => {
   return iframe
 }
 
-export const isDocPIP = (tar = window) =>
+export const isDocPIP = (tar = window as Window) =>
   !!tryCatch(
     () =>
       window.top !== tar &&

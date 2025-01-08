@@ -1,12 +1,12 @@
 import { FC, useContext, useEffect, useRef, useState } from 'react'
-import Dropdown from '../Dropdown'
+import Dropdown from '../../Dropdown'
 import { useMemoizedFn } from 'ahooks'
-import vpContext from './context'
+import vpContext from '../context'
 import { observer } from 'mobx-react'
 import classNames from 'classnames'
-import Iconfont from '../Iconfont'
+import Iconfont from '../../Iconfont'
 import { runInAction } from 'mobx'
-import { handleOnPressEnter } from '../VideoPlayer/utls'
+import { handleOnPressEnter } from '../../VideoPlayer/utls'
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import { useOnce } from '@root/hook'
 import WebextEvent from '@root/shared/webextEvent'
@@ -26,6 +26,7 @@ import {
   setBrowserSyncStorage,
 } from '@root/utils/storage'
 import { isUndefined } from 'lodash-es'
+import { useKeydown } from '../hooks'
 
 const Menu: FC = observer((props) => {
   const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
@@ -180,6 +181,12 @@ const DanmakuSettingBtn: FC = (props) => {
   if (!danmakuEngine) return
 
   const visible = danmakuEngine.visible
+
+  useKeydown((key) => {
+    if (key === 'd') {
+      danmakuEngine.changeVisible()
+    }
+  })
 
   return (
     <Dropdown menuRender={() => <Menu />}>

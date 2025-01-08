@@ -46,3 +46,6 @@ export type TransStringValToAny<
 export type AsyncFn<Args extends readonly unknown[] = any[], Return = any> = (
   ...args: Args
 ) => Promise<Awaited<Return>>
+
+export type PartialIncludes<T extends Record<any, any>, Keys> = Omit<T, Keys> &
+  Partial<Pick<T, Keys>>

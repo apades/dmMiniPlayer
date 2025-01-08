@@ -392,9 +392,9 @@ const FloatButton: FC<Props> = (props) => {
           <div
             ref={floatBtn}
             className={classNames(
-              'group absolute z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn',
+              'group z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn',
             )}
-            style={posStyle}
+            style={{ ...posStyle, position: 'absolute' }}
             onMouseEnter={() => {
               isHoverLockRef.current = true
               clear()
@@ -414,6 +414,8 @@ const FloatButton: FC<Props> = (props) => {
               >
                 <img
                   className="wh-[16px]"
+                  width={16}
+                  height={16}
                   src={
                     isPluginEnv
                       ? `${Browser.runtime.getURL('/assets/icon.png')}`
@@ -437,6 +439,7 @@ const FloatButton: FC<Props> = (props) => {
                     playerConfig.forceDocPIPRenderType =
                       DocPIPRenderType.replaceWebVideoDom
                     const provider = getWebProvider()
+                    window.provider = provider
                     provider.openPlayer({ videoEl })
                   }}
                 >

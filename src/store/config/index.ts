@@ -103,6 +103,10 @@ export const baseConfigMap = {
       },
     ],
   }),
+  keyboardTips_show: config({
+    defaultValue: true,
+    notRecommended: true,
+  }),
   videoProgress_show: config({
     defaultValue: true,
     label: t('settingPanel.videoProgress_show'),
@@ -221,12 +225,13 @@ export const baseConfigMap = {
   }),
 }
 
-export const {
+const {
   configStore,
   openSettingPanel,
   closeSettingPanel,
   observe,
   updateConfig: _updateConfig,
+  saveConfig,
 } = initSetting({
   settings: baseConfigMap,
   saveInLocal: !isPluginEnv,
@@ -280,11 +285,11 @@ export const {
     oldConfig = loadedConfig
     return loadedConfig
   },
-  useShadowDom: true,
+  useShadowDom: isPluginEnv,
 })
 let oldConfig: typeof configStore
 
-const updateConfig = async (config?: typeof configStore) => {
+const updateConfig = async (config?: Partial<typeof configStore>) => {
   config ??= await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
   if (!config) return
   _updateConfig(config)
@@ -325,3 +330,11 @@ useBrowserSyncStorage(FLOAT_BTN_HIDDEN, async (val) => {
 })
 
 export default configStore
+export {
+  configStore,
+  openSettingPanel,
+  closeSettingPanel,
+  observe,
+  updateConfig,
+  saveConfig,
+}

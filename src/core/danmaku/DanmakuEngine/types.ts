@@ -13,4 +13,5 @@ export type DanmakuEngineEvents = {
   'danmaku-enter': DanmakuBase
   'danmaku-leaveTunnel': DanmakuBase
   'danmaku-leave': DanmakuBase
+  'container-resize': void
 }

@@ -17,6 +17,8 @@ import { SideSwitcher } from '../SideSwitcher'
 import EventSwitcher from '@root/utils/EventSwitcher'
 import playerConfig from '@root/store/playerConfig'
 import { checkIsLive } from '@root/utils/video'
+import { SettingDanmakuEngine } from '@root/store/config/danmaku'
+import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -79,10 +81,14 @@ export default abstract class WebProvider
   }
 
   init() {
-    this.danmakuEngine =
-      configStore.useHtmlDanmaku && configStore.useDocPIP
-        ? new HtmlDanmakuEngine()
-        : new CanvasDanmakuEngine()
+    this.danmakuEngine = (() => {
+      if (configStore.useHtmlDanmaku && configStore.useDocPIP) {
+        if (configStore.htmlDanmakuEngine === SettingDanmakuEngine.IronKinoko)
+          return new IronKinokoEngine()
+        return new HtmlDanmakuEngine()
+      }
+      return new CanvasDanmakuEngine()
+    })()
 
     this.subtitleManager = new SubtitleManager()
 

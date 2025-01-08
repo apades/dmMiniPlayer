@@ -1,6 +1,5 @@
 import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
-import CCLiveProvider from './cc'
 import CommonProvider from './common'
 import DdrkProvider from './ddrk'
 import DouyinProvider from './douyin'
@@ -21,8 +20,6 @@ export default function getWebProvider(): WebProvider {
       return new BilibiliVideoProvider()
     case 'douyu':
       return new DouyuLiveProvider()
-    case 'cc':
-      return new CCLiveProvider()
     case 'ddrk':
       return new DdrkProvider()
     case 'douyin':

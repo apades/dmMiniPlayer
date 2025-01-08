@@ -6,7 +6,6 @@ export function observeVideoEl(
   videoEl: HTMLVideoElement,
   onChange: (videoEl: HTMLVideoElement) => void,
 ) {
-  console.log('observeVideoEl', videoEl)
   let t = 0,
     timer: NodeJS.Timeout
   function observe(videoEl: HTMLElement) {
@@ -63,6 +62,8 @@ export function observeVideoEl(
       _disconnects.forEach((fn) => fn())
       const newParent = await observe(videoEl)
       t++
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       clearTimeout(timer)
       timer = setTimeout(() => {
         t = 0

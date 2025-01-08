@@ -10,11 +10,31 @@ export enum MaxTunnelType {
   full = 'full',
 }
 
+export enum SettingDanmakuEngine {
+  Apades = 'Apades',
+  IronKinoko = 'IronKinoko',
+}
+
 const config_danmaku = {
   useHtmlDanmaku: config({
     defaultValue: true,
     label: t('settingPanel.useHtmlDanmaku'),
     desc: t('settingPanel.useHtmlDanmakuDesc'),
+  }),
+  htmlDanmakuEngine: config<SettingDanmakuEngine>({
+    defaultValue: SettingDanmakuEngine.Apades,
+    label: t('settingPanel.htmlDanmakuEngine'),
+    type: 'group',
+    group: [
+      {
+        value: SettingDanmakuEngine.Apades,
+        desc: t('settingPanel.htmlDanmakuEngine_Apades'),
+      },
+      {
+        value: SettingDanmakuEngine.IronKinoko,
+        desc: t('settingPanel.htmlDanmakuEngine_IronKinoko'),
+      },
+    ],
   }),
   fontShadow: config({
     defaultValue: false,

@@ -4,6 +4,8 @@ import {
   FullscreenExitOutlined,
   FullscreenOutlined,
   LeftOutlined,
+  QuestionCircleFilled,
+  QuestionOutlined,
   SettingOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons'
@@ -11,7 +13,7 @@ import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
-import { isDocPIP, isIframe, ownerWindow } from '@root/utils'
+import { isDocPIP, isIframe, ownerWindow, tryCatch, wait } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
@@ -34,24 +36,30 @@ import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
 import vpContext, { ContextData, defaultVpContext } from './context'
 import DanmakuContainer from './DanmakuContainer'
 import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
-import DanmakuSettingBtn from './DanmakuSettingBtn'
+import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
 import {
   useInWindowKeydown,
+  useKeydown,
   useTogglePlayState,
   useWebVideoEventsInit,
 } from './hooks'
 import LoadingIcon from './LoadingIcon'
-import PlaybackRateSelection from './PlaybackRateSelection'
-import PlayedTime from './PlayedTime'
-import PlayerProgressBar from './PlayerProgressBar'
+import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
+import PlayedTime from './bottomPanel/PlayedTime'
+import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
 import SpeedIcon from './SpeedIcon'
-import TogglePlayActionButton from './TogglePlayActionButton'
-import VolumeBar from './VolumeBar'
+import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
+import VolumeBar from './bottomPanel/VolumeBar'
 import VolumeIcon from './VolumeIcon'
 import screenfull from '@root/utils/screenfull'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { postMessageToTop } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
+import { Key } from '@root/types/key'
+import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
+import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
+import KeyboardTipsModal from './KeyboardTipsModal'
+import ScreenshotTips from './ScreenshotTips'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -71,7 +79,7 @@ type VpInnerProps = Props & {
   setContext: React.Dispatch<React.SetStateAction<ContextData>>
 } & Pick<ContextData, 'eventBus'>
 
-const ACTION_AREA_ACTIVE = 'action-area-active'
+const ACTION_AREA_ACTIVE = 'active'
 
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
@@ -88,6 +96,9 @@ const VideoPlayerV2Inner = observer(
       subtitleManager.unload()
     })
 
+    const [keyboardTipsModal, keyboardTipsModalContext] =
+      useOpenIsolationModal(KeyboardTipsModal)
+
     const { run, clear } = useDebounceTimeoutCallback(() => {
       videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
     }, 1000)
@@ -98,25 +109,11 @@ const VideoPlayerV2Inner = observer(
     const videoRef = useRef<HTMLVideoElement>()
     /**这个专属于vp的ref，videoRef是专属于传入的webVideo */
     const inVpVideoRef = useRef<HTMLVideoElement>()
+
     useEffect(() => {
-      if (!videoRef.current) return
-      const video = videoRef.current
-      const isLive = props.isLive || video.duration === Infinity
-
-      const keydownWindow = props.useWebVideo
-        ? ownerWindow(video)
-        : ownerWindow(videoPlayerRef.current)
-      props.setContext((v) => ({
-        ...v,
-        isLive,
-        webVideo: video,
-        keydownWindow,
-      }))
-
-      if (!props.useWebVideo && props.videoStream) {
-        updateVideoStream(props.videoStream)
-      }
-    }, [videoRef.current])
+      if (!videoPlayerRef.current) return
+      videoPlayerRef.current.focus()
+    }, [videoPlayerRef.current])
 
     useEffect(() => {
       if (!props.webVideo) return
@@ -155,7 +152,6 @@ const VideoPlayerV2Inner = observer(
     const toggleFullInWeb = useMemoizedFn(() => {
       setFullInWeb((v) => {
         const toFullInWeb = !v
-        console.log('isIframe', isIframe())
         if (isIframe()) {
           postMessageToTop(
             toFullInWeb
@@ -191,9 +187,14 @@ const VideoPlayerV2Inner = observer(
 
     useTargetEventListener(
       'dblclick',
-      () => {
+      (ev) => {
+        if (!props.isReplacerMode) return
+        ev.stopPropagation()
+        ev.preventDefault()
         if (configStore.replacerDbClickAction === ReplacerDbClickAction.none)
           return
+        if (!videoRef.current) return
+        const isPause = videoRef.current.paused
         switch (configStore.replacerDbClickAction) {
           case ReplacerDbClickAction.fullscreen: {
             toggleFullscreen()
@@ -204,6 +205,12 @@ const VideoPlayerV2Inner = observer(
             break
           }
         }
+        wait(10).then(() => {
+          if (!videoRef.current) return
+          if (isPause !== videoRef.current.paused) {
+            togglePlayState()
+          }
+        })
       },
       videoPlayerRef.current,
     )
@@ -215,6 +222,22 @@ const VideoPlayerV2Inner = observer(
         subtitleManager.init(video)
       }
       subtitleManager.video = video
+
+      const isLive = props.isLive || video.duration === Infinity
+
+      const keydownWindow = props.useWebVideo
+        ? ownerWindow(video)
+        : ownerWindow(videoPlayerRef.current)
+      props.setContext((v) => ({
+        ...v,
+        isLive,
+        webVideo: video,
+        keydownWindow,
+      }))
+
+      if (!props.useWebVideo && props.videoStream) {
+        updateVideoStream(props.videoStream)
+      }
       forceUpdate()
     })
 
@@ -239,12 +262,14 @@ const VideoPlayerV2Inner = observer(
     const togglePlayState = useTogglePlayState()
 
     // 初始化
-    useInWindowKeydown((e) => {
-      if (e.key === 'Escape') {
+    useInWindowKeydown()
+    useWebVideoEventsInit()
+
+    useKeydown((key) => {
+      if (key === 'Escape') {
         quitFullMode()
       }
     })
-    useWebVideoEventsInit()
 
     const setCurrentTime = useMemoizedFn((time: number, pause?: boolean) => {
       if (!videoRef.current) return
@@ -291,6 +316,7 @@ const VideoPlayerV2Inner = observer(
 
     const el = (
       <div
+        tabIndex={1}
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,
@@ -309,11 +335,15 @@ const VideoPlayerV2Inner = observer(
           handleChangeActionArea(false)
         }}
       >
+        {keyboardTipsModalContext}
         <link rel="stylesheet" href={Browser.runtime.getURL('/css.css')} />
         <div
-          className="video-container relative h-full bg-black cursor-pointer"
+          className={classNames(
+            'video-container relative h-full bg-black',
+            !isLive && 'cursor-pointer',
+          )}
           onClick={() => {
-            togglePlayState()
+            !isLive && togglePlayState()
           }}
           onMouseMove={() => {
             handleChangeActionArea(true)
@@ -356,14 +386,15 @@ const VideoPlayerV2Inner = observer(
           <LoadingIcon />
           <VolumeIcon />
           <SpeedIcon />
+          <ScreenshotTips />
         </div>
 
         {/* 底部操作栏 */}
         <div
           className={classNames(
-            'video-action-area absolute w-full transition-all bottom-[calc(-1*(var(--area-height)+5px))] duration-500 ',
+            'video-action-area w-full transition-all duration-500',
             // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
-            `group-[&.action-area-active]:bottom-0`,
+            `absolute bottom-[calc(-1*(var(--area-height)+5px))] group-[&.active]:bottom-0`,
           )}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
@@ -376,7 +407,7 @@ const VideoPlayerV2Inner = observer(
 
           {!isLive && <PlayerProgressBar />}
 
-          <div className="opacity-0 group-[&.action-area-active]:opacity-100 transition-all duration-500">
+          <div className="opacity-0 group-[&.active]:opacity-100 transition-all duration-500">
             <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
             <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
               <TogglePlayActionButton />
@@ -397,11 +428,20 @@ const VideoPlayerV2Inner = observer(
                   )}
                   onClick={handleOpenSetting}
                 >
-                  <SettingOutlined />
+                  <SettingOutlined className="block" />
                 </div>
               </div>
 
               <div className="right ml-auto f-i-center gap-1">
+                {configStore.keyboardTips_show && (
+                  <QuestionCircleFilled
+                    className={classNames(
+                      'text-white cursor-pointer hover:text-[#fffa] transition-all',
+                      'text-[16px] px-2',
+                    )}
+                    onClick={keyboardTipsModal.openModal}
+                  />
+                )}
                 <VolumeBar />
                 {props.isReplacerMode && (
                   <>
@@ -430,12 +470,15 @@ const VideoPlayerV2Inner = observer(
 
         <DanmakuInput danmakuSender={props.danmakuSender} />
         <DanmakuContainer />
+        <div className="group-[&.active]:opacity-0 transition-all">
+          <CurrentTimeTooltipsWithKeydown />
+        </div>
 
         {/* 侧边操作栏 */}
         {props.sideSwitcher && (
           <div className="side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+15px)] hover:right-0 group/side">
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
-            <div className="side-dragger group-hover/side:opacity-100 group-[&.action-area-active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center">
+            <div className="side-dragger group-hover/side:opacity-100 group-[&.active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center">
               <LeftOutlined
                 className={classNames(
                   'group-hover/side:rotate-180 rotate-0 text-xs',
@@ -447,7 +490,11 @@ const VideoPlayerV2Inner = observer(
 
         {props.isReplacerMode && (
           <div
-            className="rounded-full wh-[40px] cursor-pointer right-[20px] top-0 absolute z-20 text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all group-[&.action-area-active]:top-[20px] opacity-0 group-[&.action-area-active]:opacity-100"
+            className={classNames(
+              'absolute right-[20px] top-0 z-20 group-[&.active]:top-[20px]',
+              'opacity-0 group-[&.active]:opacity-100',
+              'rounded-full wh-[40px] cursor-pointer text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all',
+            )}
             onClick={() => {
               props.videoPlayer.emit(PlayerEvent.close)
             }}

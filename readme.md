@@ -28,7 +28,6 @@
 - 弹幕播放和发送
   - bilibili视频 + 直播
   - 斗鱼直播
-  - CC直播
   - 动画疯
   - youtube直播 *
   - twitch直播 *
@@ -65,13 +64,14 @@
 
 - [bilibili-evaolved](https://github.com/the1812/Bilibili-Evolved)
 - [douyu-monitor](https://github.com/qianjiachun/douyu-monitor)
-- [real-url](https://github.com/wbt5/real-url/blob/master/danmu/danmaku/cc.py)
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 - [rc-slider](http://github.com/react-component/slider)
 - [js-cookie](https://github.com/js-cookie/js-cookie)
 - [esbuild-plugin-inline-import](https://github.com/claviska/esbuild-plugin-inline-import)
 - [tsup](https://github.com/egoist/tsup/blob/796fc5030f68f929fecde7c94732e9a586ba7508/src/esbuild/postcss.ts)
 - [tailwindcss-container-queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
+- [ts-key-enum](https://www.npmjs.com/package/ts-key-enum)
+- [@ironkinoko/danmaku](https://github.com/IronKinoko/danmaku)
 
 ## 🍔 投喂
 如果您很喜欢这个项目, 欢迎打赏, 金额随意. 您的支持是我的动力(=・ω・=)

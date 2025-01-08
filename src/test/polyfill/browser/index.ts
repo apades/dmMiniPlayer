@@ -130,6 +130,7 @@ const BrowserPolyfill = {
     // ? 这里插件还没用到，先不弄？
     getMessage: (messageName: string, substitutions?: string | string[]) => 1,
   },
+  polyfill: true,
 }
 
 const BrowserProxy = objectDeepProxy(BrowserPolyfill, 'BrowserPolyfill', {

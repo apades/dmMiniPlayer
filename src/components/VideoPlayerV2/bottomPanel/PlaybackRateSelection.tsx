@@ -1,8 +1,10 @@
 import { FC, useContext, useEffect, useState } from 'react'
-import vpContext from './context'
+import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
-import Dropdown from '../Dropdown'
+import Dropdown from '../../Dropdown'
 import classNames from 'classnames'
+import { useKeydown } from '../hooks'
+import { useMemoizedFn } from 'ahooks'
 
 const PlaybackRateSelection: FC = (props) => {
   const { webVideo, isLive } = useContext(vpContext)
@@ -32,6 +34,32 @@ const PlaybackRateSelection: FC = (props) => {
     webVideo.playbackRate = rate
   }
 
+  const handleTogglePlaybackRate = useMemoizedFn(() => {
+    if (playbackRate === 1) {
+      handleChangePlaybackRate(lastPlaybackRate)
+    } else {
+      handleChangePlaybackRate(1)
+    }
+  })
+
+  useKeydown((key) => {
+    if (!webVideo) return
+    if (isLive) return
+    switch (key) {
+      case '-':
+      case '_':
+        webVideo.playbackRate -= 0.25
+        break
+      case '+':
+      case '=':
+        webVideo.playbackRate += 0.25
+        break
+      case '0':
+        handleTogglePlaybackRate()
+        break
+    }
+  })
+
   const menu = (
     <div className="w-[60px] bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">
       {[0.5, 1, 1.25, 1.5, 2].map((rate) => {
@@ -46,7 +74,7 @@ const PlaybackRateSelection: FC = (props) => {
               handleChangePlaybackRate(rate)
             }}
           >
-            {rate.toFixed(1)}x
+            {rate.toFixed(2)}x
           </div>
         )
       })}
@@ -58,15 +86,9 @@ const PlaybackRateSelection: FC = (props) => {
     <Dropdown menuRender={() => menu}>
       <div
         className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors leading-[18px]"
-        onClick={() => {
-          if (playbackRate === 1) {
-            handleChangePlaybackRate(lastPlaybackRate)
-          } else {
-            handleChangePlaybackRate(1)
-          }
-        }}
+        onClick={handleTogglePlaybackRate}
       >
-        {playbackRate.toFixed(1)}x
+        {playbackRate.toFixed(2)}x
       </div>
     </Dropdown>
   )

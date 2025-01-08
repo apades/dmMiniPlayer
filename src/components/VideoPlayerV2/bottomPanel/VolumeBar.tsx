@@ -1,11 +1,12 @@
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import classNames from 'classnames'
 import { type FC, useContext, useEffect, useState } from 'react'
-import Iconfont from '../Iconfont'
-import ProgressBar from '../ProgressBar'
-import vpContext from './context'
+import Iconfont from '../../Iconfont'
+import ProgressBar from '../../ProgressBar'
+import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import style from './VolumeBar.less?inline'
+import { useKeydown } from '../hooks'
 
 type Props = {}
 const VolumeBar: FC<Props> = (props) => {
@@ -38,6 +39,16 @@ const VolumeBar: FC<Props> = (props) => {
       active: isActive,
     },
   ])
+
+  useKeydown((key) => {
+    if (key === 'm') {
+      setMuted((muted) => {
+        if (!webVideo) return muted
+        webVideo.muted = !muted
+        return !muted
+      })
+    }
+  })
 
   const { run } = useDebounceTimeoutCallback(() => {
     setActive(false)
