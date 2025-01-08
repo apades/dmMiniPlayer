@@ -1,10 +1,14 @@
+import vpContext from '@root/components/VideoPlayerV2/context'
+import { PlayerEvent } from '@root/core/event'
 import SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
 import { useOnce } from '@root/hook'
 import configStore from '@root/store/config'
-import { useSet } from 'ahooks'
+import { minmax } from '@root/utils'
+import { useMemoizedFn, useSet } from 'ahooks'
+import { autorun } from 'mobx'
 import { observer } from 'mobx-react'
-import { useState, type FC } from 'react'
+import { useContext, useMemo, useRef, useState, type FC } from 'react'
 
 type Props = {
   subtitleManager: SubtitleManager
@@ -12,6 +16,9 @@ type Props = {
 const SubtitleText: FC<Props> = (props) => {
   const { subtitleManager } = props
   const [activeRows, setActiveRows] = useState<Record<string, SubtitleRow>>({})
+  const [fontSize, setFontSize] = useState(configStore.subtitle_fontSize)
+  const { eventBus } = useContext(vpContext)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // window.subtitleManager = subtitleManager
   useOnce(() => {
@@ -27,8 +34,6 @@ const SubtitleText: FC<Props> = (props) => {
     })
     const unListenLeave = subtitleManager.on2('row-leave', (row) => {
       console.log('row-leave', row)
-      // activeRowsManager.remove(row)
-      // console.log('activeRows', activeRows)
       setActiveRows((activeRows) => {
         delete activeRows[row.id]
         return { ...activeRows }
@@ -40,6 +45,28 @@ const SubtitleText: FC<Props> = (props) => {
       unListenLeave()
     }
   })
+  const updateFontSize = useMemoizedFn(() => {
+    if (!configStore.subtitle_autoSize)
+      return setFontSize(configStore.subtitle_fontSize)
+    if (!containerRef.current) return
+
+    // 先计算出目标大小
+    const tarSize =
+      (configStore.subtitle_fontSize /
+        configStore.subtitle_autoSize_startWidth) *
+      containerRef.current.clientWidth *
+      configStore.subtitle_autoSize_scaleRate
+    // 再根据最大大小调整
+    const clampSize = minmax(
+      tarSize,
+      configStore.subtitle_fontSize,
+      configStore.subtitle_autoSize_maxSize,
+    )
+    setFontSize(clampSize)
+  })
+
+  useOnce(() => eventBus.on2(PlayerEvent.resize, updateFontSize))
+  useOnce(() => autorun(updateFontSize))
 
   return (
     <div
@@ -49,6 +76,7 @@ const SubtitleText: FC<Props> = (props) => {
           ? 0
           : configStore.subtitle_opacity,
       }}
+      ref={containerRef}
     >
       {Object.values(activeRows).map((row, i) => (
         <div key={row.id} className="relative w-fit">
@@ -66,7 +94,7 @@ const SubtitleText: FC<Props> = (props) => {
               opacity: configStore.subtitle_fontOpacity,
               fontWeight: configStore.subtitle_fontWeight,
               fontFamily: configStore.subtitle_fontFamily,
-              fontSize: configStore.subtitle_fontSize + 'px',
+              fontSize: fontSize + 'px',
             }}
           >
             {row.text}

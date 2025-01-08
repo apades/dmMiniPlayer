@@ -48,6 +48,30 @@ const config_subtitle = {
     label: t('settingPanel.subtitleFontFamily'),
     defaultValue: 'arial, microsoft yahei, pingfangsc ,helvetica, sans-serif',
   }),
+
+  subtitle_autoSize: config({
+    defaultValue: true,
+    label: t('settingPanel.adjustFontsizeByPIPWidthResize'),
+    desc: t('settingPanel.subtitleAutoSizeDesc'),
+  }),
+  subtitle_autoSize_startWidth: config({
+    defaultValue: 500,
+    label: t('settingPanel.adjustFontsizeStartWidth'),
+    relateBy: 'subtitle_autoSize',
+    relateByValue: true,
+  }),
+  subtitle_autoSize_scaleRate: config({
+    defaultValue: 0.8,
+    label: t('settingPanel.adjustFontsizeScaleRate'),
+    relateBy: 'subtitle_autoSize',
+    relateByValue: true,
+  }),
+  subtitle_autoSize_maxSize: config({
+    defaultValue: 48,
+    label: t('settingPanel.adjustFontsizeMaxSize'),
+    relateBy: 'subtitle_autoSize',
+    relateByValue: true,
+  }),
 }
 
 export default config_subtitle
