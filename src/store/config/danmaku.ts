@@ -35,6 +35,8 @@ const config_danmaku = {
         desc: t('settingPanel.htmlDanmakuEngine_IronKinoko'),
       },
     ],
+    relateBy: 'useHtmlDanmaku',
+    relateByValue: true,
   }),
   fontShadow: config({
     defaultValue: false,
