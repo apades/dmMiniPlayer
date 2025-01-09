@@ -1,20 +1,24 @@
+import { wait } from '@root/utils'
 import { onMessage, sendMessage } from '../contentSender'
 
 onMessage('inject-api:onTrigger', (data) => {
-  if (data.event != 'history') return null
+  if (data?.event != 'history') return null
   console.log('切换了路由 history')
-  callbacks.forEach((cb) => cb())
+
+  wait(0).then(() => {
+    callbacks.forEach((cb) => cb(location.pathname))
+  })
 })
 window.addEventListener('popstate', () => {
   console.log('切换了路由 popstate')
-  callbacks.forEach((cb) => cb())
+  callbacks.forEach((cb) => cb(location.pathname))
 })
 
-const callbacks: (() => void)[] = []
+const callbacks: ((pathname: string) => void)[] = []
 /**
  * @returns {Function} 取消监听onRouteChange
  */
-export default function onRouteChange(callback: () => void) {
+export default function onRouteChange(callback: (pathname: string) => void) {
   callbacks.push(callback)
   const unListen = () => {
     callbacks.slice(callbacks.findIndex((c) => c == callback))

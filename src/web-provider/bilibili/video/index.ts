@@ -3,7 +3,7 @@ import { getDanmakus, getVideoInfoFromUrl } from '../utils'
 import BilibiliSubtitleManager from './SubtitleManager'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { dq, dq1 } from '@root/utils'
+import { dq, dq1, switchLatest } from '@root/utils'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
@@ -44,7 +44,6 @@ export default class BilibiliVideoProvider extends WebProvider {
 
     this.addOnUnloadFn(
       onRouteChange(() => {
-        this.danmakuEngine?.resetState()
         this.initDanmakus()
         this.subtitleManager.init(this.webVideo)
         this.initSideSwitcherData()
@@ -52,13 +51,15 @@ export default class BilibiliVideoProvider extends WebProvider {
     )
   }
 
-  async initDanmakus() {
+  getDanmakus = switchLatest(async () => {
     const { aid, cid } = await getVideoInfoFromUrl(location.href)
-    if (this.lastAid === aid && this.lastCid === cid) return
-    this.lastAid = aid
-    this.lastCid = cid
+    console.log('load from', location.href)
 
     const danmakus = await getDanmakus(aid, cid)
+    return danmakus
+  })
+  async initDanmakus() {
+    const danmakus = await this.getDanmakus()
 
     this.danmakuEngine?.setDanmakus(danmakus)
   }
