@@ -23,6 +23,9 @@ export default defineConfig({
   entry: {
     background: shareConfig.entry.background,
     css: shareConfig.entry.css,
+    inject: shareConfig.entry.inject,
+    'before-init-main': pr('../src/contents/before-init-main.ts'),
+    world: pr('../src/contents/world.dev.ts'),
   },
   treeshake: false,
   minify: false,
