@@ -287,8 +287,9 @@ const {
     return loadedConfig
   },
   useShadowDom: isPluginEnv,
-  styleHref:
-    isPluginEnv && isDev ? Browser.runtime.getURL('/css.css') : undefined,
+  ...(isPluginEnv && isDev
+    ? { styleHref: Browser.runtime.getURL('/css.css') }
+    : {}),
 })
 let oldConfig: typeof configStore
 
