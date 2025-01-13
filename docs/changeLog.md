@@ -1,3 +1,9 @@
+## v0.6.27
+1. Added a new HTML danmaku engine IronKinoko version
+2. Fixed the problem of incorrect danmakus when switching between bilibili episode.
+3. Added the function of merging YouTube subtitles with similar time to avoid subtitle jitter
+4. added the function of dynamic size of subtitles, which is the same as the dynamic size of danmakus.
+
 ## v0.6.26
 Fixed some small bugs
 
