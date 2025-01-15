@@ -103,5 +103,8 @@ export const manifest: chrome.runtime.ManifestV3 = {
     playbackRate: {
       description: '__MSG_playbackRate__',
     },
+    quickHideToggle: {
+      description: '__MSG_quickHideToggle__',
+    },
   },
 }

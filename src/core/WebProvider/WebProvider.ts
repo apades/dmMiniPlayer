@@ -19,6 +19,7 @@ import playerConfig from '@root/store/playerConfig'
 import { checkIsLive } from '@root/utils/video'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
+import WebextEvent from '@root/shared/webextEvent'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -214,6 +215,10 @@ export default abstract class WebProvider
   onOpenPlayer(): Promise<void> | void {}
 
   bindCommandsEvent() {
+    let isHide = false
+    let lastX = 0,
+      lastY = 0
+
     this.addOnUnloadFn(
       onMessage('PIP-action', (req) => {
         console.log('PIP-action', req)
@@ -253,6 +258,29 @@ export default abstract class WebProvider
             videoEl.playbackRate == 1
               ? (videoEl.playbackRate = configStore.playbackRate)
               : (videoEl.playbackRate = 1)
+            break
+          }
+          case 'quickHideToggle': {
+            if (!window.documentPictureInPicture?.window) return
+            // TODO Error: Invalid value for bounds. Bounds must be at least 50% within visible screen space.
+            const docWin = window.documentPictureInPicture.window
+            if (isHide) {
+              isHide = false
+              sendMessage(WebextEvent.moveDocPIPPos, {
+                x: lastX,
+                y: lastY,
+                docPIPWidth: docWin.innerWidth,
+              })
+            } else {
+              isHide = true
+              lastX = docWin.screenTop
+              lastY = docWin.screenLeft
+              sendMessage(WebextEvent.moveDocPIPPos, {
+                x: 0,
+                y: screen.height,
+                docPIPWidth: docWin.innerWidth,
+              })
+            }
             break
           }
         }

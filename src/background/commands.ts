@@ -5,13 +5,6 @@ import { onMessage, sendMessage } from 'webext-bridge/background'
 browser.commands.onCommand.addListener(async (command, tab) => {
   console.log('command', command)
   if (activeTabId) {
-    if (command == 'show/hide') {
-      // await browser.tabs.highlight({ tabs: activeTabIndex })
-      // await browser.tabs.update(activeTabId, {
-      //   active: true,
-      //   highlighted: true,
-      // })
-    }
     sendMessage(
       'PIP-action',
       {
@@ -23,11 +16,6 @@ browser.commands.onCommand.addListener(async (command, tab) => {
         context: 'content-script',
       },
     )
-    // sendToContentScript({
-    //   name: 'PIP-action',
-    //   body: command,
-    //   tabId: activeTabId,
-    // })
   }
 })
 
