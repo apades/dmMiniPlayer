@@ -8,6 +8,10 @@ import { WebProvider } from '.'
 import { PlayerEvent } from '../event'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
+import { sendMessage } from 'webext-bridge/content-script'
+import WebextEvent from '@root/shared/webextEvent'
+import { Position } from '@root/store/config/docPIP'
+import { autorun } from 'mobx'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
@@ -51,6 +55,30 @@ export default class DocPIPWebProvider extends WebProvider {
       height,
     })
     this.pipWindow = pipWindow
+
+    this.addOnUnloadFn(
+      autorun(() => {
+        if (configStore.movePIPInOpen) {
+          const [x, y] = (() => {
+            switch (configStore.movePIPInOpen_basePos) {
+              case Position['top-left']:
+                return [0, 0]
+              case Position['top-right']:
+                return [screen.width - width, 0]
+              case Position['bottom-left']:
+                return [0, screen.height - height]
+              case Position['bottom-right']:
+                return [screen.width - width, screen.height - height]
+            }
+          })()
+          sendMessage(WebextEvent.moveDocPIPPos, {
+            docPIPWidth: width,
+            x: x + configStore.movePIPInOpen_offsetX,
+            y: y + configStore.movePIPInOpen_offsetY,
+          })
+        }
+      }),
+    )
 
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {

@@ -71,7 +71,7 @@ export enum DocPIPRenderType {
   replaceWebVideoDom = 'replaceWebVideoDom',
 }
 
-export enum AutoPIPPos {
+export enum Position {
   default = 'default',
   'top-left' = 'top-left',
   'top-right' = 'top-right',
@@ -89,6 +89,26 @@ export const docPIPConfig = {
     label: t('settingPanel.autoPIPInScroll'),
     defaultValue: false,
     desc: t('settingPanel.autoPIPInScrollDesc'),
+  }),
+  movePIPInOpen: config({
+    defaultValue: false,
+  }),
+  movePIPInOpen_basePos: config<Exclude<Position, Position.default>>({
+    defaultValue: Position['bottom-right'],
+    relateBy: 'movePIPInOpen',
+    relateByValue: true,
+    type: 'group',
+    group: Object.values(Position).filter((v) => v !== Position.default),
+  }),
+  movePIPInOpen_offsetX: config({
+    defaultValue: 0,
+    relateBy: 'movePIPInOpen',
+    relateByValue: true,
+  }),
+  movePIPInOpen_offsetY: config({
+    defaultValue: 0,
+    relateBy: 'movePIPInOpen',
+    relateByValue: true,
   }),
   useDocPIP: config({
     defaultValue: !!window?.documentPictureInPicture,

@@ -13,6 +13,7 @@ import {
 import WebextEvent from '@root/shared/webextEvent'
 import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
 import { v4 as uuid } from 'uuid'
+import { mv3GetDocPIPTab, mv3MoveTabsToPosition } from '@root/utils/mv3'
 
 console.log('run bg')
 getBrowserLocalStorage(LOCALE).then((locale) => {
@@ -123,6 +124,12 @@ onMessage(WebextEvent.stopGetDanmaku, ({ data }) => {
     danmakuGetter.unload()
     danmakuGetterCacheMap.delete(data.id)
   }
+})
+
+onMessage(WebextEvent.moveDocPIPPos, async ({ data }) => {
+  const docPIPTab = await mv3GetDocPIPTab(data.docPIPWidth)
+  if (!docPIPTab) return
+  await mv3MoveTabsToPosition(docPIPTab, [data.x, data.y])
 })
 
 const FLOAT_BTN_ID = 'FLOAT_BTN_ID',

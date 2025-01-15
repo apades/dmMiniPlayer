@@ -40,5 +40,6 @@ declare module 'webext-bridge' {
       | { state: string; errType?: string }
     >
     [WebextEvent.openSetting]: void
+    [WebextEvent.moveDocPIPPos]: { x: number; y: number; docPIPWidth: number }
   }
 }

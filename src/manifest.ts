@@ -30,6 +30,7 @@ export const manifest: chrome.runtime.ManifestV3 = {
   permissions: [
     'storage',
     'contextMenus',
+    'activeTab',
     // 'tabCapture',
   ],
   background: {
