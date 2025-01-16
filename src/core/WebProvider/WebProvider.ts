@@ -1,6 +1,12 @@
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import configStore, { DocPIPRenderType } from '@root/store/config'
-import { createElement, dq, getDeepPrototype } from '@root/utils'
+import {
+  createElement,
+  dq,
+  getDeepPrototype,
+  tryCatch,
+  wait,
+} from '@root/utils'
 import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
 import {
   CanvasDanmakuEngine,
@@ -39,6 +45,7 @@ export default abstract class WebProvider
   sideSwitcher?: SideSwitcher
   isLive?: boolean
   active = false
+  isQuickHiding = false
 
   private _webVideo?: HTMLVideoElement
   get webVideo() {
@@ -114,7 +121,9 @@ export default abstract class WebProvider
       this.active = false
     }, 0)
   }
-  onUnload() {}
+  onUnload() {
+    this.isQuickHiding = false
+  }
 
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
@@ -215,12 +224,25 @@ export default abstract class WebProvider
   onOpenPlayer(): Promise<void> | void {}
 
   bindCommandsEvent() {
-    let isHide = false
     let lastX = 0,
-      lastY = 0
+      lastY = 0,
+      lastW = 0,
+      lastH = 0,
+      lastIsPause = false,
+      coverDom = createElement('div', {
+        style: {
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 9999999999,
+          backgroundColor: 'black',
+        },
+      })
 
     this.addOnUnloadFn(
-      onMessage('PIP-action', (req) => {
+      onMessage('PIP-action', async (req) => {
         console.log('PIP-action', req)
         if (!this.miniPlayer || !this.webVideo) return
         const videoEl = this.webVideo
@@ -262,24 +284,39 @@ export default abstract class WebProvider
           }
           case 'quickHideToggle': {
             if (!window.documentPictureInPicture?.window) return
-            // TODO Error: Invalid value for bounds. Bounds must be at least 50% within visible screen space.
+            // !不能完全隐藏，只能通过其他方式隐藏 Error: Invalid value for bounds. Bounds must be at least 50% within visible screen space.
             const docWin = window.documentPictureInPicture.window
-            if (isHide) {
-              isHide = false
-              sendMessage(WebextEvent.moveDocPIPPos, {
+            if (this.isQuickHiding) {
+              docWin.document.body.removeChild(coverDom)
+              docWin.resizeTo(lastW, lastH)
+              if (!lastIsPause) {
+                videoEl.play()
+              }
+
+              await wait(10)
+              await sendMessage(WebextEvent.moveDocPIPPos, {
                 x: lastX,
                 y: lastY,
                 docPIPWidth: docWin.innerWidth,
               })
+              this.isQuickHiding = false
             } else {
-              isHide = true
-              lastX = docWin.screenTop
-              lastY = docWin.screenLeft
-              sendMessage(WebextEvent.moveDocPIPPos, {
+              lastX = docWin.screenLeft
+              lastY = docWin.screenTop
+              lastW = docWin.outerWidth
+              lastH = docWin.outerHeight
+              lastIsPause = videoEl.paused
+
+              this.webVideo.pause()
+              docWin.document.body.appendChild(coverDom)
+              await sendMessage(WebextEvent.moveDocPIPPos, {
                 x: 0,
-                y: screen.height,
+                y: 0,
                 docPIPWidth: docWin.innerWidth,
               })
+              await wait(10)
+              docWin.resizeTo(50, 50)
+              this.isQuickHiding = true
             }
             break
           }

@@ -82,11 +82,14 @@ export default class DocPIPWebProvider extends WebProvider {
 
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {
+      // 保存画中画的大小
+      if (!this.isQuickHiding) {
+        setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
+          height: pipWindow.innerHeight,
+          width: pipWindow.innerWidth,
+        })
+      }
       this.emit(PlayerEvent.close)
-      setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
-        height: pipWindow.innerHeight,
-        width: pipWindow.innerWidth,
-      })
     })
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)

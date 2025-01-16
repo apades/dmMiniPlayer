@@ -128,7 +128,7 @@ onMessage(WebextEvent.stopGetDanmaku, ({ data }) => {
 
 onMessage(WebextEvent.moveDocPIPPos, async ({ data }) => {
   const docPIPTab = await mv3GetDocPIPTab(data.docPIPWidth)
-  if (!docPIPTab) return
+  if (!docPIPTab) throw Error('Not find docPIP tab')
   await mv3MoveTabsToPosition(docPIPTab, [data.x, data.y])
 })
 
