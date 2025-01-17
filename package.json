@@ -20,15 +20,16 @@
     "archive": "node ./scripts/archive.mjs",
     "sizetest": "pnpm build && pnpm archive --size-test",
     "translate": "tsx ./scripts/auto-translate.ts",
-    "eslint": "npx eslint"
+    "eslint": "npx eslint",
+    "update-deps": "pnpm update --depth Infinity"
   },
   "devDependencies": {
     "@apad/env-tools": "^1.0.6",
     "@babel/plugin-proposal-decorators": "^7.25.9",
     "@chialab/esbuild-plugin-meta-url": "^0.18.2",
-    "@emotion/react": "^11.13.0",
-    "@emotion/styled": "^11.13.0",
-    "@mui/material": "^5.16.7",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^5.16.14",
     "@types/chrome": "0.0.268",
     "@types/color": "^3.0.6",
     "@types/fs-extra": "^11.0.4",
@@ -36,8 +37,8 @@
     "@types/lodash-es": "^4.17.12",
     "@types/node": "18.15.11",
     "@types/pako": "^2.0.3",
-    "@types/react": "^18.2.79",
-    "@types/react-dom": "^18.2.25",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "@types/uuid": "^9.0.8",
     "@types/webextension-polyfill": "0.9.0",
     "@vitejs/plugin-react": "^4.3.4",
@@ -72,7 +73,7 @@
     "vite": "^6.0.7"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.3.0",
+    "@ant-design/icons": "^4.8.3",
     "@apad/rc-slider": "^10.5.0",
     "@apad/setting-panel": "^0.4.6",
     "ahooks": "^3.8.4",
