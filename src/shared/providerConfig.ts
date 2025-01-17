@@ -11,6 +11,7 @@ const providerConfig = {
   donghuafeng: [/https:\/\/ani\.gamer\.com\.tw\/.*/],
   twitch: [/https:\/\/www\.twitch\.tv\/.*/],
   youtube: [/https:\/\/www\.youtube\.com\/.*/],
+  huya: [/https:\/\/www\.huya\.com\/.*/],
 } as const
 
 export default providerConfig

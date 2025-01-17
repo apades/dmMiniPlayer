@@ -9,6 +9,7 @@ import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
 import { WebProvider } from '@root/core/WebProvider'
 import { getProviderConfig } from '@root/shared/providerConfig'
+import HuyaProvider from './huya'
 
 export default function getWebProvider(): WebProvider {
   const providerKey = getProviderConfig(location.href)
@@ -30,6 +31,8 @@ export default function getWebProvider(): WebProvider {
       return new TwitchProvider()
     case 'youtube':
       return new YoutubeProvider()
+    case 'huya':
+      return new HuyaProvider()
     default:
       return new CommonProvider()
   }
