@@ -1,7 +1,6 @@
 import { defineConfig } from 'tsup'
 import { manifest, outDir, shareConfig } from './tsup.shared'
 import fs from 'fs-extra'
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 import { pr } from './utils.mjs'
 import { omit } from '@root/utils'
 

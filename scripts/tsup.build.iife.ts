@@ -1,8 +1,7 @@
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 import { omit } from '@root/utils'
 import { defineConfig } from 'tsup'
 import { shareConfig } from './tsup.shared'
-import { pr } from './utils.mjs'
+import { getDefinesConfig, pr } from './utils.mjs'
 
 export default defineConfig({
   ...omit(shareConfig, ['onSuccess']),
@@ -19,6 +18,6 @@ export default defineConfig({
   format: 'iife',
   define: {
     ...shareConfig.define,
-    ...getDefinesObject('prod'),
+    ...getDefinesConfig('prod'),
   },
 })

@@ -1,4 +1,3 @@
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 import { omit } from '@root/utils'
 import { defineConfig } from 'tsup'
 import { shareConfig } from './tsup.shared'

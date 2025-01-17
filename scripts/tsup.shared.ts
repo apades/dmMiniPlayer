@@ -4,10 +4,8 @@ import { inlineImport } from './plugin/inlineImport'
 import fs from 'fs-extra'
 import { manifest } from '../src/manifest'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
-import { getChangeLog } from './utils.mjs'
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
+import { getChangeLog, getDefinesConfig } from './utils.mjs'
 import packageJson from '../package.json'
-import { omit } from '@root/utils'
 
 const version = packageJson.version
 export const pr = (...p: any) => path.resolve(__dirname, ...p)
@@ -86,14 +84,11 @@ export const shareConfig = {
     'process.env.NODE_ENV': process.env.NODE_ENV
       ? `"${process.env.NODE_ENV}"`
       : '"development"',
-    ...omit(
-      getDefinesObject('dev', {
-        upgrade_en: getChangeLog(version)?.replaceAll('\n', '\\n'),
-        upgrade_zh: getChangeLog(version, 'zh')?.replaceAll('\n', '\\n'),
-        version,
-      }),
-      ['____env____'],
-    ),
+    ...getDefinesConfig('dev', {
+      upgrade_en: getChangeLog(version)?.replaceAll('\n', '\\n'),
+      upgrade_zh: getChangeLog(version, 'zh')?.replaceAll('\n', '\\n'),
+      version,
+    }),
   },
   platform: 'browser',
 } satisfies Parameters<typeof defineConfig>[0]

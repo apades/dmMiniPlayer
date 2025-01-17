@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 import { shareConfig } from './tsup.shared'
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 import { omit } from '@root/utils'
+import { getDefinesConfig } from './utils.mjs'
 
 export default defineConfig({
   ...shareConfig,
@@ -11,6 +11,6 @@ export default defineConfig({
   sourcemap: false,
   define: {
     ...shareConfig.define,
-    ...getDefinesObject('prod'),
+    ...getDefinesConfig('prod'),
   },
 })

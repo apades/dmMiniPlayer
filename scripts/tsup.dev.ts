@@ -1,6 +1,5 @@
 import { defineConfig } from 'tsup'
 import { shareConfig } from './tsup.shared'
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 import { pr } from './utils.mjs'
 
 export default defineConfig({

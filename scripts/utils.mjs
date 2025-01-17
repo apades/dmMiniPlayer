@@ -2,6 +2,7 @@ import { spawn as _spawn } from 'child_process'
 import fs from 'fs-extra'
 import path from 'path'
 import * as url from 'url'
+import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 export const __filename = url.fileURLToPath(import.meta.url)
 export const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -33,4 +34,18 @@ export function getChangeLog(ver, lang) {
   const regex = new RegExp(`## v${ver}\\s*([\\s\\S]*?)(?=## v|$)`)
 
   return fs.readFileSync(targetFile, 'utf-8').match(regex)?.[1].trim?.()
+}
+
+function omit(obj, key) {
+  let rs = { ...obj }
+  key.forEach((k) => delete rs[k])
+  return rs
+}
+
+export function getDefinesConfig(
+  /**@type {'prod'| 'dev'} */
+  type,
+  extend = {},
+) {
+  return omit(getDefinesObject(type, extend), ['process.env'])
 }
