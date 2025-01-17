@@ -1,15 +1,21 @@
+## v0.6.28
+1. Added support for Huya danmaku, but only solid color + scrolling
+2. Added position adjustment function settings after turning on PIP
+3. Added a shortcut key function to quickly hide PIP
+4. Fixed the issue where repeated danmakus may occur when opening PIP repeatedly.
+
 ## v0.6.27
 1. Added a new HTML danmaku engine IronKinoko version
 2. Fixed the problem of incorrect danmakus when switching between bilibili episode.
 3. Added the function of merging YouTube subtitles with similar time to avoid subtitle jitter
-4. added the function of dynamic size of subtitles, which is the same as the dynamic size of danmakus.
+4. Added the function of dynamic size of subtitles, which is the same as the dynamic size of danmakus.
 
 ## v0.6.26
 Fixed some small bugs
 
 ## v0.6.25
 1. Fixed the problem of invalid shortcut keys after switching videos
-2. Add multiple video shortcut key functions
+2. Added multiple video shortcut key functions
 3. Adjust the live broadcast to also display the pause button
 4. Optimizing the floating button can cause a shaking issue on the page.
 
