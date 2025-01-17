@@ -61,13 +61,13 @@ export default class DocPIPWebProvider extends WebProvider {
         if (configStore.movePIPInOpen) {
           const [x, y] = (() => {
             switch (configStore.movePIPInOpen_basePos) {
-              case Position['top-left']:
+              case Position['topLeft']:
                 return [0, 0]
-              case Position['top-right']:
+              case Position['topRight']:
                 return [screen.width - width, 0]
-              case Position['bottom-left']:
+              case Position['bottomLeft']:
                 return [0, screen.height - height]
-              case Position['bottom-right']:
+              case Position['bottomRight']:
                 return [screen.width - width, screen.height - height]
             }
           })()

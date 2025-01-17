@@ -19,5 +19,8 @@
   },
   "playbackRate": {
     "message": "開啟/關閉倍速，預設3倍速，修改請至設定頁"
+  },
+  "quickHideToggle": {
+    "message": "透過位置變更開啟/關閉畫中畫隱藏"
   }
 }

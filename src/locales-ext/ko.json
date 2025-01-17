@@ -19,5 +19,8 @@
   },
   "playbackRate": {
     "message": "2배속을 켜거나 끕니다. 기본값은 3배속입니다. 수정하려면 설정 페이지로 이동하세요."
+  },
+  "quickHideToggle": {
+    "message": "위치 변경으로 PIP 숨기기 켜기/끄기"
   }
 }

@@ -19,5 +19,8 @@
   },
   "playbackRate": {
     "message": "Activer/désactiver la double vitesse. La valeur par défaut est 3x. Veuillez vous rendre sur la page des paramètres pour la modifier."
+  },
+  "quickHideToggle": {
+    "message": "Activer/désactiver le masquage PIP avec changement de position"
   }
 }

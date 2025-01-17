@@ -73,10 +73,10 @@ export enum DocPIPRenderType {
 
 export enum Position {
   default = 'default',
-  'top-left' = 'top-left',
-  'top-right' = 'top-right',
-  'bottom-left' = 'bottom-left',
-  'bottom-right' = 'bottom-right',
+  topLeft = 'topLeft',
+  topRight = 'topRight',
+  bottomLeft = 'bottomLeft',
+  bottomRight = 'bottomRight',
 }
 
 export const docPIPConfig = {
@@ -91,21 +91,30 @@ export const docPIPConfig = {
     desc: t('settingPanel.autoPIPInScrollDesc'),
   }),
   movePIPInOpen: config({
+    label: t('settingPanel.movePIPInOpen'),
     defaultValue: false,
   }),
   movePIPInOpen_basePos: config<Exclude<Position, Position.default>>({
-    defaultValue: Position['bottom-right'],
+    label: t('settingPanel.movePIPInOpen_basePos'),
+    defaultValue: Position['bottomRight'],
     relateBy: 'movePIPInOpen',
     relateByValue: true,
     type: 'group',
-    group: Object.values(Position).filter((v) => v !== Position.default),
+    group: Object.values(Position)
+      .filter((v) => v !== Position.default)
+      .map((v) => ({
+        value: v,
+        label: t(`pos.${v}`),
+      })),
   }),
   movePIPInOpen_offsetX: config({
+    label: t('settingPanel.movePIPInOpen_offsetX'),
     defaultValue: 0,
     relateBy: 'movePIPInOpen',
     relateByValue: true,
   }),
   movePIPInOpen_offsetY: config({
+    label: t('settingPanel.movePIPInOpen_offsetY'),
     defaultValue: 0,
     relateBy: 'movePIPInOpen',
     relateByValue: true,
