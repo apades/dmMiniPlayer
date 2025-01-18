@@ -20,7 +20,7 @@ import { FC, SVGProps, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 import icon from '../../assets/icon.png'
-import ShadowRootContainer from './ShadowRootContainer'
+import AppRoot from './AppRoot'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 import { sendMediaStreamInSender } from '@root/utils/webRTC'
 import { getIsZh, t } from '@root/utils/i18n'
@@ -303,7 +303,7 @@ const FloatButton: FC<Props> = (props) => {
         )}
 
       {createPortal(
-        <ShadowRootContainer>
+        <AppRoot isShadowRoot>
           {/* TODO 拖拽功能在小网站还可以用，但是油管、bilibili这些复杂网站会出问题 */}
           {/* <DraggerContainer
             bounds={{
@@ -415,7 +415,7 @@ const FloatButton: FC<Props> = (props) => {
                 <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
                 <div
                   className={classNames(
-                    'absolute max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded',
+                    'absolute max-w-[200px] w-max bg-bg overflow-hidden h-0 transition-all group-hover:h-calc-auto text-[12px] rounded',
                     {
                       'left-[--x] top-[--y]':
                         configStore.floatButtonPos === FloatButtonPos.leftTop,
@@ -473,7 +473,7 @@ const FloatButton: FC<Props> = (props) => {
             )}
           </div>
           {/* </DraggerContainer> */}
-        </ShadowRootContainer>,
+        </AppRoot>,
         container,
       )}
     </>

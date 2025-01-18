@@ -25,10 +25,12 @@ const config = {
       width: {
         'side-width': 'var(--side-width, 200px)',
         'btn-size': 'var(--btn-size, 120px)',
+        'calc-auto': 'calc-size(auto,size)',
       },
       height: {
         'area-height': 'var(--area-height, 40px)',
         'btn-size': 'var(--btn-size, 120px)',
+        'calc-auto': 'calc-size(auto,size)',
       },
     },
   },

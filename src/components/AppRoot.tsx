@@ -1,33 +1,50 @@
 import { useOnce } from '@root/hook'
 import isDev from '@root/shared/isDev'
 import { createElement, wait, waitLoopCallback } from '@root/utils'
+import { useUpdate } from 'ahooks'
 import { FC, PropsWithChildren, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 
-const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
-  const rootRef = useRef<HTMLDivElement>(null)
+type Props = {
+  isShadowRoot?: boolean
+} & PropsWithChildren
+const AppRoot: FC<Props> = (props) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const root = useMemo(() => {
+    const root = (() => {
+      const root = document.createElement('div')
+      if (!props.isShadowRoot) return root
+      root.attachShadow({ mode: 'open' })
+      return root.shadowRoot!
+    })()
 
-  const shadowRoot = useMemo(() => {
-    const root = document.createElement('div')
-    root.attachShadow({ mode: 'open' })
+    if (!root) return null
+
     if (isDev) {
       import('../style/tailwind.css?inline').then((data) => {
-        root.shadowRoot!.append(
+        root.append(
           createElement('style', {
             innerHTML: data.default,
           }),
         )
       })
       import('../style/tailwindBase.css?inline').then((data) => {
-        root.shadowRoot!.append(
+        root.append(
+          createElement('style', {
+            innerHTML: data.default,
+          }),
+        )
+      })
+      import('@apad/rc-slider/assets/index.css?inline').then((data) => {
+        root.append(
           createElement('style', {
             innerHTML: data.default,
           }),
         )
       })
     } else {
-      root.shadowRoot!.append(
+      root.append(
         createElement('link', {
           rel: 'stylesheet',
           href: Browser.runtime.getURL('/css.css'),
@@ -35,8 +52,8 @@ const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
             const target = e.target as HTMLLinkElement
             await waitLoopCallback(() => !!target.sheet, { intervalTime: 10 })
             await wait(10)
-            if (!rootRef.current) return
-            rootRef.current.style.visibility = ''
+            if (!containerRef.current) return
+            containerRef.current.style.visibility = ''
           },
         }),
       )
@@ -45,18 +62,22 @@ const ShadowRootContainer: FC<PropsWithChildren> = (props) => {
   }, [])
 
   useOnce(() => {
-    if (!rootRef.current) return
-    rootRef.current.appendChild(shadowRoot)
+    if (!containerRef.current) return
+    containerRef.current.appendChild(
+      root instanceof ShadowRoot ? root.host : root!,
+    )
   })
 
   return (
     <div
-      ref={rootRef}
+      ref={containerRef}
       style={{ all: 'initial', visibility: isDev ? undefined : 'hidden' }}
     >
-      {createPortal(props.children, shadowRoot.shadowRoot!)}
+      {root instanceof ShadowRoot
+        ? createPortal(props.children, root)
+        : props.children}
     </div>
   )
 }
 
-export default ShadowRootContainer
+export default AppRoot

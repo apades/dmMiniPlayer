@@ -29,7 +29,7 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
-import ShadowRootContainer from '../ShadowRootContainer'
+import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
 import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
@@ -336,7 +336,6 @@ const VideoPlayerV2Inner = observer(
         }}
       >
         {keyboardTipsModalContext}
-        <link rel="stylesheet" href={Browser.runtime.getURL('/css.css')} />
         <div
           className={classNames(
             'video-container relative h-full bg-black',
@@ -507,9 +506,9 @@ const VideoPlayerV2Inner = observer(
 
     if (isFullInWeb)
       return createPortal(
-        <ShadowRootContainer>
+        <AppRoot isShadowRoot>
           <div className="fixed top-0 left-0 size-full z-[9999]">{el}</div>
-        </ShadowRootContainer>,
+        </AppRoot>,
         document.body,
       )
 

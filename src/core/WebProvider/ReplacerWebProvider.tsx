@@ -12,7 +12,7 @@ import { PlayerEvent } from '../event'
 import { createRoot } from 'react-dom/client'
 import { useSize, useUpdate } from 'ahooks'
 import { useOnce } from '@root/hook'
-import ShadowRootContainer from '@root/components/ShadowRootContainer'
+import AppRoot from '@root/components/AppRoot'
 import { getDomAbsolutePosition } from '@root/utils/dom'
 import { sendMessage } from '@root/inject/contentSender'
 import { onPostMessage } from '@root/utils/windowMessages'
@@ -106,7 +106,7 @@ export default class ReplacerWebProvider extends WebProvider {
       })
 
       return (
-        <ShadowRootContainer>
+        <AppRoot isShadowRoot>
           <div
             className="absolute scale-100"
             style={{
@@ -122,7 +122,7 @@ export default class ReplacerWebProvider extends WebProvider {
               ref={containerRef}
             ></div>
           </div>
-        </ShadowRootContainer>
+        </AppRoot>
       )
     }
 

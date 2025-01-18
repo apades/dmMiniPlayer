@@ -18,6 +18,7 @@ import { sendMessage as sendBgMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import playerConfig from '@root/store/playerConfig'
+import AppRoot from '@root/components/AppRoot'
 
 const docPIPStyleEl = createElement('style', {
   innerText: 'html, body { height: 100% }',
@@ -204,7 +205,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
 
     if (!playerComponent) throw new Error(`未支持的renderMode: ${renderMode}`)
 
-    reactRoot.render(playerComponent)
+    reactRoot.render(<AppRoot>{playerComponent}</AppRoot>)
 
     const supportOnVideoChange = supportOnVideoChangeTypes.includes(renderMode)
 
