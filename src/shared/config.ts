@@ -9,3 +9,4 @@ export const DEFAULT_EVENT_INJECT_SITE = [
 export const ATTR_DISABLE = 'dm-disable'
 export const ATTR_EVENT_INJECT_SITES = 'dm-event-inject-sites'
 export const ATTR_URL = 'dm-url'
+export const VIDEO_ID_ATTR = 'data-dm-vid'

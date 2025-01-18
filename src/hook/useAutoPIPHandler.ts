@@ -2,7 +2,7 @@ import { addEventListener, canAccessTop } from '@root/utils'
 import { useOnce } from '.'
 import { useState } from 'react'
 import configStore from '@root/store/config'
-import { postStartPIPDataMsg } from '@root/components/FloatButton'
+import { postStartPIPDataMsg } from '@root/utils/pip'
 
 let hasInit = false
 let activeVideoEl: HTMLVideoElement | undefined
