@@ -2,6 +2,8 @@ import classNames from 'classnames'
 import { FC, ReactNode } from 'react'
 
 const Modal: FC<{
+  className?: string
+  fullWidth?: boolean
   isOpen: boolean
   /**关闭modal，可保留组件的动画 */
   onClose: () => void
@@ -9,15 +11,17 @@ const Modal: FC<{
 }> = (props) => {
   return (
     <div
-      className="fixed left-0 top-0 size-full z-[9999]"
+      className="fixed left-0 top-0 size-full z-[9999] f-center"
       style={{
         '--top': 'clamp(0px, 20vh, 200px)',
       }}
     >
       <div
         className={classNames(
-          'absolute z-[2] left-1/2 -translate-x-1/2 top-[var(--top)]',
-          'max-w-[600px] max-h-[calc(100%-var(--top)*2)] overflow-y-auto custom-scrollbar bg-[#111a] text-white',
+          'relative z-[2] bg-[#111a]',
+          'overflow-y-auto custom-scrollbar text-white max-h-[calc(100%-var(--top)*2)]',
+          !props.fullWidth ? 'max-w-[600px]' : 'min-w-fit',
+          props.className,
         )}
       >
         {props.children}

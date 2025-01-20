@@ -89,7 +89,7 @@ const KeyboardTipsModal = createIsolationModal((props) => {
   ]
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.destroy}>
+    <Modal isOpen={props.isOpen} onClose={props.destroy} fullWidth>
       <div className="[&_th]:bor-[#dee2e6] [&_td]:bor-[#dee2e6] [&_td]:px-4 [&_td]:py-2 p-4">
         <div className="f-i-center gap-4 mb-2">
           <input
