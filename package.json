@@ -76,6 +76,7 @@
     "@ant-design/icons": "^4.8.3",
     "@apad/rc-slider": "^10.5.0",
     "@apad/setting-panel": "^0.4.6",
+    "@rc-component/trigger": "^2.2.6",
     "ahooks": "^3.8.4",
     "ass-compiler": "^0.1.14",
     "bilibili-live-ws": "^6.3.1",
