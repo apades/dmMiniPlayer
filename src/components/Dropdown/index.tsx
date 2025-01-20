@@ -18,8 +18,8 @@ const Dropdown: FC<Props> = (props) => {
       <div
         className={classNames(
           'absolute bottom-full left-[-12px] pb-[4px] transition-all origin-bottom',
-          'opacity-0 scale-y-0',
-          'group-hover/dropdown:opacity-100 group-hover/dropdown:scale-y-100',
+          'opacity-0 h-0 overflow-hidden',
+          'group-hover/dropdown:opacity-100 group-hover/dropdown:h-calc-auto',
         )}
       >
         {props.menuRender()}
