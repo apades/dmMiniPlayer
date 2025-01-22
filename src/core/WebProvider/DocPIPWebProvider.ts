@@ -43,6 +43,20 @@ export default class DocPIPWebProvider extends WebProvider {
       }
     }
 
+    // 调整宽高，使其能被4整除
+    width = Math.floor(width / 4) * 4;
+    height = Math.floor(height / 4) * 4;
+
+    // 确保宽高比不变
+    const aspectRatio = vw / vh;
+    if (width / height > aspectRatio) {
+      // 如果宽高比大于原始比率，调整高度
+      height = Math.floor(width / aspectRatio);
+    } else {
+      // 如果宽高比小于或等于原始比率，调整宽度
+      width = Math.floor(height * aspectRatio);
+    }
+
     await this.miniPlayer.init()
     const playerEl = this.miniPlayer.playerRootEl
     if (!playerEl) {
