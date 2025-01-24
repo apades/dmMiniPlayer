@@ -12,6 +12,7 @@ const websiteDanmakuSetting = {
   sender_input: '',
   sender_button: '',
 }
+const NO_SUPPORT = 'no support'
 
 const config_specialWebsites = {
   biliVideoDansFromBiliEvaolved: config({
@@ -42,10 +43,18 @@ const config_specialWebsites = {
         sender_input: '.webcast-chatroom___input-container textarea',
         sender_button: '.webcast-chatroom___send-btn',
       },
+      'www.youtube.com': {
+        danmaku_container: '#items.yt-live-chat-item-list-renderer',
+        danmaku_child: 'yt-live-chat-text-message-renderer',
+        danmaku_text: '#message',
+        sender_input: '#input.yt-live-chat-text-input-field-renderer',
+        sender_button:
+          '.yt-live-chat-message-input-renderer .yt-spec-button-shape-next',
+      },
       // twitch视频
       // 'www.twitch.tv/video/': {},
       // twitch直播
-      '/^www\\.twitch\\.tv\\/(?!video\\/).*$/': {
+      '/^www.twitch.tv\\/(?!video\\/).*$/': {
         danmaku_container: '.chat-scrollable-area__message-container',
         danmaku_child: '*',
         danmaku_text:
