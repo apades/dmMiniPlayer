@@ -1,15 +1,11 @@
+import { HtmlDanmakuProvider, WebProvider } from '@root/core/WebProvider'
+import { getProviderConfig } from '@root/shared/providerConfig'
 import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
-import CommonProvider from './common'
 import DdrkProvider from './ddrk'
-import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
-import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
-import { WebProvider } from '@root/core/WebProvider'
-import { getProviderConfig } from '@root/shared/providerConfig'
-import HuyaProvider from './huya'
 
 export default function getWebProvider(): WebProvider {
   const providerKey = getProviderConfig(location.href)
@@ -23,17 +19,17 @@ export default function getWebProvider(): WebProvider {
       return new DouyuLiveProvider()
     case 'ddrk':
       return new DdrkProvider()
-    case 'douyin':
-      return new DouyinProvider()
+    // case 'douyin':
+    //   return new DouyinProvider()
     case 'donghuafeng':
       return new DonghuafengProvider()
-    case 'twitch':
-      return new TwitchProvider()
+    // case 'twitch':
+    //   return new TwitchProvider()
     case 'youtube':
       return new YoutubeProvider()
-    case 'huya':
-      return new HuyaProvider()
+    // case 'huya':
+    //   return new HuyaProvider()
     default:
-      return new CommonProvider()
+      return new HtmlDanmakuProvider()
   }
 }

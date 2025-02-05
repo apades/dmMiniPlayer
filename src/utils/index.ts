@@ -581,3 +581,5 @@ export const isDocPIP = (tar = window as Window) =>
       window.top !== tar &&
       window.top?.documentPictureInPicture?.window === tar,
   )[1]
+
+export const arrLen = (len: number) => new Array(len).fill(0)
