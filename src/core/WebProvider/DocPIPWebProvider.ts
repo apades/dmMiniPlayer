@@ -1,5 +1,5 @@
 import configStore, { videoBorderType } from '@root/store/config'
-import { createElement } from '@root/utils'
+import { createElement, wait } from '@root/utils'
 import {
   getBrowserSyncStorage,
   setBrowserSyncStorage,
@@ -12,6 +12,7 @@ import { sendMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
 import { Position } from '@root/store/config/docPIP'
 import { autorun } from 'mobx'
+import { getDocPIPBorderSize, resizeDocPIPWindow } from '@root/utils/docPIP'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
@@ -25,7 +26,7 @@ export default class DocPIPWebProvider extends WebProvider {
     let width = pipWindowConfig?.width ?? this.webVideo.clientWidth,
       height = pipWindowConfig?.height ?? this.webVideo.clientHeight
 
-    console.log('pipWindowConfig', pipWindowConfig)
+    console.log('[docPIP_WH] pipWindowConfig', pipWindowConfig)
     // cw / ch = vw / vh
     const vw = this.webVideo.videoWidth,
       vh = this.webVideo.videoHeight
@@ -50,11 +51,25 @@ export default class DocPIPWebProvider extends WebProvider {
       throw Error('不正常的miniPlayer.init()')
     }
 
+    console.log('[docPIP_WH] real width height', { width, height })
     const pipWindow = await window.documentPictureInPicture.requestWindow({
       width,
       height,
     })
     this.pipWindow = pipWindow
+
+    // 这里卡50是往前系统API给的outerWidth innerWidth都是乱的，就这里正常
+    wait(50).then(() => {
+      if (pipWindow.innerWidth === width && pipWindow.innerHeight === height)
+        return
+      const [borX, borY] = getDocPIPBorderSize(pipWindow)
+      // ! 已经确定是chrome的bug，第二次打开不会按照width和height来设置窗口大小
+      sendMessage(WebextEvent.resizeDocPIP, {
+        width: width + borX,
+        height: height + borY,
+        docPIPWidth: pipWindow.innerWidth,
+      })
+    })
 
     this.addOnUnloadFn(
       autorun(() => {
@@ -150,9 +165,11 @@ export default class DocPIPWebProvider extends WebProvider {
     pipWindow.addEventListener('pagehide', () => {
       // 保存画中画的大小
       if (!this.isQuickHiding) {
+        const [width, height] = [pipWindow.innerWidth, pipWindow.innerHeight]
+        console.log('[docPIP_WH] save width and height', { width, height })
         setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
-          height: pipWindow.innerHeight,
-          width: pipWindow.innerWidth,
+          height,
+          width,
         })
       }
       this.emit(PlayerEvent.close)
