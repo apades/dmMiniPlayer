@@ -41,5 +41,13 @@ declare module 'webext-bridge' {
     >
     [WebextEvent.openSetting]: void
     [WebextEvent.moveDocPIPPos]: { x: number; y: number; docPIPWidth: number }
+    [WebextEvent.resizeDocPIP]: {
+      width: number
+      height: number
+      docPIPWidth: number
+    }
+    [WebextEvent.updateDocPIPRect]: {
+      docPIPWidth: number
+    } & Partial<{ left: number; top: number; width: number; height: number }>
   }
 }
