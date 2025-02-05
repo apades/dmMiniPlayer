@@ -8,6 +8,23 @@ export const mv3MoveTabsToPosition = (
   })
 }
 
+export const mv3UpdateTab = (
+  tab: chrome.tabs.Tab,
+  data: chrome.windows.UpdateInfo,
+) => {
+  return chrome.windows.update(tab.windowId, data)
+}
+
+export const mv3ResizeTabs = (
+  tab: chrome.tabs.Tab,
+  position: { width: number; height: number },
+) => {
+  return chrome.windows.update(tab.windowId, {
+    width: position.width,
+    height: position.height,
+  })
+}
+
 const sensitive = 3
 export const mv3GetDocPIPTab = (
   /**chrome系统页和docPIP属性都一样的，只能通过width判断了 */

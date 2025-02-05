@@ -15,6 +15,8 @@ enum WebextEvent {
   openSetting = 'openSetting',
 
   moveDocPIPPos = 'moveDocPIPPos',
+  resizeDocPIP = 'resizeDocPIP',
+  updateDocPIPRect = 'updateDocPIPRect',
 }
 
 export default WebextEvent

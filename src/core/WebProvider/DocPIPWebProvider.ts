@@ -80,6 +80,72 @@ export default class DocPIPWebProvider extends WebProvider {
       }),
     )
 
+    const handleWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey) return
+      e.preventDefault()
+      const isUp = e.deltaY < 0
+
+      const {
+        outerHeight: height,
+        outerWidth: width,
+        screenLeft: left,
+        screenTop: top,
+      } = pipWindow
+      const scale = isUp ? 1.03 : 0.97
+
+      const { width: sw, height: sh } = screen
+
+      const x = sw / 2 - left > left + width - sw / 2 ? 'left' : 'right'
+      const y = sh / 2 - top > top + height - sh / 2 ? 'top' : 'bottom'
+
+      const newHeight = ~~(height * scale),
+        newWidth = ~~(newHeight * (width / height))
+
+      const docPIPWidth = pipWindow.innerWidth
+
+      switch (`${x}${y}`) {
+        case 'lefttop':
+          sendMessage(WebextEvent.resizeDocPIP, {
+            docPIPWidth,
+            height: newHeight,
+            width: newWidth,
+          })
+          break
+        case 'righttop': {
+          const newLeft = left - (newWidth - width)
+          sendMessage(WebextEvent.updateDocPIPRect, {
+            docPIPWidth,
+            height: newHeight,
+            width: newWidth,
+            left: newLeft,
+          })
+          break
+        }
+        case 'leftbottom': {
+          const newTop = top - (newHeight - height)
+          sendMessage(WebextEvent.updateDocPIPRect, {
+            docPIPWidth,
+            height: newHeight,
+            width: newWidth,
+            top: newTop,
+          })
+          break
+        }
+        case 'rightbottom': {
+          const newLeft = left - (newWidth - width)
+          const newTop = top - (newHeight - height)
+          sendMessage(WebextEvent.updateDocPIPRect, {
+            docPIPWidth,
+            height: newHeight,
+            width: newWidth,
+            left: newLeft,
+            top: newTop,
+          })
+        }
+      }
+    }
+    pipWindow.addEventListener('wheel', handleWheel, { passive: false })
+
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {
       // 保存画中画的大小
@@ -90,6 +156,7 @@ export default class DocPIPWebProvider extends WebProvider {
         })
       }
       this.emit(PlayerEvent.close)
+      pipWindow.removeEventListener('wheel', handleWheel)
     })
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)
