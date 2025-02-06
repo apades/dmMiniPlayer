@@ -20,9 +20,7 @@ export default defineConfig({
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
   },
   entry: {
-    background: shareConfig.entry.background,
-    css: shareConfig.entry.css,
-    inject: shareConfig.entry.inject,
+    ...omit(shareConfig.entry, ['main', 'clogInject']),
     'before-init-main': pr('../src/contents/before-init-main.ts'),
     world: pr('../src/contents/world.dev.ts'),
   },

@@ -5,9 +5,10 @@
         "src/popup/index.html",
         "scripts/tsup.shared.ts",
         "scripts/tsup.dev.ts",
-        "scripts/tsup.dev.*.ts",
+        "scripts/tsup.dev.bg.ts",
+        "scripts/tsup.dev.iife.ts",
         "scripts/tsup.build.ts",
-        "scripts/tsup.build.*.ts",
+        "scripts/tsup.build.iife.ts",
         "nodemon.json",
         "docs",
         "package.json"

@@ -46,6 +46,7 @@ export const shareConfig = {
     // popup的脚本
     popup: pr('../src/popup/index.tsx'),
     css: pr('../src/style/index.ts'),
+    settingCss: pr('../node_modules/@apad/setting-panel/lib/index.css'),
   },
   noExternal: [/(.*)/],
   async onSuccess() {

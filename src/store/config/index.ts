@@ -1,41 +1,39 @@
-import { config } from '@apad/setting-panel'
-import { initSetting } from '@apad/setting-panel'
+import { config, initSetting } from '@apad/setting-panel'
+import en from '@apad/setting-panel/i18n/en.json'
+import zh from '@apad/setting-panel/i18n/zh_cn.json'
+import isDev from '@root/shared/isDev'
+import isPluginEnv from '@root/shared/isPluginEnv'
+import {
+  DM_MINI_PLAYER_CONFIG,
+  FLOAT_BTN_HIDDEN,
+  LOCALE,
+} from '@root/shared/storeKey'
+import {
+  getIsZh,
+  getNowLang,
+  Language,
+  LanguageNativeNames,
+  t,
+} from '@root/utils/i18n'
 import {
   getBrowserSyncStorage,
   setBrowserLocalStorage,
   setBrowserSyncStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
+import { isUndefined } from 'lodash-es'
 import {
   autorun,
+  configure,
   makeAutoObservable,
   observe as mobxObserve,
-  configure,
 } from 'mobx'
 import { observer } from 'mobx-react'
-import { docPIPConfig } from './docPIP'
-import zh from '@apad/setting-panel/i18n/zh_cn.json'
-import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
+import { docPIPConfig } from './docPIP'
+import config_floatButton from './floatButton'
 import config_specialWebsites from './specialWebsites'
 import config_subtitle from './subtitle'
-import {
-  getIsZh,
-  Language,
-  LanguageNativeNames,
-  getNowLang,
-  t,
-} from '@root/utils/i18n'
-import {
-  DM_MINI_PLAYER_CONFIG,
-  FLOAT_BTN_HIDDEN,
-  LOCALE,
-} from '@root/shared/storeKey'
-import isPluginEnv from '@root/shared/isPluginEnv'
-import config_floatButton from './floatButton'
-import { isUndefined } from 'lodash-es'
-import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
-import isDev from '@root/shared/isDev'
 import Browser from 'webextension-polyfill'
 
 if (isDev) {
@@ -44,6 +42,14 @@ if (isDev) {
   })
 }
 export { DocPIPRenderType } from './docPIP'
+export {
+  closeSettingPanel,
+  configStore,
+  observe,
+  openSettingPanel,
+  saveConfig,
+  updateConfig,
+}
 
 export enum videoBorderType {
   default = 'default',
@@ -288,7 +294,7 @@ const {
   },
   useShadowDom: isPluginEnv,
   ...(isPluginEnv && isDev
-    ? { styleHref: Browser.runtime.getURL('/css.css') }
+    ? { styleHref: Browser.runtime.getURL('/settingCss.css') }
     : {}),
 })
 let oldConfig: typeof configStore
@@ -334,11 +340,3 @@ useBrowserSyncStorage(FLOAT_BTN_HIDDEN, async (val) => {
 })
 
 export default configStore
-export {
-  configStore,
-  openSettingPanel,
-  closeSettingPanel,
-  observe,
-  updateConfig,
-  saveConfig,
-}
