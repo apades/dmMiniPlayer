@@ -22,21 +22,7 @@ const AppRoot: FC<Props> = (props) => {
     if (!root) return null
 
     if (isDev) {
-      import('../style/tailwind.css?inline').then((data) => {
-        root.append(
-          createElement('style', {
-            innerHTML: data.default,
-          }),
-        )
-      })
-      import('../style/tailwindBase.css?inline').then((data) => {
-        root.append(
-          createElement('style', {
-            innerHTML: data.default,
-          }),
-        )
-      })
-      import('@apad/rc-slider/assets/index.css?inline').then((data) => {
+      import('../style/index.css?inline').then((data) => {
         root.append(
           createElement('style', {
             innerHTML: data.default,
