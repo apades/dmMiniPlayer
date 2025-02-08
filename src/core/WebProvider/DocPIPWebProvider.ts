@@ -59,6 +59,7 @@ export default class DocPIPWebProvider extends WebProvider {
     this.addOnUnloadFn(
       autorun(() => {
         if (configStore.movePIPInOpen) {
+          const screen = pipWindow.screen
           const [x, y] = (() => {
             switch (configStore.movePIPInOpen_basePos) {
               case Position['topLeft']:
@@ -93,7 +94,7 @@ export default class DocPIPWebProvider extends WebProvider {
       } = pipWindow
       const scale = isUp ? 1.03 : 0.97
 
-      const { width: sw, height: sh } = screen
+      const { width: sw, height: sh } = pipWindow.screen
 
       const x = sw / 2 - left > left + width - sw / 2 ? 'left' : 'right'
       const y = sh / 2 - top > top + height - sh / 2 ? 'top' : 'bottom'

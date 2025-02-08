@@ -14,8 +14,12 @@ export default class HtmlDanmakuProvider extends WebProvider {
   initdDanmakuEngine = false
   onInit() {
     console.log('HtmlDanmakuProvider')
-    this.initdDanmakuSender = !!this.initDanmakuSender()
-    this.initdDanmakuEngine = !!this.initDanmakuEngine()
+    try {
+      this.initdDanmakuSender = !!this.initDanmakuSender()
+      this.initdDanmakuEngine = !!this.initDanmakuEngine()
+    } catch (error) {
+      console.error(error)
+    }
 
     if (this.initdDanmakuEngine) {
       // 注入js
