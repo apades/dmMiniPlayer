@@ -581,3 +581,36 @@ export const isDocPIP = (tar = window as Window) =>
       window.top !== tar &&
       window.top?.documentPictureInPicture?.window === tar,
   )[1]
+
+export function calculateNewDimensions(
+  width: number,
+  height: number,
+  scale: number,
+) {
+  // 1. 根据 scale 计算目标尺寸
+  let newHeight = height * scale
+  let newWidth = newHeight * (width / height)
+
+  // 2. 四舍五入为整数
+  let newWidthRounded = Math.round(newWidth)
+  let newHeightRounded = Math.round(newHeight)
+
+  // 3. 检查比例是否一致
+  // 计算四舍五入后比例和原始比例的误差
+  let originalRatio = width / height
+  let roundedRatio = newWidthRounded / newHeightRounded
+
+  // 判断比例是否接近（允许误差范围）
+  if (!isClose(roundedRatio, originalRatio, 1e-5)) {
+    // 如果比例不一致，强制按原始比例调整
+    // 这里选择调整 newHeightRounded，根据 newWidthRounded 和原始比例计算
+    newHeightRounded = Math.round(newWidthRounded * (height / width))
+  }
+
+  return [newWidthRounded, newHeightRounded]
+}
+
+// 判断两个数是否接近的函数
+function isClose(a: number, b: number, tolerance = 1e-5) {
+  return Math.abs(a - b) < tolerance
+}

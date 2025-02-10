@@ -1,5 +1,5 @@
 import configStore, { videoBorderType } from '@root/store/config'
-import { createElement, wait } from '@root/utils'
+import { calculateNewDimensions, createElement, wait } from '@root/utils'
 import {
   getBrowserSyncStorage,
   setBrowserSyncStorage,
@@ -113,8 +113,7 @@ export default class DocPIPWebProvider extends WebProvider {
       const x = sw / 2 - left > left + width - sw / 2 ? 'left' : 'right'
       const y = sh / 2 - top > top + height - sh / 2 ? 'top' : 'bottom'
 
-      const newHeight = ~~(height * scale),
-        newWidth = ~~(newHeight * (width / height))
+      const [newWidth, newHeight] = calculateNewDimensions(width, height, scale)
 
       const docPIPWidth = pipWindow.innerWidth
 
