@@ -1,3 +1,8 @@
+## v0.6.29
+1. Added ctrl + mouse scrolling to adjust the PIP size function
+2. Added quick hidden moving position option
+3. Fixed to close the PIP after quick hiding, and the size was incorrect when reopened
+
 ## v0.6.28
 1. Added support for Huya danmaku, but only solid color + scrolling
 2. Added position adjustment function settings after turning on PIP
