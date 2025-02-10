@@ -21,6 +21,6 @@
     "message":"Turn on/off double speed. Default 3x, can change in settings"
   },
   "quickHideToggle": {
-    "message": "Turn on/off PIP hide with position change"
+    "message": "Turn on/off PIP quick hide with position change"
   }
 }

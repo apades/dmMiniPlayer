@@ -119,6 +119,18 @@ export const docPIPConfig = {
     relateBy: 'movePIPInOpen',
     relateByValue: true,
   }),
+  quickHide_pos: config<Exclude<Position, Position.default>>({
+    label: t('settingPanel.quickHide_pos'),
+    defaultValue: Position['topLeft'],
+    relateByValue: true,
+    type: 'group',
+    group: Object.values(Position)
+      .filter((v) => v !== Position.default)
+      .map((v) => ({
+        value: v,
+        label: t(`pos.${v}`),
+      })),
+  }),
   useDocPIP: config({
     defaultValue: !!window?.documentPictureInPicture,
     label: t('settingPanel.useDocPIP'),

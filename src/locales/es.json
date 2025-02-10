@@ -107,6 +107,7 @@
     "movePIPInOpen_basePos": "Posición",
     "movePIPInOpen_offsetX": "Desplazamiento de posición X",
     "movePIPInOpen_offsetY": "Desplazamiento de posición Y",
+    "quickHide_pos": "Posición de escondite rápida",
     "showReplacerBtn": "Mostrar botón de reemplazo de video",
     "showReplacerBtnDesc": "Reemplace el reproductor de video en la página web con el reproductor de video de extensión",
     "replacerDbClickAction": "Acción de doble clic"

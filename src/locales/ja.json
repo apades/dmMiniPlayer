@@ -107,6 +107,7 @@
     "movePIPInOpen_basePos": "位置",
     "movePIPInOpen_offsetX": "位置オフセット X",
     "movePIPInOpen_offsetY": "位置オフセットY",
+    "quickHide_pos": "クイック非表示位置",
     "showReplacerBtn": "「ビデオを置換」ボタンを表示",
     "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。",
     "replacerDbClickAction": "ダブルクリックアクション"

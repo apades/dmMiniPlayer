@@ -26,6 +26,7 @@ import { checkIsLive } from '@root/utils/video'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import WebextEvent from '@root/shared/webextEvent'
+import { Position } from '@root/store/config/docPIP'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -309,13 +310,30 @@ export default abstract class WebProvider
 
               this.webVideo.pause()
               docWin.document.body.appendChild(coverDom)
-              await sendMessage(WebextEvent.moveDocPIPPos, {
-                x: 0,
-                y: 0,
+              const screen = docWin.screen
+
+              const minWidth = 240,
+                minHeight = 52
+              const [left, top] = (() => {
+                switch (configStore.quickHide_pos) {
+                  case Position.topLeft:
+                    return [0, 0]
+                  case Position.topRight:
+                    return [screen.width - minWidth, 0]
+                  case Position.bottomLeft:
+                    return [0, screen.height - minHeight]
+                  case Position.bottomRight:
+                    return [screen.width - minWidth, screen.height - minHeight]
+                }
+              })()
+
+              await sendMessage(WebextEvent.updateDocPIPRect, {
+                left,
+                top,
+                width: minWidth,
+                height: minHeight,
                 docPIPWidth: docWin.innerWidth,
               })
-              await wait(10)
-              docWin.resizeTo(50, 50)
               this.isQuickHiding = true
             }
             break
