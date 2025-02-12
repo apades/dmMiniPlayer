@@ -1,5 +1,6 @@
 import { OrPromise } from '@root/utils/typeUtils'
-import { useEffect } from 'react'
+import { useMemoizedFn } from 'ahooks'
+import { useEffect, useState } from 'react'
 
 export function useOnce(
   cb: (stats: {
@@ -33,4 +34,20 @@ export function useOnce(
       }
     } catch (error) {}
   }, [])
+}
+
+export function useAction(fn: () => OrPromise<any>, defaultLoading = false) {
+  const [isLoading, setLoading] = useState(defaultLoading)
+
+  const action = useMemoizedFn(async () => {
+    setLoading(true)
+    try {
+      await fn()
+    } finally {
+      console.log('finally')
+      setLoading(false)
+    }
+  })
+
+  return [isLoading, action] as const
 }

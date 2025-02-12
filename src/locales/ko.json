@@ -146,7 +146,9 @@
   },
   "popup": {
     "tips": "Picture-in-Picture 재생을 시작하려면 다음 페이지를 클릭해야 합니다",
-    "noVideo": "이 페이지에는 비디오가 없습니다."
+    "noVideo": "이 페이지에는 비디오가 없습니다.",
+    "defaultTips": "PIP가 나타나지 않으면 페이지를 다시로드하십시오.",
+    "noSupport": "이 페이지에서는 확장 기능이 지원되지 않습니다"
   },
   "menu": {
     "showFloatBtn": "플로팅 버튼 표시",

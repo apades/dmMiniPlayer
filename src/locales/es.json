@@ -146,7 +146,9 @@
   },
   "popup": {
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",
-    "noVideo": "No hay ningún vídeo en esta página"
+    "noVideo": "No hay ningún vídeo en esta página",
+    "defaultTips": "Si no aparece PIP, intente recargar la página",
+    "noSupport": "La extensión no es compatible en esta página"
   },
   "menu": {
     "showFloatBtn": "Mostrar botón flotante",

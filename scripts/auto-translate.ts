@@ -72,8 +72,6 @@ async function main(props: { targetDir: string; sourceFile: string }) {
 
       translate(sourceJson)
 
-      console.log(lang, needTranslateMap)
-
       const needTranslateEntries = Object.entries(needTranslateMap)
       if (needTranslateEntries.length > 0) {
         const translateResult = await googleTranslate(
@@ -83,8 +81,11 @@ async function main(props: { targetDir: string; sourceFile: string }) {
 
         needTranslateEntries.forEach(([deepKey, val], index) => {
           set(copySource, deepKey, translateResult[index])
+          set(needTranslateMap, deepKey, translateResult[index])
         })
       }
+
+      console.log(lang, needTranslateMap)
 
       fs.writeJsonSync(translateTargetFile, copySource, { spaces: 2 })
     }

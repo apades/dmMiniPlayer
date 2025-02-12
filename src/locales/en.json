@@ -146,7 +146,9 @@
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",
-    "noVideo": "No video in this page"
+    "noVideo": "No video in this page",
+    "defaultTips": "If it doesn't pop up PIP, please try to reload page",
+    "noSupport": "Extension doesn't support in this page"
   },
   "menu": {
     "showFloatBtn": "Show float button",

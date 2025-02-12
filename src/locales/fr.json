@@ -146,7 +146,9 @@
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",
-    "noVideo": "Il n'y a aucune vidéo sur cette page"
+    "noVideo": "Il n'y a aucune vidéo sur cette page",
+    "defaultTips": "S'il n'apparaît pas Pip, essayez de recharger la page",
+    "noSupport": "L'extension ne prend pas en charge dans cette page"
   },
   "menu": {
     "showFloatBtn": "Afficher le bouton flottant",

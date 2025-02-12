@@ -146,7 +146,9 @@
   },
   "popup": {
     "tips": "需要點擊下頁面才能觸發畫中畫播放",
-    "noVideo": "該網頁中沒有影片"
+    "noVideo": "該網頁中沒有影片",
+    "defaultTips": "如果沒有彈出畫中畫，請嘗試重新加載頁面",
+    "noSupport": "擴展不支持此頁面"
   },
   "menu": {
     "showFloatBtn": "顯示浮動按鈕",

@@ -146,7 +146,9 @@
   },
   "popup": {
     "tips": "需要点击下页面才能触发画中画播放",
-    "noVideo": "该网页中没有视频"
+    "noVideo": "该网页中没有视频",
+    "defaultTips": "如果没有弹出画中画，请尝试重新加载页面",
+    "noSupport": "扩展不支持此页面"
   },
   "menu": {
     "showFloatBtn": "显示浮动按钮",

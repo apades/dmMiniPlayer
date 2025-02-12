@@ -25,6 +25,7 @@ export default defineConfig({
     inject: shareConfig.entry.inject,
     'before-init-main': pr('../src/contents/before-init-main.ts'),
     world: pr('../src/contents/world.dev.ts'),
+    popup: shareConfig.entry.popup,
   },
   treeshake: false,
   minify: false,
