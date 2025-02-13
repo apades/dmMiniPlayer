@@ -7,6 +7,7 @@ export default defineConfig({
   ...omit(shareConfig, ['onSuccess']),
   entry: {
     world: pr('../src/contents/world.build.ts'),
+    'world-pip': pr('../src/contents/world-pip.build.ts'),
     'before-init-main': pr('../src/contents/before-init-main.ts'),
     'entry-all-frames': pr('../src/contents/entry-all-frames.ts'),
   },
