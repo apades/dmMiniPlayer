@@ -10,9 +10,9 @@ import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
 import { sendMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
-import { Position } from '@root/store/config/docPIP'
 import { autorun } from 'mobx'
 import { getDocPIPBorderSize, resizeDocPIPWindow } from '@root/utils/docPIP'
+import { Position } from '@root/types/config'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer

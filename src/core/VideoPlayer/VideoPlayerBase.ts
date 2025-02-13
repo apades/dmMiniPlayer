@@ -5,8 +5,9 @@ import SubtitleManager from '../SubtitleManager'
 import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
-import configStore, { DocPIPRenderType } from '@root/store/config'
+import configStore from '@root/store/config'
 import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager

@@ -6,7 +6,6 @@ import PostMessageEvent, {
   PostMessageProtocolMap,
 } from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
-import { DocPIPRenderType } from '@root/store/config'
 import playerConfig from '@root/store/playerConfig'
 import { createElement, dq, dq1Adv, getIframeElFromSource } from '@root/utils'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
@@ -18,6 +17,7 @@ import {
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import _getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
+import { DocPIPRenderType } from '@root/types/config'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -245,7 +245,10 @@ function main() {
       if (data.restrictionTarget) {
         playerConfig.restrictionTarget = data.restrictionTarget
       }
-      playerConfig.forceDocPIPRenderType = data.renderType
+      if (data.renderType) {
+        playerConfig.forceDocPIPRenderType = data.renderType
+      }
+
       playerConfig.posData = data.posData
 
       const id = data.videoState.id

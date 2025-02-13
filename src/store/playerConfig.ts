@@ -1,6 +1,6 @@
 import { objectKeys } from '@root/utils'
-import { DocPIPRenderType } from './config'
 import { VideoPosData } from '@root/shared/postMessageEvent'
+import { DocPIPRenderType } from '@root/types/config'
 
 type PlayerConfig = {
   cropTarget?: CropTarget

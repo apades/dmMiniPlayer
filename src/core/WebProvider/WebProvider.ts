@@ -1,5 +1,5 @@
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
-import configStore, { DocPIPRenderType } from '@root/store/config'
+import configStore from '@root/store/config'
 import {
   createElement,
   dq,
@@ -26,7 +26,7 @@ import { checkIsLive } from '@root/utils/video'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import WebextEvent from '@root/shared/webextEvent'
-import { Position } from '@root/store/config/docPIP'
+import { DocPIPRenderType, Position } from '@root/types/config'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [

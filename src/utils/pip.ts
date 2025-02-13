@@ -1,11 +1,11 @@
 import PostMessageEvent from '@root/shared/postMessageEvent'
-import { DocPIPRenderType } from '@root/store/config'
 import { postMessageToTop } from './windowMessages'
 import { VIDEO_ID_ATTR } from '@root/shared/config'
 import { createElement } from '.'
+import { DocPIPRenderType } from '@root/types/config'
 
 export const postStartPIPDataMsg = async (
-  renderType: DocPIPRenderType,
+  renderType: DocPIPRenderType | null,
   videoEl: HTMLVideoElement,
 ) => {
   const id = videoEl.getAttribute(VIDEO_ID_ATTR)!

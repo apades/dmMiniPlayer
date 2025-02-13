@@ -1,12 +1,16 @@
-import { sendMessage_inject } from './injectListener'
+import { VIDEO_ID_ATTR } from '@root/shared/config'
+import { tryCatch, uuid } from '@root/utils'
+import { postStartPIPDataMsg } from '@root/utils/pip'
 
-// TODO 用开关控制
-// Element.prototype.attachShadow = ()=>{}
-// let origin = HTMLVideoElement.prototype.requestPictureInPicture
+const originReqPIP = HTMLVideoElement.prototype.requestPictureInPicture
 
-// console.log('inject requestPictureInPicture')
-// HTMLVideoElement.prototype.requestPictureInPicture = function () {
-//   //   return origin.bind(this)({ mode: 'open' })
-//   console.log('player-startPIPPlay')
-//   sendMessage_inject('start-PIP')
-// } as any
+HTMLVideoElement.prototype.requestPictureInPicture = async function () {
+  const [cannotAccessTop] = tryCatch(() => top!.document)
+  if (cannotAccessTop) return originReqPIP.bind(this)()
+
+  if (!this.getAttribute(VIDEO_ID_ATTR)) {
+    this.setAttribute(VIDEO_ID_ATTR, uuid())
+  }
+  postStartPIPDataMsg(null, this)
+  return window as any as PictureInPictureWindow
+}

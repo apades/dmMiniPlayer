@@ -39,7 +39,7 @@ export interface PostMessageProtocolMap {
     restrictionTarget?: RestrictionTarget
     posData: VideoPosData
     videoState: BaseVideoState
-    renderType: DocPIPRenderType
+    renderType: DocPIPRenderType | null
   }
   [PostMessageEvent.updateVideoState]: Partial<{
     isPause: boolean

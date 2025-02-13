@@ -43,7 +43,6 @@ if (isDev) {
     enforceActions: 'never',
   })
 }
-export { DocPIPRenderType } from './docPIP'
 
 export enum videoBorderType {
   default = 'default',
