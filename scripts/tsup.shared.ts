@@ -41,6 +41,7 @@ export const shareConfig = {
     main: pr('../src/contents/main.ts'),
     // 注入world: main的脚本
     inject: pr('../src/contents/inject.ts'),
+    'inject-pip': pr('../src/contents/inject-pip.ts'),
     // 修改cs的clog脚本
     clogInject: pr('../src/contents/clogInject.ts'),
     // popup的脚本

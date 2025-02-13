@@ -65,8 +65,23 @@ window.addEventListener('message', (event) => {
 export function onPostMessage<T extends PostMessageEvent>(
   type: T,
   callback: (data: PostMessageProtocolMap[T], source: Window) => void,
+): () => void
+export function onPostMessage<T extends PostMessageEvent>(
+  type: T,
+): Promise<[data: PostMessageProtocolMap[T], source: Window]>
+export function onPostMessage<T extends PostMessageEvent>(
+  type: T,
+  callback?: (data: PostMessageProtocolMap[T], source: Window) => void,
 ) {
-  return eventSource.on2(type as any, ({ data, source }: any) =>
-    callback(data, source),
-  )
+  if (callback)
+    return eventSource.on2(type as any, ({ data, source }: any) => {
+      callback(data, source)
+    })
+
+  return new Promise((resolve) => {
+    const unListen = eventSource.on2(type as any, ({ data, source }: any) => {
+      resolve([data, source])
+      unListen()
+    })
+  })
 }

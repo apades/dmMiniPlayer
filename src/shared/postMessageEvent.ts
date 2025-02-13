@@ -1,7 +1,8 @@
-import { DocPIPRenderType } from '@root/store/config'
+import { DocPIPRenderType } from '@root/types/config'
 
 enum PostMessageEvent {
   startPIPFromFloatButton = 'startPIPFromFloatButton',
+  startPIPFromFloatButton_resp = 'startPIPFromFloatButton_resp',
   startPIPWithWebRTC = 'startPIPWithWebRTC',
   updateVideoState = 'updateVideoState',
   detectVideo_req = 'detectVideo_req',
@@ -67,6 +68,10 @@ export interface PostMessageProtocolMap {
     target: { tagName: string; contentEditable: string }
     code: string
     type: string
+  }
+  [PostMessageEvent.startPIPFromFloatButton_resp]: {
+    isOk: boolean
+    errMsg?: string
   }
 }
 

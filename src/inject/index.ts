@@ -2,7 +2,6 @@ import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './createElementHacker'
 import './fetchHacker'
-import './injectPIPFunction'
 import { injectFunction } from '@root/utils/injectFunction'
 import { get } from '@root/utils'
 

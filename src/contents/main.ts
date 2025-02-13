@@ -7,7 +7,13 @@ import PostMessageEvent, {
 } from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
 import playerConfig from '@root/store/playerConfig'
-import { createElement, dq, dq1Adv, getIframeElFromSource } from '@root/utils'
+import {
+  createElement,
+  dq,
+  dq1Adv,
+  getIframeElFromSource,
+  tryCatch,
+} from '@root/utils'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import {
   onPostMessage,
@@ -239,74 +245,85 @@ function main() {
   onPostMessage(
     PostMessageEvent.startPIPFromFloatButton,
     async (data, captureSource) => {
-      if (data.cropTarget) {
-        playerConfig.cropTarget = data.cropTarget
-      }
-      if (data.restrictionTarget) {
-        playerConfig.restrictionTarget = data.restrictionTarget
-      }
-      if (data.renderType) {
-        playerConfig.forceDocPIPRenderType = data.renderType
-      }
+      const fn = () => {
+        if (data.cropTarget) {
+          playerConfig.cropTarget = data.cropTarget
+        }
+        if (data.restrictionTarget) {
+          playerConfig.restrictionTarget = data.restrictionTarget
+        }
+        if (data.renderType) {
+          playerConfig.forceDocPIPRenderType = data.renderType
+        }
 
-      playerConfig.posData = data.posData
+        playerConfig.posData = data.posData
 
-      const id = data.videoState.id
+        const id = data.videoState.id
 
-      const isWebRTCMode =
-        data.renderType === DocPIPRenderType.capture_captureStreamWithWebRTC
+        const isWebRTCMode =
+          data.renderType === DocPIPRenderType.capture_captureStreamWithWebRTC
 
-      switch (data.renderType) {
-        case DocPIPRenderType.capture_captureStreamWithWebRTC:
-        case DocPIPRenderType.capture_displayMediaWithCropTarget:
-        case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
-          // 判断captureSource是iframe里还是top发起的
-          const isIframe = captureSource !== window
+        switch (data.renderType) {
+          case DocPIPRenderType.capture_captureStreamWithWebRTC:
+          case DocPIPRenderType.capture_displayMediaWithCropTarget:
+          case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
+            // 判断captureSource是iframe里还是top发起的
+            const isIframe = captureSource !== window
 
-          if (isIframe) {
-            const targetIframeEl = getIframeElFromSource(captureSource)
-            if (!targetIframeEl) {
-              console.error('captureSource', captureSource)
-              throw Error('找不到captureSource iframe')
+            if (isIframe) {
+              const targetIframeEl = getIframeElFromSource(captureSource)
+              if (!targetIframeEl) {
+                console.error('captureSource', captureSource)
+                throw Error('找不到captureSource iframe')
+              }
+              const targetIframeRect = targetIframeEl.getBoundingClientRect()
+              playerConfig.posData.x += targetIframeRect.x
+              playerConfig.posData.y += targetIframeRect.y
             }
-            const targetIframeRect = targetIframeEl.getBoundingClientRect()
-            playerConfig.posData.x += targetIframeRect.x
-            playerConfig.posData.y += targetIframeRect.y
+
+            const { videoEl, unMount } = getSimulateVideoEl(
+              data.videoState,
+              captureSource,
+            )
+
+            // webRTC模式
+            if (isWebRTCMode) {
+              const { mediaStream, unMount: unMountMediaStream } =
+                getMediaStreamInGetter({ target: captureSource })
+              playerConfig.webRTCMediaStream = mediaStream
+
+              openPlayer({ videoEl })
+              provider?.on(PlayerEvent.close, () => {
+                unMountMediaStream()
+                unMount()
+                postMessageToChild(
+                  PostMessageEvent.webRTC_close,
+                  undefined,
+                  captureSource,
+                )
+              })
+            } else {
+              openPlayer({ videoEl })
+              provider?.on(PlayerEvent.close, () => {
+                unMount()
+              })
+            }
+            return
           }
-
-          const { videoEl, unMount } = getSimulateVideoEl(
-            data.videoState,
-            captureSource,
-          )
-
-          // webRTC模式
-          if (isWebRTCMode) {
-            const { mediaStream, unMount: unMountMediaStream } =
-              getMediaStreamInGetter({ target: captureSource })
-            playerConfig.webRTCMediaStream = mediaStream
-
-            openPlayer({ videoEl })
-            provider?.on(PlayerEvent.close, () => {
-              unMountMediaStream()
-              unMount()
-              postMessageToChild(
-                PostMessageEvent.webRTC_close,
-                undefined,
-                captureSource,
-              )
-            })
-          } else {
-            openPlayer({ videoEl })
-            provider?.on(PlayerEvent.close, () => {
-              unMount()
-            })
+          default: {
+            return openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${id}"]`) })
           }
-          return
-        }
-        default: {
-          return openPlayer({ videoEl: dq1Adv(`video[data-dm-vid="${id}"]`) })
         }
       }
+
+      const [err] = await tryCatch(fn)
+      postMessageToChild(PostMessageEvent.startPIPFromFloatButton_resp, {
+        isOk: !err,
+        err:
+          ((err as any).toString && (err as any).toString()) ||
+          err?.message ||
+          err,
+      })
     },
   )
   // 从floatButton发起的启动设置面板

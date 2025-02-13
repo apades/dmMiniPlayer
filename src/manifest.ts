@@ -42,12 +42,20 @@ export const manifest: chrome.runtime.ManifestV3 = {
       js: ['before-init-main.js'],
       run_at: 'document_start',
       matches: ['<all_urls>'],
+      all_frames: true,
     },
     {
       js: ['world.js'],
       run_at: 'document_start',
       world: 'MAIN',
       matches: ['<all_urls>'],
+    },
+    {
+      js: ['world-pip.js'],
+      run_at: 'document_start',
+      world: 'MAIN',
+      matches: ['<all_urls>'],
+      all_frames: true,
     },
     {
       matches: ['<all_urls>'],
