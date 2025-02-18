@@ -60,40 +60,43 @@ export default class DocPIPWebProvider extends WebProvider {
 
     // 这里卡50是往前系统API给的outerWidth innerWidth都是乱的，就这里正常
     wait(50).then(() => {
-      if (pipWindow.innerWidth === width && pipWindow.innerHeight === height)
-        return
       const [borX, borY] = getDocPIPBorderSize(pipWindow)
       // ! 已经确定是chrome的bug，第二次打开不会按照width和height来设置窗口大小
-      sendMessage(WebextEvent.resizeDocPIP, {
-        width: width + borX,
-        height: height + borY,
-        docPIPWidth: pipWindow.innerWidth,
+      const [w, h] = (() => {
+        if (pipWindow.innerWidth === width && pipWindow.innerHeight === height)
+          return []
+        return [width + borX, height + borY]
+      })()
+
+      const [left, top] = (() => {
+        if (!configStore.movePIPInOpen) return []
+        const [x, y] = (() => {
+          switch (configStore.movePIPInOpen_basePos) {
+            case Position['topLeft']:
+              return [0, 0]
+            case Position['topRight']:
+              return [screen.width - width, 0]
+            case Position['bottomLeft']:
+              return [0, screen.height - height - borY]
+            case Position['bottomRight']:
+              return [screen.width - width, screen.height - height - borY]
+          }
+        })()
+
+        return [
+          x + configStore.movePIPInOpen_offsetX - borX / 2,
+          y + configStore.movePIPInOpen_offsetY,
+        ]
+      })()
+
+      sendMessage(WebextEvent.updateDocPIPRect, {
+        docPIPWidth: width,
+        left,
+        top,
+        width: w,
+        height: h,
       })
     })
-
-    this.addOnUnloadFn(
-      autorun(() => {
-        if (configStore.movePIPInOpen) {
-          const [x, y] = (() => {
-            switch (configStore.movePIPInOpen_basePos) {
-              case Position['topLeft']:
-                return [0, 0]
-              case Position['topRight']:
-                return [screen.width - width, 0]
-              case Position['bottomLeft']:
-                return [0, screen.height - height]
-              case Position['bottomRight']:
-                return [screen.width - width, screen.height - height]
-            }
-          })()
-          sendMessage(WebextEvent.moveDocPIPPos, {
-            docPIPWidth: width,
-            x: x + configStore.movePIPInOpen_offsetX,
-            y: y + configStore.movePIPInOpen_offsetY,
-          })
-        }
-      }),
-    )
 
     const handleWheel = (e: WheelEvent) => {
       if (!e.ctrlKey) return
