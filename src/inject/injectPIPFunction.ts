@@ -6,7 +6,7 @@ import { onPostMessage } from '@root/utils/windowMessages'
 
 const originReqPIP = HTMLVideoElement.prototype.requestPictureInPicture
 
-HTMLVideoElement.prototype.requestPictureInPicture = async function () {
+HTMLVideoElement.prototype.requestPictureInPicture = function () {
   const [cannotAccessTop] = tryCatch(() => top!.document)
   if (cannotAccessTop) return originReqPIP.bind(this)()
 
@@ -14,10 +14,13 @@ HTMLVideoElement.prototype.requestPictureInPicture = async function () {
     this.setAttribute(VIDEO_ID_ATTR, uuid())
   }
 
-  postStartPIPDataMsg(null, this)
-  const [{ isOk }] = await onPostMessage(
-    PostMessageEvent.startPIPFromFloatButton_resp,
-  )
-  if (isOk) return window as any as PictureInPictureWindow
-  return originReqPIP.bind(this)()
+  // ? 很奇怪在agemys里requestPictureInPicture不能是async function，不然连第一行都没法运行
+  return new Promise(async (res) => {
+    postStartPIPDataMsg(null, this)
+    const [{ isOk }] = await onPostMessage(
+      PostMessageEvent.startPIPFromFloatButton_resp,
+    )
+    if (isOk) return res(window as any as PictureInPictureWindow)
+    return res(originReqPIP.bind(this)())
+  })
 }
