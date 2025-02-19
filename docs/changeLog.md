@@ -1,3 +1,7 @@
+## v0.6.30
+1. Inject the PIP of the original website and change it to the PIP mode of the startup with extension
+2. When the automatic PIP is enabled, the PIP will be automatically close when returned to original position
+
 ## v0.6.29
 1. Added ctrl + mouse scrolling to adjust the PIP size function
 2. Added quick hidden moving position option
