@@ -320,7 +320,7 @@ function main() {
       postMessageToChild(PostMessageEvent.startPIPFromFloatButton_resp, {
         isOk: !err,
         err:
-          ((err as any).toString && (err as any).toString()) ||
+          ((err as any)?.toString && (err as any).toString()) ||
           err?.message ||
           err,
       })
@@ -329,6 +329,12 @@ function main() {
   // 从floatButton发起的启动设置面板
   onPostMessage(PostMessageEvent.openSettingPanel, () => {
     window.openSettingPanel()
+  })
+
+  onPostMessage(PostMessageEvent.closeDocPIP, () => {
+    if (!provider) return
+    provider.doNotUsePauseInCloseConfig = true
+    provider.close()
   })
 
   // iframe里发起的fullInWeb，把该iframe也撑满全屏

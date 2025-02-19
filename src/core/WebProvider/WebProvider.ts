@@ -47,6 +47,7 @@ export default abstract class WebProvider
   isLive?: boolean
   active = false
   isQuickHiding = false
+  doNotUsePauseInCloseConfig = false
 
   private _webVideo?: HTMLVideoElement
   get webVideo() {
@@ -159,7 +160,7 @@ export default abstract class WebProvider
 
     this.miniPlayer.on(PlayerEvent.close, () => {
       this.unload()
-      if (configStore.pauseInClose_video) {
+      if (configStore.pauseInClose_video && !this.doNotUsePauseInCloseConfig) {
         const video = this.webVideo
         if (!this.isLive) {
           video.pause()
@@ -342,4 +343,6 @@ export default abstract class WebProvider
       }),
     )
   }
+
+  close() {}
 }

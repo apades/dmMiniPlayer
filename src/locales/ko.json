@@ -103,6 +103,7 @@
     "autoPIPInPageHideDesc": "음소거 해제된 비디오 및 동일한 출처의 iframe 비디오만 지원",
     "autoPIPInScroll": "스크롤의 자동 PIP",
     "autoPIPInScrollDesc": "이 비디오가 보이지 않을 때까지 페이지를 스크롤한 다음 PIP를 켜십시오.",
+    "autoPIPCloseInReturnToOriginPos": "반환하면 자동 닫기",
     "movePIPInOpen": "공개 후 PIP 위치 이동",
     "movePIPInOpen_basePos": "위치",
     "movePIPInOpen_offsetX": "위치 오프셋 X",

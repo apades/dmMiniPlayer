@@ -133,19 +133,20 @@ export default class ReplacerWebProvider extends WebProvider {
     // fixed 模式是替换 videoEl 成 VideoPlayer 组件
     if (isFixedPos) {
       replacerParent.replaceChild(root, videoEl)
-      this.on(PlayerEvent.close, () => {
+      this.close = () => {
         reactRoot.unmount()
         replacerParent.replaceChild(videoEl, root)
-      })
+      }
     }
     // 否则直接替加进 child 就行了
     else {
       replacerParent.appendChild(root)
-      this.on(PlayerEvent.close, () => {
+      this.close = () => {
         reactRoot.unmount()
         replacerParent.removeChild(root)
-      })
+      }
     }
+    this.on(PlayerEvent.close, this.close)
 
     // 有出现播放中替换播放器会导致播放器暂停的问题
     setTimeout(() => {

@@ -1,5 +1,3 @@
-import { windows } from 'webextension-polyfill'
-
 export function getTopParent(el: HTMLElement) {
   let p = el
   while (true) {

@@ -103,6 +103,7 @@
     "autoPIPInPageHideDesc": "Ne prend en charge que la vidéo non muette et la vidéo iframe de même origine",
     "autoPIPInScroll": "PIP automatique en défilement",
     "autoPIPInScrollDesc": "Faites défiler la page jusqu'à ce que cette vidéo soit invisible, puis activez PIP",
+    "autoPIPCloseInReturnToOriginPos": "Fermer automatiquement lors du retour",
     "movePIPInOpen": "Déplacer la position PIP après l'ouverture",
     "movePIPInOpen_basePos": "Position",
     "movePIPInOpen_offsetX": "Décalage de position X",

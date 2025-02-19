@@ -83,4 +83,8 @@ export default class CanvasPIPWebProvider extends WebProvider {
     this.pipVideoEl.srcObject = null
     this.unlistenPipVideoEl()
   }
+
+  close() {
+    document.exitPictureInPicture()
+  }
 }

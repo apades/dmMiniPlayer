@@ -210,4 +210,8 @@ canvas{
     })
     playerEl.appendChild(docPIPRootStyle)
   }
+
+  close(): void {
+    this.pipWindow?.close?.()
+  }
 }

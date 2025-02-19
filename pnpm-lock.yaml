@@ -15,8 +15,8 @@ importers:
         specifier: ^10.5.0
         version: 10.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@apad/setting-panel':
-        specifier: ^0.4.6
-        version: 0.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 0.5.4
+        version: 0.5.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       ahooks:
         specifier: ^3.8.4
         version: 3.8.4(react@18.2.0)
@@ -244,8 +244,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@apad/setting-panel@0.4.6':
-    resolution: {integrity: sha512-FFP1U4ctEBn2otavJth58Is1naU13y4YGwPn1n/fip9ASXjoXIjGeiAF8e3kDEKypQkQ3coOMK6gYcT0+WDijQ==}
+  '@apad/setting-panel@0.5.4':
+    resolution: {integrity: sha512-xgcfkEEkZUYFoREUvyCcd9xxL29xooCV4u0V8zACKZ8P9subPwLAattoBNXzygiT8WTqqhforhbMaBo2j20fvw==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -3278,7 +3278,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@apad/setting-panel@0.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@apad/setting-panel@0.5.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)

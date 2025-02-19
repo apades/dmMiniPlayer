@@ -16,6 +16,13 @@ export const docPIPConfig = {
     defaultValue: false,
     desc: t('settingPanel.autoPIPInScrollDesc'),
   }),
+  autoPIP_closeInReturnToOriginPos: config({
+    label: t('settingPanel.autoPIPCloseInReturnToOriginPos'),
+    defaultValue: true,
+    relateBy(settings) {
+      return settings.autoPIP_inPageHide || settings.autoPIP_inScrollToInvisible
+    },
+  }),
   movePIPInOpen: config({
     label: t('settingPanel.movePIPInOpen'),
     defaultValue: false,

@@ -103,6 +103,7 @@
     "autoPIPInPageHideDesc": "Solo admite videos no silenciados y videos iframe del mismo origen",
     "autoPIPInScroll": "PIP automático en desplazamiento",
     "autoPIPInScrollDesc": "Desplácese por la página hasta que este video sea invisible, luego active PIP",
+    "autoPIPCloseInReturnToOriginPos": "Auto cierre cuando regresa",
     "movePIPInOpen": "Mover posición PIP después de abrir",
     "movePIPInOpen_basePos": "Posición",
     "movePIPInOpen_offsetX": "Desplazamiento de posición X",

@@ -103,6 +103,7 @@
     "autoPIPInPageHideDesc": "ミュートされていないビデオと、同じオリジンの iframe ビデオのみをサポートします",
     "autoPIPInScroll": "スクロール時の自動 PIP",
     "autoPIPInScrollDesc": "このビデオが表示されなくなるまでページをスクロールし、PIP をオンにします",
+    "autoPIPCloseInReturnToOriginPos": "返品時にオートクローズ",
     "movePIPInOpen": "開いた後に PIP 位置を移動する",
     "movePIPInOpen_basePos": "位置",
     "movePIPInOpen_offsetX": "位置オフセット X",

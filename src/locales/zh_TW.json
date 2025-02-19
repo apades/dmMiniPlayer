@@ -103,6 +103,7 @@
     "autoPIPInPageHideDesc": "僅支援未靜音的視頻和同源iframe視頻",
     "autoPIPInScroll": "滾動頁面時自動畫中畫",
     "autoPIPInScrollDesc": "捲動頁面直到該影片不可見，然後開啟畫中畫",
+    "autoPIPCloseInReturnToOriginPos": "返回時自動關閉",
     "movePIPInOpen": "打開後移動畫中畫位置",
     "movePIPInOpen_basePos": "位置",
     "movePIPInOpen_offsetX": "位置偏移X",

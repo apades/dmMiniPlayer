@@ -103,6 +103,7 @@
     "autoPIPInPageHideDesc": "Only support unmuted video, and same origin iframe video",
     "autoPIPInScroll": "Auto PIP in scroll",
     "autoPIPInScrollDesc": "Scroll page until this video is invisible, then turn on PIP",
+    "autoPIPCloseInReturnToOriginPos": "Auto close when return",
     "movePIPInOpen": "Move PIP pos after open",
     "movePIPInOpen_basePos": "Position",
     "movePIPInOpen_offsetX": "Position offset X",
