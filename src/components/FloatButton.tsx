@@ -416,7 +416,7 @@ const FloatButton: FC<Props> = (props) => {
                 <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
                 <div
                   className={classNames(
-                    'absolute max-w-[200px] w-max bg-bg overflow-hidden h-0 transition-all group-hover:h-calc-auto text-[12px] rounded',
+                    'absolute max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded',
                     {
                       'left-[var(--x)] top-[var(--y)]':
                         configStore.floatButtonPos === FloatButtonPos.leftTop,
