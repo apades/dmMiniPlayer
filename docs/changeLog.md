@@ -1,3 +1,7 @@
+## v0.6.31
+1. Fixed the problem of floating button display settings
+2. Changelog display issues that are compatible with lower versions of Chrome
+
 ## v0.6.30
 1. Inject the PIP of the original website and change it to the PIP mode of the startup with extension
 2. When the automatic PIP is enabled, the PIP will be automatically close when returned to original position
