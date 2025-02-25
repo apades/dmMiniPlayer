@@ -1,3 +1,0 @@
-@import "tailwindcss";
-@import './style/theme.css';
-@plugin "../packages/tailwind/plugin.mjs";
