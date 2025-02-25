@@ -329,7 +329,8 @@ autorun(() => {
 })
 useBrowserSyncStorage(FLOAT_BTN_HIDDEN, async (val) => {
   if (isUndefined(val)) return
-  updateConfig()
+  updateConfig({ floatButtonVisible: !val })
+  saveConfig()
 })
 
 export default configStore
