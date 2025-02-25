@@ -1,3 +1,2 @@
-@import url('./tailwind.css');
-@import url('./tailwindBase.css');
+@import '../index.css';
 @import url('@apad/rc-slider/assets/index.css');

@@ -1,0 +1,42 @@
+@theme {
+    --shadow-btn-shadow: 0px 2px 4px rgba(55, 60, 68, 0.2);
+    --color-main: var(--main, #0669ff);
+    --color-bg: #262626;
+    --color-bg-hover: #404040;
+    --width-side-width: var(--side-width, 200px);
+    --width-btn-size: var(--btn-size, 120px);
+    --width-calc-auto: calc-size(auto,size);
+    --height-area-height: var(--area-height, 40px);
+    --height-btn-size: var(--btn-size, 120px);
+    --height-calc-auto: calc-size(auto,size);
+}
+
+:root {
+    /* calc-size 保底方案 */
+    interpolate-size: allow-keywords;
+}
+
+/* 屏幕大小query */
+@custom-variant dp {
+    @media (min-width: 768px) {
+        @slot;
+    }
+}
+@custom-variant mb {
+    @media (max-width: 768px) {
+        @slot;
+    }
+}
+
+/* 容器query */
+@custom-variant cdp {
+    @container (width > 768px) {
+        @slot;
+    }
+}
+@custom-variant cmb {
+    @container (width < 768px) and (height < 300px) {
+        @slot;
+    }
+}
+
