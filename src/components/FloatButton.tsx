@@ -418,14 +418,14 @@ const FloatButton: FC<Props> = (props) => {
                   className={classNames(
                     'absolute max-w-[200px] w-max bg-bg overflow-hidden h-0 transition-all group-hover:h-calc-auto text-[12px] rounded',
                     {
-                      'left-[--x] top-[--y]':
+                      'left-[var(--x)] top-[var(--y)]':
                         configStore.floatButtonPos === FloatButtonPos.leftTop,
-                      'left-[--x] bottom-[--y]':
+                      'left-[var(--x)] bottom-[var(--y)]':
                         configStore.floatButtonPos ===
                         FloatButtonPos.leftBottom,
-                      'right-[--x] top-[--y]':
+                      'right-[var(--x)] top-[var(--y)]':
                         configStore.floatButtonPos === FloatButtonPos.rightTop,
-                      'right-[--x] bottom-[--y]':
+                      'right-[var(--x)] bottom-[var(--y)]':
                         configStore.floatButtonPos ===
                         FloatButtonPos.rightBottom,
                     },
