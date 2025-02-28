@@ -1,3 +1,6 @@
+## v0.6.32
+Restore the previous logic for adjusting the position after enabling PIP
+
 ## v0.6.31
 1. Fixed the problem of floating button display settings
 2. Changelog display issues that are compatible with lower versions of Chrome
