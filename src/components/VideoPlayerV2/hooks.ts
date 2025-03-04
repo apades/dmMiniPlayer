@@ -66,13 +66,13 @@ export const useInWindowKeydown = () => {
         case 'ArrowDown': {
           e.preventDefault()
           const v = webVideo.volume
-          webVideo.volume = v - 0.1 >= 0 ? v - 0.1 : 0
+          eventBus.emit(PlayerEvent.volumeUpdate, v - 0.1 >= 0 ? v - 0.1 : 0)
           break
         }
         case 'ArrowUp': {
           e.preventDefault()
           const v = webVideo.volume
-          webVideo.volume = v + 0.1 <= 1 ? v + 0.1 : 1
+          eventBus.emit(PlayerEvent.volumeUpdate, v + 0.1 <= 1 ? v + 0.1 : 1)
           break
         }
         case 'ArrowLeft': {

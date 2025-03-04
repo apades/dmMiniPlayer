@@ -18,7 +18,7 @@ import VideoPlayerBase, {
   ExtendComponent,
 } from '../VideoPlayer/VideoPlayerBase'
 import DanmakuSender from '../danmaku/DanmakuSender'
-import { EventBus, PlayerEvent } from '../event'
+import { eventBus, EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import EventSwitcher from '@root/utils/EventSwitcher'
 import playerConfig from '@root/store/playerConfig'
@@ -27,6 +27,8 @@ import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import WebextEvent from '@root/shared/webextEvent'
 import { DocPIPRenderType, Position } from '@root/types/config'
+import { sendMessage as sendInjectMessage } from '@root/inject/contentSender'
+import { VIDEO_ID_ATTR } from '@root/shared/config'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -132,7 +134,10 @@ export default abstract class WebProvider
     if (!navigator.userActivation.isActive) return
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
+
     this.injectVideoEventsListener(this.webVideo)
+    this.injectVideoVolumeSetting()
+
     this.bindCommandsEvent()
     this.isLive ??= checkIsLive(this.webVideo)
 
@@ -158,7 +163,7 @@ export default abstract class WebProvider
 
     sendMessage('PIP-active', { name: 'PIP-active' })
 
-    this.miniPlayer.on(PlayerEvent.close, () => {
+    eventBus.on(PlayerEvent.close, () => {
       this.unload()
       if (configStore.pauseInClose_video && !this.doNotUsePauseInCloseConfig) {
         const video = this.webVideo
@@ -193,6 +198,74 @@ export default abstract class WebProvider
         eventSwitcher.unload,
       ],
     )
+  }
+
+  // Youtube直播的播放器自身记录了volume，每次修改video.volume都会被自动替换
+  // https://github.com/apades/dmMiniPlayer/issues/80
+  injectVideoVolumeSetting() {
+    function injectVolume(vid: string) {
+      function getPrototypeGetter<T>(obj: T, key: keyof T) {
+        const getter = Object.getOwnPropertyDescriptor(obj, key)?.get
+
+        if (!getter) {
+          const prototype = Object.getPrototypeOf(obj)
+          if (!prototype) {
+            return null
+          }
+          return getPrototypeGetter(prototype, key)
+        }
+
+        return getter
+      }
+      function getPrototypeSetter<T>(obj: T, key: keyof T) {
+        const setter = Object.getOwnPropertyDescriptor(obj, key)?.set
+
+        if (!setter) {
+          const prototype = Object.getPrototypeOf(obj)
+          if (!prototype) {
+            return null
+          }
+          return getPrototypeSetter(prototype, key)
+        }
+
+        return setter
+      }
+
+      const video = document.querySelector(
+        `video[${VIDEO_ID_ATTR}="${vid}"]`,
+      ) as HTMLVideoElement
+      const volumeSetter = getPrototypeSetter(video, 'volume')!,
+        volumeGetter = getPrototypeGetter(video, 'volume')!
+
+      window.__canSetBySetter = false
+      const updateVolume = (volume: number) => {
+        if (!window.__canSetBySetter) return
+        volumeSetter.call(video, volume)
+      }
+
+      Object.defineProperty(video, 'volume', {
+        get: volumeGetter,
+        set: updateVolume,
+      })
+
+      window.__updateVolume = (volume: number) =>
+        volumeSetter.call(video, volume)
+    }
+
+    sendInjectMessage('run-code', {
+      function: injectVolume.toString(),
+      args: [this.webVideo.getAttribute(VIDEO_ID_ATTR)],
+    })
+
+    this.on(PlayerEvent.volumeUpdate, (volume) => {})
+    this.on(PlayerEvent.close, () => {
+      function restoreInjectVolume() {
+        window.__canSetBySetter = true
+      }
+      sendInjectMessage('run-code', {
+        function: restoreInjectVolume.toString(),
+      })
+    })
   }
 
   /**获取视频 */

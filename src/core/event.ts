@@ -12,6 +12,7 @@ export enum PlayerEvent {
   seeked = 'seeked',
   changeCurrentTimeByKeyboard = 'currentTimeJump',
   changeCurrentTimeByKeyboard_fine = 'currentTimeJump_fine',
+  volumeUpdate = 'volumeUpdate',
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged = 'webVideoChanged',
 
@@ -35,6 +36,7 @@ export enum PlayerEvent {
 type OverrideArgsEvent = {
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged: HTMLVideoElement
+  volumeUpdate: number
 }
 
 export type PlayerEvents = Merge<

@@ -7,6 +7,7 @@ import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import style from './VolumeBar.less?inline'
 import { useKeydown } from '../hooks'
+import { eventBus, PlayerEvent } from '@root/core/event'
 
 type Props = {}
 const VolumeBar: FC<Props> = (props) => {
@@ -70,7 +71,7 @@ const VolumeBar: FC<Props> = (props) => {
               webVideo.muted = false
             }
 
-            webVideo.volume = p / 100
+            eventBus.emit(PlayerEvent.volumeUpdate, p / 100)
 
             run(() => setActive(true))
           }}
