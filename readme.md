@@ -79,5 +79,9 @@
 
 <img src="./docs/assets/donate.png" width="300">
 
+> 🙏 thanks list
+> 
+> - 2025/3/4 我爱吃肉
+
 ## 📜 License
 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
