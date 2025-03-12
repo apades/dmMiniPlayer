@@ -6,11 +6,12 @@ import ProgressBar from '../../ProgressBar'
 import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import style from './VolumeBar.less?inline'
-import { useKeydown } from '../hooks'
+import { useOnce } from '@root/hook'
+import { PlayerEvent } from '@root/core/event'
 
 type Props = {}
 const VolumeBar: FC<Props> = (props) => {
-  const { webVideo } = useContext(vpContext)
+  const { webVideo, eventBus } = useContext(vpContext)
   const [volume, setVolume] = useState(0)
   const [isMuted, setMuted] = useState(false)
   const [isActive, setActive] = useState(false)
@@ -40,15 +41,29 @@ const VolumeBar: FC<Props> = (props) => {
     },
   ])
 
-  useKeydown((key) => {
-    if (key === 'm') {
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_muteToggle, () => {
       setMuted((muted) => {
         if (!webVideo) return muted
         webVideo.muted = !muted
         return !muted
       })
-    }
-  })
+    }),
+  )
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_volumeUp, () => {
+      if (!webVideo) return
+      const v = webVideo.volume
+      webVideo.volume = v + 0.1 <= 1 ? v + 0.1 : 1
+    }),
+  )
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_volumeDown, () => {
+      if (!webVideo) return
+      const v = webVideo.volume
+      webVideo.volume = v - 0.1 >= 0 ? v - 0.1 : 0
+    }),
+  )
 
   const { run } = useDebounceTimeoutCallback(() => {
     setActive(false)

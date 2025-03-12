@@ -2,8 +2,9 @@ import Dropdown from '@root/components/Dropdown'
 import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
 import vpContext from '@root/components/VideoPlayerV2/context'
-import { useKeydown } from '@root/components/VideoPlayerV2/hooks'
+import { PlayerEvent } from '@root/core/event'
 import type SubtitleManager from '@root/core/SubtitleManager'
+import { useOnce } from '@root/hook'
 import { t } from '@root/utils/i18n'
 import { useMemoizedFn } from 'ahooks'
 import classNames from 'classnames'
@@ -17,6 +18,7 @@ type Props = {
 const SubtitleSelectionInner: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
+  const { eventBus } = useContext(vpContext)
 
   const handleChangeVisible = useMemoizedFn(() => {
     runInAction(() => {
@@ -33,11 +35,11 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
     })
   })
 
-  useKeydown((key) => {
-    if (key === 's') {
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_subtitleVisible, () => {
       handleChangeVisible()
-    }
-  })
+    }),
+  )
 
   return (
     <Dropdown menuRender={() => <Menu {...props} />}>

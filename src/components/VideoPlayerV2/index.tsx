@@ -60,6 +60,7 @@ import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWit
 import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
 import KeyboardTipsModal from './KeyboardTipsModal'
 import ScreenshotTips from './ScreenshotTips'
+import { useOnce } from '@root/hook'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -84,9 +85,21 @@ const ACTION_AREA_ACTIVE = 'active'
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
-    const { isLive } = useContext(vpContext)
+    const { isLive, keyBinding, keydownWindow } = useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
+
+    useOnce(() => {
+      keyBinding.init()
+      return () => {
+        keyBinding.unload()
+      }
+    })
+
+    useEffect(() => {
+      if (!keydownWindow) return
+      keyBinding.updateKeydownWindow(keydownWindow)
+    }, [keydownWindow])
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
@@ -265,10 +278,8 @@ const VideoPlayerV2Inner = observer(
     useInWindowKeydown()
     useWebVideoEventsInit()
 
-    useKeydown((key) => {
-      if (key === 'Escape') {
-        quitFullMode()
-      }
+    useKeydown('Escape', () => {
+      quitFullMode()
     })
 
     const setCurrentTime = useMemoizedFn((time: number, pause?: boolean) => {

@@ -4,7 +4,8 @@ import { isDocPIP, minmax, ownerWindow } from '@root/utils'
 import configStore from '@root/store/config'
 import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { Key } from '@root/types/key'
+import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
+import { isFunction, isString } from 'lodash-es'
 
 export const useTogglePlayState = () => {
   const { webVideo, isLive } = useContext(vpContext)
@@ -40,144 +41,26 @@ export const useTogglePlayState = () => {
 
 /**监听docPIP全局键盘 */
 export const useInWindowKeydown = () => {
-  const { webVideo, eventBus, isLive, keydownWindow } = useContext(vpContext)
+  const { webVideo, eventBus, isLive, keydownWindow, keyBinding } =
+    useContext(vpContext)
   const togglePlayState = useTogglePlayState()
 
   useEffect(() => {
     if (!keydownWindow) return
+
     let speedModeTimer: NodeJS.Timeout | null,
       isSpeedMode = false
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!webVideo) return
-      // TODO 以后尽量把e.target去掉，因为shadowRoot下接收到冒泡的event.target是shadowRoot，不会是keydown实际的target😅
-      // ? 或者搞个polyfill，支持shadowRoot的event通过一层转发。但会导致isTrusted:false
-      const tar = e.target as HTMLElement
-      if (
-        tar.tagName === 'TEXTAREA' ||
-        tar.tagName === 'INPUT' ||
-        tar.contentEditable === 'true'
-      )
-        return
-      const isShift = e.shiftKey,
-        isCtrl = e.ctrlKey
 
-      const oneFrame = 1 / 60
-      switch (e.code as Key) {
-        case 'ArrowDown': {
-          e.preventDefault()
-          const v = webVideo.volume
-          webVideo.volume = v - 0.1 >= 0 ? v - 0.1 : 0
-          break
-        }
-        case 'ArrowUp': {
-          e.preventDefault()
-          const v = webVideo.volume
-          webVideo.volume = v + 0.1 <= 1 ? v + 0.1 : 1
-          break
-        }
-        case 'ArrowLeft': {
-          if (isLive) return
-          e.preventDefault()
+    const oneFrame = 1 / 60
+    const callbackFns = [
+      keyBinding.onKeydown((e) => {
+        if (!webVideo) return
 
-          if (isShift) {
-            const getNewTime = () =>
-              minmax(webVideo.currentTime - oneFrame, 0, webVideo.duration)
-
-            webVideo.currentTime = getNewTime()
-            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
-            break
-          }
-          if (isCtrl) return
-
-          let getNewTime = () =>
-            minmax(webVideo.currentTime - 5, 0, webVideo.duration)
-
-          if (webVideo.paused) {
-            togglePlayState('play').then(() => {
-              webVideo.currentTime = getNewTime()
-              eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
-            })
-          } else {
-            webVideo.currentTime = getNewTime()
-            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
-          }
-          break
-        }
-        case 'ArrowRight': {
-          if (isLive) return
-          if (speedModeTimer) return
-
-          if (isShift) {
-            const getNewTime = () =>
-              minmax(webVideo.currentTime + oneFrame, 0, webVideo.duration)
-
-            webVideo.currentTime = getNewTime()
-            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
-            return
-          }
-
-          if (isCtrl) return
-
-          speedModeTimer = setTimeout(() => {
-            isSpeedMode = true
-            webVideo.playbackRate = configStore.playbackRate
-            eventBus.emit(PlayerEvent.longTabPlaybackRate)
-          }, 200)
-          break
-        }
-        case 'Space':
-          if (isLive) return
-          e.preventDefault()
-          togglePlayState()
-
-          break
-      }
-    }
-    keydownWindow.addEventListener('keydown', handleKeyDown)
-    // 这是给replacer模式监听的，keydown keyup已经被阻止了，通过一层代理转发和监听
-    const handleKeyDownCustom = (e: KeyboardEvent) => {
-      const detail = e.detail
-      handleKeyDown(detail as any)
-    }
-    keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (!webVideo) return
-      const tar = e.target as HTMLElement
-      if (
-        tar.tagName === 'TEXTAREA' ||
-        tar.tagName === 'INPUT' ||
-        tar.contentEditable === 'true'
-      )
-        return
-      e.stopPropagation()
-
-      const isShift = e.shiftKey,
-        isCtrl = e.ctrlKey
-
-      switch (e.code) {
-        case 'ArrowRight': {
-          if (isLive) return
-          e.preventDefault()
-          if (isShift || isCtrl) return
-          if (speedModeTimer) {
-            clearTimeout(speedModeTimer)
-          }
-
-          speedModeTimer = null
-          // https://github.com/apades/dmMiniPlayer/issues/9
-
-          webVideo.currentTime = webVideo.currentTime
-          setTimeout(() => {
-            eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
-          }, 0)
-
-          if (isSpeedMode) {
-            webVideo.playbackRate = 1
-            isSpeedMode = false
-          } else {
-            const getNewTime = () =>
-              minmax(webVideo.currentTime + 5, 0, webVideo.duration)
+        switch (e.code as Key) {
+          case 'ArrowLeft': {
+            if (isLive) return
+            let getNewTime = () =>
+              minmax(webVideo.currentTime - 5, 0, webVideo.duration)
 
             if (webVideo.paused) {
               togglePlayState('play').then(() => {
@@ -188,30 +71,96 @@ export const useInWindowKeydown = () => {
               webVideo.currentTime = getNewTime()
               eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
             }
+            break
+          }
+          case 'ArrowRight': {
+            if (isLive) return
+            if (speedModeTimer) return
+
+            speedModeTimer = setTimeout(() => {
+              isSpeedMode = true
+              webVideo.playbackRate = configStore.playbackRate
+              eventBus.emit(PlayerEvent.longTabPlaybackRate)
+            }, 200)
+            break
           }
         }
-      }
-    }
-    keydownWindow.addEventListener('keyup', handleKeyUp)
-    const handleKeyUpCustom = (e: KeyboardEvent) => {
-      const detail = e.detail
-      handleKeyUp(detail as any)
-    }
-    keydownWindow.addEventListener('dm-keyup' as any, handleKeyUpCustom)
+      }),
+
+      keyBinding.onKeyup((e) => {
+        if (!webVideo) return
+
+        const { shiftKey, ctrlKey } = e
+        switch (e.code) {
+          case 'ArrowRight': {
+            if (isLive) return
+            if (shiftKey || ctrlKey) return
+
+            if (speedModeTimer) {
+              clearTimeout(speedModeTimer)
+            }
+
+            speedModeTimer = null
+            // https://github.com/apades/dmMiniPlayer/issues/9
+
+            webVideo.currentTime = webVideo.currentTime
+            setTimeout(() => {
+              eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
+            }, 0)
+
+            if (isSpeedMode) {
+              webVideo.playbackRate = 1
+              isSpeedMode = false
+            } else {
+              const getNewTime = () =>
+                minmax(webVideo.currentTime + 5, 0, webVideo.duration)
+
+              if (webVideo.paused) {
+                togglePlayState('play').then(() => {
+                  webVideo.currentTime = getNewTime()
+                  eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
+                })
+              } else {
+                webVideo.currentTime = getNewTime()
+                eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
+              }
+            }
+          }
+        }
+      }),
+      eventBus.on2(PlayerEvent.command_playToggle, () => togglePlayState()),
+      eventBus.on2(PlayerEvent.command_fineForward, () => {
+        if (!webVideo) return
+        const getNewTime = () =>
+          minmax(webVideo.currentTime + oneFrame, 0, webVideo.duration)
+
+        webVideo.currentTime = getNewTime()
+        eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
+      }),
+      eventBus.on2(PlayerEvent.command_fineRewind, () => {
+        if (!webVideo) return
+        const getNewTime = () =>
+          minmax(webVideo.currentTime - oneFrame, 0, webVideo.duration)
+
+        webVideo.currentTime = getNewTime()
+        eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard_fine)
+      }),
+    ]
 
     return () => {
-      keydownWindow.removeEventListener('keydown', handleKeyDown)
-      keydownWindow.removeEventListener('keyup', handleKeyUp)
-
-      keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
-      keydownWindow.addEventListener('dm-keyup' as any, handleKeyUpCustom)
+      callbackFns.forEach((fn) => fn())
     }
   }, [keydownWindow, isLive, webVideo])
 }
 
-export const useKeydown = (
-  onKeydown?: (key: Key, e: KeyboardEvent) => void,
-) => {
+export function useKeydown(
+  onKeydown: (key: Key, e: KeyboardEvent) => void,
+): void
+export function useKeydown(key: Key, fn: (e: KeyboardEvent) => void): void
+export function useKeydown(
+  onKeydown: ((key: Key, e: KeyboardEvent) => void) | Key,
+  fn?: (e: KeyboardEvent) => void,
+) {
   const { webVideo, isLive, keydownWindow } = useContext(vpContext)
   useEffect(() => {
     if (!keydownWindow) return
@@ -226,9 +175,15 @@ export const useKeydown = (
         tar.contentEditable === 'true'
       )
         return
-      let key = e.key as Key
-      if (key.length === 1) key = key.toLowerCase()
-      onKeydown?.(key, e)
+      let keyCode = e.keyCode
+      if (isFunction(onKeydown)) {
+        onKeydown((keyCodeToCode as any)[keyCode] as Key, e)
+      }
+      if (isString(onKeydown)) {
+        if (keyCode === (keyToKeyCodeMap as any)[onKeydown]) {
+          fn?.(e)
+        }
+      }
     }
     keydownWindow.addEventListener('keydown', handleKeyDown)
     // 这是给replacer模式监听的，keydown keyup已经被阻止了，通过一层代理转发和监听

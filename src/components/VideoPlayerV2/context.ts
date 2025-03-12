@@ -1,6 +1,7 @@
 import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { eventBus, EventBus } from '@root/core/event'
+import { KeyBinding } from '@root/core/KeyBinding'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import SubtitleManager from '@root/core/SubtitleManager'
 import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
@@ -21,10 +22,12 @@ export type ContextData = {
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
   videoStream?: MediaStream
+  keyBinding: KeyBinding
 }
 
 export const defaultVpContext: ContextData = {
   eventBus,
+  keyBinding: new KeyBinding(),
   videoPlayer: null as any,
 }
 

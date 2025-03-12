@@ -1,93 +1,14 @@
+import { getShortcutConfigs } from '@root/core/KeyBinding'
 import { createIsolationModal } from '@root/hook/useOpenIsolationModal'
 import configStore, { saveConfig, updateConfig } from '@root/store/config'
-import { isArray } from '@root/utils'
-import { runInAction } from 'mobx'
+import config_shortcut from '@root/store/config/shortcut'
+import { t } from '@root/utils/i18n'
 import { observer } from 'mobx-react'
 import { Fragment } from 'react'
 import Modal from '../Modal'
-import { t } from '@root/utils/i18n'
 
-type keyDataItem = {
-  key: string | string[]
-  text: string
-  desc?: string
-}
 const KeyboardTipsModal = createIsolationModal((props) => {
-  const keydataList: keyDataItem[] = [
-    {
-      key: 'Space',
-      text: t('shortcut.play/pause'),
-    },
-    {
-      key: '←',
-      text: t('shortcut.rewind'),
-    },
-    {
-      key: '→',
-      text: t('shortcut.forward'),
-    },
-    {
-      key: ['Shift', '←'],
-      text: t('shortcut.rewind_fine'),
-    },
-    {
-      key: ['Shift', '→'],
-      text: t('shortcut.forward_fine'),
-    },
-    {
-      key: [t('shortcut.longPress'), '→'],
-      text: t('shortcut.speedMode'),
-    },
-    // {
-    //   key: ['ctrl', '→'],
-    //   text: '下一个视频',
-    // },
-    // {
-    //   key: ['ctrl', '←'],
-    //   text: '上一个视频',
-    // },
-    {
-      key: '↑',
-      text: t('shortcut.volumeUp'),
-    },
-    {
-      key: '↓',
-      text: t('shortcut.volumeDown'),
-    },
-    {
-      key: 'M',
-      text: t('shortcut.mute/unmute'),
-    },
-    {
-      key: '0',
-      text: t('shortcut.speedMode/normal'),
-    },
-    {
-      key: '=',
-      text: t('shortcut.speedUp'),
-    },
-    {
-      key: '-',
-      text: t('shortcut.speedDown'),
-    },
-    {
-      key: 'Enter',
-      text: t('shortcut.popupDanmakuInput'),
-    },
-    {
-      key: ['Shift', 'P'],
-      text: t('shortcut.screenshot'),
-    },
-    {
-      key: 'D',
-      text: t('shortcut.show/hideDanmaku'),
-    },
-    {
-      key: 'S',
-      text: t('shortcut.show/hideSubtitle'),
-    },
-  ]
-
+  const keydataMap = getShortcutConfigs()
   return (
     <Modal isOpen={props.isOpen} onClose={props.destroy} fullWidth>
       <div className="[&_th]:bor-[#dee2e6] [&_td]:bor-[#dee2e6] [&_td]:px-4 [&_td]:py-2 p-4">
@@ -111,8 +32,7 @@ const KeyboardTipsModal = createIsolationModal((props) => {
             </tr>
           </thead>
           <tbody>
-            {keydataList.map((item, i) => {
-              const kbds = isArray(item.key) ? item.key : [item.key]
+            {Object.entries(keydataMap).map(([key, kbds], i) => {
               return (
                 <tr key={i}>
                   <td>
@@ -128,7 +48,7 @@ const KeyboardTipsModal = createIsolationModal((props) => {
                       )
                     })}
                   </td>
-                  <td>{item.text}</td>
+                  <td>{(config_shortcut as any)[key].label}</td>
                 </tr>
               )
             })}

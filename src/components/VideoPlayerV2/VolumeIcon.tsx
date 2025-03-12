@@ -3,7 +3,6 @@ import vpContext from './context'
 import Iconfont from '../Iconfont'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { useKeydown } from './hooks'
 
 const VolumeIcon: FC = (props) => {
   const [isVisible, setVisible] = useState(false)
@@ -21,15 +20,6 @@ const VolumeIcon: FC = (props) => {
     },
     webVideo,
   )
-
-  useKeydown((key) => {
-    switch (key) {
-      case 'ArrowUp':
-      case 'ArrowDown':
-        run(() => setVisible(true))
-        break
-    }
-  })
 
   return (
     isVisible && (

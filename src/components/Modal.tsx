@@ -13,7 +13,7 @@ const Modal: FC<{
     <div
       className="fixed left-0 top-0 size-full z-[9999] f-center"
       style={{
-        '--top': 'clamp(0px, 20vh, 200px)',
+        '--top': 'clamp(0px, 10vh, 200px)',
       }}
     >
       <div
