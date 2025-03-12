@@ -132,7 +132,7 @@
     "rewind_fine": "1フレーム巻き戻し",
     "forward_fine": "1フレーム進む",
     "longPress": "長押し",
-    "speedMode": "ロングプレススピードモード",
+    "speedMode": "スピードモードまでのロングプレス",
     "volumeUp": "ボリュームアップ",
     "volumeDown": "音量を下げる",
     "mute/unmute": "沈黙/不快感",
