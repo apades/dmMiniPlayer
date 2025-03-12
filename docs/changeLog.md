@@ -1,3 +1,6 @@
+## v0.6.33
+Added custom shortcut key settings
+
 ## v0.6.32
 Restore the previous logic for adjusting the position after enabling PIP
 
