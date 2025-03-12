@@ -3,11 +3,12 @@ import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import Dropdown from '../../Dropdown'
 import classNames from 'classnames'
-import { useKeydown } from '../hooks'
 import { useMemoizedFn } from 'ahooks'
+import { useOnce } from '@root/hook'
+import { PlayerEvent } from '@root/core/event'
 
 const PlaybackRateSelection: FC = (props) => {
-  const { webVideo, isLive } = useContext(vpContext)
+  const { webVideo, isLive, eventBus } = useContext(vpContext)
   const [playbackRate, setPlaybackRate] = useState(1)
   const [lastPlaybackRate, setLastPlaybackRate] = useState(3)
 
@@ -42,23 +43,24 @@ const PlaybackRateSelection: FC = (props) => {
     }
   })
 
-  useKeydown((key) => {
-    if (!webVideo) return
-    if (isLive) return
-    switch (key) {
-      case '-':
-      case '_':
-        webVideo.playbackRate -= 0.25
-        break
-      case '+':
-      case '=':
-        webVideo.playbackRate += 0.25
-        break
-      case '0':
-        handleTogglePlaybackRate()
-        break
-    }
-  })
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_speedDown, () => {
+      if (!webVideo || isLive) return
+      webVideo.playbackRate -= 0.25
+    }),
+  )
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_speedUp, () => {
+      if (!webVideo || isLive) return
+      webVideo.playbackRate += 0.25
+    }),
+  )
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_speedToggle, () => {
+      if (!webVideo || isLive) return
+      handleTogglePlaybackRate()
+    }),
+  )
 
   const menu = (
     <div className="w-[60px] bg-[#000] rounded-[4px] p-[4px] flex-col gap-[4px] text-[14px] text-white">

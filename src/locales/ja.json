@@ -132,7 +132,7 @@
     "rewind_fine": "1フレーム巻き戻し",
     "forward_fine": "1フレーム進む",
     "longPress": "長押し",
-    "speedMode": "スピードモード",
+    "speedMode": "ロングプレススピードモード",
     "volumeUp": "ボリュームアップ",
     "volumeDown": "音量を下げる",
     "mute/unmute": "沈黙/不快感",
@@ -143,7 +143,11 @@
     "screenshot": "スクリーンショット",
     "show/hideDanmaku": "弾幕の表示/非表示",
     "show/hideSubtitle": "字幕の表示/非表示",
-    "notSupport": "このビデオではサポートされていません"
+    "notSupport": "このビデオではサポートされていません",
+    "cate_progress": "進捗バー",
+    "cate_volume": "音量",
+    "cate_speed": "スピード",
+    "cate_other": "その他"
   },
   "popup": {
     "tips": "ピクチャーインピクチャー再生をトリガーするには,次のページをクリックする必要があります",

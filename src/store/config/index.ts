@@ -19,6 +19,7 @@ import en from '@apad/setting-panel/i18n/en.json'
 import config_danmaku from './danmaku'
 import config_specialWebsites from './specialWebsites'
 import config_subtitle from './subtitle'
+import config_shortcut from './shortcut'
 import {
   getIsZh,
   Language,
@@ -61,6 +62,8 @@ export const baseConfigMap = {
   ...config_danmaku,
   ...config_specialWebsites,
   ...config_subtitle,
+  ...docPIPConfig,
+  ...config_shortcut,
   language: config<Language>({
     label: 'Language',
     desc: 'Will reload page when language has changed',
@@ -202,7 +205,6 @@ export const baseConfigMap = {
   //   defaultValue: DEFAULT_EVENT_INJECT_SITE,
   //   notRecommended: true,
   // }),
-  ...docPIPConfig,
   showReplacerBtn: config({
     defaultValue: false,
     label: t('settingPanel.showReplacerBtn'),

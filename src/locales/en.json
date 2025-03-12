@@ -132,7 +132,7 @@
     "rewind_fine": "Rewind 1 frame",
     "forward_fine": "Forward 1 frame",
     "longPress":"Long press",
-    "speedMode": "Speed mode",
+    "speedMode": "Long press speed mode",
     "volumeUp": "Volume up",
     "volumeDown": "Volume down",
     "mute/unmute": "Mute/Unmute",
@@ -143,7 +143,11 @@
     "screenshot": "Screenshot",
     "show/hideDanmaku": "Show/Hide danmaku",
     "show/hideSubtitle": "Show/Hide subtitle",
-    "notSupport": "Not support in this video"
+    "notSupport": "Not support in this video",
+    "cate_progress": "Progress bar",
+    "cate_volume": "Volume",
+    "cate_speed": "Speed",
+    "cate_other": "Others"
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

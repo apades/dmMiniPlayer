@@ -1,32 +1,29 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react'
-import Dropdown from '../../Dropdown'
-import { useMemoizedFn } from 'ahooks'
-import vpContext from '../context'
-import { observer } from 'mobx-react'
-import classNames from 'classnames'
-import Iconfont from '../../Iconfont'
-import { runInAction } from 'mobx'
-import { handleOnPressEnter } from '../../VideoPlayer/utls'
-import { onMessage, sendMessage } from 'webext-bridge/content-script'
-import { useOnce } from '@root/hook'
-import WebextEvent from '@root/shared/webextEvent'
 import {
-  LoadingOutlined,
   CheckOutlined,
+  LoadingOutlined,
   WarningOutlined,
 } from '@ant-design/icons'
-import { getAnyObjToString } from '@root/utils'
 import { parserBilibiliDanmuFromXML } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
-import AssParser from '@root/utils/AssParser'
-import { t } from '@root/utils/i18n'
+import { PlayerEvent } from '@root/core/event'
+import { useOnce } from '@root/hook'
 import { useReactBrowserSyncStorage } from '@root/hook/browserStorage'
 import { DANMAKU_VISIBLE } from '@root/shared/storeKey'
-import {
-  getBrowserSyncStorage,
-  setBrowserSyncStorage,
-} from '@root/utils/storage'
+import WebextEvent from '@root/shared/webextEvent'
+import { getAnyObjToString } from '@root/utils'
+import AssParser from '@root/utils/AssParser'
+import { t } from '@root/utils/i18n'
+import { setBrowserSyncStorage } from '@root/utils/storage'
+import { useMemoizedFn } from 'ahooks'
+import classNames from 'classnames'
 import { isUndefined } from 'lodash-es'
-import { useKeydown } from '../hooks'
+import { runInAction } from 'mobx'
+import { observer } from 'mobx-react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
+import Dropdown from '../../Dropdown'
+import Iconfont from '../../Iconfont'
+import { handleOnPressEnter } from '../../VideoPlayer/utls'
+import vpContext from '../context'
 
 const Menu: FC = observer((props) => {
   const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
@@ -177,16 +174,16 @@ const Menu: FC = observer((props) => {
 })
 
 const DanmakuSettingBtn: FC = (props) => {
-  const { danmakuEngine } = useContext(vpContext)
+  const { danmakuEngine, eventBus } = useContext(vpContext)
   if (!danmakuEngine) return
 
   const visible = danmakuEngine.visible
 
-  useKeydown((key) => {
-    if (key === 'd') {
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_danmakuVisible, () => {
       danmakuEngine.changeVisible()
-    }
-  })
+    }),
+  )
 
   return (
     <Dropdown menuRender={() => <Menu />}>

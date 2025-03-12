@@ -132,7 +132,7 @@
     "rewind_fine": "快退1格",
     "forward_fine": "前進1幀",
     "longPress": "長按",
-    "speedMode": "倍速模式",
+    "speedMode": "長媒體速度模式",
     "volumeUp": "音量+",
     "volumeDown": "音量-",
     "mute/unmute": "靜音/取消靜音",
@@ -143,7 +143,11 @@
     "screenshot": "截圖",
     "show/hideDanmaku": "顯示/隱藏彈幕",
     "show/hideSubtitle": "顯示/隱藏字幕",
-    "notSupport": "本影片不支援"
+    "notSupport": "本影片不支援",
+    "cate_progress": "進度欄",
+    "cate_volume": "音量",
+    "cate_speed": "速度",
+    "cate_other": "其他"
   },
   "popup": {
     "tips": "需要點擊下頁面才能觸發畫中畫播放",

@@ -15,6 +15,23 @@ export enum PlayerEvent {
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged = 'webVideoChanged',
 
+  command_playToggle = 'command_playToggle',
+  // command_rewind = 'command_rewind',
+  // command_forward = 'command_forward',
+  command_fineRewind = 'command_fineRewind',
+  command_fineForward = 'command_fineForward',
+  command_volumeUp = 'command_volumeUp',
+  command_volumeDown = 'command_volumeDown',
+  command_muteToggle = 'command_muteToggle',
+  command_danmakuVisible = 'command_danmakuVisible',
+  command_subtitleVisible = 'command_subtitleVisible',
+  command_speedUp = 'command_speedUp',
+  command_speedDown = 'command_speedDown',
+  command_speedToggle = 'command_speedToggle',
+  // command_pressSpeedMode = 'command_pressSpeedMode',
+  command_screenshot = 'command_screenshot',
+  command_danmakuShowInput = 'command_danmakuShowInput',
+
   /**长按倍速功能 */
   longTabPlaybackRate = 'longTabPlaybackRate',
   longTabPlaybackRateEnd = 'longTabPlaybackRateEnd',

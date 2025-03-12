@@ -75,7 +75,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.8.3",
     "@apad/rc-slider": "^10.5.0",
-    "@apad/setting-panel": "0.5.4",
+    "@apad/setting-panel": "0.6.2",
     "ahooks": "^3.8.4",
     "ass-compiler": "^0.1.14",
     "bilibili-live-ws": "^6.3.1",
