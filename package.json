@@ -50,6 +50,7 @@
     "esbuild": "^0.23.1",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.2",
     "fs-extra": "^11.3.0",
     "globals": "^15.14.0",

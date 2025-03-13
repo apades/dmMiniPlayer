@@ -1,8 +1,8 @@
 import SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
 import { runInAction } from 'mobx'
-import { getSubtitles, getSubtitle } from './utils'
 import configStore from '@root/store/config'
+import { getSubtitles, getSubtitle } from './utils'
 
 export default class YoutubeSubtitleManager extends SubtitleManager {
   onInit() {

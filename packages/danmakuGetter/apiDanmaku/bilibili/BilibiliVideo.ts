@@ -1,7 +1,7 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
-import { DanmakuGetter } from '../..'
 import parser from 'node-html-parser'
 import { getAnyObjToString } from '@root/utils'
+import { DanmakuGetter } from '../..'
 
 enum BilibiliDanmakuType {
   normal1 = '1',

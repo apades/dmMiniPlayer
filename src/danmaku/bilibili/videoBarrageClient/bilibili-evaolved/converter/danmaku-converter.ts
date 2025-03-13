@@ -1,3 +1,4 @@
+import { ascendingSort } from '@root/utils'
 import {
   type Duration,
   type BlockTypes,
@@ -8,7 +9,6 @@ import {
 import { Danmaku } from './danmaku-data'
 import { XmlDanmakuDocument, XmlDanmaku } from './xml-danmaku'
 import { DanmakuStack } from './danmaku-stack'
-import { ascendingSort } from '@root/utils'
 import {
   convertTimeByDuration,
   normalizeContent,

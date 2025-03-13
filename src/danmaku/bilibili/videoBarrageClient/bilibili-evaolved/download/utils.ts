@@ -1,12 +1,12 @@
 // import { loadDanmakuSettingsPanel } from '@/core/utils/lazy-panel'
 // import { getFriendlyTitle } from '@/core/utils/title'
+import { ascendingSort, clamp, dq1, get, omit } from '@root/utils'
 import {
   type DanmakuConverterConfig,
   DanmakuConverter,
 } from '../converter/danmaku-converter'
 import { DanmakuType } from '../converter/danmaku-type'
 import { XmlDanmaku } from '../converter/xml-danmaku'
-import { ascendingSort, clamp, dq1, get, omit } from '@root/utils'
 import {
   decodeDanmakuSegment,
   decodeDanmakuView,

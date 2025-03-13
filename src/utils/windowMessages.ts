@@ -1,10 +1,10 @@
 import PostMessageEvent, {
   PostMessageProtocolMap,
 } from '@root/shared/postMessageEvent'
-import { dq, isUndefined } from '.'
 import { isArray } from 'lodash-es'
 import mitt from 'mitt'
 import Events2 from './Events2'
+import { dq, isUndefined } from '.'
 
 const ID = 'dmMiniPlayer'
 

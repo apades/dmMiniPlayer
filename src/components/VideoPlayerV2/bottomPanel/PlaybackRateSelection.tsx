@@ -1,11 +1,11 @@
 import { FC, useContext, useEffect, useState } from 'react'
-import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
-import Dropdown from '../../Dropdown'
 import classNames from 'classnames'
 import { useMemoizedFn } from 'ahooks'
 import { useOnce } from '@root/hook'
 import { PlayerEvent } from '@root/core/event'
+import Dropdown from '../../Dropdown'
+import vpContext from '../context'
 
 const PlaybackRateSelection: FC = (props) => {
   const { webVideo, isLive, eventBus } = useContext(vpContext)

@@ -1,12 +1,12 @@
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { FC, useContext, useRef, useState } from 'react'
-import vpContext from './context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { useOnce } from '@root/hook'
 import classNames from 'classnames'
 import { ownerWindow, wait } from '@root/utils'
-import Iconfont from '../Iconfont'
 import Events2 from '@root/utils/Events2'
+import Iconfont from '../Iconfont'
+import vpContext from './context'
 
 const eventBus = new Events2<{
   visible: void

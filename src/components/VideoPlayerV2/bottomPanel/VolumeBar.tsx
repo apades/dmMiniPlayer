@@ -1,13 +1,13 @@
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import classNames from 'classnames'
 import { type FC, useContext, useEffect, useState } from 'react'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { useOnce } from '@root/hook'
+import { PlayerEvent } from '@root/core/event'
 import Iconfont from '../../Iconfont'
 import ProgressBar from '../../ProgressBar'
 import vpContext from '../context'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
 import style from './VolumeBar.less?inline'
-import { useOnce } from '@root/hook'
-import { PlayerEvent } from '@root/core/event'
 
 type Props = {}
 const VolumeBar: FC<Props> = (props) => {

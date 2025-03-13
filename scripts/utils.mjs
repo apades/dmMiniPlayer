@@ -1,7 +1,7 @@
 import { spawn as _spawn } from 'child_process'
-import fs from 'fs-extra'
 import path from 'path'
 import * as url from 'url'
+import fs from 'fs-extra'
 import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 export const __filename = url.fileURLToPath(import.meta.url)
 export const __dirname = url.fileURLToPath(new URL('.', import.meta.url))

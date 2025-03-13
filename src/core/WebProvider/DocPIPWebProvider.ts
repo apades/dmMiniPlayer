@@ -4,15 +4,15 @@ import {
   getBrowserSyncStorage,
   setBrowserSyncStorage,
 } from '@root/utils/storage'
-import { WebProvider } from '.'
-import { PlayerEvent } from '../event'
-import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
 import { sendMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
 import { autorun } from 'mobx'
 import { getDocPIPBorderSize, resizeDocPIPWindow } from '@root/utils/docPIP'
 import { Position } from '@root/types/config'
+import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
+import { PlayerEvent } from '../event'
+import { WebProvider } from '.'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer

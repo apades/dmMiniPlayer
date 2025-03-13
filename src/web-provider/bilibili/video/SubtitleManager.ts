@@ -1,7 +1,7 @@
 import SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
-import { getSubtitle, getSubtitles } from '../utils'
 import { runInAction } from 'mobx'
+import { getSubtitle, getSubtitles } from '../utils'
 
 export default class BilibiliSubtitleManager extends SubtitleManager {
   onInit() {

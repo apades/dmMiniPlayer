@@ -10,13 +10,13 @@ import parser from '@root/core/SubtitleManager/subtitleParser/srt'
 import '@root/core/danmaku/DanmakuEngine/htmlDanmaku/index.less'
 import { HtmlDanmakuEngine as DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 import IronKinokoDanmaku from '@root/core/danmaku/DanmakuEngine/IronKinoko/lib/index'
-import { dans } from './data/dans'
 import CanvasVideo from '@root/core/CanvasVideo'
 import chalk from 'chalk'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { useUpdate } from 'ahooks'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
+import { dans } from './data/dans'
 
 window.parser = parser
 window.listSelector = listSelector

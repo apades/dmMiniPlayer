@@ -2,10 +2,12 @@ import globals from 'globals'
 import tsEslint from 'typescript-eslint'
 import prettierConfig from 'eslint-config-prettier'
 import prettierRecommendConfig from 'eslint-plugin-prettier/recommended'
+import importPlugin from 'eslint-plugin-import'
 
 /**@type {import('eslint').Linter.Config} */
 export default tsEslint.config(
   tsEslint.configs.recommended,
+  importPlugin.flatConfigs.recommended,
   {
     ignores: ['**/dist/*', '**/lib/*', '**/build/*'],
   },
@@ -51,6 +53,25 @@ export default tsEslint.config(
       '@typescript-eslint/no-unused-expressions': 0,
       '@typescript-eslint/no-require-imports': 0,
       '@typescript-eslint/no-this-alias': 0,
+      'import/named': 0,
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
+          pathGroups: [
+            {
+              pattern: '@root/**',
+              group: 'external',
+              position: 'after',
+            },
+            {
+              pattern: '@pkgs/**',
+              group: 'external',
+              position: 'after',
+            },
+          ],
+        },
+      ],
     },
   },
   prettierConfig,

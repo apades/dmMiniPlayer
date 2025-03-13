@@ -1,8 +1,7 @@
 import { noop } from '@root/utils'
 import { useLatest } from 'ahooks'
-import { BasicTarget } from 'ahooks/lib/utils/domTarget'
+import { BasicTarget, getTargetElement } from 'ahooks/lib/utils/domTarget'
 import useEffectWithTarget from 'ahooks/lib/utils/useEffectWithTarget'
-import { getTargetElement } from 'ahooks/lib/utils/domTarget'
 import { useEffect } from 'react'
 
 export type Target =

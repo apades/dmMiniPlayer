@@ -1,7 +1,7 @@
 import { addEventListener } from '@root/utils'
 import { onceCallGet } from '@root/utils/decorator'
-import { EventBus, PlayerEvent } from './event'
 import { isUndefined } from 'lodash-es'
+import { EventBus, PlayerEvent } from './event'
 
 type Props = {
   videoEl: HTMLVideoElement

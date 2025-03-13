@@ -1,11 +1,11 @@
 import { addEventListener, readTextFromFile } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import { makeObservable, observable, runInAction } from 'mobx'
+import { ERROR_MSG } from '@root/shared/errorMsg'
 import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
-import { ERROR_MSG } from '@root/shared/errorMsg'
 
 class SubtitleManager
   extends Events2<SubtitleManagerEvents>

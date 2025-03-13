@@ -1,9 +1,9 @@
+import { injectFunction } from '@root/utils/injectFunction'
+import { get } from '@root/utils'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './createElementHacker'
 import './fetchHacker'
-import { injectFunction } from '@root/utils/injectFunction'
-import { get } from '@root/utils'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)

@@ -1,5 +1,5 @@
-import { createElement, throttle } from '.'
 import { getTopParentsWithSameRect } from './dom'
+import { createElement, throttle } from '.'
 
 export function listSelector() {
   return new Promise<{ parent: HTMLElement; childs: HTMLElement[] }>((res) => {

@@ -1,6 +1,6 @@
+import type { openSettingPanel } from '@root/store/config'
 import { WebProvider } from './core/WebProvider'
 import { Language } from './utils/i18n'
-import type { openSettingPanel } from '@root/store/config'
 
 declare module 'react' {
   interface CSSProperties {

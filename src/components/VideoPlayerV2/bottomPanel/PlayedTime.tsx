@@ -1,7 +1,7 @@
 import { formatTime } from '@root/utils'
 import { FC, useContext, useEffect, useState } from 'react'
-import vpContext from '../context'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import vpContext from '../context'
 
 const PlayedTime: FC = (props) => {
   const { webVideo, isLive } = useContext(vpContext)

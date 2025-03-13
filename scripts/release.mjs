@@ -1,9 +1,9 @@
 import enquirer from 'enquirer'
-import packageData from '../package.json' assert { type: 'json' }
 import fs from 'fs-extra'
-import { spawn, pr } from './utils.mjs'
 import archiver from 'archiver'
 import chalk from 'chalk'
+import packageData from '../package.json' assert { type: 'json' }
+import { spawn, pr } from './utils.mjs'
 
 const nowVersion = packageData.version
 

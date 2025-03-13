@@ -1,11 +1,11 @@
 import { useContext, useEffect } from 'react'
-import vpContext from './context'
 import { isDocPIP, minmax, ownerWindow } from '@root/utils'
 import configStore from '@root/store/config'
 import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
 import { isFunction, isString } from 'lodash-es'
+import vpContext from './context'
 
 export const useTogglePlayState = () => {
   const { webVideo, isLive } = useContext(vpContext)

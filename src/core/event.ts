@@ -1,6 +1,6 @@
 import { onceCall } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import mitt, { WildcardHandler, Handler } from 'mitt'
+import mitt from 'mitt'
 import { Merge } from 'type-fest'
 
 export enum PlayerEvent {

@@ -1,7 +1,7 @@
+import BarrageClient from '@root/core/danmaku/BarrageClient'
 import { Ex_WebSocket_UnLogin } from './websokect'
 import { getRealRid, getStrMiddle, getTransColor } from './utils'
 import { STT } from './STT'
-import BarrageClient from '@root/core/danmaku/BarrageClient'
 
 export default class DouyuLiveBarrageClient extends BarrageClient {
   ws: Ex_WebSocket_UnLogin

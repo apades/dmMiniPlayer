@@ -1,8 +1,8 @@
 import { FC, useContext, useEffect, useState } from 'react'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
 import vpContext from '../context'
 import { useTogglePlayState } from '../hooks'
 import Iconfont from '../../Iconfont'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
 
 const TogglePlayActionButton: FC = (props) => {
   const { webVideo, isLive } = useContext(vpContext)
