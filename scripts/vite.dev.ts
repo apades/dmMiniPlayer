@@ -77,6 +77,7 @@ export default defineConfig({
   },
   server: {
     port: DEV_PORT,
+    cors: true,
   },
   build: {
     write: true,
