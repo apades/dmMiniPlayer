@@ -36,6 +36,7 @@ import PostMessageEvent from '@root/shared/postMessageEvent'
 import { Key } from '@root/types/key'
 import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
 import { useOnce } from '@root/hook'
+import { Omit } from '@root/utils/typeUtils'
 import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
@@ -74,7 +75,7 @@ type Props = {
   className?: string
   isReplacerMode?: boolean
   showCloseButton?: boolean
-} & Omit<ContextData, 'eventBus'>
+} & Omit<ContextData, 'eventBus' | 'keyBinding'>
 
 type VpInnerProps = Props & {
   setContext: React.Dispatch<React.SetStateAction<ContextData>>

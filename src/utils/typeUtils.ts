@@ -47,5 +47,9 @@ export type AsyncFn<Args extends readonly unknown[] = any[], Return = any> = (
   ...args: Args
 ) => Promise<Awaited<Return>>
 
-export type PartialIncludes<T extends Record<any, any>, Keys> = Omit<T, Keys> &
-  Partial<Pick<T, Keys>>
+export type PartialIncludes<
+  T extends Record<any, any>,
+  Keys extends string | number | symbol,
+> = Omit<T, Keys> & Partial<Pick<T, Keys>>
+
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
