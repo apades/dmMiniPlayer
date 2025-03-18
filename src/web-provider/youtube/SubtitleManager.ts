@@ -29,8 +29,8 @@ export default class YoutubeSubtitleManager extends SubtitleManager {
           ...row,
           startTime: row.startTime,
           endTime: row.endTime,
-          text: row.text + '\n' + lastRow.text,
-          htmlText: row.text + '\n' + lastRow.text,
+          text: row.text + ' ' + lastRow.text,
+          htmlText: row.text + ' ' + lastRow.text,
         }
         newSubtitleRows.push(newRow)
         i++

@@ -179,6 +179,12 @@
   },
   "error": {
     "danmakuLoad": "Danmaku load error, please try reopen player or login website",
-    "subtitleLoad": "Subtitle load error, please try reopen player or login website"
+    "subtitleLoad": "Subtitle load error, please try reopen player or login website",
+    "translateFail": "Translate fail"
+  },
+  "subtitleTranslate": {
+    "single": "Single",
+    "double": "Double",
+    "none": "None"
   }
 }

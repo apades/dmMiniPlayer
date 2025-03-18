@@ -179,6 +179,12 @@
   },
   "error": {
     "danmakuLoad": "Danmaku로드 오류, 플레이어 또는 로그인 웹 사이트를 다시 열어보십시오.",
-    "subtitleLoad": "자막로드 오류, 플레이어 또는 로그인 웹 사이트를 다시 열어보십시오."
+    "subtitleLoad": "자막로드 오류, 플레이어 또는 로그인 웹 사이트를 다시 열어보십시오.",
+    "translateFail": "번역 실패"
+  },
+  "subtitleTranslate": {
+    "single": "하나의",
+    "double": "더블",
+    "none": "없음"
   }
 }

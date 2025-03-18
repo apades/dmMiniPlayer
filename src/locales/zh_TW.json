@@ -179,6 +179,12 @@
   },
   "error": {
     "danmakuLoad": "彈幕負載錯誤，請嘗試重新打開播放器或登錄網站",
-    "subtitleLoad": "字幕負載錯誤，請嘗試重新打開播放器或登錄網站"
+    "subtitleLoad": "字幕負載錯誤，請嘗試重新打開播放器或登錄網站",
+    "translateFail": "翻譯失敗"
+  },
+  "subtitleTranslate": {
+    "single": "單行",
+    "double": "雙行",
+    "none": "無操作"
   }
 }

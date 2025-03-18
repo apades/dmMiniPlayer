@@ -179,6 +179,12 @@
   },
   "error": {
     "danmakuLoad": "Erreur de chargement de Danmaku, veuillez essayer de rouvrir le joueur ou le site Web de connexion",
-    "subtitleLoad": "Erreur de chargement des sous-titres, veuillez essayer de rouvrir le joueur ou le site Web de connexion"
+    "subtitleLoad": "Erreur de chargement des sous-titres, veuillez essayer de rouvrir le joueur ou le site Web de connexion",
+    "translateFail": "Traduire l'échec"
+  },
+  "subtitleTranslate": {
+    "single": "Célibataire",
+    "double": "Double",
+    "none": "Aucun"
   }
 }

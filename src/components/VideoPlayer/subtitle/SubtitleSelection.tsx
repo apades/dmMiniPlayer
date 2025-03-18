@@ -1,9 +1,11 @@
+import { TranslationOutlined } from '@ant-design/icons'
 import Dropdown from '@root/components/Dropdown'
 import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
 import vpContext from '@root/components/VideoPlayerV2/context'
 import { PlayerEvent } from '@root/core/event'
 import type SubtitleManager from '@root/core/SubtitleManager'
+import { translateMode } from '@root/core/SubtitleManager'
 import { useOnce } from '@root/hook'
 import { t } from '@root/utils/i18n'
 import { useMemoizedFn } from 'ahooks'
@@ -62,6 +64,24 @@ const Menu: FC<Props> = observer((props) => {
   const activeLabel = subtitleManager.activeSubtitleLabel
   return (
     <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] text-[14px] text-white max-h-[calc(100vh-var(--area-height)-10px)] custom-scrollbar overflow-auto">
+      <div className="f-i-center px-2 py-1 justify-between gap-2">
+        <TranslationOutlined className="text-[16px]" />
+        <select
+          value={subtitleManager.translateMode}
+          className="bg-[#333] flex-1"
+          onChange={(e) => {
+            runInAction(() => {
+              subtitleManager.translateMode = e.target.value as any
+            })
+          }}
+        >
+          {Object.entries(translateMode).map(([v, text]) => (
+            <option className="bg-[#333]" key={v} value={v}>
+              {text}
+            </option>
+          ))}
+        </select>
+      </div>
       {[
         {
           key: 'add',

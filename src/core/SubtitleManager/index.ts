@@ -1,14 +1,20 @@
 import { addEventListener, readTextFromFile, tryCatch } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import { makeObservable, observable, runInAction } from 'mobx'
+import { autorun, makeObservable, observable, runInAction } from 'mobx'
 import { ERROR_MSG } from '@root/shared/errorMsg'
 import toast from 'react-hot-toast'
-import { t } from '@root/utils/i18n'
+import { getNowLang, t } from '@root/utils/i18n'
+import { googleTranslate } from '@root/utils/translate'
 import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
 
+export const translateMode = {
+  double: t('subtitleTranslate.double'),
+  single: t('subtitleTranslate.single'),
+  none: t('subtitleTranslate.none'),
+} as const
 class SubtitleManager
   extends Events2<SubtitleManagerEvents>
   implements PlayerComponent
@@ -24,7 +30,14 @@ class SubtitleManager
   activeRows = new Set<SubtitleRow>()
   activeSubtitleLabel: string = ''
   showSubtitle = false
-  translateMode = false
+  translateMode: keyof typeof translateMode = 'none'
+
+  nowSubtitleItemsLabel: string = ''
+
+  protected onUnloadFn: (() => void)[] = []
+  protected addOnUnloadFn(fn: () => void) {
+    this.onUnloadFn.push(fn)
+  }
 
   /**停止监听所有video事件 */
   private videoUnListen = () => {}
@@ -38,6 +51,7 @@ class SubtitleManager
       activeSubtitleLabel: observable,
       showSubtitle: true,
       translateMode: true,
+      nowSubtitleItemsLabel: true,
     })
   }
 
@@ -50,18 +64,24 @@ class SubtitleManager
       toast.error(t('error.subtitleLoad'))
     }
     this.initd = true
+    this.addOnUnloadFn(
+      autorun(() => {
+        this.autoloadSubtitle()
+      }),
+    )
   }
   onInit() {}
   unload() {
     this.reset()
     this.onUnload()
+    this.onUnloadFn.forEach((fn) => fn())
   }
   onUnload() {}
 
-  addSubtitle(label: string, rows: SubtitleRow[]) {
-    this.subtitleItems.push({ label, value: label })
-    this.subtitleCache.set(label, { rows })
-  }
+  // addSubtitle(label: string, rows: SubtitleRow[]) {
+  //   this.subtitleItems.push({ label, value: label })
+  //   this.subtitleCache.set(label, { rows })
+  // }
 
   async addFileSubtitle(file: File) {
     const label = file.name
@@ -162,25 +182,84 @@ class SubtitleManager
   }
 
   async useSubtitle(subtitleItemsLabel: string) {
+    runInAction(() => {
+      this.nowSubtitleItemsLabel = subtitleItemsLabel
+    })
+  }
+
+  private async autoloadSubtitle() {
+    const subtitleItemsLabel = this.nowSubtitleItemsLabel
+    const translateMode = this.translateMode
+    if (!subtitleItemsLabel) return
     this.resetSubtitleState()
     this.activeSubtitleLabel = subtitleItemsLabel
-    let subtitleData = this.subtitleCache.get(subtitleItemsLabel)
+    // let subtitleData = this.subtitleCache.get(
+    //   `${subtitleItemsLabel}-${translateMode}`,
+    // )
+    let subtitleData = null as { rows: SubtitleRow[] } | null
     const subtitleItemsValue = this.subtitleItems.find(
       (item) => item.label === subtitleItemsLabel,
     )?.value
 
-    if (!subtitleData && subtitleItemsValue) {
-      const [err, subtitleRows] = await tryCatch(() =>
-        this.loadSubtitle(subtitleItemsValue),
-      )
-      if (err) {
-        toast.error(t('error.subtitleLoad'))
-        return
+    await (async () => {
+      if (!subtitleData && subtitleItemsValue) {
+        const [err, subtitleRows] = await tryCatch(() =>
+          this.loadSubtitle(subtitleItemsValue),
+        )
+
+        if (err) {
+          toast.error(t('error.subtitleLoad'))
+          return
+        }
+
+        if (this.translateMode !== 'none') {
+          const [err, translatedTexts] = await tryCatch(() =>
+            googleTranslate(
+              subtitleRows.map((row) => row.text),
+              getNowLang(),
+            ),
+          )
+          if (!err) {
+            switch (this.translateMode) {
+              case 'single':
+                subtitleData = {
+                  rows: subtitleRows.map((d, i) => {
+                    return {
+                      ...d,
+                      text: translatedTexts[i],
+                      htmlText: translatedTexts[i],
+                    }
+                  }),
+                }
+                return
+              case 'double':
+                subtitleData = {
+                  rows: subtitleRows.map((d, i) => {
+                    return {
+                      ...d,
+                      text: `${d.text}\n${translatedTexts[i]}`,
+                      htmlText: `${d.text}\n${translatedTexts[i]}`,
+                    }
+                  }),
+                }
+                return
+            }
+          } else {
+            toast.error(t('error.translateFail'))
+          }
+        }
+
+        subtitleData = { rows: subtitleRows }
       }
-      subtitleData = { rows: subtitleRows }
-    }
+    })()
+
     if (subtitleData) {
       this.rows = [...subtitleData.rows]
+
+      this.subtitleCache.set(
+        `${subtitleItemsLabel}-${translateMode}`,
+        subtitleData,
+      )
     }
 
     this.listenVideoEvents()

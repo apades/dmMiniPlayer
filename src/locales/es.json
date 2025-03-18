@@ -179,6 +179,12 @@
   },
   "error": {
     "danmakuLoad": "Error de carga de Danmaku, intente reabrir jugador o iniciar sesión en el sitio web",
-    "subtitleLoad": "Error de carga de subtítulos, intente reabrir reproductor o iniciar sesión en el sitio web"
+    "subtitleLoad": "Error de carga de subtítulos, intente reabrir reproductor o iniciar sesión en el sitio web",
+    "translateFail": "Traducir falla"
+  },
+  "subtitleTranslate": {
+    "single": "Soltero",
+    "double": "Doble",
+    "none": "Ninguno"
   }
 }

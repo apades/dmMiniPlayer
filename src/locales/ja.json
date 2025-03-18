@@ -179,6 +179,12 @@
   },
   "error": {
     "danmakuLoad": "danmakuロードエラー、再びプレーヤーまたはログインWebサイトを試してみてください",
-    "subtitleLoad": "サブタイトルの負荷エラー、プレーヤーの再開またはログインWebサイトを試してみてください"
+    "subtitleLoad": "サブタイトルの負荷エラー、プレーヤーの再開またはログインWebサイトを試してみてください",
+    "translateFail": "失敗を翻訳します"
+  },
+  "subtitleTranslate": {
+    "single": "シングル",
+    "double": "ダブル",
+    "none": "なし"
   }
 }
