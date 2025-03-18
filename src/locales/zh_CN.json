@@ -131,7 +131,6 @@
     "forward": "快进5秒",
     "rewind_fine": "快退1帧",
     "forward_fine": "前进1帧",
-    "longPress": "长按",
     "speedMode": "长按速度模式",
     "volumeUp": "音量+",
     "volumeDown": "音量-",
@@ -143,11 +142,14 @@
     "screenshot": "截屏",
     "show/hideDanmaku": "显示/隐藏弹幕",
     "show/hideSubtitle": "显示/隐藏字幕",
+    "sizeUpdate": "鼠标滚轮调整大小",
     "notSupport": "本视频不支持",
     "cate_progress": "进度栏",
     "cate_volume": "音量",
     "cate_speed": "速度",
-    "cate_other": "其他"
+    "cate_other": "其他",
+    "longPress": "长按",
+    "wheel": "鼠标滚轮"
   },
   "popup": {
     "tips": "需要点击下页面才能触发画中画播放",

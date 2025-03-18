@@ -140,6 +140,11 @@ const config_shortcut = {
     label: t('shortcut.popupDanmakuInput'),
     defaultValue: keys('Enter'),
   }),
+  shortcut_sizeUpdate: config({
+    label: t('shortcut.sizeUpdate'),
+    defaultValue: keys('Ctrl', t('shortcut.wheel') as any),
+    render: disableRender,
+  }),
 } as const
 
 export default config_shortcut

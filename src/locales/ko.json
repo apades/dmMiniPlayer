@@ -131,7 +131,6 @@
     "forward": "5초 앞으로",
     "rewind_fine": "1프레임 되감기",
     "forward_fine": "1프레임 앞으로",
-    "longPress": "길게 누르기",
     "speedMode": "스피드 모드로 긴 누르십시오",
     "volumeUp": "볼륨 업",
     "volumeDown": "볼륨 낮추기",
@@ -143,11 +142,14 @@
     "screenshot": "스크린샷",
     "show/hideDanmaku": "탄막 표시/숨기기",
     "show/hideSubtitle": "자막 표시/숨기기",
+    "sizeUpdate": "마우스 휠 줌",
     "notSupport": "이 영상에서는 지원되지 않습니다",
     "cate_progress": "진행률 바",
     "cate_volume": "용량",
     "cate_speed": "속도",
-    "cate_other": "기타"
+    "cate_other": "기타",
+    "longPress": "길게 누르기",
+    "wheel": "마우스 스크롤 휠"
   },
   "popup": {
     "tips": "Picture-in-Picture 재생을 시작하려면 다음 페이지를 클릭해야 합니다",

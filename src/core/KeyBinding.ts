@@ -18,9 +18,7 @@ import { eventBus } from './event'
 // )
 
 export const getShortcutConfigs = () => {
-  const keys = Object.entries(config_shortcut)
-    .filter(([_, val]) => (val as any).render !== disableRender)
-    .map(([key]) => key)
+  const keys = Object.entries(config_shortcut).map(([key]) => key)
 
   return Object.fromEntries(
     keys.map((key) => [key, (configStore as any)[key]]),

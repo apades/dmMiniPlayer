@@ -131,7 +131,6 @@
     "forward": "Adelante 5 segundos",
     "rewind_fine": "Rebobinar 1 fotograma",
     "forward_fine": "Adelante 1 fotograma",
-    "longPress": "Pulsación larga",
     "speedMode": "Larga presione al modo de velocidad",
     "volumeUp": "Subir volumen",
     "volumeDown": "Bajar volumen",
@@ -143,11 +142,14 @@
     "screenshot": "Captura de pantalla",
     "show/hideDanmaku": "Mostrar/Ocultar danmaku",
     "show/hideSubtitle": "Mostrar/Ocultar subtítulo",
+    "sizeUpdate": "Zoom de la rueda del mouse",
     "notSupport": "No hay soporte en este video.",
     "cate_progress": "Barra de progreso",
     "cate_volume": "Volumen",
     "cate_speed": "Velocidad",
-    "cate_other": "Otros"
+    "cate_other": "Otros",
+    "longPress": "Pulsación larga",
+    "wheel": "Rueda de desplazamiento del ratón"
   },
   "popup": {
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",

@@ -131,7 +131,6 @@
     "forward": "Forward 5 seconds",
     "rewind_fine": "Rewind 1 frame",
     "forward_fine": "Forward 1 frame",
-    "longPress":"Long press",
     "speedMode": "Long press to speed mode",
     "volumeUp": "Volume up",
     "volumeDown": "Volume down",
@@ -143,11 +142,14 @@
     "screenshot": "Screenshot",
     "show/hideDanmaku": "Show/Hide danmaku",
     "show/hideSubtitle": "Show/Hide subtitle",
+    "sizeUpdate": "Mouse Wheel Zoom",
     "notSupport": "Not support in this video",
     "cate_progress": "Progress bar",
     "cate_volume": "Volume",
     "cate_speed": "Speed",
-    "cate_other": "Others"
+    "cate_other": "Others",
+    "longPress":"Long press",
+    "wheel": "Mouse scroll wheel"
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

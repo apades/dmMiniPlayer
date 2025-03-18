@@ -131,7 +131,6 @@
     "forward": "Avancer de 5 secondes",
     "rewind_fine": "Rembobiner 1 image",
     "forward_fine": "Avancer d'une image",
-    "longPress": "Appui long",
     "speedMode": "Appuyez sur le mode long pour accélérer",
     "volumeUp": "Augmenter le volume",
     "volumeDown": "Baisser le volume",
@@ -143,11 +142,14 @@
     "screenshot": "Capture d'écran",
     "show/hideDanmaku": "Afficher/Masquer le danmaku",
     "show/hideSubtitle": "Afficher/Masquer les sous-titres",
+    "sizeUpdate": "Zoom de roue de souris",
     "notSupport": "Pas de support dans cette vidéo",
     "cate_progress": "Barre de progression",
     "cate_volume": "Volume",
     "cate_speed": "Vitesse",
-    "cate_other": "Autres"
+    "cate_other": "Autres",
+    "longPress": "Appui long",
+    "wheel": "Rouge de défilement de souris"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",
