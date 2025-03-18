@@ -176,5 +176,9 @@
     "getDanmakuFromUrl": "URL から読み込み",
     "danmakuTimeOffsetTips": "現在,HTML レンダリングの弾幕のみがこの機能をサポートしています",
     "danmakuTimeOffset": "時差"
+  },
+  "error": {
+    "danmakuLoad": "danmakuロードエラー、再びプレーヤーまたはログインWebサイトを試してみてください",
+    "subtitleLoad": "サブタイトルの負荷エラー、プレーヤーの再開またはログインWebサイトを試してみてください"
   }
 }

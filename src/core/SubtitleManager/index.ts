@@ -1,7 +1,9 @@
-import { addEventListener, readTextFromFile } from '@root/utils'
+import { addEventListener, readTextFromFile, tryCatch } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import { makeObservable, observable, runInAction } from 'mobx'
 import { ERROR_MSG } from '@root/shared/errorMsg'
+import toast from 'react-hot-toast'
+import { t } from '@root/utils/i18n'
 import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
@@ -22,6 +24,7 @@ class SubtitleManager
   activeRows = new Set<SubtitleRow>()
   activeSubtitleLabel: string = ''
   showSubtitle = false
+  translateMode = false
 
   /**停止监听所有video事件 */
   private videoUnListen = () => {}
@@ -34,14 +37,18 @@ class SubtitleManager
       // activeRows: observable,
       activeSubtitleLabel: observable,
       showSubtitle: true,
+      translateMode: true,
     })
   }
 
-  init(video: HTMLVideoElement) {
+  async init(video: HTMLVideoElement) {
     this.reset()
     this.video = video
 
-    this.onInit()
+    const [err] = await tryCatch(async () => this.onInit())
+    if (err) {
+      toast.error(t('error.subtitleLoad'))
+    }
     this.initd = true
   }
   onInit() {}
@@ -163,7 +170,13 @@ class SubtitleManager
     )?.value
 
     if (!subtitleData && subtitleItemsValue) {
-      const subtitleRows = await this.loadSubtitle(subtitleItemsValue)
+      const [err, subtitleRows] = await tryCatch(() =>
+        this.loadSubtitle(subtitleItemsValue),
+      )
+      if (err) {
+        toast.error(t('error.subtitleLoad'))
+        return
+      }
       subtitleData = { rows: subtitleRows }
     }
     if (subtitleData) {

@@ -176,5 +176,9 @@
     "getDanmakuFromUrl": "URL에서 로드",
     "danmakuTimeOffsetTips": "현재 HTML 렌더링 공격만이 이 기능을 지원합니다",
     "danmakuTimeOffset": "시차"
+  },
+  "error": {
+    "danmakuLoad": "Danmaku로드 오류, 플레이어 또는 로그인 웹 사이트를 다시 열어보십시오.",
+    "subtitleLoad": "자막로드 오류, 플레이어 또는 로그인 웹 사이트를 다시 열어보십시오."
   }
 }

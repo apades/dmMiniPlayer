@@ -176,5 +176,9 @@
     "getDanmakuFromUrl": "From url",
     "danmakuTimeOffsetTips": "Currently only support in [HTML render danmakus]",
     "danmakuTimeOffset": "Time offset"
+  },
+  "error": {
+    "danmakuLoad": "Danmaku load error, please try reopen player or login website",
+    "subtitleLoad": "Subtitle load error, please try reopen player or login website"
   }
 }

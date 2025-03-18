@@ -5,8 +5,8 @@ import configStore from '@root/store/config'
 import { getSubtitles, getSubtitle } from './utils'
 
 export default class YoutubeSubtitleManager extends SubtitleManager {
-  onInit() {
-    runInAction(async () => {
+  async onInit() {
+    await runInAction(async () => {
       this.subtitleItems.length = 0
       this.subtitleItems = await getSubtitles(location.href)
     })

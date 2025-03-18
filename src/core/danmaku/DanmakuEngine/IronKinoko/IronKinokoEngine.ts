@@ -52,7 +52,7 @@ export default class IronKinokoEngine extends DanmakuEngine {
     this.engine = undefined
   }
 
-  override addDanmakus(danmakus: DanmakuInitData[]): void {
+  override async addDanmakus(danmakus: DanmakuInitData[]) {
     const engine = this.engine
     if (!engine) throw Error('DanmakuEngine not init')
 

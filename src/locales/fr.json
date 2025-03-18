@@ -176,5 +176,9 @@
     "getDanmakuFromUrl": "Charger depuis l'URL",
     "danmakuTimeOffsetTips": "Actuellement, seuls les barrages de rendu HTML prennent en charge cette fonction",
     "danmakuTimeOffset": "Différence horaire"
+  },
+  "error": {
+    "danmakuLoad": "Erreur de chargement de Danmaku, veuillez essayer de rouvrir le joueur ou le site Web de connexion",
+    "subtitleLoad": "Erreur de chargement des sous-titres, veuillez essayer de rouvrir le joueur ou le site Web de connexion"
   }
 }

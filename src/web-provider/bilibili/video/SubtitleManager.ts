@@ -4,8 +4,8 @@ import { runInAction } from 'mobx'
 import { getSubtitle, getSubtitles } from '../utils'
 
 export default class BilibiliSubtitleManager extends SubtitleManager {
-  onInit() {
-    runInAction(async () => {
+  async onInit() {
+    await runInAction(async () => {
       this.subtitleItems.length = 0
       this.subtitleItems.push(...(await getSubtitles()))
     })

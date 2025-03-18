@@ -176,5 +176,9 @@
     "getDanmakuFromUrl": "從url載入",
     "danmakuTimeOffsetTips": "目前只有HTML渲染彈幕支援此功能",
     "danmakuTimeOffset": "時間差"
+  },
+  "error": {
+    "danmakuLoad": "彈幕負載錯誤，請嘗試重新打開播放器或登錄網站",
+    "subtitleLoad": "字幕負載錯誤，請嘗試重新打開播放器或登錄網站"
   }
 }

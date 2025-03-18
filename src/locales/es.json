@@ -176,5 +176,9 @@
     "getDanmakuFromUrl": "Desde la URL",
     "danmakuTimeOffsetTips": "Actualmente solo se admite en [HTML render danmakus]",
     "danmakuTimeOffset": "Compensación de tiempo"
+  },
+  "error": {
+    "danmakuLoad": "Error de carga de Danmaku, intente reabrir jugador o iniciar sesión en el sitio web",
+    "subtitleLoad": "Error de carga de subtítulos, intente reabrir reproductor o iniciar sesión en el sitio web"
   }
 }

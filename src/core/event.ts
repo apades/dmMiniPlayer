@@ -2,6 +2,7 @@ import { onceCall } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import mitt from 'mitt'
 import { Merge } from 'type-fest'
+import { toast } from 'react-hot-toast'
 
 export enum PlayerEvent {
   play = 'play',
@@ -47,11 +48,25 @@ export enum PlayerEvent {
   videoPlayerInitd = 'videoPlayerInitd',
   videoPlayerBeforeUnload = 'videoPlayerBeforeUnload',
   videoPlayerUnloaded = 'videoPlayerUnloaded',
+
+  toast = 'toast',
 }
+
+type ToastArgs = Parameters<typeof toast>
 
 type OverrideArgsEvent = {
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged: HTMLVideoElement
+  toast:
+    | string
+    | (ToastArgs[1] & {
+        msg: string
+        type: 'error' | 'success' | 'loading' | 'custom'
+      })
+    | {
+        type: 'remove' | 'dismiss'
+        id: string
+      }
 }
 
 export type PlayerEvents = Merge<

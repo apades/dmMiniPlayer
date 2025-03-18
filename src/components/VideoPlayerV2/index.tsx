@@ -62,6 +62,7 @@ import VolumeIcon from './VolumeIcon'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 import KeyboardTipsModal from './KeyboardTipsModal'
 import ScreenshotTips from './ScreenshotTips'
+import Toast from './Toast'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -398,6 +399,7 @@ const VideoPlayerV2Inner = observer(
           <VolumeIcon />
           <SpeedIcon />
           <ScreenshotTips />
+          <Toast />
         </div>
 
         {/* 底部操作栏 */}
