@@ -2,6 +2,7 @@ import configStore from '@root/store/config'
 import { createElement, minmax } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import { autorun, makeObservable, runInAction } from 'mobx'
+import AsyncLock from '@root/utils/AsyncLock'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
@@ -90,6 +91,8 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
   /**弹幕时间差 */
   timeOffset = 0
 
+  initLock = new AsyncLock()
+
   get fps() {
     return configStore.renderFPS
   }
@@ -159,10 +162,12 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
 
     this.resizeObserver.observe(this.container)
     this.initd = true
+    this.initLock.ok()
   }
 
   runningDanmakus = new Set<DanmakuBase>()
-  addDanmakus(danmakus: DanmakuInitData[]) {
+  async addDanmakus(danmakus: DanmakuInitData[]) {
+    await this.initLock.waiting()
     this.danmakus.push(
       ...danmakus.map((dan) => {
         return new DanmakuBase({
@@ -174,7 +179,8 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     )
   }
 
-  setDanmakus(danmakus: DanmakuInitData[]) {
+  async setDanmakus(danmakus: DanmakuInitData[]) {
+    await this.initLock.waiting()
     this.resetState()
     this.addDanmakus(danmakus)
     this.hasSeek = true
