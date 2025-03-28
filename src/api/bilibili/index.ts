@@ -1,3 +1,4 @@
+import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 import { MomentType, type BiliLiteItem, type BiliLiveLiteItem } from './type'
 import { BilibiliFollowApiData, BilibiliFollowData } from './types/follow'
 
@@ -120,6 +121,38 @@ const API_bilibili = {
         avatar: data.face,
       }
     })
+  },
+
+  async getVideoShot(url: string) {
+    const { aid, cid } = await getVideoInfoFromUrl(url)
+
+    const res = (
+      await fetch(
+        `https://api.bilibili.com/x/player/videoshot?aid=${aid}&cid=${cid}`,
+      ).then((res) => res.json())
+    ).data
+
+    const binaryData = await fetch(res.pvdata).then((res) => res.arrayBuffer())
+    const uint16Array = new Uint8Array(binaryData)
+
+    const timeNodes: number[] = []
+    for (let i = 0; i < uint16Array.length; i += 2) {
+      const timeNode = uint16Array[i] * 100 + uint16Array[i + 1]
+
+      timeNodes.push(timeNode)
+    }
+
+    // 第一个是0，可以去掉
+    timeNodes.shift()
+
+    return {
+      images: res.image as string[],
+      xCount: res.img_x_len as number,
+      yCount: res.img_y_len as number,
+      xSize: res.img_x_size as number,
+      ySize: res.img_y_size as number,
+      timeNodes,
+    }
   },
 }
 

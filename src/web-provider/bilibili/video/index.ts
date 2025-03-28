@@ -1,5 +1,5 @@
 import { WebProvider } from '@root/core/WebProvider'
-import { getDanmakus, getVideoInfoFromUrl } from '../utils'
+import { getDanmakus } from '../utils'
 import BilibiliSubtitleManager from './SubtitleManager'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
@@ -8,6 +8,7 @@ import { SideSwitcher } from '@root/core/SideSwitcher'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
+import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 
 type RecommendVideo = {
   el: HTMLElement

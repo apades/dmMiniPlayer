@@ -24,6 +24,7 @@ import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import _getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
 import { DocPIPRenderType } from '@root/types/config'
+import API_bilibili from '@root/api/bilibili'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -403,3 +404,5 @@ function main() {
 
   window.getWebProvider = _getWebProvider
 }
+
+window.API_bilibili = API_bilibili

@@ -1,7 +1,7 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
 import { DanmakuGetter } from '../..'
 import parser from 'node-html-parser'
-import { getAnyObjToString } from '@root/utils'
+import { getAnyObjToString, onceCallWithMap } from '@root/utils'
 
 enum BilibiliDanmakuType {
   normal1 = '1',
@@ -112,7 +112,7 @@ const getBidAndAidFromURL = (url: URL) => {
   return { bid: '', aid: '' }
 }
 
-async function getVideoInfoFromUrl(_url: string) {
+export const getVideoInfoFromUrl = onceCallWithMap(async (_url: string) => {
   const url = new URL(_url)
   let cid = ''
 
@@ -183,7 +183,7 @@ async function getVideoInfoFromUrl(_url: string) {
     bid,
     cid,
   }
-}
+})
 
 export default class BilibiliVideo extends DanmakuGetter {
   abortController = new AbortController()
