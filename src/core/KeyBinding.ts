@@ -18,6 +18,16 @@ import { eventBus } from './event'
 // )
 
 export const getShortcutConfigs = () => {
+  const keys = Object.entries(config_shortcut)
+    .filter(([_, val]) => (val as any).render !== disableRender)
+    .map(([key]) => key)
+
+  return Object.fromEntries(
+    keys.map((key) => [key, (configStore as any)[key]]),
+  ) as Pick<typeof configStore, keyof typeof config_shortcut>
+}
+
+export const getShortcutAllConfigs = () => {
   const keys = Object.entries(config_shortcut).map(([key]) => key)
 
   return Object.fromEntries(
@@ -71,6 +81,8 @@ export class KeyBinding {
             eventBus.emit(command)
           }
         })
+
+        console.log('configKeyMap', this.configKeyMap)
       }),
     )
   }

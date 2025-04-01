@@ -1,4 +1,4 @@
-import { getShortcutConfigs } from '@root/core/KeyBinding'
+import { getShortcutAllConfigs } from '@root/core/KeyBinding'
 import { createIsolationModal } from '@root/hook/useOpenIsolationModal'
 import configStore, { saveConfig, updateConfig } from '@root/store/config'
 import config_shortcut from '@root/store/config/shortcut'
@@ -8,7 +8,7 @@ import { Fragment } from 'react'
 import Modal from '../Modal'
 
 const KeyboardTipsModal = createIsolationModal((props) => {
-  const keydataMap = getShortcutConfigs()
+  const keydataMap = getShortcutAllConfigs()
   return (
     <Modal isOpen={props.isOpen} onClose={props.destroy} fullWidth>
       <div className="[&_th]:bor-[#dee2e6] [&_td]:bor-[#dee2e6] [&_td]:px-4 [&_td]:py-2 p-4">

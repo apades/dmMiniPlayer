@@ -3,6 +3,7 @@ import { useToaster, toast } from 'react-hot-toast'
 import { useOnce } from '@root/hook'
 import { PlayerEvent } from '@root/core/event'
 import { isString } from 'lodash-es'
+import isDev from '@root/shared/isDev'
 import vpContext from './context'
 
 const Toast: FC = (props) => {
@@ -81,4 +82,6 @@ const Toast: FC = (props) => {
 
 export default Toast
 
-window.toast = toast
+if (isDev) {
+  window.toast = toast
+}
