@@ -8,7 +8,7 @@ import {
   getTextByType,
 } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
 import configStore from '@root/store/config'
-import { onceCall } from '@root/utils'
+import { onceCall, wait } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 
 const videoInfoReqCache = new Map<string, any>()
@@ -40,9 +40,9 @@ interface Body {
   location: number
   content: string
 }
-export async function getSubtitles(
+export const getSubtitles = async (
   url = location.href,
-): Promise<SubtitleItem[]> {
+): Promise<SubtitleItem[]> => {
   const { aid, cid } = await getVideoInfoFromUrl(url)
   const infoData = await fetch(
     `https://api.bilibili.com/x/player/v2?aid=${aid}&cid=${cid}`,
@@ -54,6 +54,7 @@ export async function getSubtitles(
     .then((res) => res.data)
 
   const subtitles = infoData.subtitle?.subtitles ?? []
+  console.log('subtitles', subtitles)
   return subtitles.map((s: any) => ({
     label: s.lan_doc,
     value: s.subtitle_url,

@@ -7,7 +7,7 @@ export default class BilibiliSubtitleManager extends SubtitleManager {
   async onInit() {
     await runInAction(async () => {
       this.subtitleItems.length = 0
-      this.subtitleItems.push(...(await getSubtitles()))
+      this.subtitleItems = await getSubtitles()
     })
   }
   async loadSubtitle(value: string): Promise<SubtitleRow[]> {

@@ -100,9 +100,9 @@ const Menu: FC<Props> = observer((props) => {
           onClick: async () => {},
           isActive: false,
         },
-        ...subtitleManager.subtitleItems.map((subtitleItem) => {
+        ...subtitleManager.subtitleItems.map((subtitleItem, i) => {
           return {
-            key: subtitleItem.value,
+            key: i,
             label: subtitleItem.label,
             onClick: () => {
               subtitleManager.useSubtitle(subtitleItem.label)
