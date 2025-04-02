@@ -5,6 +5,7 @@ import config_shortcut, {
 } from '@root/store/config/shortcut'
 import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
 import { autorun } from 'mobx'
+import { addEventListener } from '@root/utils'
 import { eventBus } from './event'
 
 // const getShortcutConfigs = onceCall(() =>
@@ -55,18 +56,21 @@ export class KeyBinding {
 
   init() {
     this.unload()
-    this.keydownWindow.addEventListener(
-      'keydown',
-      this.handleKeyDown.bind(this),
-    )
-    this.keydownWindow.addEventListener(
-      'dm-keydown' as any,
-      this.handleCustomKeyDown.bind(this),
-    )
-    this.keydownWindow.addEventListener('keyup', this.handleKeyUp.bind(this))
-    this.keydownWindow.addEventListener(
-      'dm-keyup' as any,
-      this.handleCustomKeyUp.bind(this),
+    this.unListens.push(
+      addEventListener(this.keydownWindow, (keydownWindow) => {
+        keydownWindow.addEventListener('keydown', (e) => {
+          this.handleKeyDown(e)
+        })
+        keydownWindow.addEventListener('dm-keydown' as any, (e) => {
+          this.handleCustomKeyDown(e)
+        })
+        keydownWindow.addEventListener('keyup', (e) => {
+          this.handleKeyUp(e)
+        })
+        keydownWindow.addEventListener('dm-keyup' as any, (e) => {
+          this.handleCustomKeyUp(e)
+        })
+      }),
     )
 
     this.unListens.push(
@@ -88,20 +92,6 @@ export class KeyBinding {
   }
 
   unload() {
-    this.keydownWindow.removeEventListener(
-      'keydown',
-      this.handleKeyDown.bind(this),
-    )
-    this.keydownWindow.removeEventListener(
-      'dm-keydown' as any,
-      this.handleCustomKeyDown.bind(this),
-    )
-    this.keydownWindow.removeEventListener('keyup', this.handleKeyUp.bind(this))
-    this.keydownWindow.removeEventListener(
-      'dm-keyup' as any,
-      this.handleCustomKeyUp.bind(this),
-    )
-
     this.unListens.forEach((fn) => fn())
     this.unListens.length = 0
   }

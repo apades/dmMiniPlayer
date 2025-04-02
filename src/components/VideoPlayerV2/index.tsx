@@ -64,6 +64,7 @@ import KeyboardTipsModal from './KeyboardTipsModal'
 import ScreenshotTips from './ScreenshotTips'
 import Toast from './Toast'
 import ActionButton from './bottomPanel/ActionButton'
+import EventCenter from './EventCenter'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -401,7 +402,7 @@ const VideoPlayerV2Inner = observer(
           <VolumeIcon />
           <SpeedIcon />
           <ScreenshotTips />
-          <Toast />
+          <EventCenter />
         </div>
 
         {/* 底部操作栏 */}
@@ -416,6 +417,10 @@ const VideoPlayerV2Inner = observer(
             handleChangeActionArea(false)
           }}
         >
+          <div className="absolute -top-12 w-full pointer-events-none">
+            <Toast />
+          </div>
+
           <div className="absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
             <SubtitleText subtitleManager={subtitleManager} />
           </div>

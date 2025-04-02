@@ -30,16 +30,11 @@ const Toast: FC = (props) => {
   )
 
   return (
-    <div
-      className="fixed w-full top-0 left-0 px-2 py-2"
-      onMouseEnter={startPause}
-      onMouseLeave={endPause}
-    >
+    <div className="w-full px-2 py-2">
       {toasts.map((toast) => {
-        console.log('toast', toast)
         const offset = calculateOffset(toast, {
           reverseOrder: false,
-          gutter: 8,
+          gutter: 4,
         })
 
         const icon = (() => {
@@ -63,13 +58,15 @@ const Toast: FC = (props) => {
                 updateHeight(toast.id, height)
               }
             }}
-            className="bg-[#26262680] text-white px-2 text-[14px] max-w-[80%]"
+            className="bg-[#262626] text-white px-2 text-[14px] max-w-[80%] pointer-events-auto"
             style={{
               position: 'absolute',
               transition: 'all 0.5s ease-out',
               opacity: toast.visible ? 1 : 0,
-              transform: `translateY(${offset}px)`,
+              transform: `translateY(-${offset}px)`,
             }}
+            onMouseEnter={startPause}
+            onMouseLeave={endPause}
             {...toast.ariaProps}
           >
             {icon} {toast.message as any}
