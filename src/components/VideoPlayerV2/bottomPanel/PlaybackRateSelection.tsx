@@ -4,8 +4,10 @@ import classNames from 'classnames'
 import { useMemoizedFn } from 'ahooks'
 import { useOnce } from '@root/hook'
 import { PlayerEvent } from '@root/core/event'
+import HiddenAble from '@root/components/HiddenAble'
 import Dropdown from '../../Dropdown'
 import vpContext from '../context'
+import ActionButton from './ActionButton'
 
 const PlaybackRateSelection: FC = (props) => {
   const { webVideo, isLive, eventBus } = useContext(vpContext)
@@ -86,12 +88,9 @@ const PlaybackRateSelection: FC = (props) => {
   if (isLive) return null
   return (
     <Dropdown menuRender={() => menu}>
-      <div
-        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors leading-[18px]"
-        onClick={handleTogglePlaybackRate}
-      >
+      <ActionButton onClick={handleTogglePlaybackRate}>
         {playbackRate.toFixed(2)}x
-      </div>
+      </ActionButton>
     </Dropdown>
   )
 }

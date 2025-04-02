@@ -63,6 +63,7 @@ import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWit
 import KeyboardTipsModal from './KeyboardTipsModal'
 import ScreenshotTips from './ScreenshotTips'
 import Toast from './Toast'
+import ActionButton from './bottomPanel/ActionButton'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -248,6 +249,7 @@ const VideoPlayerV2Inner = observer(
         isLive,
         webVideo: video,
         keydownWindow,
+        videoPlayerRef: videoPlayerRef,
       }))
 
       if (!props.useWebVideo && props.videoStream) {
@@ -435,14 +437,9 @@ const VideoPlayerV2Inner = observer(
 
                 <PlaybackRateSelection />
 
-                <div
-                  className={classNames(
-                    'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors mb:hidden',
-                  )}
-                  onClick={handleOpenSetting}
-                >
+                <ActionButton onClick={handleOpenSetting} className="mb:hidden">
                   <SettingOutlined className="block" />
-                </div>
+                </ActionButton>
               </div>
 
               <div className="right ml-auto f-i-center gap-1">
@@ -458,22 +455,19 @@ const VideoPlayerV2Inner = observer(
                 <VolumeBar />
                 {props.isReplacerMode && (
                   <>
-                    <div
-                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors ml-[6px]"
+                    <ActionButton
                       onClick={toggleFullInWeb}
+                      className="ml-[6px]"
                     >
                       {isFullInWeb ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
-                    </div>
-                    <div
-                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
-                      onClick={toggleFullscreen}
-                    >
+                    </ActionButton>
+                    <ActionButton onClick={toggleFullscreen}>
                       {isFullscreen ? (
                         <FullscreenExitOutlined />
                       ) : (
                         <FullscreenOutlined />
                       )}
-                    </div>
+                    </ActionButton>
                   </>
                 )}
               </div>
@@ -537,7 +531,7 @@ const VideoPlayerV2 = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
   })
 
   return (
-    <vpContext.Provider value={context}>
+    <vpContext.Provider value={{ ...context, setContext }}>
       <VideoPlayerV2Inner
         {...props}
         eventBus={context.eventBus}

@@ -24,6 +24,7 @@ import Dropdown from '../../Dropdown'
 import Iconfont from '../../Iconfont'
 import { handleOnPressEnter } from '../../VideoPlayer/utls'
 import vpContext from '../context'
+import ActionButton from './ActionButton'
 
 const Menu: FC = observer((props) => {
   const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
@@ -187,17 +188,14 @@ const DanmakuSettingBtn: FC = (props) => {
 
   return (
     <Dropdown menuRender={() => <Menu />}>
-      <div
-        className={classNames(
-          'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors',
-          !visible && 'opacity-50',
-        )}
+      <ActionButton
+        isUnActive={!visible}
         onClick={() => {
           danmakuEngine.changeVisible()
         }}
       >
         <Iconfont size={18} type={visible ? 'danmaku_open' : 'danmaku_close'} />
-      </div>
+      </ActionButton>
     </Dropdown>
   )
 }

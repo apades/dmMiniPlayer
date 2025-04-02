@@ -3,6 +3,7 @@ import useTargetEventListener from '@root/hook/useTargetEventListener'
 import vpContext from '../context'
 import { useTogglePlayState } from '../hooks'
 import Iconfont from '../../Iconfont'
+import ActionButton from './ActionButton'
 
 const TogglePlayActionButton: FC = (props) => {
   const { webVideo, isLive } = useContext(vpContext)
@@ -37,14 +38,11 @@ const TogglePlayActionButton: FC = (props) => {
       {isLive && (
         <div className="live-dot wh-[12px] bg-red-700 rounded-full mt-0.5"></div>
       )}
-      <div
-        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors -ml-1"
-        onClick={() => togglePlayState()}
-      >
+      <ActionButton onClick={() => togglePlayState()} className="-ml-1">
         <Iconfont
           type={isPlaying ? 'iconicon_player_pause' : 'iconicon_player_play'}
         />
-      </div>
+      </ActionButton>
     </>
   )
 }

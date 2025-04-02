@@ -2,6 +2,7 @@ import { TranslationOutlined } from '@ant-design/icons'
 import Dropdown from '@root/components/Dropdown'
 import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
+import ActionButton from '@root/components/VideoPlayerV2/bottomPanel/ActionButton'
 import vpContext from '@root/components/VideoPlayerV2/context'
 import { PlayerEvent } from '@root/core/event'
 import type SubtitleManager from '@root/core/SubtitleManager'
@@ -45,16 +46,12 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
 
   return (
     <Dropdown menuRender={() => <Menu {...props} />}>
-      <div
-        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+      <ActionButton
+        isUnActive={!subtitleManager.showSubtitle}
         onClick={handleChangeVisible}
       >
-        <Iconfont
-          type="subtitle"
-          size={18}
-          className={classNames(!subtitleManager.showSubtitle && 'opacity-50')}
-        />
-      </div>
+        <Iconfont type="subtitle" size={18} />
+      </ActionButton>
     </Dropdown>
   )
 })
