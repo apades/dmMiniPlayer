@@ -11,8 +11,6 @@ import EventSwitcher from '@root/utils/EventSwitcher'
 import playerConfig from '@root/store/playerConfig'
 import { checkIsLive } from '@root/utils/video'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
-import WebextEvent from '@root/shared/webextEvent'
-import { DocPIPRenderType, Position } from '@root/types/config'
 import {
   CanvasDanmakuEngine,
   DanmakuEngine,
@@ -26,6 +24,9 @@ import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
+import WebextEvent from '@root/shared/webextEvent'
+import { DocPIPRenderType, Position } from '@root/types/config'
+import VideoPreviewManager from '../VideoPreviewManager'
 import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
@@ -44,6 +45,7 @@ export default abstract class WebProvider
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  videoPreviewManager?: VideoPreviewManager
   isLive?: boolean
   active = false
   isQuickHiding = false
@@ -143,6 +145,7 @@ export default abstract class WebProvider
       subtitleManager: this.subtitleManager,
       danmakuSender: this.danmakuSender,
       sideSwitcher: this.sideSwitcher,
+      videoPreviewManager: this.videoPreviewManager,
       isLive: !!this.isLive,
     })
 

@@ -89,7 +89,7 @@ const ACTION_AREA_ACTIVE = 'active'
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
-    const { isLive, keyBinding, keydownWindow } = useContext(vpContext)
+    const { isLive, keyBinding, keydownWindow, videoPreviewManger } = useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
 
@@ -165,6 +165,15 @@ const VideoPlayerV2Inner = observer(
       //   }
       // }
     }, [videoRef.current, isFullInWeb])
+
+    useEffect(() => {
+      if (!videoPreviewManger || !videoRef.current) return
+      videoPreviewManger.init(videoRef.current)
+
+      return () => {
+        videoPreviewManger.unload()
+      }
+    }, [videoPreviewManger, videoRef.current])
 
     const toggleFullInWeb = useMemoizedFn(() => {
       setFullInWeb((v) => {

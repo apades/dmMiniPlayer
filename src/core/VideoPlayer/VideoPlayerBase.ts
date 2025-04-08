@@ -1,19 +1,21 @@
 import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { makeObservable, runInAction } from 'mobx'
-import configStore from '@root/store/config'
-import playerConfig from '@root/store/playerConfig'
-import { DocPIPRenderType } from '@root/types/config'
 import { SideSwitcher } from '../SideSwitcher'
 import SubtitleManager from '../SubtitleManager'
 import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
+import configStore from '@root/store/config'
+import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
+import VideoPreviewManager from '../VideoPreviewManager'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  videoPreviewManager?: VideoPreviewManager
   isLive?: boolean
 }
 export type BaseComponent = {
@@ -39,6 +41,7 @@ export default class VideoPlayerBase
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
+  videoPreviewManager?: VideoPreviewManager
   isLive?: boolean
 
   canSendDanmaku = false
@@ -52,6 +55,7 @@ export default class VideoPlayerBase
     this.danmakuEngine = props.danmakuEngine
     this.danmakuSender = props.danmakuSender
     this.sideSwitcher = props.sideSwitcher
+    this.videoPreviewManager = props.videoPreviewManager
     this.isLive = props.isLive
 
     makeObservable(this, {

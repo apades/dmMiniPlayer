@@ -1,3 +1,4 @@
+import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine'
 import type { SubtitleItem } from '@root/core/SubtitleManager/types'
 import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-api'
@@ -114,78 +115,4 @@ const getBidAndAidFromURL = (url: URL) => {
   }
 
   return { bid: '', aid: '' }
-}
-
-/**
- * 传入url，自动分析获取弹幕列表
- */
-export async function getVideoInfoFromUrl(_url: string) {
-  const url = new URL(_url)
-  let cid = ''
-
-  let { aid, bid } = getBidAndAidFromURL(url)
-
-  // 电影、动画，单独的弹幕接口
-  if (/\/bangumi\//.test(url.pathname)) {
-    const match = location.pathname.match(/\/(ss|ep)(\d+)/)
-    const id = match?.[2],
-      isEp = match?.[1] == 'ep'
-
-    const res = await fetch(
-      `https://api.bilibili.com/pgc/view/web/season?${
-        isEp ? 'ep_id' : 'season_id'
-      }=${id}`,
-      {
-        credentials: 'include',
-      },
-    ).then((res) => res.json())
-
-    const tarId = isEp ? id : res.result.user_status.progress.last_ep_id
-    const findEp = res.result.episodes.find((ep: any) => ep.id == tarId)
-
-    aid = findEp.aid
-    cid = findEp.cid
-
-    return {
-      aid,
-      bid,
-      cid,
-    }
-  }
-
-  const pid = +(url.searchParams.get('p') ?? 1)
-
-  const videoInfo = new URL('https://api.bilibili.com/x/web-interface/view')
-  if (bid) {
-    videoInfo.searchParams.set('bvid', bid)
-  } else if (aid) {
-    videoInfo.searchParams.set('aid', aid)
-  }
-  const res = (await cacheFetch(videoInfo.toString())).data
-  const { pages } = res
-  aid = res.aid
-  cid = res.cid
-
-  if (pid != 1) {
-    try {
-      cid = pages[pid - 1].cid
-    } catch (error) {
-      console.error('出现了pid/pages不存在的问题', res, pid)
-    }
-  }
-
-  if (!cid || !aid) {
-    console.error('找不到匹配的类型')
-    return {
-      aid,
-      bid,
-      cid,
-    }
-  }
-
-  return {
-    aid,
-    bid,
-    cid,
-  }
 }

@@ -5,6 +5,7 @@ import { KeyBinding } from '@root/core/KeyBinding'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import SubtitleManager from '@root/core/SubtitleManager'
 import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
+import VideoPreviewManager from '@root/core/VideoPreviewManager'
 import { createElement } from '@root/utils'
 import { createContext, Dispatch, SetStateAction } from 'react'
 
@@ -24,6 +25,7 @@ export type ContextData = {
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
   videoStream?: MediaStream
+  videoPreviewManger?: VideoPreviewManager
   keyBinding: KeyBinding
   setContext: Dispatch<SetStateAction<ContextData>>
 }

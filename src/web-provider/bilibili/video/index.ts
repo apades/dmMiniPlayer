@@ -6,8 +6,10 @@ import { SideSwitcher } from '@root/core/SideSwitcher'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
+import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
+import BiliBiliPreviewManager from './PreviewManager'
 import toast from 'react-hot-toast'
-import { getDanmakus, getVideoInfoFromUrl } from '../utils'
+import { getDanmakus } from '../utils'
 import BilibiliSubtitleManager from './SubtitleManager'
 
 type RecommendVideo = {
@@ -34,22 +36,27 @@ export default class BilibiliVideoProvider extends WebProvider {
     })
     // sideSwitcher
     this.sideSwitcher = new SideSwitcher()
+    this.videoPreviewManager = new BiliBiliPreviewManager()
   }
 
   private lastAid = ''
   private lastCid = ''
 
   async onPlayerInitd() {
-    this.initDanmakus()
-    this.initSideSwitcherData()
+    this.update()
 
     this.addOnUnloadFn(
       onRouteChange(() => {
-        this.initDanmakus()
-        this.subtitleManager.init(this.webVideo)
-        this.initSideSwitcherData()
+        this.update()
       }),
     )
+  }
+
+  update() {
+    this.initDanmakus()
+    this.subtitleManager.init(this.webVideo)
+    this.initSideSwitcherData()
+    this.videoPreviewManager?.init(this.webVideo)
   }
 
   getDanmakus = switchLatest(async () => {
