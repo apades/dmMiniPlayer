@@ -33,14 +33,17 @@
   - youtube直播 *
   - twitch直播 *
   - 抖音直播 *
-- 支持bilibili和youtube的视频字幕播放
-- 支持bilibili、youtube的视频播放侧边栏，可直接在画中画里切换播放列表、推荐视频
+- 针对 bilibili、youtube 的特殊功能支持
+  - 视频播放侧边栏，可直接在画中画里切换播放列表、推荐视频
+  - 网站的字幕列表
+  - 进度条的预览功能
 - 支持外挂.xml .ass弹幕文件，下载可以使用[Bilibili-Evolved](https://github.com/the1812/Bilibili-Evolved)或[ACG助手](https://chromewebstore.google.com/detail/kpbnombpnpcffllnianjibmpadjolanh)，也可以通过输入bilibili url的下载弹幕并播放
-- 支持外挂.srt .ass字幕
-- 支持字幕翻译和双语字幕功能
+- 字幕功能
+  - 支持.srt .ass外挂功能
+  - 字幕翻译 + 双语功能
 - 长按右键倍速，逐帧快进快退，截屏等功能 + 可自定快捷键
 - 将网页视频播放器替换为扩展程序的视频播放器
-- 支持大多数 https 网站，甚至支持类似Crunchyroll的[EME](https://web.dev/articles/media-eme)版权保护视频、Youtube 嵌入视频。
+- 支持绝大多数 https 网站，甚至支持类似Crunchyroll的[EME](https://web.dev/articles/media-eme)版权保护视频、Youtube 嵌入视频。
 
 > [!NOTE]
 > *标记为目前只有监听网页弹幕DOM模式，可能会有意料之外的问题
