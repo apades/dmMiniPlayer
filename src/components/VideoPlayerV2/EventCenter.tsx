@@ -1,19 +1,20 @@
-import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { FC, useContext } from 'react'
+import { FC, useContext, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import vpContext from './context'
 
 const EventCenter: FC = (props) => {
   const { webVideo } = useContext(vpContext)
 
-  useTargetEventListener(
-    'ratechange',
-    (e) => {
-      if (!webVideo) return
+  useEffect(() => {
+    if (!webVideo) return
+    const handleRateChange = () => {
       toast(`${webVideo.playbackRate}x`)
-    },
-    webVideo,
-  )
+    }
+    webVideo.addEventListener('ratechange', handleRateChange)
+    return () => {
+      webVideo.removeEventListener('ratechange', handleRateChange)
+    }
+  }, [webVideo])
 
   return <></>
 }
