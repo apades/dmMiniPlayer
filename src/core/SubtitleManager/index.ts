@@ -274,6 +274,7 @@ class SubtitleManager
     this.subtitleItems.length = 0
     this.subtitleCache.clear()
     this.resetSubtitleState()
+    this.emit('reset')
   }
 
   resetSubtitleState() {

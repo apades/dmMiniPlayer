@@ -28,23 +28,28 @@ const SubtitleText: FC<Props> = (props) => {
     setActiveRows(activeRows)
 
     const unListenEnter = subtitleManager.on2('row-enter', (row) => {
-      console.log('row-enter', row)
+      // console.log('row-enter', row)
       // activeRowsManager.add(row)
       setActiveRows((activeRows) => ({ ...activeRows, [row.id]: row }))
     })
     const unListenLeave = subtitleManager.on2('row-leave', (row) => {
-      console.log('row-leave', row)
+      // console.log('row-leave', row)
       setActiveRows((activeRows) => {
         delete activeRows[row.id]
         return { ...activeRows }
       })
     })
+    const unListenReset = subtitleManager.on2('reset', () => {
+      setActiveRows({})
+    })
 
     return () => {
       unListenEnter()
       unListenLeave()
+      unListenReset()
     }
   })
+  
   const updateFontSize = useMemoizedFn(() => {
     if (!configStore.subtitle_autoSize)
       return setFontSize(configStore.subtitle_fontSize)
