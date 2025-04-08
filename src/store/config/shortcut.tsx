@@ -21,6 +21,10 @@ const config: typeof _config = (props) => ({
           if (ctrlKey && keyCode !== keyToKeyCodeMap.Ctrl) actions.push('Ctrl')
 
           actions.push(...formatKeys((keyCodeToCode as any)[keyCode]))
+
+          if (keyCode === keyToKeyCodeMap.Backspace) {
+            actions.length = 0
+          }
           onChange(actions)
         }}
         onChange={() => {}}
