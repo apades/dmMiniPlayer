@@ -46,7 +46,7 @@ export const getSubtitles = async (
 ): Promise<SubtitleItem[]> => {
   const { aid, cid } = await getVideoInfoFromUrl(url)
   const infoData = await fetch(
-    `https://api.bilibili.com/x/player/v2?aid=${aid}&cid=${cid}`,
+    `https://api.bilibili.com/x/player/wbi/v2?aid=${aid}&cid=${cid}`,
     {
       credentials: 'include',
     },
