@@ -1,10 +1,10 @@
 import { FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import ProgressBar from '../ProgressBar'
 import { useEventListener } from 'ahooks'
 import { dq1, formatTime } from '@root/utils'
 import classNames from 'classnames'
 import { HandlesProps } from '@apad/rc-slider/lib/Handles'
 import { useOnce } from '@root/hook'
+import ProgressBar from '../ProgressBar'
 
 type Props = {
   playedPercent: number

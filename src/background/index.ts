@@ -1,6 +1,5 @@
-import 'webext-bridge/background'
-import './commands'
 import { onMessage, sendMessage } from 'webext-bridge/background'
+import './commands'
 import Browser from 'webextension-polyfill'
 import { t } from '@root/utils/i18n'
 import { FLOAT_BTN_HIDDEN, LOCALE } from '@root/shared/storeKey'

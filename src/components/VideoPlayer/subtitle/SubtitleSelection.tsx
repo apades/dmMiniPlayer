@@ -1,9 +1,13 @@
+import { TranslationOutlined } from '@ant-design/icons'
 import Dropdown from '@root/components/Dropdown'
 import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
+import ActionButton from '@root/components/VideoPlayerV2/bottomPanel/ActionButton'
 import vpContext from '@root/components/VideoPlayerV2/context'
-import { useKeydown } from '@root/components/VideoPlayerV2/hooks'
+import { PlayerEvent } from '@root/core/event'
 import type SubtitleManager from '@root/core/SubtitleManager'
+import { translateMode } from '@root/core/SubtitleManager'
+import { useOnce } from '@root/hook'
 import { t } from '@root/utils/i18n'
 import { useMemoizedFn } from 'ahooks'
 import classNames from 'classnames'
@@ -17,6 +21,7 @@ type Props = {
 const SubtitleSelectionInner: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
+  const { eventBus } = useContext(vpContext)
 
   const handleChangeVisible = useMemoizedFn(() => {
     runInAction(() => {
@@ -33,24 +38,20 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
     })
   })
 
-  useKeydown((key) => {
-    if (key === 's') {
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_subtitleVisible, () => {
       handleChangeVisible()
-    }
-  })
+    }),
+  )
 
   return (
     <Dropdown menuRender={() => <Menu {...props} />}>
-      <div
-        className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
+      <ActionButton
+        isUnActive={!subtitleManager.showSubtitle}
         onClick={handleChangeVisible}
       >
-        <Iconfont
-          type="subtitle"
-          size={18}
-          className={classNames(!subtitleManager.showSubtitle && 'opacity-50')}
-        />
-      </div>
+        <Iconfont type="subtitle" size={18} />
+      </ActionButton>
     </Dropdown>
   )
 })
@@ -60,6 +61,24 @@ const Menu: FC<Props> = observer((props) => {
   const activeLabel = subtitleManager.activeSubtitleLabel
   return (
     <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] text-[14px] text-white max-h-[calc(100vh-var(--area-height)-10px)] custom-scrollbar overflow-auto">
+      <div className="f-i-center px-2 py-1 justify-between gap-2">
+        <TranslationOutlined className="text-[16px]" />
+        <select
+          value={subtitleManager.translateMode}
+          className="bg-[#333] flex-1"
+          onChange={(e) => {
+            runInAction(() => {
+              subtitleManager.translateMode = e.target.value as any
+            })
+          }}
+        >
+          {Object.entries(translateMode).map(([v, text]) => (
+            <option className="bg-[#333]" key={v} value={v}>
+              {text}
+            </option>
+          ))}
+        </select>
+      </div>
       {[
         {
           key: 'add',
@@ -81,9 +100,9 @@ const Menu: FC<Props> = observer((props) => {
           onClick: async () => {},
           isActive: false,
         },
-        ...subtitleManager.subtitleItems.map((subtitleItem) => {
+        ...subtitleManager.subtitleItems.map((subtitleItem, i) => {
           return {
-            key: subtitleItem.value,
+            key: i,
             label: subtitleItem.label,
             onClick: () => {
               subtitleManager.useSubtitle(subtitleItem.label)

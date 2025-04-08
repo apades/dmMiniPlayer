@@ -131,8 +131,7 @@
     "forward": "Avancer de 5 secondes",
     "rewind_fine": "Rembobiner 1 image",
     "forward_fine": "Avancer d'une image",
-    "longPress": "Appui long",
-    "speedMode": "Mode vitesse",
+    "speedMode": "Appuyez sur le mode long pour accélérer",
     "volumeUp": "Augmenter le volume",
     "volumeDown": "Baisser le volume",
     "mute/unmute": "Muet/mécontentement",
@@ -143,7 +142,14 @@
     "screenshot": "Capture d'écran",
     "show/hideDanmaku": "Afficher/Masquer le danmaku",
     "show/hideSubtitle": "Afficher/Masquer les sous-titres",
-    "notSupport": "Pas de support dans cette vidéo"
+    "sizeUpdate": "Zoom de roue de souris",
+    "notSupport": "Pas de support dans cette vidéo",
+    "cate_progress": "Barre de progression",
+    "cate_volume": "Volume",
+    "cate_speed": "Vitesse",
+    "cate_other": "Autres",
+    "longPress": "Appui long",
+    "wheel": "Rouge de défilement de souris"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",
@@ -172,5 +178,15 @@
     "getDanmakuFromUrl": "Charger depuis l'URL",
     "danmakuTimeOffsetTips": "Actuellement, seuls les barrages de rendu HTML prennent en charge cette fonction",
     "danmakuTimeOffset": "Différence horaire"
+  },
+  "error": {
+    "danmakuLoad": "Erreur de chargement de Danmaku, veuillez essayer de rouvrir le joueur ou le site Web de connexion",
+    "subtitleLoad": "Erreur de chargement des sous-titres, veuillez essayer de rouvrir le joueur ou le site Web de connexion",
+    "translateFail": "Traduire l'échec"
+  },
+  "subtitleTranslate": {
+    "single": "Célibataire",
+    "double": "Double",
+    "none": "Aucun"
   }
 }

@@ -1,11 +1,11 @@
-import { defineConfig } from 'tsup'
 import path from 'path'
-import { inlineImport } from './plugin/inlineImport'
+import { defineConfig } from 'tsup'
 import fs from 'fs-extra'
-import { manifest } from '../src/manifest'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
-import { getChangeLog, getDefinesConfig } from './utils.mjs'
+import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
+import { getChangeLog, getDefinesConfig } from './utils.mjs'
+import { inlineImport } from './plugin/inlineImport'
 
 const version = packageJson.version
 export const pr = (...p: any) => path.resolve(__dirname, ...p)

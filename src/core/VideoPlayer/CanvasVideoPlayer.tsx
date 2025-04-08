@@ -1,8 +1,8 @@
 import { createElement } from '@root/utils'
-import VideoPlayerBase from './VideoPlayerBase'
 import { ERROR_MSG } from '@root/shared/errorMsg'
 import { CanvasDanmakuEngine } from '../danmaku/DanmakuEngine'
 import CanvasDanmakuVideo from '../danmaku/DanmakuEngine/canvasDanmaku/CanvasDanmakuVideo'
+import VideoPlayerBase from './VideoPlayerBase'
 
 export class CanvasVideoPlayer extends VideoPlayerBase {
   videoEl?: HTMLVideoElement

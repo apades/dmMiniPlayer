@@ -1,11 +1,11 @@
 import { type FC, useState } from 'react'
-import { useAction, useOnce } from '../hook'
 import { sendMessage } from 'webext-bridge/popup'
 import Browser from 'webextension-polyfill'
-import { t } from '../utils/i18n'
 import { createRoot } from 'react-dom/client'
 import WebextEvent from '@root/shared/webextEvent'
 import { LoadingOutlined } from '@ant-design/icons'
+import { t } from '../utils/i18n'
+import { useAction, useOnce } from '../hook'
 
 const errorTypeMap: Record<string, string> = {
   'user-activation': t('popup.tips'),

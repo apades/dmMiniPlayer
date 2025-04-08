@@ -1,13 +1,13 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { getChangeLog, pr } from './utils.mjs'
-import { manifest } from '../src/manifest'
-import fs from 'fs-extra'
 import fs2 from 'fs/promises'
 import path from 'path'
+import fs from 'fs-extra'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import { manifest } from '../src/manifest'
 
 import packageJson from '../package.json'
 import { DEV_PORT } from '../src/shared/constants'
+import { getChangeLog, pr } from './utils.mjs'
 
 export const outDir = pr('../dist')
 const version = packageJson.version
@@ -77,6 +77,7 @@ export default defineConfig({
   },
   server: {
     port: DEV_PORT,
+    cors: true,
   },
   build: {
     write: true,

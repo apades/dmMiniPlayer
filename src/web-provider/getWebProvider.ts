@@ -1,3 +1,5 @@
+import { WebProvider } from '@root/core/WebProvider'
+import { getProviderConfig } from '@root/shared/providerConfig'
 import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
 import CommonProvider from './common'
@@ -7,8 +9,6 @@ import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
 import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
-import { WebProvider } from '@root/core/WebProvider'
-import { getProviderConfig } from '@root/shared/providerConfig'
 import HuyaProvider from './huya'
 
 export default function getWebProvider(): WebProvider {

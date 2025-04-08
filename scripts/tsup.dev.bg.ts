@@ -1,8 +1,8 @@
 import { defineConfig } from 'tsup'
-import { manifest, outDir, shareConfig } from './tsup.shared'
 import fs from 'fs-extra'
-import { pr } from './utils.mjs'
 import { omit } from '@root/utils'
+import { manifest, outDir, shareConfig } from './tsup.shared'
+import { pr } from './utils.mjs'
 
 export default defineConfig({
   ...omit(shareConfig, ['onSuccess']),

@@ -1,20 +1,21 @@
+import { PlayerEvent } from '@root/core/event'
+import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
+import { tryCatch } from '@root/utils'
+import { t } from '@root/utils/i18n'
+import { downloadImage, screenshotVideo } from '@root/utils/screenshot'
 import { FC, useContext, useState } from 'react'
 import vpContext from './context'
-import { useKeydown } from './hooks'
-import { tryCatch } from '@root/utils'
-import { screenshotVideo, downloadImage } from '@root/utils/screenshot'
-import { t } from '@root/utils/i18n'
 
 const ScreenshotTips: FC = () => {
   const [isVisible, setVisible] = useState(false)
-  const { webVideo } = useContext(vpContext)
+  const { webVideo, eventBus } = useContext(vpContext)
   const [errorText, setErrorText] = useState('')
 
   const { run } = useDebounceTimeoutCallback(() => setVisible(false), 1000)
 
-  useKeydown((key, e) => {
-    if (key === 'p' && e.shiftKey) {
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_screenshot, () => {
       const [err, imagUrl] = tryCatch(() => {
         if (!webVideo) return
         return screenshotVideo(webVideo)
@@ -29,8 +30,8 @@ const ScreenshotTips: FC = () => {
         setErrorText(t('shortcut.notSupport'))
         run(() => setVisible(true))
       }
-    }
-  })
+    }),
+  )
 
   if (!isVisible) return
 

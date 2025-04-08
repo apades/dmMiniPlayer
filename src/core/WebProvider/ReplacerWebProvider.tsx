@@ -1,6 +1,4 @@
 import { FC, useEffect, useMemo, useRef } from 'react'
-import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
-import { WebProvider } from '.'
 import { createPortal } from 'react-dom'
 import {
   createElement,
@@ -8,7 +6,6 @@ import {
   getVideoElInitFloatButtonData,
   isIframe,
 } from '@root/utils'
-import { PlayerEvent } from '../event'
 import { createRoot } from 'react-dom/client'
 import { useSize, useUpdate } from 'ahooks'
 import { useOnce } from '@root/hook'
@@ -17,6 +14,9 @@ import { getDomAbsolutePosition } from '@root/utils/dom'
 import { sendMessage } from '@root/inject/contentSender'
 import { onPostMessage } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
+import { PlayerEvent } from '../event'
+import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
+import { WebProvider } from '.'
 
 export default class ReplacerWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer

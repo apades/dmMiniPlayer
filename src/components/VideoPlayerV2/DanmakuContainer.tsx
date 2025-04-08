@@ -1,7 +1,7 @@
 import { FC, memo, useContext, useRef, useState } from 'react'
-import vpContext from './context'
 import { useOnce } from '@root/hook'
 import { createElement } from '@root/utils'
+import vpContext from './context'
 
 const _danmakuContainer = createElement('div', {
   style: {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { isArray } from '.'
 import type { KeyOfType } from './typeUtils'
+import { isArray } from '.'
 
 export function injectFunction<
   T extends object,

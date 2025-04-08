@@ -1,3 +1,10 @@
+## v0.6.34
+1. Added subtitle translation function to support bilingual subtitles
+2. Fixed the issue of repeatedly opening the PIP without loading the danmakus
+
+## v0.6.33
+Added custom shortcut key settings
+
 ## v0.6.32
 Restore the previous logic for adjusting the position after enabling PIP
 

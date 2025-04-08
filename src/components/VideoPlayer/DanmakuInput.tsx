@@ -1,8 +1,8 @@
 import { wait } from '@root/utils'
 import { useContext, useEffect, useRef, useState, type FC } from 'react'
-import Iconfont from '../Iconfont'
 import configStore from '@root/store/config'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import Iconfont from '../Iconfont'
 import vpContext from '../VideoPlayerV2/context'
 
 const DanmakuInput: FC<{

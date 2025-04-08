@@ -1,7 +1,7 @@
-import App from './progressBar_App'
 import { createElement, dq1, onceCall } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
 import { createRoot } from 'react-dom/client'
+import App from './progressBar_App'
 
 const trustLock = new AsyncLock()
 window.addEventListener('click', () => trustLock.ok())

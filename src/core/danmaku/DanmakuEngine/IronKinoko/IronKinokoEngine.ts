@@ -1,10 +1,10 @@
-import IronKinokoDanmakuEngine from './lib'
-import DanmakuEngine, { DanmakuEngineInitProps } from '../DanmakuEngine'
-import { DanmakuInitData } from '../types'
 import { autorun } from 'mobx'
 import { PlayerEvent } from '@root/core/event'
 import configStore from '@root/store/config'
 import { MaxTunnelType } from '@root/store/config/danmaku'
+import { DanmakuInitData } from '../types'
+import DanmakuEngine, { DanmakuEngineInitProps } from '../DanmakuEngine'
+import IronKinokoDanmakuEngine from './lib'
 
 export default class IronKinokoEngine extends DanmakuEngine {
   engine: IronKinokoDanmakuEngine | undefined
@@ -52,7 +52,7 @@ export default class IronKinokoEngine extends DanmakuEngine {
     this.engine = undefined
   }
 
-  override addDanmakus(danmakus: DanmakuInitData[]): void {
+  override async addDanmakus(danmakus: DanmakuInitData[]) {
     const engine = this.engine
     if (!engine) throw Error('DanmakuEngine not init')
 

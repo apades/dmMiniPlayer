@@ -1,6 +1,6 @@
 import CanvasVideo from '@root/core/CanvasVideo'
-import CanvasDanmakuEngine from './CanvasDanmakuEngine'
 import { PlayerEvent } from '@root/core/event'
+import CanvasDanmakuEngine from './CanvasDanmakuEngine'
 
 export default class CanvasDanmakuVideo extends CanvasVideo {
   danmakuEngine: CanvasDanmakuEngine

@@ -1,5 +1,5 @@
-import type { SubtitleRow } from '../types'
 import { parse } from 'ass-compiler'
+import type { SubtitleRow } from '../types'
 
 function resolveDialogueTime(dialogueTime: string): number {
   let [hours, min, sec] = dialogueTime.split(':')

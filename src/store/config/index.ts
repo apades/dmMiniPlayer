@@ -1,5 +1,4 @@
-import { config } from '@apad/setting-panel'
-import { initSetting } from '@apad/setting-panel'
+import { config, initSetting } from '@apad/setting-panel'
 import {
   getBrowserSyncStorage,
   setBrowserLocalStorage,
@@ -13,12 +12,8 @@ import {
   configure,
 } from 'mobx'
 import { observer } from 'mobx-react'
-import { docPIPConfig } from './docPIP'
 import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import en from '@apad/setting-panel/i18n/en.json'
-import config_danmaku from './danmaku'
-import config_specialWebsites from './specialWebsites'
-import config_subtitle from './subtitle'
 import {
   getIsZh,
   Language,
@@ -32,11 +27,16 @@ import {
   LOCALE,
 } from '@root/shared/storeKey'
 import isPluginEnv from '@root/shared/isPluginEnv'
-import config_floatButton from './floatButton'
 import { isUndefined } from 'lodash-es'
 import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
 import isDev from '@root/shared/isDev'
 import Browser from 'webextension-polyfill'
+import config_floatButton from './floatButton'
+import config_shortcut from './shortcut'
+import config_subtitle from './subtitle'
+import config_specialWebsites from './specialWebsites'
+import config_danmaku from './danmaku'
+import { docPIPConfig } from './docPIP'
 
 if (isDev) {
   configure({
@@ -61,6 +61,8 @@ export const baseConfigMap = {
   ...config_danmaku,
   ...config_specialWebsites,
   ...config_subtitle,
+  ...docPIPConfig,
+  ...config_shortcut,
   language: config<Language>({
     label: 'Language',
     desc: 'Will reload page when language has changed',
@@ -202,7 +204,6 @@ export const baseConfigMap = {
   //   defaultValue: DEFAULT_EVENT_INJECT_SITE,
   //   notRecommended: true,
   // }),
-  ...docPIPConfig,
   showReplacerBtn: config({
     defaultValue: false,
     label: t('settingPanel.showReplacerBtn'),

@@ -1,7 +1,9 @@
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { WebProvider } from '@root/core/WebProvider'
 import { getDonghuafengDanmu } from '@root/danmaku/donghuafeng'
-import { dq1 } from '@root/utils'
+import { dq1, tryCatch } from '@root/utils'
+import { t } from '@root/utils/i18n'
+import toast from 'react-hot-toast'
 
 export default class DonghuafengProvider extends WebProvider {
   onInit(): void {
@@ -15,6 +17,9 @@ export default class DonghuafengProvider extends WebProvider {
   async onPlayerInitd() {
     const id = new URLSearchParams(location.search).get('sn') ?? ''
 
-    this.danmakuEngine?.setDanmakus(await getDonghuafengDanmu(id))
+    const [err, danmakus] = await tryCatch(() => getDonghuafengDanmu(id))
+
+    if (err) toast.error(t('error.danmakuLoad'))
+    else this.danmakuEngine?.setDanmakus(danmakus)
   }
 }

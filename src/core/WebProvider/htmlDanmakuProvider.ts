@@ -1,9 +1,9 @@
 import { sendMessage } from '@root/inject/contentSender'
-import { WebProvider } from '.'
+import { dq1 } from '@root/utils'
 import DanmakuSender, {
   Props as DanmakuSenderProps,
 } from '../danmaku/DanmakuSender'
-import { dq1 } from '@root/utils'
+import { WebProvider } from '.'
 
 /**
  * 监听html弹幕的provider，带有工具

@@ -1,7 +1,10 @@
 import cookie from '@pkgs/js-cookie'
 import API_bilibili from '@root/api/bilibili'
 import BarrageClient from '@root/core/danmaku/BarrageClient'
+import { tryCatch } from '@root/utils'
+import { t } from '@root/utils/i18n'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
+import toast from 'react-hot-toast'
 
 export const proto = {
   nested: {
@@ -39,7 +42,9 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
   ws?: LiveWS
   constructor(public id: number) {
     super()
-    this.init(id)
+    tryCatch(() => this.init(id)).then(([err]) => {
+      if (err) toast.error(t('error.danmakuLoad'))
+    })
   }
 
   async init(id: number) {

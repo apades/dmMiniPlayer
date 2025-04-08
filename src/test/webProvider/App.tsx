@@ -3,9 +3,9 @@ import { WebProvider } from '@root/core/WebProvider'
 import { useOnce } from '@root/hook'
 import { openSettingPanel } from '@root/store/config'
 import { useRef, useState, type FC } from 'react'
-import TestWebProvider from './TestWebProvider'
 import { PlayerEvent } from '@root/core/event'
 import { TEST_VIDEO_1 } from '../data/video'
+import TestWebProvider from './TestWebProvider'
 
 const v1 = () => (
   <div key="v1">

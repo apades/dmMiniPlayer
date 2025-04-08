@@ -2,10 +2,10 @@ import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import { FC, RefObject, useContext, useState } from 'react'
-import vpContext from '../context'
 import classNames from 'classnames'
 import { formatTime } from '@root/utils'
 import { useUpdate } from 'ahooks'
+import vpContext from '../context'
 
 /**在按键seek时显示currentTime */
 const CurrentTimeTooltipsWithKeydown: FC<{}> = (props) => {

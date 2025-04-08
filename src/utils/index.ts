@@ -205,11 +205,14 @@ export function onceCall<T extends noop>(fn: T): T {
   let rs: ReturnType<typeof fn>
   let lastArgs: any
   let hasCall = false
+  let err: any = null
 
   return ((...args: any[]) => {
-    if (!hasCall || !isEqual(args, lastArgs)) {
+    if (!hasCall || !isEqual(args, lastArgs) || err) {
       hasCall = true
-      rs = fn(...args)
+      ;[err, rs as any] = tryCatch(() =>
+        (fn as (...args: any[]) => {})(...args),
+      )
     }
     lastArgs = args
     return rs
@@ -220,13 +223,20 @@ export function onceCall<T extends noop>(fn: T): T {
 export function oncePromise<T extends noop>(fn: T): T {
   let promise: Promise<any>
   let lastArgs: any
+  let isErr = false
 
   return ((...args: any[]) => {
-    if (!promise || !isEqual(args, lastArgs)) {
+    if (!promise || !isEqual(args, lastArgs) || isErr) {
       promise = new Promise((res, rej) => {
         fn(...args)
-          .then(res)
-          .catch(rej)
+          .then((e: any) => {
+            res(e)
+            isErr = false
+          })
+          .catch((e: any) => {
+            rej(e)
+            isErr = true
+          })
       })
     }
     lastArgs = args

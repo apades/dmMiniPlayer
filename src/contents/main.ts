@@ -21,9 +21,9 @@ import {
   postMessageToTop,
 } from '@root/utils/windowMessages'
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
+import { DocPIPRenderType } from '@root/types/config'
 import _getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
-import { DocPIPRenderType } from '@root/types/config'
 import API_bilibili from '@root/api/bilibili'
 import isDev from '@root/shared/isDev'
 

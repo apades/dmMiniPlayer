@@ -9,10 +9,10 @@ import { createElement, throttle, tryCatch } from '@root/utils'
 import { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
 import { sendMessage as sendBgMessage } from 'webext-bridge/content-script'
+import { DocPIPRenderType } from '@root/types/config'
 import CanvasVideo from '../CanvasVideo'
 import { PlayerEvent } from '../event'
 import VideoPlayerBase, { supportOnVideoChangeTypes } from './VideoPlayerBase'
-import { DocPIPRenderType } from '@root/types/config'
 
 const docPIPStyleEl = createElement('style', {
   innerText: 'html, body { height: 100% }',

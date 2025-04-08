@@ -37,7 +37,8 @@
 - 支持bilibili、youtube的视频播放侧边栏，可直接在画中画里切换播放列表、推荐视频
 - 支持外挂.xml .ass弹幕文件，下载可以使用[Bilibili-Evolved](https://github.com/the1812/Bilibili-Evolved)或[ACG助手](https://chromewebstore.google.com/detail/kpbnombpnpcffllnianjibmpadjolanh)，也可以通过输入bilibili url的下载弹幕并播放
 - 支持外挂.srt .ass字幕
-- 与bilibili一样的长按右键倍速功能
+- 支持字幕翻译和双语字幕功能
+- 长按右键倍速，逐帧快进快退，截屏等功能 + 可自定快捷键
 - 将网页视频播放器替换为扩展程序的视频播放器
 - 支持大多数 https 网站，甚至支持类似Crunchyroll的[EME](https://web.dev/articles/media-eme)版权保护视频、Youtube 嵌入视频。
 

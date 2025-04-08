@@ -1,7 +1,7 @@
 import type { Runtime } from 'webextension-polyfill'
-import { addCallback, executeCallback, removeCallback } from '.'
 import { sendMessage } from '../message'
 import { objectDeepProxy } from '../utils'
+import { addCallback, executeCallback, removeCallback } from '.'
 
 export function getPort() {
   const portPolyfill: Partial<Runtime.Port> = {

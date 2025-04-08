@@ -1,8 +1,8 @@
 import { FC, useContext, useState } from 'react'
-import vpContext from './context'
 import { LoadingOutlined } from '@ant-design/icons'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { checkJumpInBufferArea } from '../VideoPlayer/utls'
+import vpContext from './context'
 
 const LoadingIcon: FC = (props) => {
   const [isLoading, setLoading] = useState(false)

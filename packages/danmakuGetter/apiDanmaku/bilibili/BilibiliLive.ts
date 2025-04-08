@@ -1,7 +1,7 @@
 import cookie from '@pkgs/js-cookie'
-import { DanmakuGetter } from '../..'
 import { LiveWS } from 'bilibili-live-ws'
 import { getAnyObjToString } from '@root/utils'
+import { DanmakuGetter } from '../..'
 
 async function getSelfMid() {
   try {

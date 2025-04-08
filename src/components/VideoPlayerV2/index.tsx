@@ -29,6 +29,14 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
+import screenfull from '@root/utils/screenfull'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { postMessageToTop } from '@root/utils/windowMessages'
+import PostMessageEvent from '@root/shared/postMessageEvent'
+import { Key } from '@root/types/key'
+import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
+import { useOnce } from '@root/hook'
+import { Omit } from '@root/utils/typeUtils'
 import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
@@ -51,15 +59,12 @@ import SpeedIcon from './SpeedIcon'
 import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
 import VolumeBar from './bottomPanel/VolumeBar'
 import VolumeIcon from './VolumeIcon'
-import screenfull from '@root/utils/screenfull'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { postMessageToTop } from '@root/utils/windowMessages'
-import PostMessageEvent from '@root/shared/postMessageEvent'
-import { Key } from '@root/types/key'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
-import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
 import KeyboardTipsModal from './KeyboardTipsModal'
 import ScreenshotTips from './ScreenshotTips'
+import Toast from './Toast'
+import ActionButton from './bottomPanel/ActionButton'
+import EventCenter from './EventCenter'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -73,7 +78,7 @@ type Props = {
   className?: string
   isReplacerMode?: boolean
   showCloseButton?: boolean
-} & Omit<ContextData, 'eventBus'>
+} & Omit<ContextData, 'eventBus' | 'keyBinding'>
 
 type VpInnerProps = Props & {
   setContext: React.Dispatch<React.SetStateAction<ContextData>>
@@ -84,9 +89,21 @@ const ACTION_AREA_ACTIVE = 'active'
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
-    const { isLive, videoPreviewManger } = useContext(vpContext)
+    const { isLive, keyBinding, keydownWindow, videoPreviewManger } = useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
+
+    useOnce(() => {
+      keyBinding.init()
+      return () => {
+        keyBinding.unload()
+      }
+    })
+
+    useEffect(() => {
+      if (!keydownWindow) return
+      keyBinding.updateKeydownWindow(keydownWindow)
+    }, [keydownWindow])
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
@@ -242,6 +259,7 @@ const VideoPlayerV2Inner = observer(
         isLive,
         webVideo: video,
         keydownWindow,
+        videoPlayerRef: videoPlayerRef,
       }))
 
       if (!props.useWebVideo && props.videoStream) {
@@ -274,10 +292,8 @@ const VideoPlayerV2Inner = observer(
     useInWindowKeydown()
     useWebVideoEventsInit()
 
-    useKeydown((key) => {
-      if (key === 'Escape') {
-        quitFullMode()
-      }
+    useKeydown('Escape', () => {
+      quitFullMode()
     })
 
     const setCurrentTime = useMemoizedFn((time: number, pause?: boolean) => {
@@ -395,6 +411,7 @@ const VideoPlayerV2Inner = observer(
           <VolumeIcon />
           <SpeedIcon />
           <ScreenshotTips />
+          <EventCenter />
         </div>
 
         {/* 底部操作栏 */}
@@ -409,6 +426,10 @@ const VideoPlayerV2Inner = observer(
             handleChangeActionArea(false)
           }}
         >
+          <div className="absolute -top-12 w-full pointer-events-none">
+            <Toast />
+          </div>
+
           <div className="absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
@@ -430,14 +451,9 @@ const VideoPlayerV2Inner = observer(
 
                 <PlaybackRateSelection />
 
-                <div
-                  className={classNames(
-                    'p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors mb:hidden',
-                  )}
-                  onClick={handleOpenSetting}
-                >
+                <ActionButton onClick={handleOpenSetting} className="mb:hidden">
                   <SettingOutlined className="block" />
-                </div>
+                </ActionButton>
               </div>
 
               <div className="right ml-auto f-i-center gap-1">
@@ -453,22 +469,19 @@ const VideoPlayerV2Inner = observer(
                 <VolumeBar />
                 {props.isReplacerMode && (
                   <>
-                    <div
-                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors ml-[6px]"
+                    <ActionButton
                       onClick={toggleFullInWeb}
+                      className="ml-[6px]"
                     >
                       {isFullInWeb ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
-                    </div>
-                    <div
-                      className="p-1 cursor-pointer hover:bg-[#333] rounded-sm transition-colors"
-                      onClick={toggleFullscreen}
-                    >
+                    </ActionButton>
+                    <ActionButton onClick={toggleFullscreen}>
                       {isFullscreen ? (
                         <FullscreenExitOutlined />
                       ) : (
                         <FullscreenOutlined />
                       )}
-                    </div>
+                    </ActionButton>
                   </>
                 )}
               </div>
@@ -532,7 +545,7 @@ const VideoPlayerV2 = forwardRef<VideoPlayerHandle, Props>((props, ref) => {
   })
 
   return (
-    <vpContext.Provider value={context}>
+    <vpContext.Provider value={{ ...context, setContext }}>
       <VideoPlayerV2Inner
         {...props}
         eventBus={context.eventBus}

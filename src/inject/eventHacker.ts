@@ -3,10 +3,10 @@
  */
 
 import { dq1, type noop } from '@root/utils'
-import { onMessage_inject, sendMessage_inject } from './injectListener'
 import equal from 'fast-deep-equal'
-import { eventHackerEnableSites } from './eventHacker.config'
 import { isUndefined } from 'lodash-es'
+import { onMessage_inject, sendMessage_inject } from './injectListener'
+import { eventHackerEnableSites } from './eventHacker.config'
 
 function main() {
   console.log('💀 event hacker running')

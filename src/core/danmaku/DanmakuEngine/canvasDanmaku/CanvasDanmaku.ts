@@ -1,7 +1,7 @@
 import { autorun } from 'mobx'
+import { getTextWidth, noop } from '@root/utils'
 import { DanmakuBase } from '../'
 import type { DanmakuInitProps } from '../DanmakuBase'
-import { getTextWidth, noop } from '@root/utils'
 import CanvasDanmakuEngine from './CanvasDanmakuEngine'
 
 export default class CanvasDanmaku extends DanmakuBase {

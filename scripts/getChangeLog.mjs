@@ -1,5 +1,5 @@
-import { getChangeLog } from './utils.mjs'
 import packageJson from '../package.json' assert { type: 'json' }
+import { getChangeLog } from './utils.mjs'
 
 const version = packageJson.version
 

@@ -1,15 +1,16 @@
 import { WebProvider } from '@root/core/WebProvider'
-import { getDanmakus } from '../utils'
-import BilibiliSubtitleManager from './SubtitleManager'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { dq, dq1, switchLatest } from '@root/utils'
+import { dq, dq1, switchLatest, tryCatch } from '@root/utils'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 import BiliBiliPreviewManager from './PreviewManager'
+import toast from 'react-hot-toast'
+import { getDanmakus } from '../utils'
+import BilibiliSubtitleManager from './SubtitleManager'
 
 type RecommendVideo = {
   el: HTMLElement
@@ -60,15 +61,18 @@ export default class BilibiliVideoProvider extends WebProvider {
 
   getDanmakus = switchLatest(async () => {
     const { aid, cid } = await getVideoInfoFromUrl(location.href)
-    console.log('load from', location.href)
 
     const danmakus = await getDanmakus(aid, cid)
     return danmakus
   })
   async initDanmakus() {
-    const danmakus = await this.getDanmakus()
+    const [err, danmakus] = await tryCatch(() => this.getDanmakus())
 
-    this.danmakuEngine?.setDanmakus(danmakus)
+    if (err) {
+      toast.error(t('error.danmakuLoad'))
+    } else {
+      this.danmakuEngine?.setDanmakus(danmakus)
+    }
   }
 
   // ! 已知他用的top，目前没有iframe跳转方案了；需要切换成video url方案了https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md

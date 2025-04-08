@@ -131,8 +131,7 @@
     "forward": "5秒進む",
     "rewind_fine": "1フレーム巻き戻し",
     "forward_fine": "1フレーム進む",
-    "longPress": "長押し",
-    "speedMode": "スピードモード",
+    "speedMode": "スピードモードまでのロングプレス",
     "volumeUp": "ボリュームアップ",
     "volumeDown": "音量を下げる",
     "mute/unmute": "沈黙/不快感",
@@ -143,7 +142,14 @@
     "screenshot": "スクリーンショット",
     "show/hideDanmaku": "弾幕の表示/非表示",
     "show/hideSubtitle": "字幕の表示/非表示",
-    "notSupport": "このビデオではサポートされていません"
+    "sizeUpdate": "マウスホイールズーム",
+    "notSupport": "このビデオではサポートされていません",
+    "cate_progress": "進捗バー",
+    "cate_volume": "音量",
+    "cate_speed": "スピード",
+    "cate_other": "その他",
+    "longPress": "長押し",
+    "wheel": "マウススクロールホイール"
   },
   "popup": {
     "tips": "ピクチャーインピクチャー再生をトリガーするには,次のページをクリックする必要があります",
@@ -172,5 +178,15 @@
     "getDanmakuFromUrl": "URL から読み込み",
     "danmakuTimeOffsetTips": "現在,HTML レンダリングの弾幕のみがこの機能をサポートしています",
     "danmakuTimeOffset": "時差"
+  },
+  "error": {
+    "danmakuLoad": "danmakuロードエラー、再びプレーヤーまたはログインWebサイトを試してみてください",
+    "subtitleLoad": "サブタイトルの負荷エラー、プレーヤーの再開またはログインWebサイトを試してみてください",
+    "translateFail": "失敗を翻訳します"
+  },
+  "subtitleTranslate": {
+    "single": "シングル",
+    "double": "ダブル",
+    "none": "なし"
   }
 }

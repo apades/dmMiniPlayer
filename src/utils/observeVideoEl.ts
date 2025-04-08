@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { wait } from '.'
 import { dqParents } from './dom'
+import { wait } from '.'
 
 export function observeVideoEl(
   videoEl: HTMLVideoElement,

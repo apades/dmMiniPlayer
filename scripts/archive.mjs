@@ -1,7 +1,7 @@
-import packageData from '../package.json' assert { type: 'json' }
 import fs from 'fs-extra'
-import { pr, spawn } from './utils.mjs'
 import archiver from 'archiver'
+import packageData from '../package.json' assert { type: 'json' }
+import { pr, spawn } from './utils.mjs'
 
 const args = process.argv.slice(2)
 const isSizeTest = args[0] === '--size-test'

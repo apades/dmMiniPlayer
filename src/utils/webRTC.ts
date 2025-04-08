@@ -1,10 +1,10 @@
 import PostMessageEvent from '@root/shared/postMessageEvent'
+import isTop from '@root/shared/isTop'
 import {
   onPostMessage,
   postMessageToChild,
   postMessageToTop,
 } from './windowMessages'
-import isTop from '@root/shared/isTop'
 
 const servers = {
   iceServers: [
