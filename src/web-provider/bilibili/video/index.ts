@@ -42,16 +42,20 @@ export default class BilibiliVideoProvider extends WebProvider {
   private lastCid = ''
 
   async onPlayerInitd() {
-    this.initDanmakus()
-    this.initSideSwitcherData()
+    this.update()
 
     this.addOnUnloadFn(
       onRouteChange(() => {
-        this.initDanmakus()
-        this.subtitleManager.init(this.webVideo)
-        this.initSideSwitcherData()
+        this.update()
       }),
     )
+  }
+
+  update() {
+    this.initDanmakus()
+    this.subtitleManager.init(this.webVideo)
+    this.initSideSwitcherData()
+    this.videoPreviewManager?.init(this.webVideo)
   }
 
   getDanmakus = switchLatest(async () => {

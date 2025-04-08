@@ -6,6 +6,7 @@ import { SideSwitcher } from '@root/core/SideSwitcher'
 import { t } from '@root/utils/i18n'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
 import configStore from '@root/store/config'
+import YoutubePreviewManager from './PreviewManager'
 
 const getIframe = () => dq1<HTMLIFrameElement>('.ytd-live-chat-frame')
 const getLiveClass = () => dq1<HTMLDivElement>('.ytp-live')
@@ -20,6 +21,9 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
 
     this.subtitleManager = new YoutubeSubtitleManager()
     this.sideSwitcher = new SideSwitcher()
+    if (!this.isLive) {
+      this.videoPreviewManager = new YoutubePreviewManager()
+    }
   }
 
   async onPlayerInitd() {
@@ -32,7 +36,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
       }, 500)
       const ob = new MutationObserver((e) => {
         initSideSwitcherData()
-        this.subtitleManager.init(this.webVideo)
+        this.update()
       })
       ob.observe(listDom, { attributes: true })
 
@@ -44,11 +48,18 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
       this.addOnUnloadFn(
         onRouteChange(() => {
           setTimeout(() => {
-            this.subtitleManager.init(this.webVideo)
+            this.update()
             this.initSideSwitcherData()
           }, 0)
         }),
       )
+    }
+  }
+
+  update() {
+    this.subtitleManager.init(this.webVideo)
+    if (this.videoPreviewManager) {
+      this.videoPreviewManager.init(this.webVideo)
     }
   }
 

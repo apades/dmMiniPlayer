@@ -1,3 +1,4 @@
+import Events2 from '@root/utils/Events2'
 import { OrPromise } from '@root/utils/typeUtils'
 
 export type VideoPreviewNode = {
@@ -13,10 +14,15 @@ export type VideoPreviewData = {
   image: string
 }
 
-export default abstract class VideoPreviewManager {
+export default abstract class VideoPreviewManager extends Events2<{
+  unload: void
+}> {
+  webVideo: HTMLVideoElement | null = null
   images: string[] = []
 
-  init() {
+  init(webVideo: HTMLVideoElement) {
+    this.unload()
+    this.webVideo = webVideo
     this.onInit()
   }
 
@@ -28,6 +34,8 @@ export default abstract class VideoPreviewManager {
   unload() {
     this.onUnload()
     this.images = []
+    this.webVideo = null
+    this.emit('unload')
   }
 
   protected onUnload() {}

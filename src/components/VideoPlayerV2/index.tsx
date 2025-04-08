@@ -96,15 +96,6 @@ const VideoPlayerV2Inner = observer(
       subtitleManager.unload()
     })
 
-    useEffect(() => {
-      if (!videoPreviewManger) return
-      videoPreviewManger.init()
-
-      return () => {
-        videoPreviewManger.unload()
-      }
-    }, [videoPreviewManger])
-
     const [keyboardTipsModal, keyboardTipsModalContext] =
       useOpenIsolationModal(KeyboardTipsModal)
 
@@ -157,6 +148,15 @@ const VideoPlayerV2Inner = observer(
       //   }
       // }
     }, [videoRef.current, isFullInWeb])
+
+    useEffect(() => {
+      if (!videoPreviewManger || !videoRef.current) return
+      videoPreviewManger.init(videoRef.current)
+
+      return () => {
+        videoPreviewManger.unload()
+      }
+    }, [videoPreviewManger, videoRef.current])
 
     const toggleFullInWeb = useMemoizedFn(() => {
       setFullInWeb((v) => {

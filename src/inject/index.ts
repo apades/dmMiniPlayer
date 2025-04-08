@@ -13,6 +13,11 @@ onMessage_inject('run-code', async (data) => {
   return rs
 })
 
+onMessage_inject('get-data', (data) => {
+  const rs = get(window, data.keys.join('.'))
+  return rs
+})
+
 onMessage_inject('msg-test', (data) => {
   console.log('top window msg-test log', data)
   return data

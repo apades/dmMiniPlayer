@@ -19,6 +19,22 @@ export default class Events2<Events extends Record<string, unknown>> {
     }
   }
 
+  addEventListener<Key extends keyof Events>(
+    type: Key,
+    handler: Handler<Events[Key]>,
+  ): () => void {
+    this.mitt.on(type as any, handler as any)
+    return () => {
+      this.mitt.off(type as any, handler as any)
+    }
+  }
+  removeEventListener<Key extends keyof Events>(
+    type: Key,
+    handler?: Handler<Events[Key]>,
+  ) {
+    return this.mitt.off(type, handler)
+  }
+
   emit<Key extends keyof Events>(type: Key, event: Events[Key]): void
   emit<Key extends keyof Events>(
     type: undefined extends Events[Key] ? Key : never,

@@ -139,6 +139,13 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
   const [percent, setPercent] = useState(0)
   const [image, setImage] = useState<VideoPreviewData>()
 
+  useEffect(() => {
+    if (!videoPreviewManger) return
+    return videoPreviewManger.on2('unload', () => {
+      setImage(undefined)
+    })
+  }, [videoPreviewManger])
+
   useTargetEventListener(
     'mousemove',
     (e) => {
@@ -148,14 +155,12 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
         return setVisible(false)
       }
 
-      // debugger
       const style = getComputedStyle(containerRef.current)
       const percent = (e.offsetX / containerRef.current.clientWidth) * 100
       setVisible(true)
       // containerRef.current.style.setProperty('--percent', `${percent}%`)
       setPercent(percent)
 
-      console.log('videoPreviewManger', videoPreviewManger)
       videoPreviewManger
         ?.getPreviewImage(duration * (percent / 100))
         .then((res) => {
@@ -179,6 +184,21 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
     containerRef.current,
   )
 
+  if (!image)
+    return (
+      <div
+        className={classNames(
+          isVisible ? 'opacity-100' : 'opacity-0',
+          'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none text-white text-[12px]',
+        )}
+        style={{
+          left: `${percent}%`,
+        }}
+      >
+        {formatTime(duration * (percent / 100))}
+      </div>
+    )
+
   return (
     <div
       className={classNames(
@@ -189,16 +209,14 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
         left: `clamp(${previewImageWidth / 2}px, ${percent}%, calc(100% - ${previewImageWidth / 2}px))`,
       }}
     >
-      {image && (
-        <div
-          style={{
-            width: previewImageWidth,
-            height: image.height / (image.width / previewImageWidth),
-          }}
-        >
-          <img src={image.image} className="size-full object-contain" alt="" />
-        </div>
-      )}
+      <div
+        style={{
+          width: previewImageWidth,
+          height: image.height / (image.width / previewImageWidth),
+        }}
+      >
+        <img src={image.image} className="size-full object-contain" alt="" />
+      </div>
       <div className="absolute bottom-0 w-full text-center bg-[#3337] rounded-[2px] px-[4px] py-[2px]">
         {formatTime(duration * (percent / 100))}
       </div>
