@@ -1,3 +1,7 @@
+## v0.6.35
+1. Added progress bar preview function, currently only supports bilibili and Youtube
+2. Fixed the problem of subtitle data error in bilibili
+
 ## v0.6.34
 1. Added subtitle translation function to support bilingual subtitles
 2. Fixed the issue of repeatedly opening the PIP without loading the danmakus
