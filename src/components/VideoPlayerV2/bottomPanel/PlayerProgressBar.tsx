@@ -183,10 +183,10 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
     <div
       className={classNames(
         isVisible ? 'opacity-100' : 'opacity-0',
-        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 bg-[#333] rounded-[2px] px-[4px] py-[2px] pointer-events-none text-white text-[12px]',
+        'absolute bottom-[calc(100%+4px)] -translate-x-1/2 pointer-events-none text-white text-[12px]',
       )}
       style={{
-        left: `${percent}%`,
+        left: `clamp(${previewImageWidth / 2}px, ${percent}%, calc(100% - ${previewImageWidth / 2}px))`,
       }}
     >
       {image && (
@@ -199,7 +199,9 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
           <img src={image.image} className="size-full object-contain" alt="" />
         </div>
       )}
-      {formatTime(duration * (percent / 100))}
+      <div className="absolute bottom-0 w-full text-center bg-[#3337] rounded-[2px] px-[4px] py-[2px]">
+        {formatTime(duration * (percent / 100))}
+      </div>
     </div>
   )
 }
