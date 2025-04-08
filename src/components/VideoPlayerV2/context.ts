@@ -4,6 +4,7 @@ import { eventBus, EventBus } from '@root/core/event'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import SubtitleManager from '@root/core/SubtitleManager'
 import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
+import VideoPreviewManager from '@root/core/VideoPreviewManager'
 import { createContext } from 'react'
 
 export type ContextData = {
@@ -21,6 +22,7 @@ export type ContextData = {
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
   videoStream?: MediaStream
+  videoPreviewManger?: VideoPreviewManager
 }
 
 export const defaultVpContext: ContextData = {

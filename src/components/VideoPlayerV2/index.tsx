@@ -84,7 +84,7 @@ const ACTION_AREA_ACTIVE = 'active'
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
-    const { isLive } = useContext(vpContext)
+    const { isLive, videoPreviewManger } = useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
 
@@ -95,6 +95,15 @@ const VideoPlayerV2Inner = observer(
     useUnmount(() => {
       subtitleManager.unload()
     })
+
+    useEffect(() => {
+      if (!videoPreviewManger) return
+      videoPreviewManger.init()
+
+      return () => {
+        videoPreviewManger.unload()
+      }
+    }, [videoPreviewManger])
 
     const [keyboardTipsModal, keyboardTipsModalContext] =
       useOpenIsolationModal(KeyboardTipsModal)

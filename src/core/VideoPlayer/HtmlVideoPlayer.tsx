@@ -75,6 +75,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       danmakuSender: this.danmakuSender,
       danmakuEngine: this.danmakuEngine,
       sideSwitcher: this.sideSwitcher,
+      videoPreviewManger: this.videoPreviewManager,
       videoPlayer: this,
       webVideo: this.webVideoEl,
       ref: (ref) => {

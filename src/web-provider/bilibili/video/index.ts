@@ -9,6 +9,7 @@ import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
+import BiliBiliPreviewManager from './PreviewManager'
 
 type RecommendVideo = {
   el: HTMLElement
@@ -34,6 +35,7 @@ export default class BilibiliVideoProvider extends WebProvider {
     })
     // sideSwitcher
     this.sideSwitcher = new SideSwitcher()
+    this.videoPreviewManager = new BiliBiliPreviewManager()
   }
 
   private lastAid = ''

@@ -25,6 +25,8 @@ import _getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
 import { DocPIPRenderType } from '@root/types/config'
 import API_bilibili from '@root/api/bilibili'
+import isDev from '@root/shared/isDev'
+import BiliBiliPreviewManager from '@root/web-provider/bilibili/video/PreviewManager'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -405,4 +407,6 @@ function main() {
   window.getWebProvider = _getWebProvider
 }
 
-window.API_bilibili = API_bilibili
+if (isDev) {
+  window.API_bilibili = API_bilibili
+}

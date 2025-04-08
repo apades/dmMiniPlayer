@@ -1,3 +1,5 @@
+import { OrPromise } from '@root/utils/typeUtils'
+
 export type VideoPreviewNode = {
   image: string
   timeNodes: number[]
@@ -5,16 +7,28 @@ export type VideoPreviewNode = {
   ySize?: number
 }
 
-export default class VideoPreviewManager {
+export type VideoPreviewData = {
+  width: number
+  height: number
+  image: string
+}
+
+export default abstract class VideoPreviewManager {
   images: string[] = []
 
-  init() {}
+  init() {
+    this.onInit()
+  }
+
+  protected onInit() {}
 
   addPreviewData(props: { image: string }) {}
 
-  getPreviewImage(currentTime: number) {}
-
+  abstract getPreviewImage(currentTime: number): Promise<VideoPreviewData>
   unload() {
+    this.onUnload()
     this.images = []
   }
+
+  protected onUnload() {}
 }

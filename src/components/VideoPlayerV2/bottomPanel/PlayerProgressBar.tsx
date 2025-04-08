@@ -10,6 +10,9 @@ import { useTogglePlayState } from '../hooks'
 import style from './PlayerProgressBar.less?inline'
 import { observer } from 'mobx-react'
 import configStore from '@root/store/config'
+import { VideoPreviewData } from '@root/core/VideoPreviewManager'
+
+const previewImageWidth = 200
 
 type Props = {}
 const PlayerProgressBar: FC<Props> = (props) => {
@@ -75,26 +78,14 @@ const PlayerProgressBar: FC<Props> = (props) => {
         handleRender={(node, _props) => {
           return <HandleWithToolTips {..._props} duration={duration} />
         }}
-      >
-        {/* <div className="bar-loaded">
-          {props.loaded.map(({ s, e }) => (
-            <span
-              key={s}
-              style={{
-                left: `${(s / props.duration) * 100}%`,
-                width: `${((e - s) / props.duration) * 100}%`,
-                top: 0,
-              }}
-            ></span>
-          ))}
-        </div> */}
-      </ProgressBar>
+      ></ProgressBar>
 
       <ToolTips containerRef={containerRef} duration={duration} />
     </div>
   )
 }
 
+/**在进度条的handler单独的tooltips */
 const HandleWithToolTips: FC<
   Parameters<Required<HandlesProps>['handleRender']>[1] & { duration: number }
 > = (props) => {
@@ -143,8 +134,10 @@ type ToolTipsProps = {
 }
 const ToolTips: FC<ToolTipsProps> = (props) => {
   const { containerRef, duration } = props
+  const { videoPreviewManger } = useContext(vpContext)
   const [isVisible, setVisible] = useState(false)
   const [percent, setPercent] = useState(0)
+  const [image, setImage] = useState<VideoPreviewData>()
 
   useTargetEventListener(
     'mousemove',
@@ -161,6 +154,13 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
       setVisible(true)
       // containerRef.current.style.setProperty('--percent', `${percent}%`)
       setPercent(percent)
+
+      console.log('videoPreviewManger', videoPreviewManger)
+      videoPreviewManger
+        ?.getPreviewImage(duration * (percent / 100))
+        .then((res) => {
+          setImage(res)
+        })
     },
     containerRef.current,
   )
@@ -189,6 +189,16 @@ const ToolTips: FC<ToolTipsProps> = (props) => {
         left: `${percent}%`,
       }}
     >
+      {image && (
+        <div
+          style={{
+            width: previewImageWidth,
+            height: image.height / (image.width / previewImageWidth),
+          }}
+        >
+          <img src={image.image} className="size-full object-contain" alt="" />
+        </div>
+      )}
       {formatTime(duration * (percent / 100))}
     </div>
   )

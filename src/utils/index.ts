@@ -298,9 +298,11 @@ export function formatTime(time: number, hasMs?: boolean): string {
 }
 
 /**onceCall变种，会记住所有传的args，所有args的地址/简单数据相同返回的数据都是相同的 */
-export function onceCallWithMap<T extends noop>(fn: T): T {
-  const rootMap = new WeakMap()
-  const unObjMap = new Map()
+export function onceCallWithMap<T extends noop>(
+  fn: T,
+): T & { clear: () => void } {
+  let rootMap = new WeakMap()
+  let unObjMap = new Map()
   const noArgsSymbol = Symbol()
   const getKey = (key: any) => {
     if (key instanceof Object) return key
@@ -328,7 +330,7 @@ export function onceCallWithMap<T extends noop>(fn: T): T {
     }
   }
 
-  return ((...args: any[]) => {
+  function re(...args: any[]) {
     try {
       if (!args.length) return getMapRs([noArgsSymbol], rootMap)
       const rs = getMapRs([...args], rootMap)
@@ -339,7 +341,13 @@ export function onceCallWithMap<T extends noop>(fn: T): T {
       else setMapRs([...args], rootMap, rs)
       return rs
     }
-  }) as T
+  }
+  re.clear = () => {
+    rootMap = new WeakMap()
+    unObjMap = new Map()
+  }
+
+  return re as T & { clear: () => void }
 }
 
 export function addEventListener<
