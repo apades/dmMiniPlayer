@@ -1,3 +1,6 @@
+## v0.6.36
+Added the Backspace key to clear the shortcut key
+
 ## v0.6.35
 1. Added progress bar preview function, currently only supports bilibili and Youtube
 2. Fixed the problem of subtitle data error in bilibili

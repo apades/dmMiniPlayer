@@ -1,3 +1,6 @@
+## v0.6.36
+增加Backspace键清除快捷键功能
+
 ## v0.6.35
 1. 增加进度条预览功能，目前只支持 bilibili 和 Youtube
 2. 修复 bilibili 的字幕数据错误问题
