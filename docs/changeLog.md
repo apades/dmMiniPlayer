@@ -1,3 +1,6 @@
+## v0.6.37
+Fixed some small bugs
+
 ## v0.6.36
 Added the Backspace key to clear the shortcut key
 
