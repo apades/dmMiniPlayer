@@ -10,6 +10,7 @@ export default class EventSwitcher<T extends EventTarget> {
   #originalAdd?: T['addEventListener']
   #originalRemove?: T['removeEventListener']
   #tar?: T
+  #fnMap = new Map<any, (e: any) => void>()
   constructor(tar: T) {
     this.#tar = tar
 
@@ -27,13 +28,13 @@ export default class EventSwitcher<T extends EventTarget> {
       // TODO inOnce
       const isOnce = isObject(options) && options.once
       // first init
-      if (!eventMap[key]) {
-        eventMap[key] = []
-        originalAdd.call(tar, eventName, (e) => {
-          if (this.#disableMap[key]) return
-          eventMap[key].forEach((fn) => fn(e))
-        })
+      eventMap[key] = []
+      const newFn = (e: any) => {
+        if (this.#disableMap[key]) return
+        ;(fn as any)?.(e)
       }
+      this.#fnMap.set(fn, newFn)
+      originalAdd.call(tar, eventName, newFn)
 
       eventMap[key].push(fn as () => void)
     }
@@ -47,7 +48,9 @@ export default class EventSwitcher<T extends EventTarget> {
       const optionsName = this.#resolveOptionsToStringName(options)
       const key = [eventName, optionsName].join('-')
 
-      originalRemove.call(tar, eventName, fn, options)
+      const newFn = this.#fnMap.get(fn) || fn
+      this.#fnMap.delete(fn)
+      originalRemove.call(tar, eventName, newFn, options)
 
       eventMap[key].slice(eventMap[key].indexOf(fn as () => void), 1)
     }
