@@ -57,6 +57,12 @@ export enum ReplacerDbClickAction {
   fullpage = 'fullpage',
 }
 
+export enum SideTriggerType {
+  hidden = 'hidden',
+  hover = 'hover',
+  click = 'click',
+}
+
 export const baseConfigMap = {
   ...config_floatButton,
   ...config_danmaku,
@@ -128,6 +134,16 @@ export const baseConfigMap = {
   sideWidth: config({
     defaultValue: 300,
     label: t('settingPanel.sideWidth'),
+  }),
+  sideTrigger: config<SideTriggerType>({
+    defaultValue: SideTriggerType.hover,
+    label: t('settingPanel.sideTrigger'),
+    type: 'group',
+    group: [
+      { label: t('hidden'), value: SideTriggerType.hidden },
+      { label: t('hover'), value: SideTriggerType.hover },
+      { label: t('click'), value: SideTriggerType.click },
+    ],
   }),
   playbackRate: config({
     defaultValue: 3,

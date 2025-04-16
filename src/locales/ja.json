@@ -17,6 +17,7 @@
     "videoProgress_height": "進行状況バーの高さ",
     "videoNoJudgeDurationInLiveDesc": "ビデオが 60x60x5s を超える場合,ライブ ブロードキャストであると判断されます。YouTube および Twitch のライブ ブロードキャストに適応するために追加されます。この設定は将来的には必要なくなる可能性があります。",
     "sideWidth": "サイドバーの幅",
+    "sideTrigger": "サイドパネルトリガーモード",
     "playbackRate": "ショートカット/ロングプレスの再生速度",
     "playbackRateDesc": "ライブ配信中は無効",
     "pauseInClose_video": "ビデオを閉じるときに一時停止します",
@@ -192,5 +193,8 @@
     "single": "シングル",
     "double": "ダブル",
     "none": "なし"
-  }
+  },
+  "hidden": "隠れた",
+  "hover": "ホバー",
+  "click": "クリック"
 }

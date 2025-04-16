@@ -17,6 +17,7 @@
     "videoProgress_height": "Hauteur de la barre de progression",
     "videoNoJudgeDurationInLiveDesc": "Si une vidéo dépasse 60x60x5s, elle est considérée comme une diffusion en direct. Elle est ajoutée pour s'adapter aux diffusions en direct de YouTube et Twitch. Ce paramètre pourrait ne plus être nécessaire à l'avenir.",
     "sideWidth": "Largeur de la barre latérale",
+    "sideTrigger": "Mode de déclenchement du panneau latéral",
     "playbackRate": "Vitesse de lecture dans le raccourci / LongPress à droite",
     "playbackRateDesc": "Invalide pendant la diffusion en direct",
     "pauseInClose_video": "Pause à la fermeture de la vidéo",
@@ -192,5 +193,8 @@
     "single": "Célibataire",
     "double": "Double",
     "none": "Aucun"
-  }
+  },
+  "hidden": "Caché",
+  "hover": "Flotter",
+  "click": "Faire un clic"
 }

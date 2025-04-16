@@ -17,6 +17,7 @@
     "videoProgress_height": "Progress height",
     "videoNoJudgeDurationInLiveDesc": "If the video exceeds 60x60x5s, it is judged as a live broadcast. It is added to adapt to YouTube and Twitch live broadcasts. This setting may not be needed in the future.",
     "sideWidth": "Side panel width",
+    "sideTrigger": "Side panel trigger mode",
     "playbackRate": "Playback speed in shortcut/longPress right",
     "playbackRateDesc": "Not work in live",
     "pauseInClose_video": "Pause when closing video",
@@ -192,5 +193,8 @@
     "single": "Single",
     "double": "Double",
     "none": "None"
-  }
+  },
+  "hidden": "Hidden",
+  "hover": "Hover",
+  "click": "Click"
 }

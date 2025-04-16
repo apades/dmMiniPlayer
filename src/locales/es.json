@@ -17,6 +17,7 @@
     "videoProgress_height": "Altura de la barra de progreso",
     "videoNoJudgeDurationInLiveDesc": "Si un vídeo supera los 60x60x5s, se considera una transmisión en vivo. Se agrega para adaptarse a las transmisiones en vivo de YouTube y Twitch. Es posible que esta configuración no sea necesaria en el futuro.",
     "sideWidth": "Ancho de la barra lateral",
+    "sideTrigger": "Modo de activación del panel lateral",
     "playbackRate": "Velocidad de reproducción en atajo/longpress derecha",
     "playbackRateDesc": "No válido durante la transmisión en vivo",
     "pauseInClose_video": "Pausar al cerrar el vídeo",
@@ -192,5 +193,8 @@
     "single": "Soltero",
     "double": "Doble",
     "none": "Ninguno"
-  }
+  },
+  "hidden": "Oculto",
+  "hover": "Flotar",
+  "click": "Hacer clic"
 }

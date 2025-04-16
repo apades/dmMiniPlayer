@@ -17,6 +17,7 @@
     "videoProgress_height": "進度列高度",
     "videoNoJudgeDurationInLiveDesc": "影片超過60x60x5s就判斷是直播，為了適配youtube、twitch直播加的。這個設定未來可能就不需要了",
     "sideWidth": "側邊欄寬度",
+    "sideTrigger": "側邊欄觸發模式",
     "playbackRate": "快速鍵/長按右鍵的倍速播放速率",
     "playbackRateDesc": "直播下無效",
     "pauseInClose_video": "關閉影片時暫停",
@@ -192,5 +193,8 @@
     "single": "單行",
     "double": "雙行",
     "none": "無操作"
-  }
+  },
+  "hidden": "隐藏",
+  "hover": "鼠标悬停",
+  "click": "點擊"
 }

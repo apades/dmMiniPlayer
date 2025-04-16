@@ -4,7 +4,10 @@ import { formatTime, formatView, isNumber } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState, type FC } from 'react'
+import { useContext, useEffect, useRef, useState, type FC } from 'react'
+import { LeftOutlined } from '@ant-design/icons'
+import configStore, { SideTriggerType } from '@root/store/config'
+import vpContext from '../VideoPlayerV2/context'
 
 export type VideoItem = {
   /**spa点击切换路由的link元素 */
@@ -39,7 +42,7 @@ export type Props = {
   onChange?: (videoItem: VideoItem) => void
 }
 
-const VideoPlayerSide: FC<Props> = (props) => {
+const VideoPlayerSideInner: FC<Props> = observer((props) => {
   // const videoChanger = useRef(new VideoChanger(props.webProvider))
   const [activeMap, setActiveMap] = useState<Rec<number>>({})
   const [activeEl, setActiveEl] = useState<HTMLLIElement>()
@@ -137,7 +140,7 @@ const VideoPlayerSide: FC<Props> = (props) => {
       </div>
     </div>
   )
-}
+})
 
 const CoverTitleItem: FC<VideoItem> = (data) => {
   const infoSharedClass = `absolute px-[2px] py-[1px] bg-[#0005] rounded-[4px]`
@@ -173,6 +176,58 @@ const CoverTitleItem: FC<VideoItem> = (data) => {
         </div>
       </div>
     </>
+  )
+}
+
+const VideoPlayerSide: FC = (props) => {
+  const { sideSwitcher } = useContext(vpContext)
+
+  const isClickType = configStore.sideTrigger === SideTriggerType.click,
+    isHoverType = configStore.sideTrigger === SideTriggerType.hover
+  // const [isVisible, setVisible] = useState(false)
+
+  if (configStore.sideTrigger === SideTriggerType.hidden) return
+  if (!sideSwitcher) return
+
+  return (
+    <div
+      className={classNames(
+        'side-action-area ab-vertical-center transition-all duration-500 h-full z-[11] right-[calc(var(--side-width)*-1)] w-[calc(var(--side-width)+15px)] group/side',
+        isHoverType && 'hover:right-0',
+        // isVisible && 'right-0',
+        // ! docPIP很奇怪2边没法点击，hover成点击才能触发，这个问题已经很久了
+        // 暂时不搞click事件的visible触发，用该bug代替
+        isClickType && 'w-[calc(var(--side-width)+5px)] hover:right-0',
+      )}
+      // onMouseLeave={() => {
+      //   if (!isClickType) return
+      //   setVisible(false)
+      // }}
+    >
+      <VideoPlayerSideInner sideSwitcher={sideSwitcher} />
+      <div
+        className={classNames(
+          'side-dragger group-[&.active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center',
+          isHoverType && 'group-hover/side:opacity-100',
+          // isVisible && 'opacity-100',
+          isClickType && 'cursor-pointer w-[5px] group-hover/side:opacity-100',
+        )}
+        // onClick={() => {
+        //   if (!isClickType) return
+        //   setVisible(true)
+        // }}
+      >
+        {isHoverType && (
+          <LeftOutlined
+            className={classNames(
+              'rotate-0 text-xs group-hover/side:rotate-180',
+              // isHoverType && 'group-hover/side:rotate-180',
+              // isVisible && 'rotate-180',
+            )}
+          />
+        )}
+      </div>
+    </div>
   )
 }
 
