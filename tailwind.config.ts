@@ -1,8 +1,11 @@
 import remToPx from 'tailwindcss-rem-to-px'
+import { Config } from 'tailwindcss'
 import containerQuery from './packages/container-queries'
 
-/** @type {import('tailwindcss').Config} */
-const config = {
+const config: Config = {
+  experimental: {
+    optimizeUniversalDefaults: true,
+  },
   content: ['./src/**/*.{html,tsx,jsx}'],
   theme: {
     extend: {
