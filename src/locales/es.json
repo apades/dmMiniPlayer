@@ -17,7 +17,7 @@
     "videoProgress_height": "Altura de la barra de progreso",
     "videoNoJudgeDurationInLiveDesc": "Si un vídeo supera los 60x60x5s, se considera una transmisión en vivo. Se agrega para adaptarse a las transmisiones en vivo de YouTube y Twitch. Es posible que esta configuración no sea necesaria en el futuro.",
     "sideWidth": "Ancho de la barra lateral",
-    "playbackRate": "Tecla de acceso directo/presione prolongadamente el botón derecho para duplicar la velocidad de reproducción",
+    "playbackRate": "Velocidad de reproducción en atajo/longpress derecha",
     "playbackRateDesc": "No válido durante la transmisión en vivo",
     "pauseInClose_video": "Pausar al cerrar el vídeo",
     "pauseInClose_live": "Cierra la transmisión en vivo y pausala",
@@ -111,7 +111,9 @@
     "quickHide_pos": "Posición de escondite rápida",
     "showReplacerBtn": "Mostrar botón de reemplazo de video",
     "showReplacerBtnDesc": "Reemplace el reproductor de video en la página web con el reproductor de video de extensión",
-    "replacerDbClickAction": "Acción de doble clic"
+    "replacerDbClickAction": "Acción de doble clic",
+    "features": "Características",
+    "bpPlaybackRate": "Velocidad de reproducción"
   },
   "pos": {
     "topLeft": "Arriba a la izquierda",

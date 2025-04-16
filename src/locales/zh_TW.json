@@ -111,7 +111,9 @@
     "quickHide_pos": "快速隱藏位置",
     "showReplacerBtn": "顯示替換影片按鈕",
     "showReplacerBtnDesc": "將網頁中的影片播放器替換為擴展影片播放器",
-    "replacerDbClickAction": "雙擊動作"
+    "replacerDbClickAction": "雙擊動作",
+    "features": "特徵",
+    "bpPlaybackRate": "播放速度"
   },
   "pos": {
     "topLeft": "左上",

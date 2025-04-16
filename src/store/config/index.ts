@@ -37,6 +37,7 @@ import config_subtitle from './subtitle'
 import config_specialWebsites from './specialWebsites'
 import config_danmaku from './danmaku'
 import { docPIPConfig } from './docPIP'
+import config_features from './features'
 
 if (isDev) {
   configure({
@@ -63,6 +64,7 @@ export const baseConfigMap = {
   ...config_subtitle,
   ...docPIPConfig,
   ...config_shortcut,
+  ...config_features,
   language: config<Language>({
     label: 'Language',
     desc: 'Will reload page when language has changed',
@@ -104,10 +106,6 @@ export const baseConfigMap = {
         value: videoBorderType.height,
       },
     ],
-  }),
-  keyboardTips_show: config({
-    defaultValue: true,
-    notRecommended: true,
   }),
   videoProgress_show: config({
     defaultValue: true,

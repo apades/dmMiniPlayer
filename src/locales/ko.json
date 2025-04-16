@@ -17,7 +17,7 @@
     "videoProgress_height": "진행률 표시줄 높이",
     "videoNoJudgeDurationInLiveDesc": "동영상이 60x60x5초를 초과하면 라이브 방송으로 판단됩니다. YouTube 및 Twitch 라이브 방송에 적합하도록 추가됩니다. 이 설정은 향후에는 필요하지 않을 수 있습니다.",
     "sideWidth": "사이드바 너비",
-    "playbackRate": "재생 속도를 두 배로 높이려면 바로가기 키/오른쪽 버튼을 길게 누르세요",
+    "playbackRate": "바로 가기/긴 압박의 재생 속도",
     "playbackRateDesc": "생방송 중에는 유효하지 않습니다.",
     "pauseInClose_video": "동영상을 닫을 때 일시중지",
     "pauseInClose_live": "생방송을 닫고 일시중지하세요",
@@ -111,7 +111,9 @@
     "quickHide_pos": "빠른 가죽 위치",
     "showReplacerBtn": "비디오 교체 버튼 표시",
     "showReplacerBtnDesc": "웹페이지의 비디오 플레이어를 확장 비디오 플레이어로 교체",
-    "replacerDbClickAction": "더블클릭 동작"
+    "replacerDbClickAction": "더블클릭 동작",
+    "features": "특징",
+    "bpPlaybackRate": "재생 속도"
   },
   "pos": {
     "topLeft": "왼쪽 상단",

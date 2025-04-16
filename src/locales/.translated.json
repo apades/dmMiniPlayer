@@ -17,7 +17,7 @@
     "videoProgress_height": "Progress height",
     "videoNoJudgeDurationInLiveDesc": "If the video exceeds 60x60x5s, it is judged as a live broadcast. It is added to adapt to YouTube and Twitch live broadcasts. This setting may not be needed in the future.",
     "sideWidth": "Side panel width",
-    "playbackRate": "Playback rate in shortcut/longPress right",
+    "playbackRate": "Playback speed in shortcut/longPress right",
     "playbackRateDesc": "Not work in live",
     "pauseInClose_video": "Pause when closing video",
     "pauseInClose_live": "Pause when closing live",
@@ -111,7 +111,9 @@
     "quickHide_pos": "Quick hide position",
     "showReplacerBtn": "Show replace video button",
     "showReplacerBtnDesc": "Replace the video player in the web page with the extension video player",
-    "replacerDbClickAction": "Double click action"
+    "replacerDbClickAction": "Double click action",
+    "features": "Features",
+    "bpPlaybackRate": "Playback speed"
   },
   "pos": {
     "topLeft": "Top left",

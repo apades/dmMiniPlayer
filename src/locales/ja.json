@@ -17,7 +17,7 @@
     "videoProgress_height": "進行状況バーの高さ",
     "videoNoJudgeDurationInLiveDesc": "ビデオが 60x60x5s を超える場合,ライブ ブロードキャストであると判断されます。YouTube および Twitch のライブ ブロードキャストに適応するために追加されます。この設定は将来的には必要なくなる可能性があります。",
     "sideWidth": "サイドバーの幅",
-    "playbackRate": "ショートカット キー/右ボタンを長押しすると,再生速度が 2 倍になります",
+    "playbackRate": "ショートカット/ロングプレスの再生速度",
     "playbackRateDesc": "ライブ配信中は無効",
     "pauseInClose_video": "ビデオを閉じるときに一時停止します",
     "pauseInClose_live": "ライブブロードキャストを閉じて一時停止します",
@@ -111,7 +111,9 @@
     "quickHide_pos": "クイック非表示位置",
     "showReplacerBtn": "「ビデオを置換」ボタンを表示",
     "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。",
-    "replacerDbClickAction": "ダブルクリックアクション"
+    "replacerDbClickAction": "ダブルクリックアクション",
+    "features": "特徴",
+    "bpPlaybackRate": "再生速度"
   },
   "pos": {
     "topLeft": "左上",

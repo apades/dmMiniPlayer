@@ -17,7 +17,7 @@
     "videoProgress_height": "Hauteur de la barre de progression",
     "videoNoJudgeDurationInLiveDesc": "Si une vidéo dépasse 60x60x5s, elle est considérée comme une diffusion en direct. Elle est ajoutée pour s'adapter aux diffusions en direct de YouTube et Twitch. Ce paramètre pourrait ne plus être nécessaire à l'avenir.",
     "sideWidth": "Largeur de la barre latérale",
-    "playbackRate": "Touche de raccourci/appui long sur le bouton droit pour doubler la vitesse de lecture",
+    "playbackRate": "Vitesse de lecture dans le raccourci / LongPress à droite",
     "playbackRateDesc": "Invalide pendant la diffusion en direct",
     "pauseInClose_video": "Pause à la fermeture de la vidéo",
     "pauseInClose_live": "Fermez la diffusion en direct et mettez-la en pause",
@@ -111,7 +111,9 @@
     "quickHide_pos": "Position de peau rapide",
     "showReplacerBtn": "Afficher le bouton de remplacement de la vidéo",
     "showReplacerBtnDesc": "Remplacez le lecteur vidéo de la page Web par l'extension lecteur vidéo",
-    "replacerDbClickAction": "Action de double-clic"
+    "replacerDbClickAction": "Action de double-clic",
+    "features": "Caractéristiques",
+    "bpPlaybackRate": "Vitesse de lecture"
   },
   "pos": {
     "topLeft": "En haut à gauche",
