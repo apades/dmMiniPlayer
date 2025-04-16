@@ -38,7 +38,7 @@ const TogglePlayActionButton: FC = (props) => {
       {isLive && (
         <div className="live-dot wh-[12px] bg-red-700 rounded-full mt-0.5"></div>
       )}
-      <ActionButton onClick={() => togglePlayState()} className="-mx-2">
+      <ActionButton onClick={() => togglePlayState()}>
         <Iconfont
           type={isPlaying ? 'iconicon_player_pause' : 'iconicon_player_play'}
         />
