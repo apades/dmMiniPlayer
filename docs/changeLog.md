@@ -1,3 +1,8 @@
+## v0.6.38
+1. Add the function of switching the previous/next video + shortcut keys
+2. Add custom hidden player button settings
+3. Add sidebar triggering mode settings
+
 ## v0.6.37
 Fixed some small bugs
 
