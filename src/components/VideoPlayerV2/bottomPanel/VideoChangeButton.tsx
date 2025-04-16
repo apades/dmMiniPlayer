@@ -35,7 +35,7 @@ const Pre: FC<Props> = (props) => {
   const handleClick = useMemoizedFn(() => {
     const item = mainList.items[index - 1]
     item.linkEl.click()
-    // toast(item.title)
+    toast(item.title)
   })
 
   return (
@@ -66,7 +66,7 @@ const Next: FC<Props> = (props) => {
   const handleClick = useMemoizedFn(() => {
     const item = mainList.items[index + 1]
     item.linkEl.click()
-    // toast(item.title)
+    toast(item.title)
   })
 
   return (

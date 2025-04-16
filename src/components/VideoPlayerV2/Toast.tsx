@@ -61,6 +61,7 @@ const Toast: FC = (props) => {
             className="bg-[#262626] text-white px-2 text-[14px] max-w-[80%] pointer-events-auto"
             style={{
               position: 'absolute',
+              bottom: 0,
               transition: 'all 0.5s ease-out',
               opacity: toast.visible ? 1 : 0,
               transform: `translateY(-${offset}px)`,

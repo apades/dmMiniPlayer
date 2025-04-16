@@ -428,7 +428,7 @@ const VideoPlayerV2Inner = observer(
             handleChangeActionArea(false)
           }}
         >
-          <div className="absolute -top-12 w-full pointer-events-none">
+          <div className="absolute -top-8 w-full pointer-events-none">
             <Toast />
           </div>
 
