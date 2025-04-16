@@ -131,6 +131,8 @@
     "forward": "Adelante 5 segundos",
     "rewind_fine": "Rebobinar 1 fotograma",
     "forward_fine": "Adelante 1 fotograma",
+    "preVideo": "Video anterior",
+    "nextVideo": "Siguiente video",
     "speedMode": "Larga presione al modo de velocidad",
     "volumeUp": "Subir volumen",
     "volumeDown": "Bajar volumen",

@@ -1,12 +1,10 @@
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { formatTime, formatView, isNumber } from '@root/utils'
-import { isElementInViewport } from '@root/utils/dom'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState, type FC } from 'react'
-import scrollIntoView from 'scroll-into-view'
 
 export type VideoItem = {
   /**spa点击切换路由的link元素 */
@@ -31,6 +29,7 @@ export type VideoList = {
    *  */
   isSpa?: boolean
   items: VideoItem[]
+  mainList?: boolean
 }
 export type Props = {
   // videoList: VideoList[]

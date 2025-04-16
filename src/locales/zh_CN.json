@@ -131,6 +131,8 @@
     "forward": "快进5秒",
     "rewind_fine": "快退1帧",
     "forward_fine": "前进1帧",
+    "preVideo": "上一个视频",
+    "nextVideo": "下一个视频",
     "speedMode": "长按速度模式",
     "volumeUp": "音量+",
     "volumeDown": "音量-",

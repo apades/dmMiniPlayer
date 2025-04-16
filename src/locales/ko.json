@@ -131,6 +131,8 @@
     "forward": "5초 앞으로",
     "rewind_fine": "1프레임 되감기",
     "forward_fine": "1프레임 앞으로",
+    "preVideo": "이전 비디오",
+    "nextVideo": "다음 비디오",
     "speedMode": "스피드 모드로 긴 누르십시오",
     "volumeUp": "볼륨 업",
     "volumeDown": "볼륨 낮추기",

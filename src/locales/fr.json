@@ -131,6 +131,8 @@
     "forward": "Avancer de 5 secondes",
     "rewind_fine": "Rembobiner 1 image",
     "forward_fine": "Avancer d'une image",
+    "preVideo": "Vidéo précédente",
+    "nextVideo": "Vidéo suivante",
     "speedMode": "Appuyez sur le mode long pour accélérer",
     "volumeUp": "Augmenter le volume",
     "volumeDown": "Baisser le volume",

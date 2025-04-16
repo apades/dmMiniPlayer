@@ -5,16 +5,22 @@ import {
   FullscreenOutlined,
   LeftOutlined,
   QuestionCircleFilled,
-  QuestionOutlined,
   SettingOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons'
 import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
+import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
+import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
+import PostMessageEvent from '@root/shared/postMessageEvent'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
-import { isDocPIP, isIframe, ownerWindow, tryCatch, wait } from '@root/utils'
+import { isDocPIP, isIframe, ownerWindow, wait } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
+import screenfull from '@root/utils/screenfull'
+import { Omit } from '@root/utils/typeUtils'
+import { postMessageToTop } from '@root/utils/windowMessages'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -28,43 +34,38 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import Browser from 'webextension-polyfill'
-import screenfull from '@root/utils/screenfull'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { postMessageToTop } from '@root/utils/windowMessages'
-import PostMessageEvent from '@root/shared/postMessageEvent'
-import { Key } from '@root/types/key'
-import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
-import { useOnce } from '@root/hook'
-import { Omit } from '@root/utils/typeUtils'
 import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
 import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
+import ActionButton from './bottomPanel/ActionButton'
+import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
+import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
+import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
+import PlayedTime from './bottomPanel/PlayedTime'
+import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
+import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
+import VolumeBar from './bottomPanel/VolumeBar'
 import vpContext, { ContextData, defaultVpContext } from './context'
 import DanmakuContainer from './DanmakuContainer'
 import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
-import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
+import EventCenter from './EventCenter'
 import {
   useInWindowKeydown,
   useKeydown,
   useTogglePlayState,
   useWebVideoEventsInit,
 } from './hooks'
-import LoadingIcon from './LoadingIcon'
-import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
-import PlayedTime from './bottomPanel/PlayedTime'
-import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
-import SpeedIcon from './SpeedIcon'
-import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
-import VolumeBar from './bottomPanel/VolumeBar'
-import VolumeIcon from './VolumeIcon'
-import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 import KeyboardTipsModal from './KeyboardTipsModal'
+import LoadingIcon from './LoadingIcon'
 import ScreenshotTips from './ScreenshotTips'
+import SpeedIcon from './SpeedIcon'
 import Toast from './Toast'
-import ActionButton from './bottomPanel/ActionButton'
-import EventCenter from './EventCenter'
+import VolumeIcon from './VolumeIcon'
+import {
+  ChangeNextVideoButton,
+  ChangePreVideoButton,
+} from './bottomPanel/VideoChangeButton'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -89,7 +90,8 @@ const ACTION_AREA_ACTIVE = 'active'
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
-    const { isLive, keyBinding, keydownWindow, videoPreviewManger } = useContext(vpContext)
+    const { isLive, keyBinding, keydownWindow, videoPreviewManger } =
+      useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
 
@@ -439,7 +441,10 @@ const VideoPlayerV2Inner = observer(
           <div className="opacity-0 group-[&.active]:opacity-100 transition-all duration-500">
             <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
             <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
+              <ChangePreVideoButton />
               <TogglePlayActionButton />
+              <ChangeNextVideoButton />
+
               <PlayedTime />
 
               <div className="f-i-center gap-1">

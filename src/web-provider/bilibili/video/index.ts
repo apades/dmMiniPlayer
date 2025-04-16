@@ -7,9 +7,9 @@ import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
-import BiliBiliPreviewManager from './PreviewManager'
 import toast from 'react-hot-toast'
 import { getDanmakus } from '../utils'
+import BiliBiliPreviewManager from './PreviewManager'
 import BilibiliSubtitleManager from './SubtitleManager'
 
 type RecommendVideo = {
@@ -85,24 +85,29 @@ export default class BilibiliVideoProvider extends WebProvider {
     const getCtxDocument = () => document
     /**获取视频分p列表 */
     const getVideoPElList = () => {
-      const l1 = dq('.video-episode-card', getCtxDocument())
-      if (l1.length) return l1
-      // https://www.bilibili.com/video/BV1Yh4y1j7ko 用的这个，是不是瓦比赛那套改了不得而知
-      const l2 = dq('.list-box li .clickitem', getCtxDocument())
-      if (l2.length) return l2
-      // 新网页的选择器
-      const l3 = dq('.video-pod__item .simple-base-item', getCtxDocument())
-      if (l3.length) return l3
-      // 目前看到瓦的比赛视频分p用的这个
-      return dq('.list-box li a', getCtxDocument())
+      const list = [
+        () => dq('.video-episode-card', getCtxDocument()),
+        // https://www.bilibili.com/video/BV1Yh4y1j7ko 用的这个，是不是瓦比赛那套改了不得而知
+        () => dq('.list-box li .clickitem', getCtxDocument()),
+        // 新网页的选择器
+        () => dq('.video-pod__item .simple-base-item', getCtxDocument()),
+        // 目前看到瓦的比赛视频分p用的这个
+        () => dq('.list-box li a', getCtxDocument()),
+        // /list/*用的这个
+        () => dq('.action-list-item .actionlist-item-inner', getCtxDocument()),
+      ]
+
+      return list.find((fn) => fn().length)?.() || []
     }
+
     /**分p视频active */
     const isVideoPActive = (el: HTMLElement) =>
       !!(
         el.querySelector('.video-episode-card__info-playing') ||
         el.querySelector('.video-episode-card__info-title-playing') ||
         el.classList.contains('on') ||
-        el.classList.contains('active')
+        el.classList.contains('active') ||
+        el.classList.contains('siglep-active')
       )
 
     // 视频分p
@@ -114,9 +119,11 @@ export default class BilibiliVideoProvider extends WebProvider {
         linkEl: el,
         title:
           el.querySelector('.video-episode-card__info-title')?.textContent ??
+          el.querySelector('.title')?.textContent ??
           el.textContent?.trim() ??
           '',
         isActive: isVideoPActive(el),
+        cover: dq1<HTMLImageElement>('.cover img', el)?.src,
       }
     })
 
@@ -128,6 +135,7 @@ export default class BilibiliVideoProvider extends WebProvider {
 
       if (!relateVideos) throw Error('没法获取关联视频')
       const recommendVideos: RecommendVideo[] = []
+
       recommendElList.forEach((el) => {
         const elAEl = el.querySelector<HTMLAnchorElement>('.info a')
         if (!elAEl) return
@@ -162,6 +170,7 @@ export default class BilibiliVideoProvider extends WebProvider {
       {
         category: t('vp.playList'),
         items: videoPItems,
+        mainList: true,
       },
       {
         category: t('vp.recommendedList'),

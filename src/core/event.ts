@@ -32,6 +32,8 @@ export enum PlayerEvent {
   // command_pressSpeedMode = 'command_pressSpeedMode',
   command_screenshot = 'command_screenshot',
   command_danmakuShowInput = 'command_danmakuShowInput',
+  command_preVideo = 'command_preVideo',
+  command_nextVideo = 'command_nextVideo',
 
   /**长按倍速功能 */
   longTabPlaybackRate = 'longTabPlaybackRate',

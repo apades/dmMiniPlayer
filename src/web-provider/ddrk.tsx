@@ -39,6 +39,8 @@ export default class DdrkProvider extends WebProvider {
       }
     })
 
-    this.sideSwitcher?.init([{ category: '视频分P', items: videoPItems }])
+    this.sideSwitcher?.init([
+      { category: '视频分P', items: videoPItems, mainList: true },
+    ])
   }
 }

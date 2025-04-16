@@ -132,6 +132,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
       {
         category: t('vp.playList'),
         items: playListItems,
+        mainList: true,
       },
       {
         category: t('vp.recommendedList'),

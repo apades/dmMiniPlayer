@@ -92,6 +92,16 @@ const config_shortcut = {
     defaultValue: keys('Shift', 'ArrowRight'),
     ext: cateProgress,
   }),
+  shortcut_preVideo: config({
+    label: t('shortcut.preVideo'),
+    defaultValue: keys('Ctrl', 'Alt', 'ArrowLeft'),
+    ext: cateProgress,
+  }),
+  shortcut_nextVideo: config({
+    label: t('shortcut.nextVideo'),
+    defaultValue: keys('Ctrl', 'Alt', 'ArrowRight'),
+    ext: cateProgress,
+  }),
   shortcut_volumeUp: config({
     label: t('shortcut.volumeUp'),
     defaultValue: keys('ArrowUp'),

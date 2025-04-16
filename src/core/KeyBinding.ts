@@ -106,12 +106,13 @@ export class KeyBinding {
       return
     e.stopPropagation()
 
-    const { keyCode, shiftKey, ctrlKey } = e
+    const { keyCode, shiftKey, ctrlKey, altKey } = e
     // if (key.length === 1) key = key.toLowerCase()
     const actions: Key[] = []
 
     if (shiftKey && keyCode !== keyToKeyCodeMap.Shift) actions.push('Shift')
     if (ctrlKey && keyCode !== keyToKeyCodeMap.Ctrl) actions.push('Ctrl')
+    if (altKey && keyCode !== keyToKeyCodeMap.Alt) actions.push('Alt')
 
     actions.push(...formatKeys((keyCodeToCode as any)[keyCode]))
 
