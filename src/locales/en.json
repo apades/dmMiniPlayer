@@ -111,7 +111,8 @@
     "quickHide_pos": "Quick hide position",
     "showReplacerBtn": "Show replace video button",
     "showReplacerBtnDesc": "Replace the video player in the web page with the extension video player",
-    "replacerDbClickAction": "Double click action"
+    "replacerDbClickAction": "Double click action",
+    "bottomPanel": "bottomPanel"
   },
   "pos": {
     "topLeft": "Top left",
