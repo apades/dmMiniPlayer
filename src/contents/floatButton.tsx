@@ -5,7 +5,7 @@ import {
 } from '@root/utils'
 
 import FloatButton from '@root/components/FloatButton'
-import { getTopParentsWithSameRect } from '@root/utils/dom'
+import { dqParents, getTopParentsWithSameRect } from '@root/utils/dom'
 import { createRoot } from 'react-dom/client'
 import { getBrowserSyncStorage } from '@root/utils/storage'
 import { DRAG_POS } from '@root/shared/storeKey'
@@ -22,6 +22,22 @@ async function initVideoFloatBtn(
   if (container.ownerDocument != document) return
 
   container.setAttribute(INIT_ATTR, 'true')
+
+  // fixed会受到 transform、perspective、filter 或 backdrop-filter 影响上下文
+  // @see https://developer.mozilla.org/zh-CN/docs/Web/CSS/position#fixed
+  if (fixedPos) {
+    const els = [vel, ...dqParents(vel, '*')]
+    const hasSpcStyle = !!els.find((el) => {
+      const style = getComputedStyle(el)
+
+      return ['transform', 'perspective', 'filter', 'backdropFilter'].find(
+        (prop: any) => style[prop] !== 'none',
+      )
+    })
+
+    console.log('hasSpcStyle', hasSpcStyle)
+    if (hasSpcStyle) fixedPos = false
+  }
 
   console.log('create floatButton', container, vel, fixedPos)
   const initPos = await getBrowserSyncStorage(DRAG_POS)
