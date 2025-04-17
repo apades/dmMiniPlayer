@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react'
 import type { AsyncFn, Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
 import _throttle from './feat/throttle'
-import { getTopParentsWithSameRect } from './dom'
+import { dqParents, getTopParentsWithSameRect } from './dom'
 // export * as debounce from './feat/debounce'
 
 export const throttle = _throttle
@@ -577,7 +577,22 @@ export const getVideoElInitFloatButtonData = (
     // 也有单标签的video的，container就用videoTarget.parentElement
     const container =
       topParents[topParents.length - 1] ?? videoTarget.parentElement
-    return [container, videoTarget, true]
+
+    // fixed会受到 transform、perspective、filter 或 backdrop-filter 影响上下文
+    // @see https://developer.mozilla.org/zh-CN/docs/Web/CSS/position#fixed
+    let fixedPos = true
+    const els = [videoTarget, ...dqParents(videoTarget, '*')]
+    const hasSpcStyle = !!els.find((el) => {
+      const style = getComputedStyle(el)
+
+      return ['transform', 'perspective', 'filter', 'backdropFilter'].find(
+        (prop: any) => style[prop] !== 'none',
+      )
+    })
+
+    console.log('hasSpcStyle', hasSpcStyle)
+    if (hasSpcStyle) fixedPos = false
+    return [container, videoTarget, fixedPos]
   }
   if (topParentWithPosition instanceof HTMLVideoElement) {
     // console.log('top的', topParentWithPosition)

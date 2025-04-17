@@ -1,13 +1,20 @@
 import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { makeObservable, runInAction } from 'mobx'
+import configStore from '@root/store/config'
+import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
+import {
+  createElement,
+  getClientRect,
+  getVideoElInitFloatButtonData,
+} from '@root/utils'
+import classNames from 'classnames'
+import { getTopParentsWithSameRect } from '@root/utils/dom'
 import { SideSwitcher } from '../SideSwitcher'
 import SubtitleManager from '../SubtitleManager'
 import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
-import configStore from '@root/store/config'
-import playerConfig from '@root/store/playerConfig'
-import { DocPIPRenderType } from '@root/types/config'
 import VideoPreviewManager from '../VideoPreviewManager'
 
 export type ExtendComponent = {
@@ -130,23 +137,85 @@ export default class VideoPlayerBase
       throw Error('不正常的video标签')
     }
 
-    const originInParentIndex = [...videoEl.parentElement.children].findIndex(
-        (child) => child == videoEl,
-      ),
-      hasController = videoEl.controls,
-      originStyle = videoEl.getAttribute('style')
+    const hasController = videoEl.controls,
+      isPause = videoEl.paused
+
+    const style = videoEl.computedStyleMap()
+    const isDynamicWH = !![
+      style.get('width')?.toString(),
+      videoEl.getAttribute('width'),
+      style.get('height')?.toString(),
+      videoEl.getAttribute('height'),
+    ].find((v) => !!v && v.endsWith('px'))
     videoEl.controls = false
+
+    // 随时监听大小变化
+    const unListenObserver = (() => {
+      if (!isDynamicWH) return () => {}
+
+      const listenTarget = getTopParentsWithSameRect(videoEl).pop() ?? videoEl
+      const resizeObserver = new ResizeObserver(() => {
+        const { width, height } = listenTarget.getBoundingClientRect()
+        occupyEl.style.width = `${width}px`
+        occupyEl.style.height = `${height}px`
+      })
+
+      resizeObserver.observe(listenTarget)
+
+      return () => {
+        resizeObserver.disconnect()
+      }
+    })()
+
+    const [, , fixedPos] = getVideoElInitFloatButtonData(videoEl)
+
+    const { width, height } = videoEl.getBoundingClientRect()
+    const occupyEl = createElement('div', {
+      style: {
+        ...(fixedPos || isDynamicWH
+          ? { width, height }
+          : {
+              width: '100%',
+              height: '100%',
+            }),
+        cursor: 'pointer',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '14px',
+      },
+      innerText: '正在以画中画模式播放中，点击可还原播放器',
+      onclick: () => {
+        console.log('click close`')
+        this.emit(PlayerEvent.close)
+      },
+    })
+    occupyEl.style.background = 'black'
+    occupyEl.style.color = 'white'
+
+    // FIXME 有时候会出现替换一瞬间，又替换回去的情况，然后docPIP的播放器就卡状态了
+    originParent.replaceChild(occupyEl, videoEl)
+
+    // replaceChild触发后会被暂停视频
+    setTimeout(() => {
+      if (!isPause && videoEl.paused) {
+        videoEl.play()
+      }
+    }, 0)
 
     return () => {
       videoEl.controls = hasController
-      if (!originParent.childNodes[originInParentIndex]) {
-        originParent.appendChild(videoEl)
-      } else {
-        originParent.insertBefore(
-          videoEl,
-          originParent.childNodes[originInParentIndex],
-        )
-      }
+
+      originParent.replaceChild(videoEl, occupyEl)
+      unListenObserver()
+      // if (!originParent.childNodes[originInParentIndex]) {
+      //   originParent.appendChild(videoEl)
+      // } else {
+      //   originParent.insertBefore(
+      //     videoEl,
+      //     originParent.childNodes[originInParentIndex],
+      //   )
+      // }
     }
   }
 }

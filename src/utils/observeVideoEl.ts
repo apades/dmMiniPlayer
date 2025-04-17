@@ -11,7 +11,7 @@ export function observeVideoEl(
   function observe(videoEl: HTMLElement) {
     return new Promise<HTMLElement>((res) => {
       const parents = dqParents(videoEl, '*').reverse()
-      if (parents[0].tagName !== 'HTML')
+      if (parents[0] && parents[0].tagName !== 'HTML')
         throw Error('该videoEl已经不在html上了')
 
       // let removeIndex = -1
