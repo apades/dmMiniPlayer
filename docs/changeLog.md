@@ -1,3 +1,6 @@
+## v0.6.39
+Compatible with some bilibili videos that do not display in the sidebar
+
 ## v0.6.38
 1. Add the function of switching the previous/next video + shortcut keys
 2. Add custom hidden player button settings
