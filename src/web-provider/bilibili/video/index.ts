@@ -91,6 +91,8 @@ export default class BilibiliVideoProvider extends WebProvider {
         () => dq('.list-box li .clickitem', getCtxDocument()),
         // 新网页的选择器
         () => dq('.video-pod__item .simple-base-item', getCtxDocument()),
+        // 还有这种😅
+        () => dq('.video-pod__item.simple-base-item', getCtxDocument()),
         // 目前看到瓦的比赛视频分p用的这个
         () => dq('.list-box li a', getCtxDocument()),
         // /list/*用的这个
