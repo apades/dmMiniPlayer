@@ -1,4 +1,7 @@
+import { Hono } from 'hono'
+import { useTranslations } from 'next-intl'
 import packageJson from '../package.json'
+import {} from 'type-fest'
 
 const version = packageJson.version
 
@@ -116,3 +119,129 @@ export const manifest: chrome.runtime.ManifestV3 = {
     },
   },
 }
+
+const a = new Hono()
+
+a.get('/test/:a/:b/c', (c) => {
+  c.req.param('b')
+})
+
+const t = useTranslations('a1')
+t('a13')
+
+type ICUTags<
+  MessageString extends string,
+  TagsFn,
+> = MessageString extends `${infer Prefix}<${infer TagName}>${infer Content}</${string}>${infer Tail}`
+  ? Record<TagName, TagsFn> & ICUTags<`${Prefix}${Content}${Tail}`, TagsFn>
+  : {}
+
+type ICUTags2<
+  MessageString extends string,
+  TagsFn,
+> = MessageString extends `${infer Prefix}{${infer TagName}}${infer Tail}`
+  ? Record<TagName, TagsFn> & ICUTags2<`${Prefix}${Tail}`, TagsFn>
+  : {}
+
+type t1 = ICUTags<'test<div> {bbb}</div> bvbb', string>
+
+let a1: t1 = {
+  div: 'asd',
+}
+
+type t2 = ICUTags2<'test<div> {bbb} {cccc}', string>
+
+let b1: t2 = {
+  bbb: 'ccc',
+  cccc: '22',
+}
+
+/**
+ * 按模板将字符串拆分成联合类型
+ *
+ * @example
+ * ```ts
+ * type Split1 = SplitTemplateStringToUnion<'{content}', 'aaa {a1} {a2} bbbb'> // 'a1' | 'a2'
+ * const sp: Split1 = 'a1'
+ *
+ * type Split2 = SplitTemplateStringToUnion<'%content%', 'aaa %a1% %a2% bbbb'> // 'a1' | 'a2'
+ * const sp: Split2 = 'a1'
+ * ```
+ */
+type SplitTemplateStringToUnion<
+  template extends `${string}content${string}`,
+  tarString extends string,
+> = template extends `${infer Prefix}content${infer Tail}`
+  ? tarString extends `${infer tPre}${Prefix}${infer Content}${Tail}${infer tTail}`
+    ? Content | SplitTemplateStringToUnion<template, `${tPre}${tTail}`>
+    : never
+  : never
+
+type Split1 = SplitTemplateStringToUnion<'{content}', 'asads{a1}{a2}bb'>
+const sp1: Split1 = 'a1'
+// useless
+type Split2 = SplitTemplateStringToUnion<`/:content`, '/path/:aa/:a2'>
+const sp2: Split2 = 'a'
+
+/**
+ * 按字符将字符串拆分成联合类型
+ *
+ * @example
+ * ```ts
+ * type Split = SplitStringToUnion<'/', '/path/to/file.html'> // 'path' | 'to' | 'file.html'
+ * const sp: Split = 'file.html'
+ * ```
+ */
+type SplitStringToUnion<
+  split extends string,
+  tarString extends string,
+> = tarString extends `${infer tPre}${split}${infer tTail}`
+  ? tPre | SplitStringToUnion<split, tTail>
+  : tarString
+
+type Split3 = SplitStringToUnion<'/', '/path/to/file.html'>
+const sp3: Split3 = 'file.html'
+
+type Split4 = SplitStringToUnion<'/:', '/path/p2/:a1/p4/p5/:a2/p3'>
+const sp4: Split4 = '/path/p2'
+
+type FilterUnionUnStartWith<
+  Union,
+  Prefix extends string,
+> = Union extends `${Prefix}${string}` ? never : Union
+
+type SplitStringToArray<
+  split extends string,
+  tarString extends string,
+> = tarString extends `${infer tPre}${split}${infer tTail}`
+  ? [tPre, ...SplitStringToArray<split, tTail>]
+  : [tarString]
+
+type FilterSplit4 = FilterUnionUnStartWith<Split4, '/'>
+type ArraySplit4 = SplitStringToArray<'/', FilterSplit4>
+
+type GetArrayFirst<T extends any[]> = T extends [infer First, ...any[]]
+  ? First
+  : never
+
+type GetFirstSplit4 = GetArrayFirst<ArraySplit4>
+const sp42: GetFirstSplit4 = 'a1'
+
+/**
+ * 将union类型宽松化
+ * @example
+ * ```ts
+ * type Union = 'a' | 'b'
+ * const a1: Union = 'c' // error
+ * const a2: LooseUnion<Union> = 'c' // ok
+ */
+type LooseUnion<T> = T | (string & {})
+
+type Unt1 = LooseUnion<Split1>
+const unt1: Unt1 = 'a3'
+
+type Unt2 = LooseUnion<'a' | { t: true }>
+const unt2: Unt2 = { t: true }
+
+type Unt3 = LooseUnion<{ t: false; a1: string } | { t: true; a2: string }>
+const unt3: Unt3 = { asd: '1' }
