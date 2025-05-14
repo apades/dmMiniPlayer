@@ -25,32 +25,7 @@ export const docPIPConfig = {
   }),
   movePIPInOpen: config({
     label: t('settingPanel.movePIPInOpen'),
-    defaultValue: false,
-  }),
-  movePIPInOpen_basePos: config<Exclude<Position, Position.default>>({
-    label: t('settingPanel.movePIPInOpen_basePos'),
-    defaultValue: Position['bottomRight'],
-    relateBy: 'movePIPInOpen',
-    relateByValue: true,
-    type: 'group',
-    group: Object.values(Position)
-      .filter((v) => v !== Position.default)
-      .map((v) => ({
-        value: v,
-        label: t(`pos.${v}`),
-      })),
-  }),
-  movePIPInOpen_offsetX: config({
-    label: t('settingPanel.movePIPInOpen_offsetX'),
-    defaultValue: 0,
-    relateBy: 'movePIPInOpen',
-    relateByValue: true,
-  }),
-  movePIPInOpen_offsetY: config({
-    label: t('settingPanel.movePIPInOpen_offsetY'),
-    defaultValue: 0,
-    relateBy: 'movePIPInOpen',
-    relateByValue: true,
+    defaultValue: true,
   }),
   quickHide_pos: config<Exclude<Position, Position.default>>({
     label: t('settingPanel.quickHide_pos'),

@@ -8,9 +8,14 @@ function key<T = any>(key: string) {
 export type KeyType<T extends { __key: any }> = T['__key']
 
 export const FLOAT_BTN_HIDDEN = key<boolean>('FLOAT_BTN_HIDDEN')
-export const PIP_WINDOW_CONFIG = key<{ width: number; height: number }>(
-  'PIP_WINDOW_CONFIG',
-)
+export const PIP_WINDOW_CONFIG = key<{
+  width: number
+  height: number
+  left: number
+  top: number
+  mainDPR: number
+  pipDPR: number
+}>('PIP_WINDOW_CONFIG')
 export const DM_MINI_PLAYER_CONFIG = key<typeof configStore>('LOCAL_CONFIG')
 
 export const DRAG_POS = key<{

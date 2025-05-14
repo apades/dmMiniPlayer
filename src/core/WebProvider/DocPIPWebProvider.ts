@@ -1,15 +1,13 @@
+import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
+import WebextEvent from '@root/shared/webextEvent'
 import configStore, { videoBorderType } from '@root/store/config'
-import { calculateNewDimensions, createElement, wait } from '@root/utils'
+import { calculateNewDimensions, createElement } from '@root/utils'
+import { getDocPIPBorderSize } from '@root/utils/docPIP'
 import {
   getBrowserSyncStorage,
   setBrowserSyncStorage,
 } from '@root/utils/storage'
-import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
 import { sendMessage } from 'webext-bridge/content-script'
-import WebextEvent from '@root/shared/webextEvent'
-import { autorun } from 'mobx'
-import { getDocPIPBorderSize, resizeDocPIPWindow } from '@root/utils/docPIP'
-import { Position } from '@root/types/config'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PlayerEvent } from '../event'
 import { WebProvider } from '.'
@@ -63,48 +61,27 @@ export default class DocPIPWebProvider extends WebProvider {
     })
 
     // 这里卡50是往前系统API给的outerWidth innerWidth都是乱的，就这里正常
-    wait(50).then(() => {
-      console.log(
-        'pipWindow.innerWidth',
-        pipWindow.innerWidth,
-        height,
-        pipWindow.innerWidth === width && pipWindow.innerHeight === height,
-      )
-      if (pipWindow.innerWidth === width && pipWindow.innerHeight === height)
-        return
-      const [borX, borY] = getDocPIPBorderSize(pipWindow)
-      // ! 已经确定是chrome的bug，第二次打开不会按照width和height来设置窗口大小
-      sendMessage(WebextEvent.resizeDocPIP, {
-        width: width + borX,
-        height: height + borY,
-        docPIPWidth: pipWindow.innerWidth,
-      })
-    })
+    const [borX, borY] = getDocPIPBorderSize(pipWindow)
 
-    this.addOnUnloadFn(
-      autorun(() => {
-        console.log('configStore.movePIPInOpen', configStore.movePIPInOpen)
-        if (configStore.movePIPInOpen) {
-          const [x, y] = (() => {
-            switch (configStore.movePIPInOpen_basePos) {
-              case Position['topLeft']:
-                return [0, 0]
-              case Position['topRight']:
-                return [screen.width - width, 0]
-              case Position['bottomLeft']:
-                return [0, screen.height - height]
-              case Position['bottomRight']:
-                return [screen.width - width, screen.height - height]
-            }
-          })()
-          sendMessage(WebextEvent.moveDocPIPPos, {
-            docPIPWidth: width,
-            x: x + configStore.movePIPInOpen_offsetX,
-            y: y + configStore.movePIPInOpen_offsetY,
-          })
-        }
-      }),
-    )
+    let [realWidth, realHeight] = [width + borX, height + borY]
+
+    // 低DPR屏幕到高DPR屏幕需要缩小wh，高到低就不需要😓
+    if (
+      pipWindowConfig?.pipDPR &&
+      pipWindowConfig?.pipDPR > window.devicePixelRatio
+    ) {
+      realWidth = ~~(realWidth / pipWindowConfig?.pipDPR)
+      realHeight = ~~(realHeight / pipWindowConfig?.pipDPR)
+    }
+
+    // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
+    await sendMessage(WebextEvent.updateDocPIPRect, {
+      width: realWidth,
+      height: realHeight,
+      docPIPWidth: pipWindow.innerWidth,
+      left: pipWindowConfig?.left,
+      top: pipWindowConfig?.top,
+    })
 
     const handleWheel = (e: WheelEvent) => {
       if (!e.ctrlKey) return
@@ -180,6 +157,10 @@ export default class DocPIPWebProvider extends WebProvider {
         setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
           height,
           width,
+          left: pipWindow.screenLeft,
+          top: pipWindow.screenTop,
+          mainDPR: window.devicePixelRatio,
+          pipDPR: pipWindow.devicePixelRatio,
         })
       }
       this.emit(PlayerEvent.close)
