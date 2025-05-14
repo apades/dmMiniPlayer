@@ -1,3 +1,6 @@
+## v0.6.40
+Fixed some issues involving initializing the position and size of the PIP
+
 ## v0.6.39
 Compatible with some bilibili videos that do not display in the sidebar
 
