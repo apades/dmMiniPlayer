@@ -51,15 +51,25 @@ export default class DocPIPWebProvider extends WebProvider {
       throw Error('不正常的miniPlayer.init()')
     }
 
+    await sendMessage(WebextEvent.beforeStartPIP, null)
     console.log('[docPIP_WH] real width height', { width, height })
     const pipWindow = await window.documentPictureInPicture.requestWindow({
       width,
       height,
     })
     this.pipWindow = pipWindow
+    await sendMessage(WebextEvent.afterStartPIP, {
+      width: pipWindow.innerWidth,
+    })
 
     // 这里卡50是往前系统API给的outerWidth innerWidth都是乱的，就这里正常
     wait(50).then(() => {
+      console.log(
+        'pipWindow.innerWidth',
+        pipWindow.innerWidth,
+        height,
+        pipWindow.innerWidth === width && pipWindow.innerHeight === height,
+      )
       if (pipWindow.innerWidth === width && pipWindow.innerHeight === height)
         return
       const [borX, borY] = getDocPIPBorderSize(pipWindow)
@@ -73,6 +83,7 @@ export default class DocPIPWebProvider extends WebProvider {
 
     this.addOnUnloadFn(
       autorun(() => {
+        console.log('configStore.movePIPInOpen', configStore.movePIPInOpen)
         if (configStore.movePIPInOpen) {
           const [x, y] = (() => {
             switch (configStore.movePIPInOpen_basePos) {
@@ -173,6 +184,7 @@ export default class DocPIPWebProvider extends WebProvider {
       }
       this.emit(PlayerEvent.close)
       pipWindow.removeEventListener('wheel', handleWheel)
+      sendMessage(WebextEvent.closePIP, null)
     })
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)

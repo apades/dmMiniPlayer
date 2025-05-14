@@ -1,23 +1,18 @@
-import { onMessage, sendMessage } from 'webext-bridge/background'
-import './commands'
-import Browser from 'webextension-polyfill'
-import { t } from '@root/utils/i18n'
+import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
 import { FLOAT_BTN_HIDDEN, LOCALE } from '@root/shared/storeKey'
+import WebextEvent from '@root/shared/webextEvent'
+import { t } from '@root/utils/i18n'
 import {
   getBrowserLocalStorage,
   setBrowserSyncStorage,
   useBrowserLocalStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
-import WebextEvent from '@root/shared/webextEvent'
-import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
 import { v4 as uuid } from 'uuid'
-import {
-  mv3GetDocPIPTab,
-  mv3MoveTabsToPosition,
-  mv3ResizeTabs,
-  mv3UpdateTab,
-} from '@root/utils/mv3'
+import { onMessage, sendMessage } from 'webext-bridge/background'
+import Browser from 'webextension-polyfill'
+import './commands'
+import './docPIP'
 
 console.log('run bg')
 getBrowserLocalStorage(LOCALE).then((locale) => {
@@ -129,27 +124,6 @@ onMessage(WebextEvent.stopGetDanmaku, ({ data }) => {
     danmakuGetterCacheMap.delete(data.id)
   }
 })
-
-onMessage(WebextEvent.moveDocPIPPos, async ({ data }) => {
-  const docPIPTab = await mv3GetDocPIPTab(data.docPIPWidth)
-  if (!docPIPTab) throw Error('Not find docPIP tab')
-  await mv3MoveTabsToPosition(docPIPTab, [data.x, data.y])
-})
-
-onMessage(WebextEvent.resizeDocPIP, async ({ data }) => {
-  const docPIPTab = await mv3GetDocPIPTab(data.docPIPWidth)
-  if (!docPIPTab) throw Error('Not find docPIP tab')
-  await mv3ResizeTabs(docPIPTab, { height: data.height, width: data.width })
-})
-
-onMessage(
-  WebextEvent.updateDocPIPRect,
-  async ({ data: { docPIPWidth, ...data } }) => {
-    const docPIPTab = await mv3GetDocPIPTab(docPIPWidth)
-    if (!docPIPTab) throw Error('Not find docPIP tab')
-    await mv3UpdateTab(docPIPTab, data)
-  },
-)
 
 const FLOAT_BTN_ID = 'FLOAT_BTN_ID',
   SETTING_ID = 'SETTING_ID'

@@ -53,3 +53,5 @@ export type PartialIncludes<
 > = Omit<T, Keys> & Partial<Pick<T, Keys>>
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+
+export type Nullable<T> = T | null | undefined

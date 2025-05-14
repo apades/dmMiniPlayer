@@ -11,6 +11,8 @@ import EventSwitcher from '@root/utils/EventSwitcher'
 import playerConfig from '@root/store/playerConfig'
 import { checkIsLive } from '@root/utils/video'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
+import WebextEvent from '@root/shared/webextEvent'
+import { DocPIPRenderType, Position } from '@root/types/config'
 import {
   CanvasDanmakuEngine,
   DanmakuEngine,
@@ -24,8 +26,6 @@ import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
-import WebextEvent from '@root/shared/webextEvent'
-import { DocPIPRenderType, Position } from '@root/types/config'
 import VideoPreviewManager from '../VideoPreviewManager'
 import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
 

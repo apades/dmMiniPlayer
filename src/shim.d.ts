@@ -26,7 +26,6 @@ declare module 'webext-bridge' {
     }
     [WebextEvent.stopGetDanmaku]: { id: string }
     [WebextEvent.needClickWebToOpenPIP]: void
-    [WebextEvent.openPIP]: void
     [WebextEvent.startTabCapture]: ProtocolWithReturn<
       null,
       { streamId?: string; error?: string }
@@ -49,5 +48,7 @@ declare module 'webext-bridge' {
     [WebextEvent.updateDocPIPRect]: {
       docPIPWidth: number
     } & Partial<{ left: number; top: number; width: number; height: number }>
+
+    [WebextEvent.afterStartPIP]: { width: number }
   }
 }
