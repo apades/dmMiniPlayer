@@ -42,6 +42,7 @@ export default class DocPIPWebProvider extends WebProvider {
       }
     }
 
+    await sendMessage(WebextEvent.beforeStartPIP, null)
     await this.miniPlayer.init()
     const playerEl = this.miniPlayer.playerRootEl
     if (!playerEl) {
@@ -49,38 +50,38 @@ export default class DocPIPWebProvider extends WebProvider {
       throw Error('不正常的miniPlayer.init()')
     }
 
-    await sendMessage(WebextEvent.beforeStartPIP, null)
     console.log('[docPIP_WH] real width height', { width, height })
     const pipWindow = await window.documentPictureInPicture.requestWindow({
       width,
       height,
     })
     this.pipWindow = pipWindow
-    await sendMessage(WebextEvent.afterStartPIP, {
+
+    // 这里await会莫名其妙使webVideo被暂停
+    sendMessage(WebextEvent.afterStartPIP, {
       width: pipWindow.innerWidth,
-    })
+    }).then(() => {
+      const [borX, borY] = getDocPIPBorderSize(pipWindow)
 
-    // 这里卡50是往前系统API给的outerWidth innerWidth都是乱的，就这里正常
-    const [borX, borY] = getDocPIPBorderSize(pipWindow)
+      let [realWidth, realHeight] = [width + borX, height + borY]
 
-    let [realWidth, realHeight] = [width + borX, height + borY]
+      // 低DPR屏幕到高DPR屏幕需要缩小wh，高到低就不需要😓
+      if (
+        pipWindowConfig?.pipDPR &&
+        pipWindowConfig?.pipDPR > window.devicePixelRatio
+      ) {
+        realWidth = ~~(realWidth / pipWindowConfig?.pipDPR)
+        realHeight = ~~(realHeight / pipWindowConfig?.pipDPR)
+      }
 
-    // 低DPR屏幕到高DPR屏幕需要缩小wh，高到低就不需要😓
-    if (
-      pipWindowConfig?.pipDPR &&
-      pipWindowConfig?.pipDPR > window.devicePixelRatio
-    ) {
-      realWidth = ~~(realWidth / pipWindowConfig?.pipDPR)
-      realHeight = ~~(realHeight / pipWindowConfig?.pipDPR)
-    }
-
-    // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
-    await sendMessage(WebextEvent.updateDocPIPRect, {
-      width: realWidth,
-      height: realHeight,
-      docPIPWidth: pipWindow.innerWidth,
-      left: pipWindowConfig?.left,
-      top: pipWindowConfig?.top,
+      // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
+      sendMessage(WebextEvent.updateDocPIPRect, {
+        width: realWidth,
+        height: realHeight,
+        docPIPWidth: pipWindow.innerWidth,
+        left: pipWindowConfig?.left,
+        top: pipWindowConfig?.top,
+      })
     })
 
     const handleWheel = (e: WheelEvent) => {
