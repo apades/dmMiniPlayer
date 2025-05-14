@@ -1,3 +1,7 @@
+## v0.6.41
+1. Remove the advanced settings of [Move PIP pos after open], and change it to [Auto save PIP position], and it is turned on by default.
+2. Fixed the issue of video being paused when open PIP
+
 ## v0.6.40
 Fixed some issues involving initializing the position and size of the PIP
 
