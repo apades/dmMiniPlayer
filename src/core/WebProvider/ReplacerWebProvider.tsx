@@ -5,6 +5,7 @@ import {
   dq1,
   getVideoElInitFloatButtonData,
   isIframe,
+  tryCatch,
 } from '@root/utils'
 import { createRoot } from 'react-dom/client'
 import { useSize, useUpdate } from 'ahooks'
@@ -136,7 +137,9 @@ export default class ReplacerWebProvider extends WebProvider {
         replacerParent.replaceChild(root, videoEl)
         this.close = () => {
           reactRoot.unmount()
-          replacerParent.replaceChild(videoEl, root)
+          tryCatch(() => {
+            replacerParent.replaceChild(videoEl, root)
+          })
         }
       }
       // 否则直接替加进 child 就行了
@@ -144,7 +147,9 @@ export default class ReplacerWebProvider extends WebProvider {
         replacerParent.appendChild(root)
         this.close = () => {
           reactRoot.unmount()
-          replacerParent.removeChild(root)
+          tryCatch(() => {
+            replacerParent.removeChild(root)
+          })
         }
       }
     }
