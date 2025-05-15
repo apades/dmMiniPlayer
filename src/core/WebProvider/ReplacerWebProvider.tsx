@@ -130,22 +130,39 @@ export default class ReplacerWebProvider extends WebProvider {
     const reactRoot = createRoot(root)
     reactRoot.render(<VideoPlayerOuterContainer />)
 
-    // fixed 模式是替换 videoEl 成 VideoPlayer 组件
-    if (isFixedPos) {
-      replacerParent.replaceChild(root, videoEl)
-      this.close = () => {
-        reactRoot.unmount()
-        replacerParent.replaceChild(videoEl, root)
+    const replacePlayer = (replacerParent: HTMLElement) => {
+      // fixed 模式是替换 videoEl 成 VideoPlayer 组件
+      if (isFixedPos) {
+        replacerParent.replaceChild(root, videoEl)
+        this.close = () => {
+          reactRoot.unmount()
+          replacerParent.replaceChild(videoEl, root)
+        }
+      }
+      // 否则直接替加进 child 就行了
+      else {
+        replacerParent.appendChild(root)
+        this.close = () => {
+          reactRoot.unmount()
+          replacerParent.removeChild(root)
+        }
       }
     }
-    // 否则直接替加进 child 就行了
-    else {
-      replacerParent.appendChild(root)
-      this.close = () => {
-        reactRoot.unmount()
-        replacerParent.removeChild(root)
-      }
-    }
+
+    replacePlayer(replacerParent)
+    this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
+      const [topParentWithPosition, , isFixedPos] =
+        getVideoElInitFloatButtonData(newVideoEl)
+
+      const replacerParent = isFixedPos
+        ? newVideoEl.parentElement
+        : topParentWithPosition
+
+      if (!replacerParent) throw Error('不正常的webVideoEl')
+
+      replacePlayer(replacerParent)
+    })
+
     this.on(PlayerEvent.close, this.close)
 
     // 有出现播放中替换播放器会导致播放器暂停的问题
