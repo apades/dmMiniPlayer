@@ -202,7 +202,7 @@ export type noop = (this: any, ...args: any[]) => any
 
 export function onceCall<T extends noop>(fn: T): T {
   if (isPromiseFunction(fn)) return oncePromise(fn)
-  let rs: ReturnType<typeof fn>
+  let rs: any
   let lastArgs: any
   let hasCall = false
   let err: any = null
@@ -210,12 +210,10 @@ export function onceCall<T extends noop>(fn: T): T {
   return ((...args: any[]) => {
     if (!hasCall || !isEqual(args, lastArgs) || err) {
       hasCall = true
-      ;[err, rs as any] = tryCatch(() =>
-        (fn as (...args: any[]) => {})(...args),
-      )
+      ;[err, rs] = tryCatch(() => (fn as (...args: any[]) => {})(...args))
     }
     lastArgs = args
-    return rs
+    return rs as ReturnType<typeof fn>
   }) as T
 }
 
@@ -593,12 +591,19 @@ export const getIframeElFromSource = (source: Window) => {
   return iframe
 }
 
-export const isDocPIP = (tar = window as Window) =>
-  !!tryCatch(
+/**用来检测当前窗口是不是docPIP*/
+export const isDocPIP = (
+  /**当前的window对象或者挂在当前窗口里的dom */
+  tar?: Window | HTMLElement | null,
+) => {
+  const tarWin =
+    (tar instanceof HTMLElement ? tar.ownerDocument.defaultView : tar) ?? window
+  return !!tryCatch(
     () =>
-      window.top !== tar &&
-      window.top?.documentPictureInPicture?.window === tar,
+      window.top !== tarWin &&
+      window.top?.documentPictureInPicture?.window === tarWin,
   )[1]
+}
 
 export function calculateNewDimensions(
   width: number,

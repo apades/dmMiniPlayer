@@ -330,10 +330,8 @@ const VideoPlayerV2Inner = observer(
     })
 
     const handleOpenSetting = useMemoizedFn(() => {
-      const tarWin =
-        (videoPlayerRef.current?.ownerDocument.defaultView as any) ?? window
       // 全屏模式和docPIP内需要
-      if (isFullscreen || isDocPIP(tarWin)) {
+      if (isFullscreen || isDocPIP(videoPlayerRef.current)) {
         if (!videoPlayerRef.current) return
         window.openSettingPanel(videoPlayerRef.current)
       } else {
