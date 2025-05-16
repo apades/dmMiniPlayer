@@ -238,6 +238,9 @@ export const baseConfigMap = {
     relateBy: 'showReplacerBtn',
     relateByValue: true,
   }),
+  replacer_autoReplace: config<string[]>({
+    defaultValue: [],
+  }),
 }
 
 const {

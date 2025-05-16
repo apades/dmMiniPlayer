@@ -27,7 +27,12 @@ import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import VideoPreviewManager from '../VideoPreviewManager'
-import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
+import {
+  CanvasPIPWebProvider,
+  DocPIPWebProvider,
+  MoveDomToDocPIPWebProvider,
+  ReplacerWebProvider,
+} from '.'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -66,11 +71,15 @@ export default abstract class WebProvider
 
   constructor() {
     super()
-    if (
-      [DocPIPWebProvider, CanvasPIPWebProvider, ReplacerWebProvider].includes(
-        Object.getPrototypeOf(this).constructor,
-      )
-    )
+
+    const baseProviders = [
+      DocPIPWebProvider,
+      CanvasPIPWebProvider,
+      ReplacerWebProvider,
+      MoveDomToDocPIPWebProvider,
+    ]
+
+    if (baseProviders.includes(Object.getPrototypeOf(this).constructor))
       return this
 
     const provider = (() => {
@@ -84,10 +93,10 @@ export default abstract class WebProvider
     })()
 
     const rootPrototype =
-      getDeepPrototype(this, DocPIPWebProvider) ||
-      getDeepPrototype(this, CanvasPIPWebProvider) ||
-      getDeepPrototype(this, ReplacerWebProvider) ||
-      getDeepPrototype(this, WebProvider)
+      getDeepPrototype(
+        this,
+        baseProviders.find((v) => getDeepPrototype(this, v)),
+      ) || getDeepPrototype(this, WebProvider)
     Object.setPrototypeOf(rootPrototype, provider)
     return this
   }
@@ -138,8 +147,7 @@ export default abstract class WebProvider
     this.bindCommandsEvent()
     this.isLive ??= checkIsLive(this.webVideo)
 
-    const MiniPlayer = (Object.getPrototypeOf(this) as WebProvider).MiniPlayer
-    this.miniPlayer = new MiniPlayer({
+    this.miniPlayer = new this.MiniPlayer({
       webVideoEl: this.webVideo,
       danmakuEngine: this.danmakuEngine,
       subtitleManager: this.subtitleManager,

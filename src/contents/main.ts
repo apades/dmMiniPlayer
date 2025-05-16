@@ -8,6 +8,7 @@ import PostMessageEvent, {
 import WebextEvent from '@root/shared/webextEvent'
 import playerConfig from '@root/store/playerConfig'
 import {
+  configStringArrValid,
   createElement,
   dq,
   dq1Adv,
@@ -22,10 +23,12 @@ import {
 } from '@root/utils/windowMessages'
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import { DocPIPRenderType } from '@root/types/config'
-import _getWebProvider from '../web-provider/getWebProvider'
+import _getWebProvider from '@root/web-provider/getWebProvider'
 import './floatButton'
 import API_bilibili from '@root/api/bilibili'
 import isDev from '@root/shared/isDev'
+import { autorun } from 'mobx'
+import configStore from '@root/store/config'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -402,6 +405,17 @@ function main() {
   } catch (error) {
     console.log('🟡 No support mediaSession action enterpictureinpicture')
   }
+
+  // 自动替换功能
+  autorun(() => {
+    if (!configStore.replacer_autoReplace.length) return
+    const isTarSite = configStringArrValid(
+      location.href,
+      configStore.replacer_autoReplace,
+    )
+
+    console.log('isTarSite', isTarSite)
+  })
 
   window.getWebProvider = _getWebProvider
 }

@@ -83,6 +83,8 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         vpRef = ref
       },
       isLive: this.isLive,
+      setContext: () => {},
+      videoPlayerRef: {} as any,
     }
 
     const renderMode =

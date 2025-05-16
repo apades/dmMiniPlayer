@@ -18,7 +18,7 @@ export default class CanvasPIPWebProvider extends WebProvider {
     if (!this.danmakuEngine) {
       throw Error(ERROR_MSG.unInitDanmakuEngine)
     }
-    this.miniPlayer.init()
+    this.miniPlayer.init({ webProvider: this })
     this.danmakuEngine.init({
       media: this.webVideo,
       container: this.webVideo,

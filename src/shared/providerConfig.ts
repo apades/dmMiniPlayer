@@ -12,6 +12,7 @@ const providerConfig = {
   twitch: [/https:\/\/www\.twitch\.tv\/.*/],
   youtube: [/https:\/\/www\.youtube\.com\/.*/],
   huya: [/https:\/\/www\.huya\.com\/.*/],
+  netflix: [/https:\/\/www\.netflix\.com\/.*/],
 } as const
 
 export default providerConfig

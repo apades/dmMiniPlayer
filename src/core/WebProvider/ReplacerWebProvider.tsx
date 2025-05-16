@@ -25,7 +25,7 @@ export default class ReplacerWebProvider extends WebProvider {
 
   async onOpenPlayer() {
     const paused = this.webVideo.paused
-    await this.miniPlayer.init()
+    await this.miniPlayer.init({ webProvider: this })
 
     const videoEl = this.webVideo
     const [topParentWithPosition, , isFixedPos] =

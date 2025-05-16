@@ -9,6 +9,7 @@ import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import VideoPreviewManager from '../VideoPreviewManager'
+import { WebProvider } from '../WebProvider'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
@@ -76,7 +77,7 @@ export default class VideoPlayerBase
   private unobserveVideoElChange = () => {}
   private unlistenOnClose = () => {}
   protected onUnload() {}
-  async init() {
+  async init(props: { webProvider: WebProvider }) {
     this.unlistenOnClose = this.on2(PlayerEvent.close, () => {
       console.log('PlayerEvent.close')
       this.unload()

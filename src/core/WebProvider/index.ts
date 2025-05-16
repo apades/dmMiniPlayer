@@ -6,6 +6,7 @@ import DocPIPWebProvider from './DocPIPWebProvider'
 import CanvasPIPWebProvider from './CanvasPIPWebProvider'
 import HtmlDanmakuProvider from './htmlDanmakuProvider'
 import ReplacerWebProvider from './ReplacerWebProvider'
+import MoveDomToDocPIPWebProvider from './MoveDomToDocPIPWebProvider'
 
 export {
   WebProvider,
@@ -13,4 +14,5 @@ export {
   CanvasPIPWebProvider,
   HtmlDanmakuProvider,
   ReplacerWebProvider,
+  MoveDomToDocPIPWebProvider,
 }
