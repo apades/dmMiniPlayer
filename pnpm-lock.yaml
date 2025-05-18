@@ -20,8 +20,8 @@ importers:
         specifier: ^10.5.0
         version: 10.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@apad/setting-panel':
-        specifier: 0.6.2
-        version: 0.6.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 0.6.5
+        version: 0.6.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@rc-component/trigger':
         specifier: ^3.2.0
         version: 3.2.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -437,8 +437,8 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@apad/setting-panel@0.6.2':
-    resolution: {integrity: sha512-1OWSwDATH8pv0iomxgLj/xQLb3zcubpkdp7PvMB40WluwqJ1XgW8DgPvZ4USZa/PiCON7EumNuVWQQ6woftlBQ==}
+  '@apad/setting-panel@0.6.5':
+    resolution: {integrity: sha512-EIGe1wZhvhH6c7fwp7Jc0hm/v1vAJTid5bezWNEmMPknXKG5kx51ozS4bXlWIagKi599KObslE2xnMrExhPz0Q==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -10586,7 +10586,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@apad/setting-panel@0.6.2(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@apad/setting-panel@0.6.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)

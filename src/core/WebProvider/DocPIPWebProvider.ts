@@ -8,6 +8,8 @@ import {
   setBrowserSyncStorage,
 } from '@root/utils/storage'
 import { sendMessage } from 'webext-bridge/content-script'
+import { MovePIPAfterOpenType, Position } from '@root/types/config'
+import { autorun } from 'mobx'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PlayerEvent } from '../event'
 import { WebProvider } from '.'
@@ -61,27 +63,66 @@ export default class DocPIPWebProvider extends WebProvider {
     sendMessage(WebextEvent.afterStartPIP, {
       width: pipWindow.innerWidth,
     }).then(() => {
-      const [borX, borY] = getDocPIPBorderSize(pipWindow)
+      switch (configStore.movePIPInOpen) {
+        case MovePIPAfterOpenType.lastPos: {
+          const [borX, borY] = getDocPIPBorderSize(pipWindow)
+          console.log('borX, borY', borX, borY)
 
-      let [realWidth, realHeight] = [width + borX, height + borY]
+          let [realWidth, realHeight] = [width + borX, height + borY]
 
-      // 低DPR屏幕到高DPR屏幕需要缩小wh，高到低就不需要😓
-      if (
-        pipWindowConfig?.pipDPR &&
-        pipWindowConfig?.pipDPR > window.devicePixelRatio
-      ) {
-        realWidth = ~~(realWidth / pipWindowConfig?.pipDPR)
-        realHeight = ~~(realHeight / pipWindowConfig?.pipDPR)
+          // 低DPR屏幕到高DPR屏幕需要缩小wh，高到低就不需要😓
+          if (
+            pipWindowConfig?.pipDPR &&
+            pipWindowConfig?.pipDPR > window.devicePixelRatio
+          ) {
+            realWidth = ~~(realWidth / pipWindowConfig?.pipDPR)
+            realHeight = ~~(realHeight / pipWindowConfig?.pipDPR)
+          }
+
+          // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
+          sendMessage(WebextEvent.updateDocPIPRect, {
+            width: realWidth,
+            height: realHeight,
+            docPIPWidth: pipWindow.innerWidth,
+            left: pipWindowConfig?.left,
+            top: pipWindowConfig?.top,
+          })
+          break
+        }
+        case MovePIPAfterOpenType.custom: {
+          const [borX, borY] = getDocPIPBorderSize(pipWindow)
+          // ! 已经确定是chrome的bug，第二次打开不会按照width和height来设置窗口大小
+          sendMessage(WebextEvent.resizeDocPIP, {
+            width: width + borX,
+            height: height + borY,
+            docPIPWidth: pipWindow.innerWidth,
+          })
+
+          this.addOnUnloadFn(
+            autorun(() => {
+              const [x, y] = (() => {
+                switch (configStore.movePIPInOpen_basePos) {
+                  case Position['topLeft']:
+                    return [0, 0]
+                  case Position['topRight']:
+                    return [screen.width - width, 0]
+                  case Position['bottomLeft']:
+                    return [0, screen.height - height]
+                  case Position['bottomRight']:
+                    return [screen.width - width, screen.height - height]
+                }
+              })()
+
+              sendMessage(WebextEvent.moveDocPIPPos, {
+                docPIPWidth: width,
+                x: x + configStore.movePIPInOpen_offsetX,
+                y: y + configStore.movePIPInOpen_offsetY,
+              })
+            }),
+          )
+          break
+        }
       }
-
-      // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
-      sendMessage(WebextEvent.updateDocPIPRect, {
-        width: realWidth,
-        height: realHeight,
-        docPIPWidth: pipWindow.innerWidth,
-        left: pipWindowConfig?.left,
-        top: pipWindowConfig?.top,
-      })
     })
 
     const handleWheel = (e: WheelEvent) => {
@@ -153,7 +194,10 @@ export default class DocPIPWebProvider extends WebProvider {
     pipWindow.addEventListener('pagehide', () => {
       // 保存画中画的大小
       if (!this.isQuickHiding) {
-        const [width, height] = [pipWindow.innerWidth, pipWindow.innerHeight]
+        const [width, height] = [
+          pipWindow.innerWidth + configStore.saveWidthOnDocPIPCloseOffset,
+          pipWindow.innerHeight + configStore.saveHeightOnDocPIPCloseOffset,
+        ]
         console.log('[docPIP_WH] save width and height', { width, height })
         setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
           height,

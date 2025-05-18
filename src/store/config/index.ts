@@ -296,8 +296,15 @@ const {
       DM_MINI_PLAYER_CONFIG,
     )) as any
 
-    const loadedConfig = { ...config, ...(savedConfig ?? {}) }
+    const loadedConfig = { ...config, ...(savedConfig ?? {}) } as typeof config
+
+    // 去除旧config
+    if (typeof loadedConfig.movePIPInOpen === 'boolean') {
+      delete loadedConfig.movePIPInOpen
+    }
+
     oldConfig = loadedConfig
+
     return loadedConfig
   },
   useShadowDom: isPluginEnv,
@@ -305,7 +312,7 @@ const {
     ? { styleHref: Browser.runtime.getURL('/css.css') }
     : {}),
 })
-let oldConfig: typeof configStore
+let oldConfig: Partial<typeof configStore>
 
 const updateConfig = async (config?: Partial<typeof configStore>) => {
   config ??= await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)

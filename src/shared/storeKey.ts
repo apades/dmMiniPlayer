@@ -16,7 +16,8 @@ export const PIP_WINDOW_CONFIG = key<{
   mainDPR: number
   pipDPR: number
 }>('PIP_WINDOW_CONFIG')
-export const DM_MINI_PLAYER_CONFIG = key<typeof configStore>('LOCAL_CONFIG')
+export const DM_MINI_PLAYER_CONFIG =
+  key<Partial<typeof configStore>>('LOCAL_CONFIG')
 
 export const DRAG_POS = key<{
   x: number

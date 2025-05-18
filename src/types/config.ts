@@ -72,3 +72,8 @@ export enum Position {
   bottomLeft = 'bottomLeft',
   bottomRight = 'bottomRight',
 }
+
+export enum MovePIPAfterOpenType {
+  lastPos = 'lastPos',
+  custom = 'custom',
+}

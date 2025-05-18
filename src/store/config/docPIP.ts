@@ -1,5 +1,9 @@
 import { config as _config } from '@apad/setting-panel'
-import { Position, DocPIPRenderType } from '@root/types/config'
+import {
+  Position,
+  DocPIPRenderType,
+  MovePIPAfterOpenType,
+} from '@root/types/config'
 import { t } from '@root/utils/i18n'
 
 const category = 'PIP'
@@ -23,10 +27,48 @@ export const docPIPConfig = {
       return settings.autoPIP_inPageHide || settings.autoPIP_inScrollToInvisible
     },
   }),
-  movePIPInOpen: config({
+  movePIPInOpen: config<MovePIPAfterOpenType>({
     label: t('settingPanel.movePIPInOpen'),
-    defaultValue: true,
+    type: 'group',
+    group: [
+      {
+        value: MovePIPAfterOpenType.lastPos,
+        label: t('settingPanel.movePIPInOpen_lastPos'),
+      },
+      {
+        value: MovePIPAfterOpenType.custom,
+        label: t('settingPanel.movePIPInOpen_custom'),
+        desc: t('settingPanel.movePIPInOpen_customDesc'),
+      },
+    ],
+    defaultValue: MovePIPAfterOpenType.lastPos,
   }),
+  movePIPInOpen_basePos: config<Exclude<Position, Position.default>>({
+    label: t('settingPanel.movePIPInOpen_basePos'),
+    defaultValue: Position['bottomRight'],
+    relateBy: 'movePIPInOpen',
+    relateByValue: MovePIPAfterOpenType.custom,
+    type: 'group',
+    group: Object.values(Position)
+      .filter((v) => v !== Position.default)
+      .map((v) => ({
+        value: v,
+        label: t(`pos.${v}`),
+      })),
+  }),
+  movePIPInOpen_offsetX: config({
+    label: t('settingPanel.movePIPInOpen_offsetX'),
+    defaultValue: 0,
+    relateBy: 'movePIPInOpen',
+    relateByValue: MovePIPAfterOpenType.custom,
+  }),
+  movePIPInOpen_offsetY: config({
+    label: t('settingPanel.movePIPInOpen_offsetY'),
+    defaultValue: 0,
+    relateBy: 'movePIPInOpen',
+    relateByValue: MovePIPAfterOpenType.custom,
+  }),
+  // ---
   quickHide_pos: config<Exclude<Position, Position.default>>({
     label: t('settingPanel.quickHide_pos'),
     defaultValue: Position['topLeft'],

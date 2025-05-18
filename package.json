@@ -76,7 +76,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.8.3",
     "@apad/rc-slider": "^10.5.0",
-    "@apad/setting-panel": "0.6.2",
+    "@apad/setting-panel": "0.6.5",
     "@rc-component/trigger": "^3.2.0",
     "ahooks": "^3.8.4",
     "ass-compiler": "^0.1.15",
