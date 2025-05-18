@@ -1,3 +1,7 @@
+## v0.6.42
+1. Modify the option of [Move PIP position after open], and the default is [Last closed position]. If you are using Brave browser, it is recommended to switch to [Customize]
+2. Fixed the black screen problem when switching videos in replacement mode
+
 ## v0.6.41
 1. Remove the advanced settings of [Move PIP pos after open], and change it to [Auto save PIP position], and it is turned on by default.
 2. Fixed the issue of video being paused when open PIP
