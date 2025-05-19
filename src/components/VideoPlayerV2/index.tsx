@@ -341,7 +341,7 @@ const VideoPlayerV2Inner = observer(
 
     const el = (
       <div
-        tabIndex={1}
+        tabIndex={-1}
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,

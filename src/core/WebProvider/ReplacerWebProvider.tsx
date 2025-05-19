@@ -11,7 +11,7 @@ import { createRoot } from 'react-dom/client'
 import { useSize, useUpdate } from 'ahooks'
 import { useOnce } from '@root/hook'
 import AppRoot from '@root/components/AppRoot'
-import { getDomAbsolutePosition } from '@root/utils/dom'
+import { dqParents, getDomAbsolutePosition } from '@root/utils/dom'
 import { sendMessage } from '@root/inject/contentSender'
 import { onPostMessage } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
@@ -67,11 +67,17 @@ export default class ReplacerWebProvider extends WebProvider {
         events.forEach((event) => {
           // 发现只需要在body上阻止冒泡就可以让window上挂载的keydown事件监听不生效了
           document.body.addEventListener(event, stopPropagationKeyEvent)
+          document.body.addEventListener(event, stopPropagationKeyEvent, {
+            capture: true,
+          })
         })
 
         return () => {
           events.forEach((event) => {
             document.body.removeEventListener(event, stopPropagationKeyEvent)
+            document.body.removeEventListener(event, stopPropagationKeyEvent, {
+              capture: true,
+            })
           })
         }
       })
