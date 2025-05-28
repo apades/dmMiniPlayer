@@ -21,6 +21,11 @@ export default class DocPIPWebProvider extends WebProvider {
   pipWindow?: Window
 
   async onOpenPlayer() {
+    // 在标题后添加 ' - PIP'
+    const title = document.title
+    const pipTitle = title + ' - PIP'
+    document.title = pipTitle
+
     // 获取应该有的docPIP宽高
     const pipWindowConfig = await getBrowserSyncStorage(PIP_WINDOW_CONFIG)
     let width = pipWindowConfig?.width ?? this.webVideo.clientWidth,
@@ -211,6 +216,9 @@ export default class DocPIPWebProvider extends WebProvider {
       this.emit(PlayerEvent.close)
       pipWindow.removeEventListener('wheel', handleWheel)
       sendMessage(WebextEvent.closePIP, null)
+
+      // 恢复原始标题
+      document.title = title
     })
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)
