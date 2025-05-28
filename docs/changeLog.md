@@ -1,3 +1,7 @@
+## v0.6.43
+1. Fixed the issue that the keyboard control in replacement mode does not take effect on some websites
+2. Temporarily fix the problem of failed connection of bilibili live danmaku ws
+
 ## v0.6.42
 1. Modify the option of [Move PIP position after open], and the default is [Last closed position]. If you are using Brave browser, it is recommended to switch to [Customize]
 2. Fixed the black screen problem when switching videos in replacement mode
