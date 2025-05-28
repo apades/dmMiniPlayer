@@ -1,5 +1,5 @@
-import { injectFunction } from '@root/utils/injectFunction'
 import { get } from '@root/utils'
+import { injectFunction } from '@root/utils/injectFunction'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './createElementHacker'
@@ -7,9 +7,9 @@ import './fetchHacker'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)
-  let fn = new Function(`return (${data.function})(...arguments)`)
+  const fn = new Function(`return (${data.function})(...arguments)`)
 
-  let rs = await fn(...(data.args ?? []))
+  const rs = await fn(...(data.args ?? []))
   return rs
 })
 

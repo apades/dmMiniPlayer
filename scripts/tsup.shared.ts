@@ -1,11 +1,11 @@
-import path from 'path'
-import { defineConfig } from 'tsup'
-import fs from 'fs-extra'
+import path from 'node:path'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
-import { manifest } from '../src/manifest'
+import fs from 'fs-extra'
+import type { defineConfig } from 'tsup'
 import packageJson from '../package.json'
-import { getChangeLog, getDefinesConfig } from './utils.mjs'
+import { manifest } from '../src/manifest'
 import { inlineImport } from './plugin/inlineImport'
+import { getChangeLog, getDefinesConfig } from './utils.mjs'
 
 const version = packageJson.version
 export const pr = (...p: any) => path.resolve(__dirname, ...p)
@@ -25,7 +25,7 @@ export const shareConfig = {
   },
   outExtension({ format }) {
     return {
-      js: `.js`,
+      js: '.js',
     }
   },
   target: 'esnext',

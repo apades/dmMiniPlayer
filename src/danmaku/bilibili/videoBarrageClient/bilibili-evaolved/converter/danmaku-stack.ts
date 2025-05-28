@@ -1,6 +1,6 @@
+import type { Duration, FontStyles, Resolution } from './ass-danmaku'
+import type { Danmaku } from './danmaku-data'
 import { DanmakuType } from './danmaku-type'
-import type { Resolution, Duration, FontStyles } from './ass-danmaku'
-import { Danmaku } from './danmaku-data'
 
 /** 兼容v1的API, 仅按精度直接截断数字, 不做四舍五入, 若未达到精度会添加0
  * @param num 数字
@@ -105,7 +105,7 @@ export class DanmakuStack {
     const height = 52
     this.danmakuHeight = height
     this.trackHeight = DanmakuStack.margin * 2 + height
-    this.trackCount = parseInt(
+    this.trackCount = Number.parseInt(
       fixed(
         (this.resolution.y * (1 - this.bottomMarginPercent)) / this.trackHeight,
         0,
@@ -263,7 +263,6 @@ export class DanmakuStack {
         stack = this.verticalStack
         break
       }
-      case 'special': // 高级弹幕也鸽了先
       default: {
         return {
           tags: '\\pos(0,-999)',

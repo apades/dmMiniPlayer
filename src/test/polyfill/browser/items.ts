@@ -1,7 +1,7 @@
 import type { Runtime } from 'webextension-polyfill'
+import { addCallback, executeCallback, removeCallback } from '.'
 import { sendMessage } from '../message'
 import { objectDeepProxy } from '../utils'
-import { addCallback, executeCallback, removeCallback } from '.'
 
 export function getPort() {
   const portPolyfill: Partial<Runtime.Port> = {
@@ -31,7 +31,7 @@ export function getPort() {
         case 'apply':
           return sendMessage('error', {
             type: 'browser-polyfill:connect-port',
-            error: `缺少可执行函数`,
+            error: '缺少可执行函数',
           })
       }
     },

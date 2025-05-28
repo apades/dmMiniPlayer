@@ -5,9 +5,6 @@ export type LiveEvent = {
 }
 
 export default abstract class BarrageClient extends Events2<LiveEvent> {
-  constructor() {
-    super()
-  }
   addEventListener<TType extends keyof LiveEvent>(
     e: TType,
     cb: (data: LiveEvent[TType]) => void,

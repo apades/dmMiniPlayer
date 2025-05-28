@@ -1,5 +1,5 @@
 // import Events from 'events'
-import mitt, { WildcardHandler, Handler } from 'mitt'
+import mitt, { type WildcardHandler, type Handler } from 'mitt'
 
 export default class Events2<Events extends Record<string, unknown>> {
   mitt = mitt<Events>()

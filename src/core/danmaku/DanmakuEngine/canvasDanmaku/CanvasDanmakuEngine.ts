@@ -1,6 +1,6 @@
-import { noop } from '@root/utils'
+import type { noop } from '@root/utils'
 import { DanmakuEngine } from '..'
-import { DanmakuEngineInitProps } from '../DanmakuEngine'
+import type { DanmakuEngineInitProps } from '../DanmakuEngine'
 import Danmaku from './CanvasDanmaku'
 import CanvasDanmakuVideo from './CanvasDanmakuVideo'
 

@@ -25,7 +25,11 @@ export default function App() {
         <p className="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to
           a web browser that
-          <a href="https://videojs.com/html5-video-support/" target="_blank">
+          <a
+            href="https://videojs.com/html5-video-support/"
+            target="_blank"
+            rel="noreferrer"
+          >
             supports HTML5 video
           </a>
         </p>

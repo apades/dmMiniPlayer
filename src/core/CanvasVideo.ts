@@ -67,7 +67,7 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
   }
 
   protected bindVideoElEvents() {
-    let videoEl = this.videoEl
+    const videoEl = this.videoEl
 
     this.isPause = videoEl.paused
 
@@ -177,7 +177,7 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
   withoutLimitAnimaFPS = 0
   protected hansDraw = false
   protected frameUpdate(force = false) {
-    if (force || (this.fps != 0 ? this.checkFPSLimit() : true)) {
+    if (force || (this.fps !== 0 ? this.checkFPSLimit() : true)) {
       if (force || !this.isPause || !this.hansDraw) {
         this.hansDraw = true
 
@@ -215,7 +215,7 @@ export default class CanvasVideo extends EventBus implements Required<Props> {
   /**video的渲染间隔时间计算出的FPS */
   protected animaVideoFPS = 0
   protected detectFPS() {
-    let nowTime = this.videoEl.currentTime
+    const nowTime = this.videoEl.currentTime
     this.performanceInfoLimit(() => {
       if (this.lastTime) this.animaVideoFPS = ~~(1 / (nowTime - this.lastTime))
     })

@@ -5,10 +5,10 @@ import {
 } from '@root/utils'
 
 import FloatButton from '@root/components/FloatButton'
-import { dqParents, getTopParentsWithSameRect } from '@root/utils/dom'
-import { createRoot } from 'react-dom/client'
-import { getBrowserSyncStorage } from '@root/utils/storage'
 import { DRAG_POS } from '@root/shared/storeKey'
+import { dqParents, getTopParentsWithSameRect } from '@root/utils/dom'
+import { getBrowserSyncStorage } from '@root/utils/storage'
+import { createRoot } from 'react-dom/client'
 
 const INIT_ATTR = 'rc-f-init'
 async function initVideoFloatBtn(
@@ -16,10 +16,10 @@ async function initVideoFloatBtn(
   vel: HTMLVideoElement,
   fixedPos?: boolean,
 ) {
-  if (container == vel) container = container.parentElement!
+  if (container === vel) container = container.parentElement!
   if (container.getAttribute(INIT_ATTR) === 'true') return
   // 这里有时候docPIP莫名其妙的会被附加floatBtn，然而docPIP并不会加载这个脚本，很奇怪
-  if (container.ownerDocument != document) return
+  if (container.ownerDocument !== document) return
 
   container.setAttribute(INIT_ATTR, 'true')
 

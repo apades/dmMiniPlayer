@@ -26,7 +26,7 @@ import getWebProvider from '@root/web-provider/getWebProvider'
 import { useMemoizedFn, useSize, useUnmount } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { FC, SVGProps, useMemo, useRef, useState } from 'react'
+import { type FC, type SVGProps, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 import icon from '../../assets/icon.png'
@@ -154,7 +154,7 @@ const FloatButton: FC<Props> = (props) => {
       // 走非同源iframe捕获模式
       const [isErrorInOtherMode] = await tryCatch(async () => {
         switch (type) {
-          case DocPIPRenderType.capture_captureStreamWithWebRTC:
+          case DocPIPRenderType.capture_captureStreamWithWebRTC: {
             const stream = videoEl.captureStream()
             const { unMount } = sendMediaStreamInSender({ stream })
 
@@ -168,6 +168,7 @@ const FloatButton: FC<Props> = (props) => {
             )
             webRTCUnmountRef.current = handleUnmount
             break
+          }
         }
 
         await postStartPIPDataMsg(type, videoEl)
@@ -296,7 +297,7 @@ const FloatButton: FC<Props> = (props) => {
                     pointerEvents: 'none',
                     zIndex: 20,
                   }}
-                ></div>
+                />
               )
             })}
           </div>,
@@ -413,7 +414,7 @@ const FloatButton: FC<Props> = (props) => {
 
             {isUpgradeShow && (
               <>
-                <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
+                <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500" />
                 <div
                   className={classNames(
                     'absolute max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded',
@@ -446,6 +447,7 @@ const FloatButton: FC<Props> = (props) => {
                         }
                         target="_blank"
                         className="ml-auto text-blue-500"
+                        rel="noreferrer"
                       >
                         More
                       </a>

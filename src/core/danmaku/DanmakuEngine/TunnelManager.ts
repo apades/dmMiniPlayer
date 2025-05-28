@@ -1,7 +1,7 @@
 import configStore from '@root/store/config'
 import { MaxTunnelType } from '@root/store/config/danmaku'
 import { autorun } from 'mobx'
-import { DanmakuBase, DanmakuEngine, DanmakuMoveType } from '.'
+import type { DanmakuBase, DanmakuEngine, DanmakuMoveType } from '.'
 
 export default class TunnelManager {
   tunnelsMap: { [key in DanmakuMoveType]: (DanmakuBase | null)[] } = {
@@ -27,7 +27,7 @@ export default class TunnelManager {
               return renderHeight / 2 / (+fontSize + +gap)
             case MaxTunnelType['1/4']:
               return renderHeight / 4 / (+fontSize + +gap)
-            case MaxTunnelType['full']:
+            case MaxTunnelType.full:
               return 100
           }
         })()
@@ -39,7 +39,7 @@ export default class TunnelManager {
     const type = danmaku.type
     // 先找有没有空位
     const emptyIndex = this.tunnelsMap[type].findIndex((v) => !v)
-    if (emptyIndex != -1) {
+    if (emptyIndex !== -1) {
       this.tunnelsMap[type][emptyIndex] = danmaku
       return emptyIndex > this.maxTunnel ? -1 : emptyIndex
     }
@@ -60,7 +60,7 @@ export default class TunnelManager {
   pushTunnel(danmaku: DanmakuBase) {
     const type = danmaku.type
     const emptyIndex = this.tunnelsMap[type].findIndex((v) => !v)
-    if (emptyIndex != -1) {
+    if (emptyIndex !== -1) {
       this.tunnelsMap[type][emptyIndex] = danmaku
       return
     }

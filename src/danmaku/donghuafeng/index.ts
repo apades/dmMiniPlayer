@@ -13,7 +13,7 @@ export async function getDonghuafengDanmu(id: string): Promise<DanType[]> {
         color: r.color,
         text: r.text,
         time: r.time / 10,
-        type: r.position == 0 ? 'right' : 'top',
+        type: r.position === 0 ? 'right' : 'top',
       }) as DanType,
   )
 }

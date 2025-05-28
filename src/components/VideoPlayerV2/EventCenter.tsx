@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect } from 'react'
+import { type FC, useContext, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import vpContext from './context'
 

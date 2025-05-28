@@ -1,7 +1,7 @@
-import { wait } from '@root/utils'
-import { useContext, useEffect, useRef, useState, type FC } from 'react'
+import type DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import configStore from '@root/store/config'
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import { wait } from '@root/utils'
+import { type FC, useContext, useEffect, useRef, useState } from 'react'
 import Iconfont from '../Iconfont'
 import vpContext from '../VideoPlayerV2/context'
 
@@ -64,7 +64,7 @@ const DanmakuInput: FC<{
           props.setActionAreaLock(false)
         }}
         onKeyDown={(e) => {
-          if (e.code == 'Escape') {
+          if (e.code === 'Escape') {
             danmakuInputRef.current?.blur()
           }
 

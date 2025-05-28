@@ -1,4 +1,4 @@
-import Danmaku from '../danmaku'
+import type Danmaku from '../danmaku'
 import type { InnerComment, RunningComment, Stage } from '../types'
 import { raf } from '../utils'
 
@@ -59,7 +59,7 @@ function setup(this: Danmaku, stage: Stage, comments: InnerComment[]) {
       if (firstCmt) {
         isMerged = true
         firstCmt.node.dataset.count =
-          parseInt(firstCmt.node.dataset.count || '1') + 1 + ''
+          Number.parseInt(firstCmt.node.dataset.count || '1') + 1 + ''
 
         firstCmt.node.textContent = `(${firstCmt.node.dataset.count})${firstCmt.text}`
       }

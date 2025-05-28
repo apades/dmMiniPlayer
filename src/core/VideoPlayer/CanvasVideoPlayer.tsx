@@ -1,5 +1,5 @@
-import { createElement } from '@root/utils'
 import { ERROR_MSG } from '@root/shared/errorMsg'
+import { createElement } from '@root/utils'
 import { CanvasDanmakuEngine } from '../danmaku/DanmakuEngine'
 import CanvasDanmakuVideo from '../danmaku/DanmakuEngine/canvasDanmaku/CanvasDanmakuVideo'
 import VideoPlayerBase from './VideoPlayerBase'

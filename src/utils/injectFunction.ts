@@ -1,6 +1,6 @@
+import { isArray } from '.'
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import type { KeyOfType } from './typeUtils'
-import { isArray } from '.'
 
 export function injectFunction<
   T extends object,
@@ -17,7 +17,7 @@ export function injectFunction<
 } {
   if (!isArray(keys)) keys = [keys]
 
-  let originKeysValue = keys.reduce(
+  const originKeysValue = keys.reduce(
     (obj, key) => {
       obj[key] = origin[key]
       return obj
@@ -60,7 +60,7 @@ export function injectFunction<
   return {
     originKeysValue,
     restore: () => {
-      for (let key in originKeysValue) {
+      for (const key in originKeysValue) {
         origin[key] = (originKeysValue[key] as Function).bind(origin)
       }
     } /* , proxy */,

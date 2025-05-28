@@ -1,5 +1,5 @@
 import type { config as _config } from '@apad/setting-panel'
-import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
+import { type Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
 import { t } from '@root/utils/i18n'
 
 const category = t('shortcut.shortcut')

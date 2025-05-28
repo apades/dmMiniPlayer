@@ -1,8 +1,8 @@
-import path from 'path'
-import fs from 'fs'
+import fs from 'node:fs'
+import path from 'node:path'
+import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 
 function plasmoUrlReplace() {
   const virtualModuleId = /import (.*?) from "url\:(.*)"/g
@@ -10,8 +10,8 @@ function plasmoUrlReplace() {
   return {
     name: 'plasmo url replace', // required, will show up in warnings and errors
     transform(text = '', id) {
-      let matches = [...text.matchAll(virtualModuleId)]
-      for (let match of matches) {
+      const matches = [...text.matchAll(virtualModuleId)]
+      for (const match of matches) {
         text = text.replace(
           match[0],
           `import ${match[1]} from "${match[2]}?url"`,
@@ -28,8 +28,8 @@ function plasmoDataTextReplace() {
   return {
     name: 'plasmo url replace', // required, will show up in warnings and errors
     transform(text = '', id) {
-      let matches = [...text.matchAll(virtualModuleId)]
-      for (let match of matches) {
+      const matches = [...text.matchAll(virtualModuleId)]
+      for (const match of matches) {
         text = text.replace(
           match[0],
           `import ${match[1]} from "${match[2]}?row"`,

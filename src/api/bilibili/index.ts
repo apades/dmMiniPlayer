@@ -1,6 +1,6 @@
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
-import { MomentType, type BiliLiteItem, type BiliLiveLiteItem } from './type'
-import { BilibiliFollowApiData, BilibiliFollowData } from './types/follow'
+import { type BiliLiteItem, type BiliLiveLiteItem, MomentType } from './type'
+import type { BilibiliFollowApiData, BilibiliFollowData } from './types/follow'
 
 const API_bilibili = {
   async getMomentsVideos(
@@ -36,7 +36,7 @@ const API_bilibili = {
   },
   async getLiveActiveUsers(): Promise<BiliLiveLiteItem[]> {
     const res = await fetch(
-      `https://api.live.bilibili.com/xlive/web-ucenter/v1/xfetter/FeedList?pagesize=99`,
+      'https://api.live.bilibili.com/xlive/web-ucenter/v1/xfetter/FeedList?pagesize=99',
       {
         credentials: 'include',
       },
@@ -92,7 +92,7 @@ const API_bilibili = {
   },
 
   async getAllFollows(vmid?: number): Promise<BilibiliFollowData[]> {
-    let _vmid = vmid ?? (await this.getSelfMid())
+    const _vmid = vmid ?? (await this.getSelfMid())
     if (!_vmid) {
       // throw Error('需要登录')
       console.error('未登录')

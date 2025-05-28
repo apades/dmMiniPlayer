@@ -1,5 +1,7 @@
-import { FC, useEffect, useMemo, useRef } from 'react'
-import { createPortal } from 'react-dom'
+import AppRoot from '@root/components/AppRoot'
+import { useOnce } from '@root/hook'
+import { sendMessage } from '@root/inject/contentSender'
+import PostMessageEvent from '@root/shared/postMessageEvent'
 import {
   createElement,
   dq1,
@@ -7,17 +9,15 @@ import {
   isIframe,
   tryCatch,
 } from '@root/utils'
-import { createRoot } from 'react-dom/client'
-import { useSize, useUpdate } from 'ahooks'
-import { useOnce } from '@root/hook'
-import AppRoot from '@root/components/AppRoot'
 import { getDomAbsolutePosition } from '@root/utils/dom'
-import { sendMessage } from '@root/inject/contentSender'
 import { onPostMessage } from '@root/utils/windowMessages'
-import PostMessageEvent from '@root/shared/postMessageEvent'
-import { PlayerEvent } from '../event'
-import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
+import { useSize, useUpdate } from 'ahooks'
+import { type FC, useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { WebProvider } from '.'
+import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
+import { PlayerEvent } from '../event'
 
 export default class ReplacerWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
@@ -118,10 +118,7 @@ export default class ReplacerWebProvider extends WebProvider {
               zIndex: 9999,
             }}
           >
-            <div
-              className="relative z-10 w-full h-full"
-              ref={containerRef}
-            ></div>
+            <div className="relative z-10 w-full h-full" ref={containerRef} />
           </div>
         </AppRoot>
       )

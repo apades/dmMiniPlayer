@@ -1,4 +1,4 @@
-import Danmaku from '../danmaku'
+import type Danmaku from '../danmaku'
 import createEngine from '../engine/index'
 import { raf } from '../utils'
 

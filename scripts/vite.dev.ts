@@ -1,7 +1,5 @@
-import fs2 from 'fs/promises'
-import path from 'path'
-import fs from 'fs-extra'
 import react from '@vitejs/plugin-react'
+import fs from 'fs-extra'
 import { defineConfig } from 'vite'
 import { manifest } from '../src/manifest'
 

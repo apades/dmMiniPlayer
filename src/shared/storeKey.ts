@@ -1,5 +1,5 @@
 import type configStore from '@root/store/config'
-import { Language } from '@root/utils/i18n'
+import type { Language } from '@root/utils/i18n'
 
 function key<T = any>(key: string) {
   return key as string & { __key: T }

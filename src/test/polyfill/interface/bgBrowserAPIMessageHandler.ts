@@ -11,13 +11,13 @@ onMessage('browser-API', (content) => {
   let data = null
   switch (content.type) {
     case 'storage-get': {
-      data = JSON.parse(localStorage['storage'] || '{}')
+      data = JSON.parse(localStorage.storage || '{}')
       break
     }
     case 'storage-set': {
-      const oldData = JSON.parse(localStorage['storage'] || '{}')
+      const oldData = JSON.parse(localStorage.storage || '{}')
       Object.assign(oldData, content.data)
-      localStorage['storage'] = JSON.stringify(oldData)
+      localStorage.storage = JSON.stringify(oldData)
       break
     }
     case 'tabs-create': {

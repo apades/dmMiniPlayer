@@ -20,5 +20,5 @@ export type SubtitleRow = {
 export type SubtitleManagerEvents = {
   'row-enter': SubtitleRow
   'row-leave': SubtitleRow
-  'reset': void
+  reset: void
 }

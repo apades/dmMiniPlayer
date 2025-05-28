@@ -1,4 +1,4 @@
-@import url('./tailwind.css');
-@import url('./tailwindBase.css');
-@import '@apad/rc-slider/assets/index.css';
-@import '@rc-component/trigger/assets/index.css';
+@import url("./tailwind.css");
+@import url("./tailwindBase.css");
+@import "@apad/rc-slider/assets/index.css";
+@import "@rc-component/trigger/assets/index.css";

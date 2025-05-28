@@ -3,7 +3,7 @@ import {
   getMediaStreamInGetter,
   sendMediaStreamInSender,
 } from '@root/utils/webRTC'
-import { FC, useRef } from 'react'
+import { type FC, useRef } from 'react'
 
 const App: FC = (props) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -28,7 +28,7 @@ const App: FC = (props) => {
         width="100%"
         height="500px"
         src="/webRTC2/iframe.html"
-      ></iframe>
+      />
     </div>
   )
 }

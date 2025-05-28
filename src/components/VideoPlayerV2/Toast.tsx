@@ -1,9 +1,9 @@
-import { FC, useContext } from 'react'
-import { useToaster, toast } from 'react-hot-toast'
-import { useOnce } from '@root/hook'
 import { PlayerEvent } from '@root/core/event'
-import { isString } from 'lodash-es'
+import { useOnce } from '@root/hook'
 import isDev from '@root/shared/isDev'
+import { isString } from 'lodash-es'
+import { type FC, useContext } from 'react'
+import { toast, useToaster } from 'react-hot-toast'
 import vpContext from './context'
 
 const Toast: FC = (props) => {

@@ -1,5 +1,5 @@
-import { FC, PropsWithChildren, useContext } from 'react'
 import Trigger from '@rc-component/trigger'
+import { type FC, type PropsWithChildren, useContext } from 'react'
 import vpContext from './VideoPlayerV2/context'
 
 type Props = {} & PropsWithChildren

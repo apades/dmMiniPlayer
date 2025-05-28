@@ -9,7 +9,7 @@ type Props = {
 }
 export default abstract class HtmlDanmakuGetter extends DanmakuGetter {
   htmlDanmakuObserver = new MutationObserver((list) => {
-    const nodes = list.map((l) => [...l.addedNodes]).flat()
+    const nodes = list.flatMap((l) => [...l.addedNodes])
     if (!nodes)
       return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
 

@@ -1,8 +1,8 @@
 import { onceCall } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import mitt from 'mitt'
-import { Merge } from 'type-fest'
-import { toast } from 'react-hot-toast'
+import type { toast } from 'react-hot-toast'
+import type { Merge } from 'type-fest'
 
 export enum PlayerEvent {
   play = 'play',

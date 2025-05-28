@@ -1,9 +1,9 @@
-import { autorun } from 'mobx'
 import { PlayerEvent } from '@root/core/event'
 import configStore from '@root/store/config'
 import { MaxTunnelType } from '@root/store/config/danmaku'
-import { DanmakuInitData } from '../types'
-import DanmakuEngine, { DanmakuEngineInitProps } from '../DanmakuEngine'
+import { autorun } from 'mobx'
+import DanmakuEngine, { type DanmakuEngineInitProps } from '../DanmakuEngine'
+import type { DanmakuInitData } from '../types'
 import IronKinokoDanmakuEngine from './lib'
 
 export default class IronKinokoEngine extends DanmakuEngine {

@@ -15,7 +15,7 @@ type Dialogue = {
 export default class AssParser {
   assContent: string
 
-  formats: string[]
+  formats: string[] = []
 
   parsers: any[] = []
 
@@ -38,7 +38,7 @@ export default class AssParser {
   }
 
   resolveDialogueTime(dialogueTime: string): number {
-    let [hours, min, sec] = dialogueTime.split(':')
+    const [hours, min, sec] = dialogueTime.split(':')
 
     return +hours * 60 * 60 + +min * 60 + +sec
   }
@@ -48,16 +48,16 @@ export default class AssParser {
     this.parsers = parsers
 
     // let dialogues: Dialogue[] = []
-    for (let dialogue of parsers) {
-      let dialogueEntries = Object.entries(dialogue)
-      for (let index in dialogueEntries) {
+    for (const dialogue of parsers) {
+      const dialogueEntries = Object.entries(dialogue)
+      for (const index in dialogueEntries) {
         let [key, value] = dialogueEntries[index]
 
         key = key.toLowerCase()
-        if (key == 'start' || key == 'end') {
+        if (key === 'start' || key === 'end') {
           // value = this.resolveDialogueTime(value as string)
-        } else if (key == 'text') {
-          let { color, danMoveType, text } = this.resolveText(
+        } else if (key === 'text') {
+          const { color, danMoveType, text } = this.resolveText(
             dialogue.Text.raw as string,
           )
           value = text
@@ -81,12 +81,12 @@ export default class AssParser {
       color = '',
       text = ''
 
-    let configBlock = inputText.slice(
+    const configBlock = inputText.slice(
       inputText.indexOf('{') + 1,
       inputText.indexOf('}'),
     )
 
-    let configBlocks = configBlock.split('\\')
+    const configBlocks = configBlock.split('\\')
     configBlocks.shift()
 
     configBlocks.forEach((config) => {
@@ -97,7 +97,7 @@ export default class AssParser {
         let _color = config.replace('c&H', '')
         _color = _color.replace('&', '')
         _color = _color.padEnd(6, '0')
-        let [b, g, r] = splitArray([..._color], 2)
+        const [b, g, r] = splitArray([..._color], 2)
 
         color = Color(`#${r.join('')}${g.join('')}${b.join('')}`).hex()
       } else if (config.includes('move')) {

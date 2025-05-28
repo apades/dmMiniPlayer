@@ -2,23 +2,23 @@ import isEqual from 'fast-deep-equal'
 import type { CSSProperties } from 'react'
 import type { AsyncFn, Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
-import _throttle from './feat/throttle'
 import { getTopParentsWithSameRect } from './dom'
+import _throttle from './feat/throttle'
 // export * as debounce from './feat/debounce'
 
 export const throttle = _throttle
-export const isNumber = (val: any): val is number => typeof val == 'number'
+export const isNumber = (val: any): val is number => typeof val === 'number'
 export const isNull = (val: any): val is null => val == null
-export const isArray = (val: any): val is Array<any> => val instanceof Array
-export const isString = (val: any): val is string => typeof val == 'string'
-export const isObject = (val: any): val is object => typeof val == 'object'
+export const isArray = (val: any): val is Array<any> => Array.isArray(val)
+export const isString = (val: any): val is string => typeof val === 'string'
+export const isObject = (val: any): val is object => typeof val === 'object'
 export const isUndefined = (val: any): val is undefined =>
-  typeof val == 'undefined'
+  typeof val === 'undefined'
 export const isNone = (val: any): val is null | undefined =>
   isNull(val) || isUndefined(val)
 
 export function omit<T, K extends keyof T>(obj: T, key: K[]): Omit<T, K> {
-  let rs = { ...obj }
+  const rs = { ...obj }
   key.forEach((k) => delete rs[k])
   return rs
 }
@@ -43,7 +43,7 @@ export function getTextWidth(text: string, style: CSSProperties): number {
     el.setAttribute('desc', 'calc text overflow node')
   }
 
-  for (let k in style) {
+  for (const k in style) {
     el.style[k as any] = (style as any)[k]
   }
   el.innerText = text
@@ -67,22 +67,25 @@ type WaitLoop = {
     }>,
   ): Promise<boolean>
 }
-export let waitLoopCallback: WaitLoop = (cb, option = 5000) => {
+export const waitLoopCallback: WaitLoop = (cb, option = 5000) => {
   return new Promise(async (res, rej) => {
     const limitTime = (isNumber(option) ? option : option?.limitTime) ?? 5000,
       intervalTime = (isObject(option) && option.intervalTime) || 500
 
     let timer: NodeJS.Timeout
-    let initTime = new Date().getTime()
-    let loop = () => {
-      let rs = cb()
+    const initTime = new Date().getTime()
+    const loop = () => {
+      const rs = cb()
       if (!rs) {
         if (!isNull(option) && new Date().getTime() - initTime > limitTime)
           return res(false)
-        return (timer = setTimeout(() => {
+
+        timer = setTimeout(() => {
           loop()
-        }, intervalTime))
-      } else return res(true)
+        }, intervalTime)
+        return
+      }
+      return res(true)
     }
     loop()
   })
@@ -133,7 +136,7 @@ export const dq1: {
     tar?: DqTarType,
   ): E | undefined
 } = (selector: string, tar = window.document as DqTarType) => {
-  let dom = tar?.querySelector(selector) || undefined
+  const dom = tar?.querySelector(selector) || undefined
   return dom
 }
 
@@ -179,8 +182,8 @@ export const onDOMContentLoaded = () => {
 }
 
 export function splitArray<T>(arr: T[], count: number): T[][] {
-  var result = []
-  for (var i = 0; i < arr.length; i += count) {
+  const result = []
+  for (let i = 0; i < arr.length; i += count) {
     result.push(arr.slice(i, i + count))
   }
   return result
@@ -189,7 +192,7 @@ export function splitArray<T>(arr: T[], count: number): T[][] {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function isPromiseFunction(fn: Function): boolean {
   return (
-    (fn as any).__proto__.constructor ==
+    (fn as any).__proto__.constructor ===
     'function AsyncFunction() { [native code] }'
   )
 }
@@ -288,7 +291,7 @@ export function createElement<
   return el
 }
 
-export let minmax = (v: number, min = v, max = v): number =>
+export const minmax = (v: number, min = v, max = v): number =>
   v < min ? min : v > max ? max : v
 export const clamp = minmax
 
@@ -298,7 +301,7 @@ export function formatTime(time: number, hasMs?: boolean): string {
     hours = ~~(min / 60)
   if (min >= 60) min = ~~(min % 60)
 
-  let sh = hours ? hours + ':' : '',
+  const sh = hours ? hours + ':' : '',
     sm = (hours ? (min + '').padStart(2, '0') : min + '') + ':',
     ss = (sec + '').padStart(2, '0'),
     ms = hasMs
@@ -333,10 +336,10 @@ export function onceCallWithMap<T extends noop>(
       if (keys.length) {
         const newMap = new WeakMap()
         map.set(key, newMap)
-        return setMapRs(keys, newMap, rs)
-      } else {
-        map.set(key, rs)
+        setMapRs(keys, newMap, rs)
+        return
       }
+      map.set(key, rs)
     }
   }
 
@@ -383,7 +386,7 @@ export function addEventListener<
   return () => {
     Object.entries(fnMap).forEach(([key, fns]) => {
       fns.forEach((fn) => {
-        if (typeof fn == 'function')
+        if (typeof fn === 'function')
           target.removeEventListener.call(target, key, fn as any)
         else
           target.removeEventListener.call(target, key, fn.fn as any, ...fn.more)
@@ -405,10 +408,10 @@ export function filterList<T>(
   list: T[],
   callback: (data: T) => boolean,
 ): [T[], T[]] {
-  let left: T[] = [],
+  const left: T[] = [],
     right: T[] = []
   list.forEach((l) => {
-    let v = callback(l)
+    const v = callback(l)
 
     v ? left.push(l) : right.push(l)
   })
@@ -470,7 +473,7 @@ export function ownerWindow(node: Node | null | undefined): Window {
 }
 
 export function ownerDocument(node: Node | null | undefined): Document {
-  return (node && node.ownerDocument) || document
+  return node?.ownerDocument || document
 }
 
 export function getPrototypeSetter<T>(obj: T, key: keyof T) {
@@ -506,15 +509,15 @@ export function switchLatest<Args extends readonly unknown[], Return>(
   asyncFn: AsyncFn<Args, Return>,
 ) {
   let lastKey: symbol
-  return async function (...args: Args): Promise<Return> {
-    return new Promise((res, rej) => {
-      const key = (lastKey = Symbol())
+  return async (...args: Args): Promise<Return> =>
+    new Promise((res, rej) => {
+      const key = Symbol()
+      lastKey = key
       asyncFn(...args).then(
         (data) => lastKey === key && res(data),
         (err) => lastKey === key && rej(err),
       )
     })
-  }
 }
 
 export function getAnyObjToString(obj: any) {
@@ -547,9 +550,8 @@ export function tryCatch<Return>(
       return rs
         .then((d) => [undefined, d])
         .catch((err) => [err, undefined]) as any
-    } else {
-      return [undefined, rs] as any
     }
+    return [undefined, rs] as any
   } catch (error) {
     return [error as Error, undefined] as any
   }
@@ -568,7 +570,7 @@ export const getVideoElInitFloatButtonData = (
   const topParents = getTopParentsWithSameRect(videoTarget)
   const topParentWithPosition = topParents.findLast(
     (el) =>
-      ((el?.computedStyleMap?.()?.get?.('position') as any)?.value ?? '') !=
+      ((el?.computedStyleMap?.()?.get?.('position') as any)?.value ?? '') !==
       'static',
   )
 
@@ -606,17 +608,17 @@ export function calculateNewDimensions(
   scale: number,
 ) {
   // 1. 根据 scale 计算目标尺寸
-  let newHeight = height * scale
-  let newWidth = newHeight * (width / height)
+  const newHeight = height * scale
+  const newWidth = newHeight * (width / height)
 
   // 2. 四舍五入为整数
-  let newWidthRounded = Math.round(newWidth)
+  const newWidthRounded = Math.round(newWidth)
   let newHeightRounded = Math.round(newHeight)
 
   // 3. 检查比例是否一致
   // 计算四舍五入后比例和原始比例的误差
-  let originalRatio = width / height
-  let roundedRatio = newWidthRounded / newHeightRounded
+  const originalRatio = width / height
+  const roundedRatio = newWidthRounded / newHeightRounded
 
   // 判断比例是否接近（允许误差范围）
   if (!isClose(roundedRatio, originalRatio, 1e-5)) {

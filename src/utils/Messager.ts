@@ -24,7 +24,7 @@ export function createMessager<
     noCallback = false,
   ) {
     const reCb = async (e: any) => {
-      let res = await cb(e.detail)
+      const res = await cb(e.detail)
 
       if (noCallback) return
       const event = new CustomEvent(props.sendType, {

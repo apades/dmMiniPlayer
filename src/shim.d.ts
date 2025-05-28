@@ -1,7 +1,7 @@
-import { ProtocolWithReturn } from 'webext-bridge'
-import { Props as DanmakuGetterProps } from '@pkgs/danmakuGetter/DanmakuGetter'
+import type { Props as DanmakuGetterProps } from '@pkgs/danmakuGetter/DanmakuGetter'
+import type { ProtocolWithReturn } from 'webext-bridge'
+import type { DanmakuInitData } from './core/danmaku/DanmakuEngine'
 import WebextEvent from './shared/webextEvent'
-import { DanmakuInitData } from './core/danmaku/DanmakuEngine'
 
 declare module 'webext-bridge' {
   export interface ProtocolMap {

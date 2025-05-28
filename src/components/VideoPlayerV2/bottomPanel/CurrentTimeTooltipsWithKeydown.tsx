@@ -1,10 +1,10 @@
 import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
-import { FC, RefObject, useContext, useState } from 'react'
-import classNames from 'classnames'
 import { formatTime } from '@root/utils'
 import { useUpdate } from 'ahooks'
+import classNames from 'classnames'
+import { type FC, RefObject, useContext, useState } from 'react'
 import vpContext from '../context'
 
 /**在按键seek时显示currentTime */
@@ -48,7 +48,7 @@ const CurrentTimeTooltipsWithKeydown: FC<{}> = (props) => {
         'absolute bottom-0 left-0 z-[2]',
       )}
     >
-      <div className="bg-gradient-to-t from-[#000] opacity-70 h-full w-full absolute z-[1]"></div>
+      <div className="bg-gradient-to-t from-[#000] opacity-70 h-full w-full absolute z-[1]" />
       {isVisible && <Inner isFine={isFine} />}
     </div>
   )

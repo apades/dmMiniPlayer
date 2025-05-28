@@ -17,7 +17,7 @@ export interface BilibiliFollowApiItem {
   track_id: string
   follow_time: string
 }
-interface ContractInfo {}
+type ContractInfo = {}
 interface OfficialVerify {
   type: number
   desc: string

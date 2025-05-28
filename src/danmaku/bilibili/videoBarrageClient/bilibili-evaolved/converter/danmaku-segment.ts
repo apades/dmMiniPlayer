@@ -297,7 +297,7 @@ const decode = (type: string) => {
       return reply.toObject(message)
     }
 
-    let topRunnerRs = await sendMessage('run-code', {
+    const topRunnerRs = await sendMessage('run-code', {
       function: run.toString(),
       args: [proto, type, buffer],
     })

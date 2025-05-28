@@ -1,6 +1,6 @@
 import type { openSettingPanel } from '@root/store/config'
-import { WebProvider } from './core/WebProvider'
-import { Language } from './utils/i18n'
+import type { WebProvider } from './core/WebProvider'
+import type { Language } from './utils/i18n'
 
 declare module 'react' {
   interface CSSProperties {
@@ -46,5 +46,3 @@ declare global {
     fromElement: (el: HTMLElement) => Promise<CropTarget>
   }
 }
-
-export {}

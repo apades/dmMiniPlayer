@@ -12,7 +12,7 @@ export default class HtmlDanmaku extends DanmakuBase {
 
   onInit(props: DanmakuInitProps): void {
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
-    if (this.tunnel == -1) {
+    if (this.tunnel === -1) {
       this.disabled = true
       return
     }
@@ -87,7 +87,7 @@ export default class HtmlDanmaku extends DanmakuBase {
     let duration = this.danmakuEngine.unmovingDanmakuSaveTime - initTimeOffset,
       offset = cw - initTimeOffset * this.speed,
       translateX = 0
-    if (this.type == 'right') {
+    if (this.type === 'right') {
       duration = (offset + w) / this.speed
       translateX = (offset + w) * -1
     }

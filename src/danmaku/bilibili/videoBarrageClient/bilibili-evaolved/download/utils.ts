@@ -2,16 +2,16 @@
 // import { getFriendlyTitle } from '@/core/utils/title'
 import { ascendingSort, clamp, dq1, get, omit } from '@root/utils'
 import {
-  type DanmakuConverterConfig,
   DanmakuConverter,
+  type DanmakuConverterConfig,
 } from '../converter/danmaku-converter'
-import { DanmakuType } from '../converter/danmaku-type'
-import { XmlDanmaku } from '../converter/xml-danmaku'
+import DanmakuFilter from '../converter/danmaku-filter'
 import {
   decodeDanmakuSegment,
   decodeDanmakuView,
 } from '../converter/danmaku-segment'
-import DanmakuFilter from '../converter/danmaku-filter'
+import type { DanmakuType } from '../converter/danmaku-type'
+import { XmlDanmaku } from '../converter/xml-danmaku'
 
 export class JsonDanmaku {
   // static SegmentSize = 6 * 60
@@ -148,7 +148,11 @@ export const getUserDanmakuConfig = async () => {
       config.bold = getConfig('bold', false)
 
       // 透明度
-      config.alpha = clamp(1 - parseFloat(getConfig('opacity', '0.4')), 0, 1)
+      config.alpha = clamp(
+        1 - Number.parseFloat(getConfig('opacity', '0.4')),
+        0,
+        1,
+      )
 
       // 分辨率
       const resolutionFactor = 1.4 - 0.4 * getConfig('fontsize', 1)
@@ -297,8 +301,7 @@ export const getTextByType = async (
     case 'xml': {
       return convertToXmlFromJson(danmaku)
     }
-    default:
-    case 'json': {
+    default: {
       return convertToJsonFromOriginJson(danmaku)
     }
     /**这里是返回完全没处理过的全部json弹幕 */

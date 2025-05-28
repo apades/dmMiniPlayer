@@ -1,13 +1,13 @@
 import Slider from '@apad/rc-slider'
-import { type SliderProps } from '@apad/rc-slider'
+import type { SliderProps } from '@apad/rc-slider'
 import classNames from 'classnames'
 import {
   type CSSProperties,
   type FC,
+  type ReactElement,
   useEffect,
   useRef,
   useState,
-  type ReactElement,
 } from 'react'
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
   children?: ReactElement
 } & SliderProps
 const ProgressBar: FC<Props> = (props) => {
-  let {
+  const {
     className = '',
     direction = 'h',
     onClick = () => 1,
@@ -35,10 +35,10 @@ const ProgressBar: FC<Props> = (props) => {
     ..._props
   } = props
 
-  let barBgColor = bgColor
+  const barBgColor = bgColor
 
-  let progressDragTimmer = useRef<NodeJS.Timeout>()
-  let [isProgressDragging, setProgressDragging] = useState(false)
+  const progressDragTimmer = useRef<NodeJS.Timeout>()
+  const [isProgressDragging, setProgressDragging] = useState(false)
   useEffect(() => {
     if (isProgressDragging) {
       clearTimeout(progressDragTimmer.current)
@@ -72,7 +72,7 @@ const ProgressBar: FC<Props> = (props) => {
         } as CSSProperties
       }
       {..._props}
-    ></Slider>
+    />
   )
 }
 

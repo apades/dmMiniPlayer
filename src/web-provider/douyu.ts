@@ -1,5 +1,5 @@
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { WebProvider } from '@root/core/WebProvider'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import DouyuLiveBarrageClient from '@root/danmaku/douyu/liveBarrageClient'
 import { sendMessage } from '@root/inject/contentSender'
 import { dq1Adv } from '@root/utils'
@@ -24,8 +24,8 @@ export default class DouyuLiveProvider extends WebProvider {
   }
 
   getRoomId() {
-    let locationId = location.pathname.split('/').pop() ?? ''
-    if (+locationId + '' == locationId) return locationId
+    const locationId = location.pathname.split('/').pop() ?? ''
+    if (`${+locationId}` === locationId) return locationId
     return new URLSearchParams(location.search).get('rid') ?? ''
   }
 

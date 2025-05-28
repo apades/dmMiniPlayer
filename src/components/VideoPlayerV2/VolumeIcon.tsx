@@ -1,6 +1,6 @@
-import { FC, useContext, useState } from 'react'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { type FC, useContext, useState } from 'react'
 import Iconfont from '../Iconfont'
 import vpContext from './context'
 

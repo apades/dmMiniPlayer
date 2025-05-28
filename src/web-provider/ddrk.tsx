@@ -1,4 +1,4 @@
-import { type VideoItem } from '@root/components/VideoPlayer/Side'
+import type { VideoItem } from '@root/components/VideoPlayer/Side'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { WebProvider } from '@root/core/WebProvider'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'

@@ -5,7 +5,7 @@ const version = packageJson.version
 export const manifest: chrome.runtime.ManifestV3 = {
   name: '__MSG_appName__',
   description: '__MSG_appDesc__',
-  author: 'apades',
+  author: 'apades' as any,
   manifest_version: 3,
   homepage_url: 'https://github.com/apades/dmMiniPlayer',
   version,

@@ -19,10 +19,10 @@ const getStyles = onceCall(() => {
 })
 async function docPIP() {
   await trustLock.waiting()
-  let pipWindow = await window.documentPictureInPicture.requestWindow()
+  const pipWindow = await window.documentPictureInPicture.requestWindow()
   window.pipwindow = pipWindow
 
-  let styles = getStyles()
+  const styles = getStyles()
   //   const root = createElement('div')
   pipWindow.document.body.appendChild(root)
   styles.forEach((style) => {
@@ -31,8 +31,8 @@ async function docPIP() {
 }
 
 function toIframe() {
-  let iframe = dq1('iframe')!
-  let styles = getStyles()
+  const iframe = dq1('iframe')!
+  const styles = getStyles()
   //   const root = createElement('div')
   styles.forEach((style) => {
     iframe.contentWindow!.document.head.appendChild(style)

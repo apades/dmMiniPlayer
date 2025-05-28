@@ -4,10 +4,10 @@
  * (c) Sindre Sorhus; MIT License
  */
 import './screenfull.css'
-var fn = (function () {
-  var val
+const fn = (() => {
+  let val
 
-  var fnMap = [
+  const fnMap = [
     [
       'requestFullscreen',
       'exitFullscreen',
@@ -52,9 +52,9 @@ var fn = (function () {
     ],
   ]
 
-  var i = 0
-  var l = fnMap.length
-  var ret = {}
+  let i = 0
+  const l = fnMap.length
+  const ret = {}
 
   for (; i < l; i++) {
     val = fnMap[i]
@@ -69,20 +69,20 @@ var fn = (function () {
   return false
 })()
 
-var eventNameMap = {
+const eventNameMap = {
   change: fn.fullscreenchange,
   error: fn.fullscreenerror,
 }
 
-let isEnabled = !!fn
+const isEnabled = !!fn
 /**@type {HTMLElement} */
 let _element = null
 
-var screenfull = {
+const screenfull = {
   request: function (element, options) {
     return new Promise(
       function (resolve, reject) {
-        var onFullScreenEntered = function () {
+        const onFullScreenEntered = function () {
           this.off('change', onFullScreenEntered)
           resolve()
         }.bind(this)
@@ -99,7 +99,7 @@ var screenfull = {
 
         element = element || document.documentElement
 
-        var returnPromise = element[fn.requestFullscreen](options)
+        const returnPromise = element[fn.requestFullscreen](options)
 
         if (returnPromise instanceof Promise) {
           returnPromise.then(onFullScreenEntered).catch(reject)
@@ -115,7 +115,7 @@ var screenfull = {
           return
         }
 
-        var onFullScreenExit = function () {
+        const onFullScreenExit = function () {
           this.off('change', onFullScreenExit)
           resolve()
         }.bind(this)
@@ -129,7 +129,7 @@ var screenfull = {
           }).then(onFullScreenExit)
         }
 
-        var returnPromise = document[fn.exitFullscreen]()
+        const returnPromise = document[fn.exitFullscreen]()
 
         if (returnPromise instanceof Promise) {
           returnPromise.then(onFullScreenExit).catch(reject)
@@ -146,14 +146,14 @@ var screenfull = {
   onerror: function (callback) {
     this.on('error', callback)
   },
-  on: function (event, callback) {
-    var eventName = eventNameMap[event]
+  on: (event, callback) => {
+    const eventName = eventNameMap[event]
     if (eventName) {
       document.addEventListener(eventName, callback, false)
     }
   },
-  off: function (event, callback) {
-    var eventName = eventNameMap[event]
+  off: (event, callback) => {
+    const eventName = eventNameMap[event]
     if (eventName) {
       document.removeEventListener(eventName, callback, false)
     }
@@ -166,19 +166,15 @@ var screenfull = {
 
 Object.defineProperties(screenfull, {
   isFullscreen: {
-    get: function () {
-      return Boolean(document[fn.fullscreenElement])
-    },
+    get: () => Boolean(document[fn.fullscreenElement]),
   },
   element: {
     enumerable: true,
-    get: function () {
-      return document[fn.fullscreenElement]
-    },
+    get: () => document[fn.fullscreenElement],
   },
   isEnabled: {
     enumerable: true,
-    get: function () {
+    get: () => {
       // Coerce to boolean in case of old WebKit
       return Boolean(document[fn.fullscreenEnabled])
     },

@@ -1,6 +1,6 @@
-import { VideoList } from '@root/components/VideoPlayer/Side'
+import type { VideoList } from '@root/components/VideoPlayer/Side'
 import { makeObservable, runInAction } from 'mobx'
-import { PlayerComponent } from './types'
+import type { PlayerComponent } from './types'
 
 /**
  * 视频侧边栏切换别的视频的

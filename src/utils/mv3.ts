@@ -1,4 +1,4 @@
-import { Nullable } from './typeUtils'
+import type { Nullable } from './typeUtils'
 
 export const mv3MoveTabsToPosition = (
   tab: chrome.tabs.Tab,

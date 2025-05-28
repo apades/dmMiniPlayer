@@ -1,4 +1,4 @@
-import Danmaku from '../danmaku'
+import type Danmaku from '../danmaku'
 import type { RunningComment, RunningCommentRange } from '../types'
 
 export default function (this: Danmaku, cmt: RunningComment) {

@@ -1,8 +1,8 @@
-import { spawn as _spawn } from 'child_process'
-import path from 'path'
-import * as url from 'url'
-import fs from 'fs-extra'
+import { spawn as _spawn } from 'node:child_process'
+import path from 'node:path'
+import * as url from 'node:url'
 import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
+import fs from 'fs-extra'
 export const __filename = url.fileURLToPath(import.meta.url)
 export const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
@@ -17,7 +17,9 @@ export function spawn(...args) {
     child.on('close', () => res(rs))
     child.stderr.pipe(process.stderr)
     child.stdout.pipe(process.stdout)
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
     child.stdout.on('data', (data) => (rs += data.toString()))
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
     child.stderr.on('data', (data) => (rs += data.toString()))
     process.stdin.pipe(child.stdin)
   })
@@ -37,7 +39,7 @@ export function getChangeLog(ver, lang) {
 }
 
 function omit(obj, key) {
-  let rs = { ...obj }
+  const rs = { ...obj }
   key.forEach((k) => delete rs[k])
   return rs
 }

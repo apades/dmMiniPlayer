@@ -1,6 +1,6 @@
 import cookie from '@pkgs/js-cookie'
-import { LiveWS } from 'bilibili-live-ws'
 import { getAnyObjToString } from '@root/utils'
+import { LiveWS } from 'bilibili-live-ws'
 import { DanmakuGetter } from '../..'
 
 async function getSelfMid() {
@@ -71,8 +71,8 @@ export default class BilibiliLive extends DanmakuGetter {
       })
 
       this.ws.on('DANMU_MSG', (data) => {
-        let info = data.info
-        let color = '#' + info[0][3].toString(16),
+        const info = data.info
+        const color = `#${info[0][3].toString(16)}`,
           text = info[1]
 
         // console.log('danmu', text, info)

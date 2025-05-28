@@ -17,7 +17,7 @@ export function addCallback(type: string, callback: Function) {
 export function removeCallback(type: string, callback: Function) {
   if (!eventsCallbackMap[type]) return
   eventsCallbackMap[type].splice(
-    eventsCallbackMap[type].findIndex((cb) => cb == callback),
+    eventsCallbackMap[type].findIndex((cb) => cb === callback),
     1,
   )
 }
@@ -94,7 +94,7 @@ const BrowserPolyfill = {
     getManifest: () => ({}),
     // ? 这个是插件需要本地文件的路径，这里直接返回路径？
     getURL: (url: string) => {
-      if (url[0] == '/') url = url.slice(1, url.length)
+      if (url[0] === '/') url = url.slice(1, url.length)
       if (url.indexOf('./') === 0) url = url.replace('./', '')
       if (_env.baseURLInGetURL) {
         return _env.baseURLInGetURL + '/' + url
@@ -144,7 +144,7 @@ const BrowserProxy = objectDeepProxy(BrowserPolyfill, 'BrowserPolyfill', {
       case 'apply':
         return sendMessage('error', {
           type: 'browser-polyfill',
-          error: `缺少可执行函数`,
+          error: '缺少可执行函数',
         })
     }
   },

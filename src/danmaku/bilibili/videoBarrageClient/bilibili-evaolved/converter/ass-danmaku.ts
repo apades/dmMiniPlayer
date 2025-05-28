@@ -1,5 +1,5 @@
 import { type BasicDanmakuData, Danmaku } from './danmaku-data'
-import { DanmakuType } from './danmaku-type'
+import type { DanmakuType } from './danmaku-type'
 
 export type Duration = (danmaku: Danmaku) => number
 export type BlockTypes = (DanmakuType | 'color')[]

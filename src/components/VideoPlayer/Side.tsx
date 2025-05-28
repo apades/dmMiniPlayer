@@ -1,12 +1,12 @@
-import { SideSwitcher } from '@root/core/SideSwitcher'
+import { LeftOutlined } from '@ant-design/icons'
+import type { SideSwitcher } from '@root/core/SideSwitcher'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import configStore, { SideTriggerType } from '@root/store/config'
 import { formatTime, formatView, isNumber } from '@root/utils'
 import type { Rec } from '@root/utils/typeUtils'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useContext, useEffect, useRef, useState, type FC } from 'react'
-import { LeftOutlined } from '@ant-design/icons'
-import configStore, { SideTriggerType } from '@root/store/config'
+import { type FC, useContext, useEffect, useRef, useState } from 'react'
 import vpContext from '../VideoPlayerV2/context'
 
 export type VideoItem = {
@@ -55,7 +55,7 @@ const VideoPlayerSideInner: FC<Props> = observer((props) => {
 
     props.sideSwitcher.videoList.forEach((list, i) => {
       const activeIndex = list.items.findIndex((v) => v.isActive)
-      if (activeIndex == -1) return
+      if (activeIndex === -1) return
       activeMap[i] = activeIndex
     })
 
@@ -106,13 +106,13 @@ const VideoPlayerSideInner: FC<Props> = observer((props) => {
                       key={item.id ?? ii}
                       className={classNames(
                         'px-[8px] py-[2px] overflow-hidden whitespace-nowrap overflow-ellipsis bor-[#fff7] rounded-[2px] cursor-pointer',
-                        activeMap[vi] == ii && 'active bg-[#80bfff]',
+                        activeMap[vi] === ii && 'active bg-[#80bfff]',
                         isCoverItem && 'cover-title f-i-center gap-1',
                       )}
                       title={item.title}
                       ref={(el) => {
                         if (!el) return
-                        if (activeMap[vi] == ii) setActiveEl(el)
+                        if (activeMap[vi] === ii) setActiveEl(el)
                       }}
                       onClick={() => {
                         props.onClick?.(item)
@@ -143,7 +143,7 @@ const VideoPlayerSideInner: FC<Props> = observer((props) => {
 })
 
 const CoverTitleItem: FC<VideoItem> = (data) => {
-  const infoSharedClass = `absolute px-[2px] py-[1px] bg-[#0005] rounded-[4px]`
+  const infoSharedClass = 'absolute px-[2px] py-[1px] bg-[#0005] rounded-[4px]'
   return (
     <>
       <div className="img-container wh-[99px,66px] relative text-xs">

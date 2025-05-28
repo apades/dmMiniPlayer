@@ -1,10 +1,10 @@
-import { useContext, useEffect } from 'react'
-import { isDocPIP, minmax, ownerWindow } from '@root/utils'
-import configStore from '@root/store/config'
 import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
+import configStore from '@root/store/config'
+import { type Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
+import { isDocPIP, minmax, ownerWindow } from '@root/utils'
 import { isFunction, isString } from 'lodash-es'
+import { useContext, useEffect } from 'react'
 import vpContext from './context'
 
 export const useTogglePlayState = () => {
@@ -14,7 +14,7 @@ export const useTogglePlayState = () => {
     if (!webVideo) return
     // 第一次进来没有can-pause attr，忽略判断能否pause
     const canPauseAttr = webVideo.getAttribute('can-pause')
-    const canPause = canPauseAttr ? canPauseAttr == 'true' : true
+    const canPause = canPauseAttr ? canPauseAttr === 'true' : true
 
     if ((!webVideo.paused || type === 'pause') && canPause && type !== 'play') {
       webVideo.pause()
@@ -59,7 +59,7 @@ export const useInWindowKeydown = () => {
         switch (e.code as Key) {
           case 'ArrowLeft': {
             if (isLive) return
-            let getNewTime = () =>
+            const getNewTime = () =>
               minmax(webVideo.currentTime - 5, 0, webVideo.duration)
 
             if (webVideo.paused) {
@@ -175,7 +175,7 @@ export function useKeydown(
         tar.contentEditable === 'true'
       )
         return
-      let keyCode = e.keyCode
+      const keyCode = e.keyCode
       if (isFunction(onKeydown)) {
         onKeydown((keyCodeToCode as any)[keyCode] as Key, e)
       }

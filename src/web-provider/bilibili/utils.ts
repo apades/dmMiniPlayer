@@ -1,11 +1,11 @@
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
-import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine'
 import type { SubtitleItem } from '@root/core/SubtitleManager/types'
+import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine'
 import { getBiliBiliVideoDanmu } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-api'
 import { DanmakuStack } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-stack'
-import { DanmakuType } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-type'
+import type { DanmakuType } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/converter/danmaku-type'
 import {
-  JsonDanmaku,
+  type JsonDanmaku,
   getTextByType,
 } from '@root/danmaku/bilibili/videoBarrageClient/bilibili-evaolved/download/utils'
 import configStore from '@root/store/config'
@@ -69,29 +69,27 @@ export function getSubtitle(url: string): Promise<BiliBiliSubtitleRes> {
 export const getDanmakus = onceCall(async (aid: string, cid: string) => {
   if (!configStore.biliVideoDansFromBiliEvaolved) {
     return getBiliBiliVideoDanmu(cid)
-  } else {
-    // 走bili-evaolved的
-    let danmuContent = await getTextByType(
-      configStore.biliVideoPakkuFilter ? 'ass' : 'originJson',
-      { aid, cid },
-    )
-
-    if (configStore.biliVideoPakkuFilter) {
-      return new AssParser(danmuContent).dans
-    } else {
-      let jsonArr = JSON.parse(danmuContent) as JsonDanmaku['jsonDanmakus']
-      return jsonArr.map((d) => {
-        let type = DanmakuStack.danmakuType[d.mode as DanmakuType]
-
-        return {
-          color: '#' + d.color.toString(16),
-          text: d.content,
-          time: d.progress ? d.progress / 1000 : 0,
-          type: type == 'top' ? 'top' : 'right',
-        } as DanmakuInitData
-      })
-    }
   }
+  // 走bili-evaolved的
+  const danmuContent = await getTextByType(
+    configStore.biliVideoPakkuFilter ? 'ass' : 'originJson',
+    { aid, cid },
+  )
+
+  if (configStore.biliVideoPakkuFilter) {
+    return new AssParser(danmuContent).dans
+  }
+  const jsonArr = JSON.parse(danmuContent) as JsonDanmaku['jsonDanmakus']
+  return jsonArr.map((d) => {
+    const type = DanmakuStack.danmakuType[d.mode as DanmakuType]
+
+    return {
+      color: '#' + d.color.toString(16),
+      text: d.content,
+      time: d.progress ? d.progress / 1000 : 0,
+      type: type === 'top' ? 'top' : 'right',
+    } as DanmakuInitData
+  })
 })
 
 const getBidAndAidFromURL = (url: URL) => {

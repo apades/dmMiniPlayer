@@ -1,23 +1,21 @@
+import { get, onceCall } from '.'
 import en from '../locales/en.json'
-import zhCN from '../locales/zh_CN.json'
-import zhTW from '../locales/zh_TW.json'
 import es from '../locales/es.json'
 import fr from '../locales/fr.json'
 import ja from '../locales/ja.json'
 import ko from '../locales/ko.json'
-import { get, onceCall } from '.'
+import zhCN from '../locales/zh_CN.json'
+import zhTW from '../locales/zh_TW.json'
 
-type DeepKeys<T> =
-  T extends Record<string, unknown>
-    ? {
-        [K in keyof T]-?: `${K & string}` | Concat<K & string, DeepKeys<T[K]>>
-      }[keyof T]
-    : ''
+type DeepKeys<T> = T extends Record<string, unknown>
+  ? {
+      [K in keyof T]-?: `${K & string}` | Concat<K & string, DeepKeys<T[K]>>
+    }[keyof T]
+  : ''
 
-type DeepLeafKeys<T> =
-  T extends Record<string, unknown>
-    ? { [K in keyof T]-?: Concat<K & string, DeepKeys<T[K]>> }[keyof T]
-    : ''
+type DeepLeafKeys<T> = T extends Record<string, unknown>
+  ? { [K in keyof T]-?: Concat<K & string, DeepKeys<T[K]>> }[keyof T]
+  : ''
 
 type Concat<K extends string, P extends string> = `${K}${'' extends P
   ? ''
@@ -73,8 +71,8 @@ export const getNowLang = (): Language =>
   (globalThis as any).__LOCALE || getLangFromNavigator()
 
 export const getIsZh = () =>
-  getNowLang() == Language['Chinese(Simplified)'] ||
-  getNowLang() == Language['Chinese(Traditional)']
+  getNowLang() === Language['Chinese(Simplified)'] ||
+  getNowLang() === Language['Chinese(Traditional)']
 
 const getLangFile = () => i18nMap[getNowLang()]
 export function t(key: I18nKeys) {

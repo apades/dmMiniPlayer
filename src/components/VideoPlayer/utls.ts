@@ -1,5 +1,5 @@
-import { type KeyboardEvent } from 'react'
-export let checkJumpInBufferArea = (buffered: TimeRanges, time: number) => {
+import type { KeyboardEvent } from 'react'
+export const checkJumpInBufferArea = (buffered: TimeRanges, time: number) => {
   for (let i = 0; i < buffered.length; i++) {
     if (buffered.start(i) <= time && buffered.end(i) >= time) return true
   }

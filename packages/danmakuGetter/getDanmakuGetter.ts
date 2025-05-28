@@ -1,7 +1,7 @@
 import { getProviderConfig } from '@root/shared/providerConfig'
-import BilibiliVideo from './apiDanmaku/bilibili/BilibiliVideo'
-import { Props } from './DanmakuGetter'
+import type { Props } from './DanmakuGetter'
 import BilibiliLive from './apiDanmaku/bilibili/BilibiliLive'
+import BilibiliVideo from './apiDanmaku/bilibili/BilibiliVideo'
 
 export default function getDanmakuGetter(props: Props) {
   const { url } = props

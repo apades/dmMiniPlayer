@@ -1,5 +1,5 @@
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { WebProvider } from '@root/core/WebProvider'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
 import { dq1Adv } from '@root/utils'
 

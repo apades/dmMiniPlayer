@@ -1,59 +1,63 @@
-.border-1{
+.border-1 {
   border-width: 1px;
 }
-.f-i-center{
+.f-i-center {
   display: flex;
   align-items: center;
 }
-.f-center{
+.f-center {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.absolute{
+.absolute {
   position: absolute;
 }
-.relative{
+.relative {
   position: relative;
 }
 
-.c-main{
+.c-main {
   color: var(--color-main);
 }
 
-h1,h2,h3,h4,h5{
+h1,
+h2,
+h3,
+h4,
+h5 {
   margin-top: 0;
   margin-bottom: 0;
   font-weight: 600;
   font-family: var(--font-family);
 }
-h3{
+h3 {
   font-size: 18px;
 }
-#app{
+#app {
   /* font-family: var(--t-re); */
 }
 
-.ab-center{
+.ab-center {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 }
-.t-b{
+.t-b {
   font-weight: 600;
 }
-.t-l{
+.t-l {
   color: rgba(0, 0, 0, 0.65);
   font-weight: 400;
 }
-.t-n{
+.t-n {
   font-weight: 400;
   font-family: var(--t-re);
 }
-.t-re{
+.t-re {
   font-family: var(--t-re);
 }
 
@@ -70,8 +74,9 @@ h3{
 }
 @font-face {
   font-family: Roboto-Regular;
-  src: url("../assets/font/roboto/roboto-v20-latin-regular.woff2") format("woff2"),
-    url("../assets/font/roboto/roboto-v20-latin-regular.woff") format("woff");
+  src: url("../assets/font/roboto/roboto-v20-latin-regular.woff2")
+    format("woff2"), url("../assets/font/roboto/roboto-v20-latin-regular.woff")
+    format("woff");
 }
 @font-face {
   font-weight: 400;
@@ -102,18 +107,18 @@ h3{
 
 html body {
   margin: 0;
-  color: rgba(0,0,0,.85);
+  color: rgba(0, 0, 0, 0.85);
   font-size: 14px;
   font-family: var(--font-family);
   font-variant: tabular-nums;
   line-height: 1.5715;
   background-color: #fff;
-  font-feature-settings: "tnum"
+  font-feature-settings: "tnum";
 }
-p{
+p {
   margin: 0;
 }
-*{
+* {
   box-sizing: border-box;
 }
 

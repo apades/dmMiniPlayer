@@ -1,11 +1,11 @@
+import { ERROR_MSG } from '@root/shared/errorMsg'
 import { addEventListener, readTextFromFile, tryCatch } from '@root/utils'
 import Events2 from '@root/utils/Events2'
-import { autorun, makeObservable, observable, runInAction } from 'mobx'
-import { ERROR_MSG } from '@root/shared/errorMsg'
-import toast from 'react-hot-toast'
 import { getNowLang, t } from '@root/utils/i18n'
 import { googleTranslate } from '@root/utils/translate'
-import { PlayerComponent } from '../types'
+import { autorun, makeObservable, observable, runInAction } from 'mobx'
+import toast from 'react-hot-toast'
+import type { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
@@ -28,11 +28,11 @@ class SubtitleManager
   rows: SubtitleRow[] = []
   rowIndex = 0
   activeRows = new Set<SubtitleRow>()
-  activeSubtitleLabel: string = ''
+  activeSubtitleLabel = ''
   showSubtitle = false
   translateMode: keyof typeof translateMode = 'none'
 
-  nowSubtitleItemsLabel: string = ''
+  nowSubtitleItemsLabel = ''
 
   protected onUnloadFn: (() => void)[] = []
   protected addOnUnloadFn(fn: () => void) {
@@ -244,9 +244,8 @@ class SubtitleManager
                 }
                 return
             }
-          } else {
-            toast.error(t('error.translateFail'))
           }
+          toast.error(t('error.translateFail'))
         }
 
         subtitleData = { rows: subtitleRows }
@@ -289,9 +288,6 @@ class SubtitleManager
 }
 
 export class CommonSubtitleManager extends SubtitleManager {
-  constructor() {
-    super()
-  }
   async loadSubtitle(value: string): Promise<SubtitleRow[]> {
     return []
   }

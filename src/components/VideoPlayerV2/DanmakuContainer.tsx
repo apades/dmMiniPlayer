@@ -1,6 +1,6 @@
-import { FC, memo, useContext, useRef, useState } from 'react'
 import { useOnce } from '@root/hook'
 import { createElement } from '@root/utils'
+import { type FC, memo, useContext, useRef, useState } from 'react'
 import vpContext from './context'
 
 const _danmakuContainer = createElement('div', {
@@ -33,7 +33,7 @@ const DanmakuContainer: FC = (props) => {
     <div
       className="absolute left-0 top-0 size-full overflow-hidden pointer-events-none"
       ref={danmakuContainer}
-    ></div>
+    />
   )
 }
 

@@ -1,8 +1,8 @@
 import SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
-import { runInAction } from 'mobx'
 import configStore from '@root/store/config'
-import { getSubtitles, getSubtitle } from './utils'
+import { runInAction } from 'mobx'
+import { getSubtitle, getSubtitles } from './utils'
 
 export default class YoutubeSubtitleManager extends SubtitleManager {
   async onInit() {
@@ -29,8 +29,8 @@ export default class YoutubeSubtitleManager extends SubtitleManager {
           ...row,
           startTime: row.startTime,
           endTime: row.endTime,
-          text: row.text + ' ' + lastRow.text,
-          htmlText: row.text + ' ' + lastRow.text,
+          text: `${row.text} ${lastRow.text}`,
+          htmlText: `${row.text} ${lastRow.text}`,
         }
         newSubtitleRows.push(newRow)
         i++

@@ -1,12 +1,12 @@
-import { WebProvider } from '@root/core/WebProvider'
-import onRouteChange from '@root/inject/csUtils/onRouteChange'
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { dq, dq1, switchLatest, tryCatch } from '@root/utils'
-import { SideSwitcher } from '@root/core/SideSwitcher'
-import { VideoItem } from '@root/components/VideoPlayer/Side'
-import API_bilibili from '@root/api/bilibili'
-import { t } from '@root/utils/i18n'
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
+import API_bilibili from '@root/api/bilibili'
+import type { VideoItem } from '@root/components/VideoPlayer/Side'
+import { SideSwitcher } from '@root/core/SideSwitcher'
+import { WebProvider } from '@root/core/WebProvider'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import onRouteChange from '@root/inject/csUtils/onRouteChange'
+import { dq, dq1, switchLatest, tryCatch } from '@root/utils'
+import { t } from '@root/utils/i18n'
 import toast from 'react-hot-toast'
 import { getDanmakus } from '../utils'
 import BiliBiliPreviewManager from './PreviewManager'
@@ -147,7 +147,7 @@ export default class BilibiliVideoProvider extends WebProvider {
 
         if (!linkEl || !elBvid) return
 
-        const i = relateVideos.findIndex((v: any) => v.bvid == elBvid)
+        const i = relateVideos.findIndex((v: any) => v.bvid === elBvid)
         const relate = relateVideos.splice(i, 1)[0]
 
         recommendVideos.push({

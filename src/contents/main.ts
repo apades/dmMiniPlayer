@@ -1,12 +1,13 @@
+import type { WebProvider } from '@root/core/WebProvider'
 import { PlayerEvent } from '@root/core/event'
-import { WebProvider } from '@root/core/WebProvider'
 import isTop from '@root/shared/isTop'
 import PostMessageEvent, {
-  BaseVideoState,
-  PostMessageProtocolMap,
+  type BaseVideoState,
+  type PostMessageProtocolMap,
 } from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
 import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
 import {
   createElement,
   dq,
@@ -21,7 +22,6 @@ import {
   postMessageToTop,
 } from '@root/utils/windowMessages'
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
-import { DocPIPRenderType } from '@root/types/config'
 import _getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
 import API_bilibili from '@root/api/bilibili'
@@ -51,7 +51,7 @@ if (isTop) {
 
 function main() {
   let provider: WebProvider | undefined
-  let getProvider = () => {
+  const getProvider = () => {
     provider = _getWebProvider()
     window.provider = provider
     return provider
@@ -321,10 +321,7 @@ function main() {
       const [err] = await tryCatch(fn)
       postMessageToChild(PostMessageEvent.startPIPFromFloatButton_resp, {
         isOk: !err,
-        err:
-          ((err as any)?.toString && (err as any).toString()) ||
-          err?.message ||
-          err,
+        err: (err as any)?.toString?.() || err?.message || err,
       })
     },
   )

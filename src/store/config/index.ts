@@ -1,43 +1,43 @@
 import { config, initSetting } from '@apad/setting-panel'
+import en from '@apad/setting-panel/i18n/en.json'
+import zh from '@apad/setting-panel/i18n/zh_cn.json'
+import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
+import isDev from '@root/shared/isDev'
+import isPluginEnv from '@root/shared/isPluginEnv'
+import {
+  DM_MINI_PLAYER_CONFIG,
+  FLOAT_BTN_HIDDEN,
+  LOCALE,
+} from '@root/shared/storeKey'
+import {
+  Language,
+  LanguageNativeNames,
+  getIsZh,
+  getNowLang,
+  t,
+} from '@root/utils/i18n'
 import {
   getBrowserSyncStorage,
   setBrowserLocalStorage,
   setBrowserSyncStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
+import { isUndefined } from 'lodash-es'
 import {
   autorun,
+  configure,
   makeAutoObservable,
   observe as mobxObserve,
-  configure,
 } from 'mobx'
 import { observer } from 'mobx-react'
-import zh from '@apad/setting-panel/i18n/zh_cn.json'
-import en from '@apad/setting-panel/i18n/en.json'
-import {
-  getIsZh,
-  Language,
-  LanguageNativeNames,
-  getNowLang,
-  t,
-} from '@root/utils/i18n'
-import {
-  DM_MINI_PLAYER_CONFIG,
-  FLOAT_BTN_HIDDEN,
-  LOCALE,
-} from '@root/shared/storeKey'
-import isPluginEnv from '@root/shared/isPluginEnv'
-import { isUndefined } from 'lodash-es'
-import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
-import isDev from '@root/shared/isDev'
 import Browser from 'webextension-polyfill'
-import config_floatButton from './floatButton'
-import config_shortcut from './shortcut'
-import config_subtitle from './subtitle'
-import config_specialWebsites from './specialWebsites'
 import config_danmaku from './danmaku'
 import { docPIPConfig } from './docPIP'
 import config_features from './features'
+import config_floatButton from './floatButton'
+import config_shortcut from './shortcut'
+import config_specialWebsites from './specialWebsites'
+import config_subtitle from './subtitle'
 
 if (isDev) {
   configure({
@@ -255,8 +255,7 @@ const {
   async onSave(newConfig) {
     if (newConfig.language) {
       await setBrowserLocalStorage(LOCALE, newConfig.language)
-      location.reload()
-      delete (newConfig as any).language
+      location.reload()(newConfig as any).language = undefined
     }
 
     if (!isPluginEnv) return
@@ -281,7 +280,7 @@ const {
 
     if (newConfig.useDocPIP) {
       if (!window?.documentPictureInPicture) {
-        delete (newConfig as any).useDocPIP
+        ;(newConfig as any).useDocPIP = undefined
         alert(t('settingPanel.unsupportDocPIPTips'))
       }
     }

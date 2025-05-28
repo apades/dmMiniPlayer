@@ -13,7 +13,7 @@ onMessage(WebextEvent.beforeStartPIP, async () => {
   const tabs = (await chrome.tabs.query({ active: true })).filter(
     (v) => !v.favIconUrl,
   )
-  let unListen = onMessage(WebextEvent.afterStartPIP, async ({ data }) => {
+  const unListen = onMessage(WebextEvent.afterStartPIP, async ({ data }) => {
     const width = data.width
     const newTabs = (await chrome.tabs.query({ active: true })).filter(
       (v) => !v.favIconUrl,

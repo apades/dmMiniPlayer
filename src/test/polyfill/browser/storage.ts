@@ -11,7 +11,7 @@ const storageFnObj = {
     else if (isObject(_keys)) keys = Object.keys(_keys)
     else if (!isNull(_keys)) keys = [_keys as string]
 
-    if (_env.isBG) return JSON.parse(localStorage['storage'] || '{}')
+    if (_env.isBG) return JSON.parse(localStorage.storage || '{}')
 
     return sendMessageWaitResp('browser-API', {
       type: 'storage-get',
@@ -37,9 +37,9 @@ const storageFnObj = {
     })
 
     if (_env.isBG) {
-      const oldData = JSON.parse(localStorage['storage'] || '{}')
+      const oldData = JSON.parse(localStorage.storage || '{}')
       Object.assign(oldData, items)
-      localStorage['storage'] = JSON.stringify(oldData)
+      localStorage.storage = JSON.stringify(oldData)
     } else
       await sendMessageWaitResp('browser-API', {
         type: 'storage-set',

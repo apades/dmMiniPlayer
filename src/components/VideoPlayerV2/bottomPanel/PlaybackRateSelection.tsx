@@ -1,10 +1,10 @@
-import { FC, useContext, useEffect, useState } from 'react'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
-import classNames from 'classnames'
-import { useMemoizedFn } from 'ahooks'
-import { useOnce } from '@root/hook'
-import { PlayerEvent } from '@root/core/event'
 import HiddenAble from '@root/components/HiddenAble'
+import { PlayerEvent } from '@root/core/event'
+import { useOnce } from '@root/hook'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { useMemoizedFn } from 'ahooks'
+import classNames from 'classnames'
+import { type FC, useContext, useEffect, useState } from 'react'
 import Dropdown from '../../Dropdown'
 import vpContext from '../context'
 import ActionButton from './ActionButton'
@@ -29,8 +29,8 @@ const PlaybackRateSelection: FC = (props) => {
 
   const handleChangePlaybackRate = (rate: number) => {
     if (!webVideo) return
-    if (rate == playbackRate) return
-    if (playbackRate != 1) {
+    if (rate === playbackRate) return
+    if (playbackRate !== 1) {
       setLastPlaybackRate(playbackRate)
     }
     setPlaybackRate(rate)

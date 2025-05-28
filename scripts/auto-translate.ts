@@ -1,9 +1,9 @@
-import path from 'path'
-import fetch from 'node-fetch'
+import path from 'node:path'
+import { Language } from '@root/utils/i18n'
 import fs from 'fs-extra'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { cloneDeep, get, isEqual, isEqualWith, set } from 'lodash-es'
-import { Language } from '@root/utils/i18n'
+import fetch from 'node-fetch'
 
 const proxyPort = process.argv[2] || 7890
 const proxyUrl = `http://127.0.0.1:${proxyPort}`
@@ -61,9 +61,8 @@ async function main(props: { targetDir: string; sourceFile: string }) {
             ) {
               set(copySource, deepKey, val)
               continue
-            } else {
-              needTranslateMap[deepKey] = obj[key]
             }
+            needTranslateMap[deepKey] = obj[key]
           } else {
             translate(obj[key], deepKey)
           }

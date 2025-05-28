@@ -1,7 +1,7 @@
 import { addEventListener, wait } from '@root/utils'
 
 function getDom<T extends HTMLElement>(el: T | string) {
-  return typeof el == 'string' ? (document.querySelector(el) as T) : el
+  return typeof el === 'string' ? (document.querySelector(el) as T) : el
 }
 export type Props = {
   textInput: HTMLTextAreaElement | HTMLInputElement | string
@@ -41,7 +41,7 @@ export default class DanmakuSender {
     }
     this.unload()
 
-    this.isHtmlInputMode = this.webTextInput?.contentEditable == 'true'
+    this.isHtmlInputMode = this.webTextInput?.contentEditable === 'true'
     this.textInput.value = this.webTextValue
 
     this.onInput()
@@ -105,7 +105,7 @@ export default class DanmakuSender {
       let count = 0
       const fn = () => {
         count++
-        if (count == events.length) {
+        if (count === events.length) {
           removeListener()
           res()
         }
@@ -146,10 +146,8 @@ export default class DanmakuSender {
     }
     try {
       // react 的onChange特有的修改setter
-      const valueSetter = Object.getOwnPropertyDescriptor(
-        element,
-        'value',
-      )!.set!
+      const valueSetter = Object.getOwnPropertyDescriptor(element, 'value')!
+        .set!
       const prototype = Object.getPrototypeOf(element)
       const prototypeValueSetter = Object.getOwnPropertyDescriptor(
         prototype,

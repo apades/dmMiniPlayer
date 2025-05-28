@@ -5,14 +5,14 @@ import plugin from 'tailwindcss/plugin'
 
 export default plugin(
   function containerQueries({ matchUtilities, matchVariant, theme }) {
-    let values: Record<string, string> = theme('containers') ?? {}
+    const values: Record<string, string> = theme('containers') ?? {}
 
     function parseValue(value: string) {
       console.log('value', value)
-      let numericValue = value.match(/^(\d+\.\d+|\d+|\.\d+)\D+/)?.[1] ?? null
+      const numericValue = value.match(/^(\d+\.\d+|\d+|\.\d+)\D+/)?.[1] ?? null
       if (numericValue === null) return null
 
-      return parseFloat(value)
+      return Number.parseFloat(value)
     }
 
     matchUtilities(
@@ -43,7 +43,7 @@ export default plugin(
         }
         if (typeof value === 'string') {
           const parsed = parseValue(value)
-          data.min = parsed + ''
+          data.min = `${parsed}`
         }
         if (typeof value === 'object') {
           data.raw = (value as any).raw
@@ -56,21 +56,22 @@ export default plugin(
       {
         values,
         sort(aVariant, zVariant) {
-          let a = parseFloat(aVariant.value)
-          let z = parseFloat(zVariant.value)
+          const a = Number.parseFloat(aVariant.value)
+          const z = Number.parseFloat(zVariant.value)
 
           if (a === null || z === null) return 0
 
           // Sort values themselves regardless of unit
           if (a - z !== 0) return a - z
 
-          let aLabel = aVariant.modifier ?? ''
-          let zLabel = zVariant.modifier ?? ''
+          const aLabel = aVariant.modifier ?? ''
+          const zLabel = zVariant.modifier ?? ''
 
           // Explicitly move empty labels to the end
           if (aLabel === '' && zLabel !== '') {
             return 1
-          } else if (aLabel !== '' && zLabel === '') {
+          }
+          if (aLabel !== '' && zLabel === '') {
             return -1
           }
 

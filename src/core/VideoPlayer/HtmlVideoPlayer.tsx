@@ -1,15 +1,15 @@
 import AppRoot from '@root/components/AppRoot'
 import VideoPlayerV2, {
-  VideoPlayerHandle,
+  type VideoPlayerHandle,
 } from '@root/components/VideoPlayerV2'
 import WebextEvent from '@root/shared/webextEvent'
 import configStore from '@root/store/config'
 import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
 import { createElement, throttle, tryCatch } from '@root/utils'
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
 import { sendMessage as sendBgMessage } from 'webext-bridge/content-script'
-import { DocPIPRenderType } from '@root/types/config'
 import CanvasVideo from '../CanvasVideo'
 import { PlayerEvent } from '../event'
 import VideoPlayerBase, { supportOnVideoChangeTypes } from './VideoPlayerBase'
@@ -137,7 +137,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           }
           return <VideoPlayerV2 {...commonProps} videoStream={stream} />
         }
-        case DocPIPRenderType.capture_tabCapture:
+        case DocPIPRenderType.capture_tabCapture: {
           if (!playerConfig.posData) throw Error('没有定义playerConfig.posData')
           // TODO 提示用户点击下插件icon
           // 这里必须要用户点击插件icon或者右键菜单功能才能用tapCapture功能 😅
@@ -183,9 +183,9 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
                 videoStream={canvasVideo.canvasVideoStream}
               />
             )
-          } else {
-            return <VideoPlayerV2 {...commonProps} videoStream={stream} />
           }
+          return <VideoPlayerV2 {...commonProps} videoStream={stream} />
+        }
         case DocPIPRenderType.capture_captureStreamWithWebRTC:
           if (!playerConfig.webRTCMediaStream)
             throw Error('没有定义playerConfig.webRTCMediaStream')

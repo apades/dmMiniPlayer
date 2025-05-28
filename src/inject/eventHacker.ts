@@ -5,26 +5,26 @@
 import { dq1, type noop } from '@root/utils'
 import equal from 'fast-deep-equal'
 import { isUndefined } from 'lodash-es'
-import { onMessage_inject, sendMessage_inject } from './injectListener'
 import { eventHackerEnableSites } from './eventHacker.config'
+import { onMessage_inject, sendMessage_inject } from './injectListener'
 
 function main() {
   console.log('💀 event hacker running')
-  let disableMap: Record<string, string[]> = {}
+  const disableMap: Record<string, string[]> = {}
   function injectEventListener<
     T extends {
       addEventListener: (k: string, fn: noop, ...more: any[]) => void
       removeEventListener: (k: string, fn: noop, ...more: any[]) => void
     },
   >(tar: T) {
-    let originalAdd = tar.addEventListener
+    const originalAdd = tar.addEventListener
 
     const isDocOrWin = (key: string) =>
-      ((tar as any) == window && key == 'window') ||
-      ((tar as any) == document && key == 'document')
+      ((tar as any) === window && key === 'window') ||
+      ((tar as any) === document && key === 'document')
 
-    const isWindow = (tar as any) == window
-    const isDocument = (tar as any) == document
+    const isWindow = (tar as any) === window
+    const isDocument = (tar as any) === document
 
     tar.addEventListener = function (
       this: any,
@@ -53,28 +53,28 @@ function main() {
         console.error(error, tar)
       }
 
-      let eventList = getEventMap()?.[key] as any[]
-      let event = key
+      const eventList = getEventMap()?.[key] as any[]
+      const event = key
       try {
         // 判断监听触发事件
-        let onEventMatch = Object.entries(onEventAddMap).find(
+        const onEventMatch = Object.entries(onEventAddMap).find(
           ([key, val]) => isDocOrWin(key) || (tar as any).matches?.(key),
         )
-        if (onEventMatch && onEventMatch[1].includes(event)) {
+        if (onEventMatch?.[1].includes(event)) {
           sendMessage_inject('event-hacker:onEventAdd', {
             qs: onEventMatch[0],
             event: key as any,
           })
         }
 
-        let disableMatch = Object.entries(disableMap).find(
+        const disableMatch = Object.entries(disableMap).find(
           ([key, val]) => isDocOrWin(key) || this.matches?.(key),
         )
         // 判断是否禁用
-        if (disableMatch && disableMatch[1].includes(event)) {
+        if (disableMatch?.[1].includes(event)) {
           console.log('匹配到禁用query', disableMap, tar)
         } else {
-          var rs = originalAdd.call(this, key, fn, state)
+          const rs = originalAdd.call(this, key, fn, state)
         }
         const addEvent = {
           fn,
@@ -89,7 +89,7 @@ function main() {
       return rs
     }
 
-    let originalRemove = tar.removeEventListener
+    const originalRemove = tar.removeEventListener
 
     tar.removeEventListener = function (
       this: any,
@@ -105,7 +105,7 @@ function main() {
 
       try {
         const eventList = getEventMap()?.[key] ?? []
-        var rs = originalRemove.call(this, key, fn, state)
+        const rs = originalRemove.call(this, key, fn, state)
         const index = eventList.findIndex(
           (ev: any) => ev.fn === fn && ev.state === state,
         )
@@ -134,7 +134,7 @@ function main() {
     disableMap[qs].push(event)
 
     function rmEv(tar: any, fn: noop) {
-      let eventList = (tar as any).eventMap?.[event] ?? []
+      const eventList = (tar as any).eventMap?.[event] ?? []
       eventList.forEach((ev: any) => {
         if (!isUndefined(ev.state)) fn.call(tar, event, ev.fn, ev.state)
         else fn.call(tar, event, ev.fn)
@@ -161,13 +161,13 @@ function main() {
   onMessage_inject('event-hacker:enable', ({ qs, event }) => {
     console.log('开始启用事件', qs, event)
     if (!disableMap[qs]) return false
-    const index = disableMap[qs].findIndex((e) => e == event)
+    const index = disableMap[qs].findIndex((e) => e === event)
     if (index !== -1) {
       disableMap[qs].splice(index, 1)
     }
 
     function addEv(tar: any, fn: noop) {
-      let eventList = (tar as any).eventMap?.[event] ?? []
+      const eventList = (tar as any).eventMap?.[event] ?? []
       eventList.forEach((ev: any) => {
         if (ev.state) fn.call(tar, event, ev.fn, ev.state)
         else fn.call(tar, event, ev.fn)
@@ -190,7 +190,7 @@ function main() {
     return true
   })
 
-  let onEventAddMap: Record<string, string[]> = {}
+  const onEventAddMap: Record<string, string[]> = {}
   onMessage_inject('event-hacker:listenEventAdd', ({ qs, event }) => {
     onEventAddMap[qs] = onEventAddMap[qs] || []
     onEventAddMap[qs].push(event)

@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons'
-import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
-import { ExtendComponent } from '@root/core/VideoPlayer/VideoPlayerBase'
+import type { ExtendComponent } from '@root/core/VideoPlayer/VideoPlayerBase'
+import type { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 import { useOnce } from '@root/hook'
 import _env, { configStore } from '@root/store/config'
 import { formatTime, minmax, wait } from '@root/utils'
@@ -10,7 +10,9 @@ import { checkIsLive } from '@root/utils/video'
 import { default as classNames, default as cls } from 'classnames'
 import { observer } from 'mobx-react'
 import {
-  FC,
+  type CSSProperties,
+  type FC,
+  type ReactElement,
   forwardRef,
   memo,
   useEffect,
@@ -18,18 +20,16 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
-  type ReactElement,
 } from 'react'
 import Iconfont from '../Iconfont'
 import DanmakuInput from './DanmakuInput'
-import { VideoPlayerLoadEvent } from './events'
 import PlayerProgressBar from './PlayerProgressBar'
+import VideoPlayerSide from './Side'
+import VolumeBar from './VolumeBar'
+import { VideoPlayerLoadEvent } from './events'
 import SubtitleSelection from './subtitle/SubtitleSelection'
 import SubtitleText from './subtitle/SubtitleText'
 import { checkJumpInBufferArea } from './utls'
-import VolumeBar from './VolumeBar'
-import VideoPlayerSide from './Side'
 
 type EventBase = Omit<
   {
@@ -129,7 +129,7 @@ const VideoPlayer = observer(
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
-      else return new CommonSubtitleManager()
+      return new CommonSubtitleManager()
     }, [props.subtitleManager])
 
     const getIsLive = () => checkIsLive(videoRef.current)
@@ -162,7 +162,7 @@ const VideoPlayer = observer(
           window.videoPlayers.list.delete(index)
         },
         play(index) {
-          for (let i of window.videoPlayers.list.keys()) {
+          for (const i of window.videoPlayers.list.keys()) {
             if (i === index) continue
             window.videoPlayers.list.get(i)?.pause?.()
           }
@@ -209,7 +209,7 @@ const VideoPlayer = observer(
           if (isFirstPlay) setIsFirstPlay(false)
           setTimeout(() => {
             videoRef.current.currentTime = time
-            let isInBuffer = checkJumpInBufferArea(
+            const isInBuffer = checkJumpInBufferArea(
               videoRef.current.buffered,
               time,
             )
@@ -241,7 +241,7 @@ const VideoPlayer = observer(
     useEffect(() => {
       if (isFirstPlay) return
       videoRef.current.volume = volume / 100
-      localStorage['vp_volume'] = volume
+      localStorage.vp_volume = volume
     }, [volume])
 
     useEffect(() => {
@@ -289,7 +289,7 @@ const VideoPlayer = observer(
           case 'ArrowLeft': {
             if (getIsLive()) return
             e.preventDefault()
-            let getNewTime = () =>
+            const getNewTime = () =>
               minmax(videoRef.current.currentTime - 5, 0, duration)
 
             if (isFirstPlay) {
@@ -442,8 +442,8 @@ const VideoPlayer = observer(
       }
     }
 
-    let [isVolumeNotiShow, setVolumeNotiShow] = useState(false)
-    let volumeNotifTimmer = useRef<NodeJS.Timeout>(null)
+    const [isVolumeNotiShow, setVolumeNotiShow] = useState(false)
+    const volumeNotifTimmer = useRef<NodeJS.Timeout>(null)
     function showVolumeNotifi() {
       if (volumeNotifTimmer.current) clearTimeout(volumeNotifTimmer.current)
       setVolumeNotiShow(true)
@@ -452,8 +452,8 @@ const VideoPlayer = observer(
       }, 1000)
     }
 
-    let fullscreenActionAreaTimmer = useRef<NodeJS.Timeout>(null)
-    let handleFullscreenShowActionArea = (state = true, focus = false) => {
+    const fullscreenActionAreaTimmer = useRef<NodeJS.Timeout>(null)
+    const handleFullscreenShowActionArea = (state = true, focus = false) => {
       // if (!isFullscreen && !focus) return false
       if (fullscreenActionAreaTimmer.current)
         clearTimeout(fullscreenActionAreaTimmer.current)
@@ -461,7 +461,7 @@ const VideoPlayer = observer(
       return true
     }
 
-    let handleResetActionAreaShow = () => {
+    const handleResetActionAreaShow = () => {
       if (_env.vpActionAreaLock || isActionAreaLock) return
       if (fullscreenActionAreaTimmer.current)
         clearTimeout(fullscreenActionAreaTimmer.current)
@@ -475,10 +475,10 @@ const VideoPlayer = observer(
       if (_env.vpActionAreaLock) handleFullscreenShowActionArea(true)
     }, [])
 
-    let RenderVideoCover = () => {
+    const RenderVideoCover = () => {
       return (
         isFirstPlay && (
-          <div className={`video-cover`}>
+          <div className={'video-cover'}>
             <img crossOrigin="anonymous" src={props.coverUrl} />
             {props.renderCoverChild?.()}
           </div>
@@ -506,7 +506,7 @@ const VideoPlayer = observer(
           window.videoPlayers.play(index)
         },
         onTimeUpdate: () => {
-          let ctime = videoRef.current.currentTime
+          const ctime = videoRef.current.currentTime
           setCurrentTime(ctime)
           setPlayedPercent((ctime / videoRef.current.duration) * 100)
           timeupdateQueue.forEach((fn) => fn(ctime))
@@ -524,8 +524,8 @@ const VideoPlayer = observer(
           setLoading(false)
         },
         onProgress: () => {
-          let buffered = videoRef.current?.buffered ?? ({} as TimeRanges)
-          let _loaded: typeof loaded = []
+          const buffered = videoRef.current?.buffered ?? ({} as TimeRanges)
+          const _loaded: typeof loaded = []
           for (let i = 0; i < buffered.length; i++) {
             _loaded.push({ s: buffered.start(i), e: buffered.end(i) })
           }
@@ -546,8 +546,8 @@ const VideoPlayer = observer(
       }
 
       Object.keys(eventBase).forEach((key: keyof EventBase) => {
-        let realEventKey = key.slice(2).toLowerCase()
-        let fnArr: ((
+        const realEventKey = key.slice(2).toLowerCase()
+        const fnArr: ((
           event: React.SyntheticEvent<HTMLVideoElement, Event>,
         ) => void)[] = []
 
@@ -674,10 +674,10 @@ const VideoPlayer = observer(
           <div className="absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
-          <div className="mask"></div>
+          <div className="mask" />
           <div className={cls('actions', isInputMode && 'is-input')}>
             {getIsLive() ? (
-              <span className="live-dot"></span>
+              <span className="live-dot" />
             ) : (
               <Iconfont
                 ref={playBtnEl}
@@ -747,7 +747,7 @@ const VideoPlayer = observer(
             // onMouseLeave={handleResetActionAreaShow}
           >
             <VideoPlayerSide sideSwitcher={props.sideSwitcher} />
-            <div className="side-dragger"></div>
+            <div className="side-dragger" />
           </div>
         )}
 
@@ -759,7 +759,7 @@ const VideoPlayer = observer(
               height: _env.videoProgress_height + 'px',
               backgroundColor: _env.videoProgress_color,
             }}
-          ></div>
+          />
         )}
       </div>
     )

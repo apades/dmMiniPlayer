@@ -1,4 +1,4 @@
-import { DocPIPRenderType } from '@root/types/config'
+import type { DocPIPRenderType } from '@root/types/config'
 
 enum PostMessageEvent {
   startPIPFromFloatButton = 'startPIPFromFloatButton',

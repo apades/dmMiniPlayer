@@ -1,5 +1,5 @@
-import { config as _config } from '@apad/setting-panel'
-import { Position, DocPIPRenderType } from '@root/types/config'
+import type { config as _config } from '@apad/setting-panel'
+import { DocPIPRenderType, Position } from '@root/types/config'
 import { t } from '@root/utils/i18n'
 
 const category = 'PIP'
@@ -29,7 +29,7 @@ export const docPIPConfig = {
   }),
   quickHide_pos: config<Exclude<Position, Position.default>>({
     label: t('settingPanel.quickHide_pos'),
-    defaultValue: Position['topLeft'],
+    defaultValue: Position.topLeft,
     relateByValue: true,
     type: 'group',
     group: Object.values(Position)

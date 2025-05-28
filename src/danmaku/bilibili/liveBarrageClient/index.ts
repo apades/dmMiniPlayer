@@ -3,7 +3,7 @@ import API_bilibili from '@root/api/bilibili'
 import BarrageClient from '@root/core/danmaku/BarrageClient'
 import { tryCatch } from '@root/utils'
 import { t } from '@root/utils/i18n'
-import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
+import { KeepLiveTCP, KeepLiveWS, LiveTCP, LiveWS } from 'bilibili-live-ws'
 import toast from 'react-hot-toast'
 
 export const proto = {
@@ -71,8 +71,8 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
     })
 
     this.ws.on('DANMU_MSG', (data) => {
-      let info = data.info
-      let color = '#' + info[0][3].toString(16),
+      const info = data.info
+      const color = '#' + info[0][3].toString(16),
         text = info[1]
 
       // console.log('danmu', text, info)

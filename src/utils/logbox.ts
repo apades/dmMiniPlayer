@@ -1,7 +1,7 @@
-let od = Object.defineProperty
+const od = Object.defineProperty
 
 // ---- logBox Map ----
-let logBoxMap: {
+const logBoxMap: {
   [key: string]: {
     color?: string
     disable?: boolean
@@ -10,7 +10,7 @@ let logBoxMap: {
 window.logBoxMap = logBoxMap
 od(logBoxMap, 'disableList', {
   get() {
-    let arr: string[] = []
+    const arr: string[] = []
     Object.entries(logBoxMap).forEach(([key, val]) => {
       if (val.disable) arr.push(key)
     })
@@ -19,7 +19,7 @@ od(logBoxMap, 'disableList', {
 })
 od(logBoxMap, 'activeList', {
   get() {
-    let arr: string[] = []
+    const arr: string[] = []
     Object.entries(logBoxMap).forEach(([key, val]) => {
       if (!val.disable) arr.push(key)
     })
@@ -32,7 +32,7 @@ od(logBoxMap, 'keys', {
 // ---- logBox Map ----
 
 // ---- logBox Logs ----
-let logBoxLogs: {
+const logBoxLogs: {
   [k: string]: { data: any[]; date: Date }[]
 } & {
   getLogs?(types?: string[]): void
@@ -47,12 +47,12 @@ type reConsole = typeof console
 type reConsoleConfig = Partial<{
   diableKey: boolean
 }>
-let generRandomColor = (seed: number) =>
+const generRandomColor = (seed: number) =>
   `#${Math.floor(seed * 16777215).toString(16)}`
 export function logBox(key: string, config?: reConsoleConfig): reConsole {
   // if (!_env.isDev) return
-  let _console = { ...console }
-  let _log = console.log
+  const _console = { ...console }
+  const _log = console.log
   if (!logBoxMap[key]?.color) {
     let num: any = [...key]
       .map((t) => t.charCodeAt(0))
@@ -66,14 +66,14 @@ export function logBox(key: string, config?: reConsoleConfig): reConsole {
     while (num > 1) {
       num /= 10
     }
-    let color = generRandomColor(num)
+    const color = generRandomColor(num)
     logBoxMap[key] = {
       ...(logBoxMap[key] ?? []),
       color,
     }
   }
   _console.log = (...arg: Parameters<typeof _log>) => {
-    let data = logBoxMap[key]
+    const data = logBoxMap[key]
 
     if (data.disable) {
       logBoxLogs[key] = logBoxLogs[key] ?? ([] as any)
@@ -87,7 +87,7 @@ export function logBox(key: string, config?: reConsoleConfig): reConsole {
   return _console
 }
 
-logBox.disable = function (keys: string[] | string) {
+logBox.disable = (keys: string[] | string) => {
   if (!Array.isArray(keys)) keys = [keys]
   keys.forEach((k) => {
     logBoxMap[k] = {

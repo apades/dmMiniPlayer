@@ -1,20 +1,20 @@
 /**
  * 参考自 {@link https://github.com/claviska/esbuild-plugin-inline-import}
  */
-import path from 'path'
-import fs from 'fs/promises'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import { transform } from 'esbuild'
 import less from 'less'
+import postcss from 'postcss'
 // eslint-disable-next-line import/default
 import loadConfig, { type Result } from 'postcss-load-config'
-import postcss from 'postcss'
-import { transform } from 'esbuild'
 import { isDev } from '../shared'
-import { EsbuildPlugin } from './types'
+import type { EsbuildPlugin } from './types'
 
 type Props = {}
 export const inlineImport = (props: Props): EsbuildPlugin => {
   const filter = /\?inline$/,
-    namespace = '_' + Math.random().toString(36).substr(2, 9)
+    namespace = `_${Math.random().toString(36).substr(2, 9)}`
 
   return {
     name: 'inline-import',
@@ -61,7 +61,7 @@ export const inlineImport = (props: Props): EsbuildPlugin => {
         }
 
         return {
-          path: filePath + '?inline',
+          path: `${filePath}?inline`,
           namespace,
         }
       })

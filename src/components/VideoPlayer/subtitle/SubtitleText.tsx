@@ -1,14 +1,14 @@
 import vpContext from '@root/components/VideoPlayerV2/context'
-import { PlayerEvent } from '@root/core/event'
-import SubtitleManager from '@root/core/SubtitleManager'
+import type SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
+import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import configStore from '@root/store/config'
 import { minmax } from '@root/utils'
 import { useMemoizedFn, useSet } from 'ahooks'
 import { autorun } from 'mobx'
 import { observer } from 'mobx-react'
-import { useContext, useMemo, useRef, useState, type FC } from 'react'
+import { type FC, useContext, useMemo, useRef, useState } from 'react'
 
 type Props = {
   subtitleManager: SubtitleManager
@@ -24,7 +24,9 @@ const SubtitleText: FC<Props> = (props) => {
   useOnce(() => {
     const enterActiveRows = subtitleManager.activeRows
     const activeRows: Record<string, SubtitleRow> = {}
-    enterActiveRows.forEach((row) => (activeRows[row.id] = row))
+    enterActiveRows.forEach((row) => {
+      activeRows[row.id] = row
+    })
     setActiveRows(activeRows)
 
     const unListenEnter = subtitleManager.on2('row-enter', (row) => {
@@ -49,7 +51,7 @@ const SubtitleText: FC<Props> = (props) => {
       unListenReset()
     }
   })
-  
+
   const updateFontSize = useMemoizedFn(() => {
     if (!configStore.subtitle_autoSize)
       return setFontSize(configStore.subtitle_fontSize)
@@ -91,7 +93,7 @@ const SubtitleText: FC<Props> = (props) => {
               backgroundColor: configStore.subtitle_bg,
               opacity: configStore.subtitle_bgOpacity,
             }}
-          ></div>
+          />
           <div
             className="relative z-[2] px-[8px] py-[2px] text-center whitespace-pre-line"
             style={{

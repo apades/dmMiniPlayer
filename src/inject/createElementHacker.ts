@@ -1,4 +1,4 @@
-import { getPrototypeSetter, getPrototypeGetter } from '@root/utils'
+import { getPrototypeGetter, getPrototypeSetter } from '@root/utils'
 
 const ENABLE_SITES = ['https://www.youtube.com']
 

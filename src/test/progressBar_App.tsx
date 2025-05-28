@@ -1,7 +1,7 @@
 import Slider from '@mui/material/Slider'
 import IconButton from '@root/components/IconButton'
 import Iconfont from '@root/components/Iconfont'
-import { type FC } from 'react'
+import type { FC } from 'react'
 
 const App: FC = (props) => {
   return (

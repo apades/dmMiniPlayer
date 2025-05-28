@@ -1,5 +1,5 @@
 
-import Danmaku from '../danmaku'
+import type Danmaku from '../danmaku'
 
 export default function (this: Danmaku) {
   if (!this.media) return

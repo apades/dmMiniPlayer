@@ -10,7 +10,7 @@ const freeGlobal =
 const freeGlobalThis =
   typeof globalThis === 'object' &&
   globalThis !== null &&
-  globalThis.Object == Object &&
+  globalThis.Object === Object &&
   globalThis
 
 /** Detect free variable `self`. */

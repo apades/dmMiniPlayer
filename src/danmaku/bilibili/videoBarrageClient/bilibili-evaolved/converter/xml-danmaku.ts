@@ -32,10 +32,10 @@ export class XmlDanmaku extends Danmaku {
       fontSize,
       color,
     })
-    this.timeStamp = parseInt(timeStamp)
-    this.pool = parseInt(pool)
+    this.timeStamp = Number.parseInt(timeStamp)
+    this.pool = Number.parseInt(pool)
     this.userHash = userHash
-    this.rowId = parseInt(rowId)
+    this.rowId = Number.parseInt(rowId)
     this.pDataArray = [
       time,
       type,

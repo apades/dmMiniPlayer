@@ -26,12 +26,11 @@ export const dq1Parent: {
   while (true) {
     const v = p.matches(selectors)
     if (v) break
+
+    if (p.parentElement) p = p.parentElement
     else {
-      if (p.parentElement) p = p.parentElement
-      else {
-        p = null!
-        break
-      }
+      p = null!
+      break
     }
   }
 
@@ -77,7 +76,7 @@ export function getTopParentsWithSameRect(
     if (pel) {
       const isAbHeightFull = skipHeight0
         ? !pel.clientHeight &&
-          (p.computedStyleMap()?.get?.('position') as any)?.value == 'absolute'
+          (p.computedStyleMap()?.get?.('position') as any)?.value === 'absolute'
         : false
       if (isAbHeightFull) {
         rs.push(p)
@@ -85,7 +84,7 @@ export function getTopParentsWithSameRect(
         p = pel.parentElement!
       } else if (
         Math.abs(pel.clientHeight - p.clientHeight) <= offset &&
-        pel.clientWidth == p.clientWidth
+        pel.clientWidth === p.clientWidth
       ) {
         rs.push(pel)
         p = pel
@@ -108,7 +107,7 @@ export function getTopParentWithCallback(
   while (true) {
     const pel = p.parentElement
     if (pel) {
-      let rs = fn(pel, p)
+      const rs = fn(pel, p)
       switch (rs) {
         case BackType.null: {
           p = null!
@@ -129,7 +128,7 @@ export function hasParent(el: HTMLElement, parent: HTMLElement) {
   let p = el.parentElement
   while (true) {
     if (!p) return false
-    if (p == parent) {
+    if (p === parent) {
       return true
     }
     p = p.parentElement

@@ -2,7 +2,7 @@ import play from './play'
 import pause from './pause'
 import seek from './seek'
 import ratechange from './ratechange'
-import Danmaku from '../danmaku'
+import type Danmaku from '../danmaku'
 
 export function bindEvents(this: Danmaku, _: any) {
   _.play = play.bind(this)

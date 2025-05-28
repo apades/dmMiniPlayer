@@ -4,9 +4,9 @@ import FileDropper from '@root/components/FileDropper'
 import Iconfont from '@root/components/Iconfont'
 import ActionButton from '@root/components/VideoPlayerV2/bottomPanel/ActionButton'
 import vpContext from '@root/components/VideoPlayerV2/context'
-import { PlayerEvent } from '@root/core/event'
 import type SubtitleManager from '@root/core/SubtitleManager'
 import { translateMode } from '@root/core/SubtitleManager'
+import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import { t } from '@root/utils/i18n'
 import { useMemoizedFn } from 'ahooks'
@@ -108,7 +108,7 @@ const Menu: FC<Props> = observer((props) => {
               subtitleManager.useSubtitle(subtitleItem.label)
               subtitleManager.showSubtitle = true
             },
-            isActive: activeLabel == subtitleItem.label,
+            isActive: activeLabel === subtitleItem.label,
           }
         }),
       ].map((v, i) => (

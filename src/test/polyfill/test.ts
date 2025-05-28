@@ -9,7 +9,7 @@ window.addEventListener('polyfill-event', (e: any) => {
 
   switch (content.type) {
     case 'storage-get': {
-      const localData = JSON.parse(localStorage['storage'] || '{}')
+      const localData = JSON.parse(localStorage.storage || '{}')
       dispatchMessage('browser-API', {
         type: 'storage-get',
         isResp: true,

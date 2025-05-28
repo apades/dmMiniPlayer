@@ -79,7 +79,7 @@ export function offMessage(
 ) {
   if (!messageMap[category]) return
   messageMap[category].splice(
-    messageMap[category].findIndex((cb) => cb == callback),
+    messageMap[category].findIndex((cb) => cb === callback),
     1,
   )
 }

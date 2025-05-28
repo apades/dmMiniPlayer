@@ -1,9 +1,9 @@
+import { PlayerEvent } from '@root/core/event'
+import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
 import classNames from 'classnames'
 import { type FC, useContext, useEffect, useState } from 'react'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
-import { useOnce } from '@root/hook'
-import { PlayerEvent } from '@root/core/event'
 import Iconfont from '../../Iconfont'
 import ProgressBar from '../../ProgressBar'
 import vpContext from '../context'
@@ -71,7 +71,7 @@ const VolumeBar: FC<Props> = (props) => {
 
   return (
     <div className={className}>
-      <style dangerouslySetInnerHTML={{ __html: style }}></style>
+      <style dangerouslySetInnerHTML={{ __html: style }} />
       <div className="volume-progress">
         <ProgressBar
           percent={volume}

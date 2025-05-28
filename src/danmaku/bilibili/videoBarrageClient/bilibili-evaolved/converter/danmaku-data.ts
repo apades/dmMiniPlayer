@@ -1,4 +1,4 @@
-import { DanmakuType } from './danmaku-type'
+import type { DanmakuType } from './danmaku-type'
 
 export interface BasicDanmakuData {
   content: string
@@ -17,9 +17,9 @@ export class Danmaku {
   constructor({ content, time, type, fontSize, color }: BasicDanmakuData) {
     this.content = content
     this.time = time
-    this.startTime = parseFloat(time)
-    this.type = parseInt(type)
-    this.fontSize = parseFloat(fontSize)
-    this.color = parseInt(color)
+    this.startTime = Number.parseFloat(time)
+    this.type = Number.parseInt(type)
+    this.fontSize = Number.parseFloat(fontSize)
+    this.color = Number.parseInt(color)
   }
 }

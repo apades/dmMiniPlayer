@@ -1,8 +1,8 @@
-import { FC, useContext, useEffect, useState } from 'react'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { type FC, useContext, useEffect, useState } from 'react'
+import Iconfont from '../../Iconfont'
 import vpContext from '../context'
 import { useTogglePlayState } from '../hooks'
-import Iconfont from '../../Iconfont'
 import ActionButton from './ActionButton'
 
 const TogglePlayActionButton: FC = (props) => {
@@ -36,7 +36,7 @@ const TogglePlayActionButton: FC = (props) => {
   return (
     <>
       {isLive && (
-        <div className="live-dot wh-[12px] bg-red-700 rounded-full mt-0.5"></div>
+        <div className="live-dot wh-[12px] bg-red-700 rounded-full mt-0.5" />
       )}
       <ActionButton onClick={() => togglePlayState()}>
         <Iconfont

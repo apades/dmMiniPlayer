@@ -1,21 +1,15 @@
 import '@apad/setting-panel/lib/index.css'
 import { WebProvider } from '@root/core/WebProvider'
+import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import { openSettingPanel } from '@root/store/config'
-import { useRef, useState, type FC } from 'react'
-import { PlayerEvent } from '@root/core/event'
+import { type FC, useRef, useState } from 'react'
 import { TEST_VIDEO_1 } from '../data/video'
 import TestWebProvider from './TestWebProvider'
 
 const v1 = () => (
   <div key="v1">
-    <video
-      src={TEST_VIDEO_1}
-      className="video1"
-      muted
-      controls
-      height="200"
-    ></video>
+    <video src={TEST_VIDEO_1} className="video1" muted controls height="200" />
   </div>
 )
 const v2 = () => (
@@ -27,7 +21,7 @@ const v2 = () => (
         muted
         controls
         height="300"
-      ></video>
+      />
     </div>
   </div>
 )

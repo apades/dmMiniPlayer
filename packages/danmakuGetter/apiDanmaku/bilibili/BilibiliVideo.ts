@@ -1,6 +1,6 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
-import parser from 'node-html-parser'
 import { getAnyObjToString, onceCallWithMap } from '@root/utils'
+import parser from 'node-html-parser'
 import { DanmakuGetter } from '../..'
 
 enum BilibiliDanmakuType {
@@ -64,8 +64,8 @@ export function parserBilibiliDanmuFromXML(xmlText: string): DanmakuInitData[] {
       text: xmlDan.textContent || '',
       time: +startTime,
       type:
-        (danmakuType == BilibiliDanmakuType.bottom && /* 'bottom' */ 'top') ||
-        (danmakuType == BilibiliDanmakuType.top && 'top') ||
+        (danmakuType === BilibiliDanmakuType.bottom && /* 'bottom' */ 'top') ||
+        (danmakuType === BilibiliDanmakuType.top && 'top') ||
         'right',
     }
 
@@ -122,7 +122,7 @@ export const getVideoInfoFromUrl = onceCallWithMap(async (_url: string) => {
   if (/\/bangumi\//.test(url.pathname)) {
     const match = url.pathname.match(/\/(ss|ep)(\d+)/)
     const id = match?.[2],
-      isEp = match?.[1] == 'ep'
+      isEp = match?.[1] === 'ep'
 
     const res = await fetch(
       `https://api.bilibili.com/pgc/view/web/season?${
@@ -134,7 +134,7 @@ export const getVideoInfoFromUrl = onceCallWithMap(async (_url: string) => {
     ).then((res) => res.json())
 
     const tarId = isEp ? id : res.result.user_status.progress.last_ep_id
-    const findEp = res.result.episodes.find((ep: any) => ep.id == tarId)
+    const findEp = res.result.episodes.find((ep: any) => ep.id === tarId)
 
     aid = findEp.aid
     cid = findEp.cid
@@ -161,7 +161,7 @@ export const getVideoInfoFromUrl = onceCallWithMap(async (_url: string) => {
   aid = res.aid
   cid = res.cid
 
-  if (pid != 1) {
+  if (pid !== 1) {
     try {
       cid = pages[pid - 1].cid
     } catch (error) {

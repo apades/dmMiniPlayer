@@ -8,9 +8,9 @@ import {
   setBrowserSyncStorage,
 } from '@root/utils/storage'
 import { sendMessage } from 'webext-bridge/content-script'
+import { WebProvider } from '.'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PlayerEvent } from '../event'
-import { WebProvider } from '.'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer

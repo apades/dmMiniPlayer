@@ -1,5 +1,5 @@
-import { Comment } from '..'
-import Danmaku from '../danmaku'
+import type { Comment } from '..'
+import type Danmaku from '../danmaku'
 import allocate from '../internal/allocate'
 import type { RunningComment, Stage } from '../types'
 

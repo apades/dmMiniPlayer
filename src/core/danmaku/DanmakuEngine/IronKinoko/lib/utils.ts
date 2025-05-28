@@ -1,4 +1,4 @@
-import Danmaku from './danmaku'
+import type Danmaku from './danmaku'
 import type { InnerComment, Comment } from './types'
 
 export const raf =
@@ -7,9 +7,7 @@ export const raf =
   window.mozRequestAnimationFrame ||
   // @ts-ignore
   window.webkitRequestAnimationFrame ||
-  function (cb) {
-    return setTimeout(cb, 50 / 3)
-  }
+  ((cb) => setTimeout(cb, 50 / 3))
 
 export const caf =
   window.cancelAnimationFrame ||

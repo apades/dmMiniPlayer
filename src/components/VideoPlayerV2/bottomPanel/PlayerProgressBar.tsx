@@ -1,16 +1,16 @@
-import { HandlesProps } from '@apad/rc-slider/lib/Handles'
+import type { HandlesProps } from '@apad/rc-slider/lib/Handles'
+import type { VideoPreviewData } from '@root/core/VideoPreviewManager'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import configStore from '@root/store/config'
 import { formatTime } from '@root/utils'
 import { useMemoizedFn } from 'ahooks'
 import classNames from 'classnames'
-import { FC, useContext, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react'
-import configStore from '@root/store/config'
+import { type FC, useContext, useEffect, useRef, useState } from 'react'
 import ProgressBar from '../../ProgressBar'
 import vpContext from '../context'
 import { useTogglePlayState } from '../hooks'
 import style from './PlayerProgressBar.less?inline'
-import { VideoPreviewData } from '@root/core/VideoPreviewManager'
 
 const previewImageWidth = 200
 
@@ -70,7 +70,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
         '--bottom-progress-height': configStore.videoProgress_height + 'px',
       }}
     >
-      <style dangerouslySetInnerHTML={{ __html: style }}></style>
+      <style dangerouslySetInnerHTML={{ __html: style }} />
       <ProgressBar
         percent={playedPercent}
         onClick={handleOnclick}
@@ -78,7 +78,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
         handleRender={(node, _props) => {
           return <HandleWithToolTips {..._props} duration={duration} />
         }}
-      ></ProgressBar>
+      />
 
       <ToolTips containerRef={containerRef} duration={duration} />
     </div>

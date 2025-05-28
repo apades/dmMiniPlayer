@@ -10,8 +10,8 @@ import { getDomAbsolutePosition } from '@root/utils/dom'
 import { postStartPIPDataMsg } from '@root/utils/pip'
 import { postMessageToTop } from '@root/utils/windowMessages'
 import { useState } from 'react'
-import useTargetEventListener from './useTargetEventListener'
 import { useOnce } from '.'
+import useTargetEventListener from './useTargetEventListener'
 
 let hasInit = false
 let activeVideoEl: HTMLVideoElement | undefined

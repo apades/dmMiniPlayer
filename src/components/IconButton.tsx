@@ -1,5 +1,5 @@
-import { ComponentProps, CSSProperties, FC } from 'react'
 import { IconButton as MuiIconButton } from '@mui/material'
+import type { CSSProperties, ComponentProps, FC } from 'react'
 
 type MuiIconButtonProps = ComponentProps<typeof MuiIconButton>
 type Props = Omit<MuiIconButtonProps, 'size'> & {

@@ -22,7 +22,7 @@ export class RuntimeLibrary<LibraryType> implements PromiseLike<LibraryType> {
           console.log(
             `[Runtime Library] Downloaded from ${url} , length = ${code.length}`,
           )
-          let scriptEl = document.createElement('script')
+          const scriptEl = document.createElement('script')
           scriptEl.innerText = code
           document.body.appendChild(scriptEl)
           // ;(function runEval() {
@@ -41,7 +41,7 @@ export class RuntimeLibrary<LibraryType> implements PromiseLike<LibraryType> {
   }
 }
 
-const host = ``
+const host = ''
 export const protobufLibrary = new RuntimeLibrary<typeof protobufType>({
   url: chrome.runtime.getURL('lib/protobuf.js'),
   getModule: (window) => window.protobuf,

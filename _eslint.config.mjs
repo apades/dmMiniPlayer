@@ -1,8 +1,8 @@
+import prettierConfig from 'eslint-config-prettier'
+import importPlugin from 'eslint-plugin-import'
+import prettierRecommendConfig from 'eslint-plugin-prettier/recommended'
 import globals from 'globals'
 import tsEslint from 'typescript-eslint'
-import prettierConfig from 'eslint-config-prettier'
-import prettierRecommendConfig from 'eslint-plugin-prettier/recommended'
-import importPlugin from 'eslint-plugin-import'
 
 /**@type {import('eslint').Linter.Config} */
 export default tsEslint.config(

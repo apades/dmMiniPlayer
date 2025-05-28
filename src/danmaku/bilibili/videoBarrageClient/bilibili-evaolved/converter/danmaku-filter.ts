@@ -1,6 +1,6 @@
-import { JsonDanmaku, getUserDanmakuConfig } from '../download/utils'
+import type { JsonDanmaku, getUserDanmakuConfig } from '../download/utils'
 import { AssDanmaku } from './ass-danmaku'
-import { convertTimeByDuration, convertHexColorForDialogue } from './ass-utils'
+import { convertHexColorForDialogue, convertTimeByDuration } from './ass-utils'
 import { XmlDanmaku } from './xml-danmaku'
 import { normalizeContent } from './xml-utils'
 
@@ -13,7 +13,7 @@ export default class DanmakuFilter {
 
   filterJsonDanamku(danamkus: JsonDanmaku['jsonDanmakus']) {
     const filterDanmakus = []
-    let config = this.config
+    const config = this.config
     for (const danmaku of danamkus) {
       // 跳过设置为屏蔽的弹幕类型
       const isBlockType = config.blockTypes.indexOf(danmaku.mode) !== -1
@@ -23,7 +23,7 @@ export default class DanmakuFilter {
       if (isBlockType || isBlockColor) {
         continue
       }
-      let xmlDanmaku = new XmlDanmaku(
+      const xmlDanmaku = new XmlDanmaku(
         this.transJsonDanmakuToXmlDanmaku(danmaku),
       )
       // 应用传入的过滤器

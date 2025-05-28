@@ -61,7 +61,7 @@
     "specialWebsites": "Special websites",
     "biliVideoDansFromBiliEvaolved": "Bilibili get danmakus by bilibili-evaolved",
     "biliVideoDansFromBiliEvaolvedDesc": "This pattern has a problem and cannot download the complete danmakus.",
-    "youtube_mergeSubtitleAtSimilarTimes":"Merge youtube subtitles at similar times",
+    "youtube_mergeSubtitleAtSimilarTimes": "Merge youtube subtitles at similar times",
     "biliLiveSide": "Bilibili live side panel",
     "biliLiveSideDesc": "Experimental feat. Open it with reactVP_canvasCs mode",
     "useDocPIP": "Use latest PIP API",
@@ -150,7 +150,7 @@
     "cate_volume": "Volume",
     "cate_speed": "Speed",
     "cate_other": "Others",
-    "longPress":"Long press",
+    "longPress": "Long press",
     "wheel": "Mouse scroll wheel"
   },
   "popup": {

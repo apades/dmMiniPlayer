@@ -1,4 +1,4 @@
-import { OrPromise } from '@root/utils/typeUtils'
+import type { OrPromise } from '@root/utils/typeUtils'
 import { useMemoizedFn } from 'ahooks'
 import { useEffect, useState } from 'react'
 
@@ -8,6 +8,7 @@ export function useOnce(
     readonly isUnmounted: boolean
   }) => OrPromise<void | (() => void)>,
 ): void {
+  // biome-ignore lint/correctness/noVoidTypeReturn: <explanation>
   return useEffect(() => {
     let isUnmounted = false
     const state = {
@@ -26,11 +27,10 @@ export function useOnce(
         return () => {
           onUnmount()
         }
-      } else {
-        return () => {
-          onUnmount()
-          res?.()
-        }
+      }
+      return () => {
+        onUnmount()
+        res?.()
       }
     } catch (error) {}
   }, [])

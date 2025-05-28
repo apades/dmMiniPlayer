@@ -1,9 +1,9 @@
-import enquirer from 'enquirer'
-import fs from 'fs-extra'
 import archiver from 'archiver'
 import chalk from 'chalk'
+import enquirer from 'enquirer'
+import fs from 'fs-extra'
 import packageData from '../package.json' assert { type: 'json' }
-import { spawn, pr } from './utils.mjs'
+import { pr, spawn } from './utils.mjs'
 
 const nowVersion = packageData.version
 
@@ -15,10 +15,9 @@ if (!fs.existsSync(zipOutDir)) {
 }
 
 const verSplit = nowVersion.split('.')
-let toVersion =
+const toVersion =
   verSplit.slice(0, verSplit.length - 1).join('.') +
   `.${+verSplit[verSplit.length - 1] + 1}`
-
 ;(async () => {
   const { version } = await enquirer.prompt([
     {
@@ -31,7 +30,6 @@ let toVersion =
 
   const changeLogZhFile = pr('../docs/changeLog-zh.md'),
     changeLogFile = pr('../docs/changeLog.md')
-
   ;[changeLogZhFile, changeLogFile].forEach((file) => {
     if (!fs.existsSync(file)) return
     const content = fs.readFileSync(file, 'utf-8')

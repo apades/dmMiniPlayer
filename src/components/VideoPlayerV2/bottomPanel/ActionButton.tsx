@@ -1,6 +1,6 @@
 import HiddenAble from '@root/components/HiddenAble'
 import classNames from 'classnames'
-import { FC, HTMLAttributes, PropsWithChildren } from 'react'
+import type { FC, HTMLAttributes, PropsWithChildren } from 'react'
 
 type Props = {
   isUnActive?: boolean
@@ -17,7 +17,7 @@ const ActionButton: FC<Props> = (props) => {
         isUnActive && 'opacity-50',
         props.className,
       )}
-    ></div>
+    />
     // </HiddenAble>
   )
 }

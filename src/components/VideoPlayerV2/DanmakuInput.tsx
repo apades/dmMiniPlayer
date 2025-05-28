@@ -1,10 +1,10 @@
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { FC, useContext, useRef, useState } from 'react'
-import useTargetEventListener from '@root/hook/useTargetEventListener'
+import type DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { useOnce } from '@root/hook'
-import classNames from 'classnames'
+import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { ownerWindow, wait } from '@root/utils'
 import Events2 from '@root/utils/Events2'
+import classNames from 'classnames'
+import { type FC, useContext, useRef, useState } from 'react'
 import Iconfont from '../Iconfont'
 import vpContext from './context'
 
@@ -114,7 +114,7 @@ const DanmakuInputInner: FC<Props> = (props) => {
           danmakuInputRef.current?.blur()
         }}
         onKeyDown={(e) => {
-          if (e.code == 'Escape') {
+          if (e.code === 'Escape') {
             e.stopPropagation()
             danmakuInputRef.current?.blur()
           }

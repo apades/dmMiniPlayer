@@ -1,6 +1,6 @@
 import AsyncLock from './AsyncLock'
 
-let libLoadedMap: Record<any, AsyncLock> = {}
+const libLoadedMap: Record<any, AsyncLock> = {}
 
 export async function loadLib(lib: string): Promise<void> {
   if (libLoadedMap[lib]) {
@@ -9,9 +9,9 @@ export async function loadLib(lib: string): Promise<void> {
   }
 
   return new Promise((res) => {
-    let lock = new AsyncLock()
+    const lock = new AsyncLock()
     libLoadedMap[lib] = lock
-    let scriptEl = document.createElement('script')
+    const scriptEl = document.createElement('script')
     scriptEl.src = chrome.runtime.getURL(`assets/lib/${lib}`)
     scriptEl.addEventListener('load', () => {
       lock.ok()

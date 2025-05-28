@@ -1,5 +1,5 @@
+import type { Config } from 'tailwindcss'
 import remToPx from 'tailwindcss-rem-to-px'
-import { Config } from 'tailwindcss'
 import containerQuery from './packages/container-queries'
 
 const config: Config = {
@@ -35,7 +35,7 @@ const config: Config = {
     },
   },
   plugins: [
-    function ({ addUtilities, matchVariant, matchUtilities }) {
+    ({ addUtilities, matchVariant, matchUtilities }) => {
       addUtilities({
         '.f-center': {
           display: 'flex',

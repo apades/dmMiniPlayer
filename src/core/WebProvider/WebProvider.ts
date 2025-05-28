@@ -1,5 +1,8 @@
-import { onMessage, sendMessage } from 'webext-bridge/content-script'
+import WebextEvent from '@root/shared/webextEvent'
 import configStore from '@root/store/config'
+import { SettingDanmakuEngine } from '@root/store/config/danmaku'
+import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType, Position } from '@root/types/config'
 import {
   createElement,
   dq,
@@ -8,26 +11,22 @@ import {
   wait,
 } from '@root/utils'
 import EventSwitcher from '@root/utils/EventSwitcher'
-import playerConfig from '@root/store/playerConfig'
 import { checkIsLive } from '@root/utils/video'
-import { SettingDanmakuEngine } from '@root/store/config/danmaku'
-import WebextEvent from '@root/shared/webextEvent'
-import { DocPIPRenderType, Position } from '@root/types/config'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
+import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
+import type { SideSwitcher } from '../SideSwitcher'
+import SubtitleManager from '../SubtitleManager'
+import type VideoPlayerBase from '../VideoPlayer/VideoPlayerBase'
+import type { ExtendComponent } from '../VideoPlayer/VideoPlayerBase'
+import type VideoPreviewManager from '../VideoPreviewManager'
 import {
   CanvasDanmakuEngine,
-  DanmakuEngine,
+  type DanmakuEngine,
   HtmlDanmakuEngine,
 } from '../danmaku/DanmakuEngine'
-import SubtitleManager from '../SubtitleManager'
-import VideoPlayerBase, {
-  ExtendComponent,
-} from '../VideoPlayer/VideoPlayerBase'
-import DanmakuSender from '../danmaku/DanmakuSender'
-import { EventBus, PlayerEvent } from '../event'
-import { SideSwitcher } from '../SideSwitcher'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
-import VideoPreviewManager from '../VideoPreviewManager'
-import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
+import type DanmakuSender from '../danmaku/DanmakuSender'
+import { EventBus, PlayerEvent } from '../event'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -282,9 +281,11 @@ export default abstract class WebProvider
             break
           }
           case 'playbackRate': {
-            videoEl.playbackRate == 1
-              ? (videoEl.playbackRate = configStore.playbackRate)
-              : (videoEl.playbackRate = 1)
+            if (videoEl.playbackRate === 1) {
+              videoEl.playbackRate = configStore.playbackRate
+            } else {
+              videoEl.playbackRate = 1
+            }
             break
           }
           case 'quickHideToggle': {

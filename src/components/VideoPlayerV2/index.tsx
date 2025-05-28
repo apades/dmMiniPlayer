@@ -8,8 +8,8 @@ import {
   SettingOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons'
-import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
+import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
@@ -19,7 +19,7 @@ import configStore, { ReplacerDbClickAction } from '@root/store/config'
 import { isDocPIP, isIframe, ownerWindow, wait } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import screenfull from '@root/utils/screenfull'
-import { Omit } from '@root/utils/typeUtils'
+import type { Omit } from '@root/utils/typeUtils'
 import { postMessageToTop } from '@root/utils/windowMessages'
 import { useMemoizedFn, useUnmount, useUpdate } from 'ahooks'
 import classNames from 'classnames'
@@ -38,6 +38,15 @@ import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
 import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
+import DanmakuContainer from './DanmakuContainer'
+import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
+import EventCenter from './EventCenter'
+import KeyboardTipsModal from './KeyboardTipsModal'
+import LoadingIcon from './LoadingIcon'
+import ScreenshotTips from './ScreenshotTips'
+import SpeedIcon from './SpeedIcon'
+import Toast from './Toast'
+import VolumeIcon from './VolumeIcon'
 import ActionButton from './bottomPanel/ActionButton'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
@@ -45,27 +54,18 @@ import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
 import PlayedTime from './bottomPanel/PlayedTime'
 import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
 import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
+import {
+  ChangeNextVideoButton,
+  ChangePreVideoButton,
+} from './bottomPanel/VideoChangeButton'
 import VolumeBar from './bottomPanel/VolumeBar'
-import vpContext, { ContextData, defaultVpContext } from './context'
-import DanmakuContainer from './DanmakuContainer'
-import { DanmakuInput, DanmakuInputIcon } from './DanmakuInput'
-import EventCenter from './EventCenter'
+import vpContext, { type ContextData, defaultVpContext } from './context'
 import {
   useInWindowKeydown,
   useKeydown,
   useTogglePlayState,
   useWebVideoEventsInit,
 } from './hooks'
-import KeyboardTipsModal from './KeyboardTipsModal'
-import LoadingIcon from './LoadingIcon'
-import ScreenshotTips from './ScreenshotTips'
-import SpeedIcon from './SpeedIcon'
-import Toast from './Toast'
-import VolumeIcon from './VolumeIcon'
-import {
-  ChangeNextVideoButton,
-  ChangePreVideoButton,
-} from './bottomPanel/VideoChangeButton'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -109,7 +109,7 @@ const VideoPlayerV2Inner = observer(
 
     const subtitleManager = useMemo(() => {
       if (props.subtitleManager) return props.subtitleManager
-      else return new CommonSubtitleManager()
+      return new CommonSubtitleManager()
     }, [props.subtitleManager])
     useUnmount(() => {
       subtitleManager.unload()
@@ -251,7 +251,7 @@ const VideoPlayerV2Inner = observer(
       }
       subtitleManager.video = video
 
-      const isLive = props.isLive || video.duration === Infinity
+      const isLive = props.isLive || video.duration === Number.POSITIVE_INFINITY
 
       const keydownWindow = props.useWebVideo
         ? ownerWindow(video)
@@ -343,7 +343,6 @@ const VideoPlayerV2Inner = observer(
 
     const el = (
       <div
-        tabIndex={1}
         className={classNames(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,
@@ -375,7 +374,7 @@ const VideoPlayerV2Inner = observer(
             handleChangeActionArea(true)
           }}
         >
-          <div ref={videoInsertRef}></div>
+          <div ref={videoInsertRef} />
           <style>
             {`.video-player-v2 video {
     position: absolute !important;
@@ -387,7 +386,7 @@ const VideoPlayerV2Inner = observer(
     height: 100% !important;
     margin: 0 auto !important;
     cursor: pointer !important;
-    ${configStore.videoSharpening ? `filter: contrast(1) !important;` : ''}
+    ${configStore.videoSharpening ? 'filter: contrast(1) !important;' : ''}
     pointer-events: none !important;
     transform: initial !important;
     z-index: initial !important;
@@ -421,7 +420,7 @@ const VideoPlayerV2Inner = observer(
           className={classNames(
             'video-action-area w-full transition-all duration-500',
             // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
-            `absolute bottom-[calc(-1*(var(--area-height)+5px))] group-[&.active]:bottom-0`,
+            'absolute bottom-[calc(-1*(var(--area-height)+5px))] group-[&.active]:bottom-0',
           )}
           onMouseEnter={(e) => handleChangeActionArea(true, true)}
           onMouseLeave={() => {
@@ -439,7 +438,7 @@ const VideoPlayerV2Inner = observer(
           {!isLive && <PlayerProgressBar />}
 
           <div className="opacity-0 group-[&.active]:opacity-100 transition-all duration-500">
-            <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
+            <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]" />
             <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
               {configStore.bp_preVideo && (
                 <div className="-mr-2">

@@ -2,7 +2,7 @@ import { useOnce } from '@root/hook'
 import isDev from '@root/shared/isDev'
 import { createElement, wait, waitLoopCallback } from '@root/utils'
 import { useUpdate } from 'ahooks'
-import { FC, PropsWithChildren, useMemo, useRef } from 'react'
+import { type FC, type PropsWithChildren, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 

@@ -1,4 +1,4 @@
-import Danmaku from '../danmaku'
+import type Danmaku from '../danmaku'
 import { caf } from '../utils'
 
 export default function (this: Danmaku) {

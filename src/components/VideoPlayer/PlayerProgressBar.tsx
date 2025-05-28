@@ -1,9 +1,9 @@
-import { FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
-import { useEventListener } from 'ahooks'
-import { dq1, formatTime } from '@root/utils'
-import classNames from 'classnames'
-import { HandlesProps } from '@apad/rc-slider/lib/Handles'
+import type { HandlesProps } from '@apad/rc-slider/lib/Handles'
 import { useOnce } from '@root/hook'
+import { dq1, formatTime } from '@root/utils'
+import { useEventListener } from 'ahooks'
+import classNames from 'classnames'
+import { type FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import ProgressBar from '../ProgressBar'
 
 type Props = {
@@ -34,7 +34,7 @@ const PlayerProgressBar: FC<Props> = (props) => {
                 width: `${((e - s) / props.duration) * 100}%`,
                 top: 0,
               }}
-            ></span>
+            />
           ))}
         </div>
       </ProgressBar>

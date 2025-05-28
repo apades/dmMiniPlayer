@@ -1,5 +1,4 @@
 export class STT {
-  constructor() {}
   escape(v: string) {
     return v.toString().replace(/@/g, '@A').replace(/\//g, '@S')
   }
@@ -37,10 +36,10 @@ export class STT {
           o[k] = this.deserialize(this.unescape(v))
           return o
         }, {})
-    } else if (raw.includes('@A=')) {
-      return this.deserialize(this.unescape(raw))
-    } else {
-      return raw.toString()
     }
+    if (raw.includes('@A=')) {
+      return this.deserialize(this.unescape(raw))
+    }
+    return raw.toString()
   }
 }

@@ -2,7 +2,7 @@ import type { SubtitleRow } from '../types'
 
 // TODO 一些复杂的pos之类的？
 function fixed_str_digit(how_many_digit: number, str: string, padEnd = true) {
-  if (str.length == how_many_digit) {
+  if (str.length === how_many_digit) {
     return str
   }
   if (str.length > how_many_digit) {
@@ -11,9 +11,8 @@ function fixed_str_digit(how_many_digit: number, str: string, padEnd = true) {
   if (str.length < how_many_digit) {
     if (padEnd) {
       return str.padEnd(how_many_digit, '0')
-    } else {
-      return str.padStart(how_many_digit, '0')
     }
+    return str.padStart(how_many_digit, '0')
   }
 }
 
@@ -29,19 +28,19 @@ function correctFormat(time: string) {
   // 00:00:28,0    Become 00:00:28,000
   // 00:00:28,01   Become 00:00:28,010
   // 0:00:10,500   Become 00:00:10,500
-  let str = time.replace('.', ',')
+  const str = time.replace('.', ',')
 
-  var hour = null
-  var minute = null
-  var second = null
-  var millisecond = null
+  let hour = null
+  let minute = null
+  let second = null
+  let millisecond = null
 
   // Handle millisecond
-  var [front, ms] = str.split(',')
+  const [front, ms] = str.split(',')
   millisecond = fixed_str_digit(3, ms)
 
   // Handle hour
-  var [a_hour, a_minute, a_second] = front.split(':')
+  const [a_hour, a_minute, a_second] = front.split(':')
   hour = fixed_str_digit(2, a_hour, false)
   minute = fixed_str_digit(2, a_minute, false)
   second = fixed_str_digit(2, a_second, false)
@@ -52,8 +51,10 @@ function correctFormat(time: string) {
 function timestampToSeconds(srtTimestamp: string) {
   srtTimestamp = correctFormat(srtTimestamp)
   const [rest, millisecondsString] = srtTimestamp.split(',')
-  const milliseconds = parseInt(millisecondsString)
-  const [hours, minutes, seconds] = rest.split(':').map((x) => parseInt(x))
+  const milliseconds = Number.parseInt(millisecondsString)
+  const [hours, minutes, seconds] = rest
+    .split(':')
+    .map((x) => Number.parseInt(x))
   const result = milliseconds * 0.001 + seconds + 60 * minutes + 3600 * hours
 
   // fix odd JS roundings, e.g. timestamp '00:01:20,460' result is 80.46000000000001
@@ -76,7 +77,7 @@ export default function srtParser(content: string): SubtitleRow[] {
     text: '',
   }
   const firstLine = srtLines[0].trim()
-  if (+firstLine + '' != firstLine) {
+  if (+firstLine + '' !== firstLine) {
     throw Error('Error parser in line 1, not a standard number in start line')
   }
   let index = +firstLine

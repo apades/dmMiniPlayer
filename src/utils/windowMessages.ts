@@ -1,10 +1,9 @@
-import PostMessageEvent, {
-  PostMessageProtocolMap,
-} from '@root/shared/postMessageEvent'
+import type PostMessageEvent from '@root/shared/postMessageEvent'
+import type { PostMessageProtocolMap } from '@root/shared/postMessageEvent'
 import { isArray } from 'lodash-es'
 import mitt from 'mitt'
-import Events2 from './Events2'
 import { dq, isUndefined } from '.'
+import Events2 from './Events2'
 
 const ID = 'dmMiniPlayer'
 
@@ -30,7 +29,7 @@ export function postMessageToChild<
     ? [T, undefined?, Window?]
     : [T, data, Window?]
 ) {
-  let targets = !isUndefined(target)
+  const targets = !isUndefined(target)
     ? isArray(target)
       ? target
       : [target]

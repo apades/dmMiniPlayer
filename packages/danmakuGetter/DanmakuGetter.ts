@@ -1,5 +1,5 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
-import { PlayerComponent } from '@root/core/types'
+import type { PlayerComponent } from '@root/core/types'
 import Events2 from '@root/utils/Events2'
 
 type DanmakuEvents = {

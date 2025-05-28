@@ -48,23 +48,20 @@ interface CookieOptions {
   [property: string]: any
 }
 
-type CookieHandlerEnter = {
-  (cookie: string): CookieHandler
-} & CookieHandler
+type CookieHandlerEnter = ((cookie: string) => CookieHandler) & CookieHandler
 
 const converter = {
-  read: function (value: string) {
+  read: (value: string) => {
     if (value[0] === '"') {
       value = value.slice(1, -1)
     }
     return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
   },
-  write: function (value: string) {
-    return encodeURIComponent(value).replace(
+  write: (value: string) =>
+    encodeURIComponent(value).replace(
       /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
       decodeURIComponent,
-    )
-  },
+    ),
 }
 
 const get = (cookie = '') => {

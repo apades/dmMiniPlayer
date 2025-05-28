@@ -3,7 +3,7 @@ import Events2 from '@root/utils/Events2'
 import { onMessage, sendMessage } from '../contentSender'
 
 onMessage('inject-api:onTrigger', (data) => {
-  if (data?.event != 'history') return null
+  if (data?.event !== 'history') return null
   console.log('切换了路由 history')
 
   wait(0).then(() => {

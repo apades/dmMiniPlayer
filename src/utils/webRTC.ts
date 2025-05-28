@@ -1,5 +1,5 @@
-import PostMessageEvent from '@root/shared/postMessageEvent'
 import isTop from '@root/shared/isTop'
+import PostMessageEvent from '@root/shared/postMessageEvent'
 import {
   onPostMessage,
   postMessageToChild,

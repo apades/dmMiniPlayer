@@ -1,14 +1,14 @@
-import { observeVideoEl } from '@root/utils/observeVideoEl'
-import { makeObservable, runInAction } from 'mobx'
 import configStore from '@root/store/config'
 import playerConfig from '@root/store/playerConfig'
 import { DocPIPRenderType } from '@root/types/config'
-import { SideSwitcher } from '../SideSwitcher'
-import SubtitleManager from '../SubtitleManager'
-import { DanmakuEngine } from '../danmaku/DanmakuEngine'
-import DanmakuSender from '../danmaku/DanmakuSender'
+import { observeVideoEl } from '@root/utils/observeVideoEl'
+import { makeObservable, runInAction } from 'mobx'
+import type { SideSwitcher } from '../SideSwitcher'
+import type SubtitleManager from '../SubtitleManager'
+import type VideoPreviewManager from '../VideoPreviewManager'
+import type { DanmakuEngine } from '../danmaku/DanmakuEngine'
+import type DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
-import VideoPreviewManager from '../VideoPreviewManager'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
@@ -131,7 +131,7 @@ export default class VideoPlayerBase
     }
 
     const originInParentIndex = [...videoEl.parentElement.children].findIndex(
-        (child) => child == videoEl,
+        (child) => child === videoEl,
       ),
       hasController = videoEl.controls,
       originStyle = videoEl.getAttribute('style')

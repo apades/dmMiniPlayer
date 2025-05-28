@@ -33,11 +33,11 @@ export function onceCallPro() {
 }
 
 export function windowsOnceCall(key: string) {
-  return function (
+  return (
     target: any,
     propertyKey: string,
     descriptor: PropertyDescriptor,
-  ): PropertyDescriptor {
+  ): PropertyDescriptor => {
     const oGet = descriptor.value
     descriptor.value = function () {
       if (!window[`__onceCall_${key}`])
@@ -54,7 +54,7 @@ export function logFn(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   descriptor: TypedPropertyDescriptor<Function>,
 ) {
-  let method = descriptor.value!
+  const method = descriptor.value!
 
   descriptor.value = function () {
     console.log(`run ${propertyName}`, this)
@@ -64,13 +64,13 @@ export function logFn(
 }
 
 export function useGetSet(props: Partial<{ emptyMsg?: string }>) {
-  return function (target: object, propertyKey: string) {
+  return (target: object, propertyKey: string) => {
     let value = (target as any)[propertyKey]
-    const getter = function () {
+    const getter = () => {
       if (!value) throw Error(props.emptyMsg || `${propertyKey} is not initd`)
       return value
     }
-    const setter = function (newVal: string) {
+    const setter = (newVal: string) => {
       value = newVal
     }
     Object.defineProperty(target, propertyKey, {

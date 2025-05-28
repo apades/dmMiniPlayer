@@ -4,8 +4,8 @@ export function plasmoUrlReplace() {
   return {
     name: 'plasmo url replace', // required, will show up in warnings and errors
     transform(text = '', id) {
-      let matches = [...text.matchAll(virtualModuleId)]
-      for (let match of matches) {
+      const matches = [...text.matchAll(virtualModuleId)]
+      for (const match of matches) {
         text = text.replace(
           match[0],
           `import ${match[1]} from "${match[2]}?url"`,
@@ -22,8 +22,8 @@ export function plasmoDataTextReplace() {
   return {
     name: 'plasmo url replace', // required, will show up in warnings and errors
     transform(text = '', id) {
-      let matches = [...text.matchAll(virtualModuleId)]
-      for (let match of matches) {
+      const matches = [...text.matchAll(virtualModuleId)]
+      for (const match of matches) {
         text = text.replace(
           match[0],
           `import ${match[1]} from "${match[2]}?row"`,

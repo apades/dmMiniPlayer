@@ -1,16 +1,14 @@
 const defaultConverter = {
-  read: function (value) {
+  read: (value) => {
     if (value[0] === '"') {
       value = value.slice(1, -1)
     }
     return value.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
   },
-  write: function (value) {
-    return encodeURIComponent(value).replace(
+  write: (value) => encodeURIComponent(value).replace(
       /%(2[346BF]|3[AC-F]|40|5[BDE]|60|7[BCD])/g,
       decodeURIComponent,
-    )
-  },
+    ),
 }
 
 function assign(target) {
@@ -99,7 +97,7 @@ function init(converter, defaultAttributes) {
     {
       set,
       get,
-      remove: function (name, attributes) {
+      remove: (name, attributes) => {
         set(
           name,
           '',

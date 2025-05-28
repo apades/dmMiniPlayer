@@ -3,9 +3,9 @@ import config_shortcut, {
   disableRender,
   formatKeys,
 } from '@root/store/config/shortcut'
-import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
-import { autorun } from 'mobx'
+import { type Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
 import { addEventListener } from '@root/utils'
+import { autorun } from 'mobx'
 import { eventBus } from './event'
 
 // const getShortcutConfigs = onceCall(() =>
@@ -38,8 +38,6 @@ export const getShortcutAllConfigs = () => {
 
 export class KeyBinding {
   keydownWindow: Window = window
-
-  constructor() {}
 
   private configKeyMap: Record<string, () => void> = {}
 

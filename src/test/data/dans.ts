@@ -1,4 +1,4 @@
-import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
+import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
 import { formatTime } from '@root/utils'
 
 export const dans: DanmakuInitData[] = [

@@ -2,7 +2,7 @@ import { parse } from 'ass-compiler'
 import type { SubtitleRow } from '../types'
 
 function resolveDialogueTime(dialogueTime: string): number {
-  let [hours, min, sec] = dialogueTime.split(':')
+  const [hours, min, sec] = dialogueTime.split(':')
 
   return +hours * 60 * 60 + +min * 60 + +sec
 }
@@ -31,7 +31,7 @@ export default function assParser(content: string): SubtitleRow[] {
   const subtitleRows: SubtitleRow[] = []
 
   let idIndex = 0
-  for (let dialogue of parser.events.dialogue) {
+  for (const dialogue of parser.events.dialogue) {
     // if (dialogue.key != 'Dialogue') continue
     const subtitleRow: SubtitleRow = {
       endTime: 0,

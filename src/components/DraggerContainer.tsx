@@ -2,14 +2,17 @@ import classNames from 'classnames'
 import { isObject } from 'lodash-es'
 import {
   Children,
+  type FC,
+  type ReactNode,
   cloneElement,
-  FC,
-  ReactNode,
   useEffect,
   useRef,
   useState,
 } from 'react'
-import Draggable, { DraggableEvent, DraggableProps } from 'react-draggable'
+import Draggable, {
+  type DraggableEvent,
+  type DraggableProps,
+} from 'react-draggable'
 
 type Props = {
   onClick?: (e: DraggableEvent) => void

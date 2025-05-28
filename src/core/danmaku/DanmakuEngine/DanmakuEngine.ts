@@ -1,12 +1,12 @@
 import configStore from '@root/store/config'
 import { createElement, minmax } from '@root/utils'
+import AsyncLock from '@root/utils/AsyncLock'
 import Events2 from '@root/utils/Events2'
 import { autorun, makeObservable, runInAction } from 'mobx'
-import AsyncLock from '@root/utils/AsyncLock'
 import {
   DanmakuBase,
-  DanmakuEngineEvents,
-  DanmakuInitData,
+  type DanmakuEngineEvents,
+  type DanmakuInitData,
   TunnelManager,
 } from '.'
 

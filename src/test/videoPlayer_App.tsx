@@ -3,19 +3,19 @@ import VideoPlayerV2 from '@root/components/VideoPlayerV2'
 import { useOnce } from '@root/hook'
 import { openSettingPanel } from '@root/store/config'
 import { dq1 } from '@root/utils'
-import { useRef, useState, type FC } from 'react'
+import { type FC, useRef, useState } from 'react'
 import './videoPlayer_App.less'
-import { listSelector } from '@root/utils/listSelector'
 import parser from '@root/core/SubtitleManager/subtitleParser/srt'
+import { listSelector } from '@root/utils/listSelector'
 import '@root/core/danmaku/DanmakuEngine/htmlDanmaku/index.less'
+import CanvasVideo from '@root/core/CanvasVideo'
+import { SideSwitcher } from '@root/core/SideSwitcher'
+import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
 import { HtmlDanmakuEngine as DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
 import IronKinokoDanmaku from '@root/core/danmaku/DanmakuEngine/IronKinoko/lib/index'
-import CanvasVideo from '@root/core/CanvasVideo'
-import chalk from 'chalk'
-import { SideSwitcher } from '@root/core/SideSwitcher'
-import { useUpdate } from 'ahooks'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
+import { useUpdate } from 'ahooks'
+import chalk from 'chalk'
 import { dans } from './data/dans'
 
 window.parser = parser
@@ -43,7 +43,7 @@ const App = () => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const video2ref = useRef<HTMLVideoElement>(null)
 
-  let [input, setInput] = useState('')
+  const [input, setInput] = useState('')
   const [editInput, setEditInput] = useState('edit')
   const danmakuContainerRef = useRef<HTMLDivElement>(null)
   const danmakuSenderRef = useRef<DanmakuSender>()
@@ -91,7 +91,9 @@ const App = () => {
     danmakuEngineRef.current = dm
 
     // captureStream() 需要用户信任操作才能用
-    await new Promise((res) => (window.onclick = res))
+    await new Promise((res) => {
+      window.onclick = res
+    })
     const canvasVideo = new CanvasVideo({ videoEl: videoRef.current! })
     window.canvasVideo = canvasVideo
     // video2ref.current!.srcObject = canvasVideo.canvasVideoStream
@@ -153,7 +155,7 @@ const App = () => {
       <div
         ref={danmakuContainerRef}
         className="!fixed w-full h-full left-0 top-0 pointer-events-none"
-      ></div>
+      />
       {/* <div style={{ height: 200 }}>
         <VideoPlayer
           // useWebVideo
@@ -208,13 +210,13 @@ const App = () => {
           contentEditable
           className="input2"
           onInput={(e) => {
-            let val = (e.target as HTMLDivElement).textContent || ''
+            const val = (e.target as HTMLDivElement).textContent || ''
             console.log('change', val)
             // if (val.length > 3) val = val.slice(0, 3)
             setEditInput(val)
           }}
           dangerouslySetInnerHTML={{ __html: 'edit' }}
-        ></div>
+        />
         <button
           className="btn2"
           onClick={() => {

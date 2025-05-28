@@ -1,4 +1,4 @@
-import API_bilibili from '@root/api/bilibili'
+import type API_bilibili from '@root/api/bilibili'
 import VideoPreviewManager from '@root/core/VideoPreviewManager'
 import { createElement, onceCallWithMap, switchLatest } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'

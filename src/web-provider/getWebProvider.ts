@@ -1,15 +1,15 @@
-import { WebProvider } from '@root/core/WebProvider'
+import type { WebProvider } from '@root/core/WebProvider'
 import { getProviderConfig } from '@root/shared/providerConfig'
 import BilibiliLiveProvider from './bilibili/live'
 import BilibiliVideoProvider from './bilibili/video'
 import CommonProvider from './common'
 import DdrkProvider from './ddrk'
-import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
+import DouyinProvider from './douyin'
 import DouyuLiveProvider from './douyu'
+import HuyaProvider from './huya'
 import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
-import HuyaProvider from './huya'
 
 export default function getWebProvider(): WebProvider {
   const providerKey = getProviderConfig(location.href)

@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 
 const Modal: FC<{
   className?: string
@@ -32,7 +32,7 @@ const Modal: FC<{
           'bg-[#0007]',
         )}
         onClick={props.onClose}
-      ></div>
+      />
     </div>
   )
 }

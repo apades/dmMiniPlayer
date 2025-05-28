@@ -1,9 +1,9 @@
 import { ERROR_MSG } from '@root/shared/errorMsg'
 import { addEventListener, createElement, throttle } from '@root/utils'
+import { WebProvider } from '.'
 import { CanvasVideoPlayer } from '../VideoPlayer/CanvasVideoPlayer'
 import { CanvasDanmakuEngine } from '../danmaku/DanmakuEngine'
 import { PlayerEvent } from '../event'
-import { WebProvider } from '.'
 
 export default class CanvasPIPWebProvider extends WebProvider {
   declare miniPlayer: CanvasVideoPlayer

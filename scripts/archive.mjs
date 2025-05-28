@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
 import archiver from 'archiver'
+import fs from 'fs-extra'
 import packageData from '../package.json' assert { type: 'json' }
 import { pr, spawn } from './utils.mjs'
 

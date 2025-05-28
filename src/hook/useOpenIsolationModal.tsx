@@ -1,17 +1,17 @@
-import { PartialIncludes } from '@root/utils/typeUtils'
+import type { PartialIncludes } from '@root/utils/typeUtils'
 import { useMemoizedFn } from 'ahooks'
 import { isUndefined } from 'lodash-es'
-import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { FC, type ReactNode, useEffect, useRef, useState } from 'react'
 
 /**用来打开独立于App的modal, context需要放在同级的reactNode中 */
 export default function useOpenIsolationModal<
   Arg extends { isOpen?: boolean; onClose?: () => void },
 >(Modal: (props: Arg) => ReactNode) {
-  const [context, setContext] = useState(<></>)
+  const [context, setContext] = useState<ReactNode>()
   const propsOnCloseRef = useRef(() => {})
   const onClose = useMemoizedFn(() => {
     propsOnCloseRef.current()
-    setContext(<></>)
+    setContext(undefined)
   })
 
   const openModal = useMemoizedFn((props?: PartialIncludes<Arg, 'onClose'>) => {

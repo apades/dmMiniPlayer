@@ -1,5 +1,4 @@
 export default class AsyncLock {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   checkingAsyncQueue: Function[] = []
   isOk = false
 

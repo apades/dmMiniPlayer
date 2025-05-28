@@ -1,5 +1,5 @@
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { WebProvider } from '@root/core/WebProvider'
+import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { getDonghuafengDanmu } from '@root/danmaku/donghuafeng'
 import { dq1, tryCatch } from '@root/utils'
 import { t } from '@root/utils/i18n'

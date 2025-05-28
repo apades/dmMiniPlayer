@@ -1,13 +1,13 @@
-import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
-import { eventBus, EventBus } from '@root/core/event'
 import { KeyBinding } from '@root/core/KeyBinding'
-import { SideSwitcher } from '@root/core/SideSwitcher'
-import SubtitleManager from '@root/core/SubtitleManager'
-import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
-import VideoPreviewManager from '@root/core/VideoPreviewManager'
+import type { SideSwitcher } from '@root/core/SideSwitcher'
+import type SubtitleManager from '@root/core/SubtitleManager'
+import type VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
+import type VideoPreviewManager from '@root/core/VideoPreviewManager'
+import type { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
+import type DanmakuSender from '@root/core/danmaku/DanmakuSender'
+import { type EventBus, eventBus } from '@root/core/event'
 import { createElement } from '@root/utils'
-import { createContext, Dispatch, SetStateAction } from 'react'
+import { type Dispatch, type SetStateAction, createContext } from 'react'
 
 export type ContextData = {
   webVideo?: HTMLVideoElement | null

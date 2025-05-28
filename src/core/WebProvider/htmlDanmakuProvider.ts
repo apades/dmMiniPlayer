@@ -1,9 +1,9 @@
 import { sendMessage } from '@root/inject/contentSender'
 import { dq1 } from '@root/utils'
-import DanmakuSender, {
-  Props as DanmakuSenderProps,
-} from '../danmaku/DanmakuSender'
 import { WebProvider } from '.'
+import DanmakuSender, {
+  type Props as DanmakuSenderProps,
+} from '../danmaku/DanmakuSender'
 
 /**
  * 监听html弹幕的provider，带有工具
@@ -26,7 +26,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
       function getDeeperGetter(obj: any, key: string) {
         if (!obj) return undefined
         const val = Object.getOwnPropertyDescriptor(obj, key)
-        if (val && val.get) return val.get
+        if (val?.get) return val.get
         return getDeeperGetter(Object.getPrototypeOf(obj), key)
       }
 
@@ -97,7 +97,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     console.log('startObserveHtmlDanmaku')
     if (!props.container) return
     this.htmlDanmakuObserver = new MutationObserver((list) => {
-      const nodes = list.map((l) => [...l.addedNodes]).flat()
+      const nodes = list.flatMap((l) => [...l.addedNodes])
       console.log('nodes', list.length, nodes)
       if (!nodes)
         return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)

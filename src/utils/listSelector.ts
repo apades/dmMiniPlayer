@@ -1,10 +1,10 @@
-import { getTopParentsWithSameRect } from './dom'
 import { createElement, throttle } from '.'
+import { getTopParentsWithSameRect } from './dom'
 
 export function listSelector() {
   return new Promise<{ parent: HTMLElement; childs: HTMLElement[] }>((res) => {
     const styleEl = createElement('style', {
-      innerText: `.list-h-select{ background-color: red; }`,
+      innerText: '.list-h-select{ background-color: red; }',
     })
     let lastEls: HTMLElement[] = []
     const handleMousemove = throttle((e: MouseEvent) => {
@@ -16,7 +16,7 @@ export function listSelector() {
       if (topEl.parentElement) {
         const childs = Array.from(topEl.parentElement.children) as HTMLElement[]
         const sameEls = childs.filter((child) => {
-          if (child == topEl) return true
+          if (child === topEl) return true
           return isSameEl(topEl, child)
         })
 
@@ -48,9 +48,9 @@ export function listSelector() {
 
 function isSameEl(el: HTMLElement, tar: HTMLElement) {
   const elClassUnEqual = [...el.classList.values()].find((cls) => {
-    if (cls == 'list-h-select') return false
+    if (cls === 'list-h-select') return false
     return !tar.classList.contains(cls)
   })
 
-  return !elClassUnEqual && el.tagName == tar.tagName
+  return !elClassUnEqual && el.tagName === tar.tagName
 }

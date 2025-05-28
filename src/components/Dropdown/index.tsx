@@ -1,6 +1,6 @@
 import { isArray } from '@root/utils'
 import classNames from 'classnames'
-import { useRef, type FC, type PropsWithChildren, type ReactNode } from 'react'
+import { type FC, type PropsWithChildren, type ReactNode, useRef } from 'react'
 
 type Props = PropsWithChildren<{
   menuRender: () => ReactNode

@@ -2,7 +2,7 @@ import { PlayerEvent } from '@root/core/event'
 import { useOnce } from '@root/hook'
 import configStore from '@root/store/config'
 import { t } from '@root/utils/i18n'
-import { FC, useContext, useState } from 'react'
+import { type FC, useContext, useState } from 'react'
 import vpContext from './context'
 
 const SpeedIcon: FC = (props) => {

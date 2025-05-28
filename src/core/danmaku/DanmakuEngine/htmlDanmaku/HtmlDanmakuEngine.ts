@@ -1,4 +1,4 @@
-import { addEventListener, createElement, noop } from '@root/utils'
+import { addEventListener, createElement, type noop } from '@root/utils'
 import { autorun } from 'mobx'
 import { DanmakuEngine } from '..'
 import type { DanmakuEngineInitProps } from '../DanmakuEngine'
@@ -26,7 +26,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
       if (!entry.isIntersecting) return
       const target = entry.target as HTMLSpanElement
       // 莫名其妙的会监听到这个container
-      if (target == this.container) return
+      if (target === this.container) return
 
       const danmaku = this.observerMap.get(target)
       if (danmaku) {
@@ -37,9 +37,9 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     })
   })
   observeMovingDanmakuOutTunnel(danmaku: Danmaku) {
-    if (danmaku.tunnel == -1) return
+    if (danmaku.tunnel === -1) return
     // 只监听会动的弹幕，其他不需要
-    if (danmaku.type != 'right') return
+    if (danmaku.type !== 'right') return
     if (!danmaku.outTunnelObserveEl) return
     this.observerMap.set(danmaku.outTunnelObserveEl, danmaku)
     this.observer.observe(danmaku.outTunnelObserveEl)
@@ -128,7 +128,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
           }
 
           // hasSeek下不需要处理非right的弹幕
-          if (this.hasSeek && danmaku.type != 'right') {
+          if (this.hasSeek && danmaku.type !== 'right') {
             this.observeMovingDanmakuOutTunnel(danmaku)
             continue
           }

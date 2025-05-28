@@ -1,5 +1,5 @@
-import { defineConfig } from 'tsup'
 import { omit } from '@root/utils'
+import { defineConfig } from 'tsup'
 import { shareConfig } from './tsup.shared'
 import { getDefinesConfig } from './utils.mjs'
 

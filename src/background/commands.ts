@@ -1,5 +1,5 @@
-import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge/background'
+import browser from 'webextension-polyfill'
 // import { activeTabId } from './messages/pip-active'
 
 browser.commands.onCommand.addListener(async (command, tab) => {

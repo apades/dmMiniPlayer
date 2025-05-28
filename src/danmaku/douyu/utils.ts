@@ -34,10 +34,10 @@ export function getRoomGiftData(rid: string): Promise<IGiftData> {
         return res.json()
       })
       .then((ret) => {
-        let roomGiftData: IGiftData = {}
+        const roomGiftData: IGiftData = {}
         if ('giftList' in ret.data) {
           for (let i = 0; i < ret.data.giftList.length; i++) {
-            let item = ret.data.giftList[i]
+            const item = ret.data.giftList[i]
             let svga = ''
             for (const key in item.effectInfo) {
               if (
@@ -84,9 +84,9 @@ export function getBagGiftData(): Promise<IGiftData> {
         )
         json = json.substring(0, json.lastIndexOf(')'))
         json = JSON.parse(json)
-        let obj: IGiftData = {}
+        const obj: IGiftData = {}
         for (const key in json.data) {
-          let item = json.data[key]
+          const item = json.data[key]
           obj[key] = {
             n: item.name,
             pic: item.himg,
@@ -127,7 +127,7 @@ export function getStrMiddle(
   before: string,
   after: string,
 ): string {
-  let m = str.match(new RegExp(before + '(.*?)' + after))
+  const m = str.match(new RegExp(before + '(.*?)' + after))
   return m ? m[1] : ''
 }
 
@@ -161,14 +161,14 @@ export function getLocalOptions(): any {
 }
 
 export function formatObj(obj: any, objTemplate: any) {
-  let ret: any = {}
+  const ret: any = {}
   // 将obj格式化成objTemplate的属性格式，而obj的值不变，缺少的属性会增加上去
   for (const key in objTemplate) {
     if (key in obj) {
       if (
         Object.prototype.toString.call(objTemplate[key]) === '[object Object]'
       ) {
-        let childRet = formatObj(obj[key], objTemplate[key])
+        const childRet = formatObj(obj[key], objTemplate[key])
         ret[key] = childRet
       } else {
         ret[key] = obj[key]
@@ -185,8 +185,8 @@ export function formatTime(
   timestamp: number | string,
   format = 'yyyy-MM-dd hh:mm:ss',
 ) {
-  let date = new Date(Number(timestamp))
-  let o: any = {
+  const date = new Date(Number(timestamp))
+  const o: any = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),
     'h+': date.getHours(),
@@ -201,7 +201,7 @@ export function formatTime(
       (date.getFullYear() + '').substr(4 - RegExp.$1.length),
     )
   }
-  for (let k in o) {
+  for (const k in o) {
     if (new RegExp('(' + k + ')').test(format)) {
       format = format.replace(
         RegExp.$1,
@@ -227,7 +227,7 @@ export function getSuperchatOption(
       }
     }
   } else {
-    let index = Math.abs(price) - 1
+    const index = Math.abs(price) - 1
     if (index < options.length) {
       return [...options].reverse()[index]
     }
@@ -264,7 +264,6 @@ enum Color {
   orange = 4,
   purple = 5,
   pink = 6,
-  noColor = undefined,
 }
 
 enum ColorTransMap {
@@ -279,5 +278,5 @@ enum ColorTransMap {
 
 export function getTransColor(type: number) {
   const color = Color[type as any]
-  return (ColorTransMap as any)[color as any]
+  return (ColorTransMap as any)[color ?? ('noColor' as any)]
 }

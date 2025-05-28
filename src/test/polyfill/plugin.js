@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 
 /**@type {import('esbuild').Plugin} */
 const polyfillPlugin = {
@@ -8,7 +8,7 @@ const polyfillPlugin = {
       {
         filter: /webextension-polyfill/,
       },
-      function (args) {
+      (args) => {
         // console.log(path.resolve(__dirname, './browser/index.ts'))
         return {
           path: path.resolve(__dirname, './browser/index.ts'),

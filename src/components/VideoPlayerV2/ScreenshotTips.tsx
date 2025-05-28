@@ -4,7 +4,7 @@ import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import { tryCatch } from '@root/utils'
 import { t } from '@root/utils/i18n'
 import { downloadImage, screenshotVideo } from '@root/utils/screenshot'
-import { FC, useContext, useState } from 'react'
+import { type FC, useContext, useState } from 'react'
 import vpContext from './context'
 
 const ScreenshotTips: FC = () => {

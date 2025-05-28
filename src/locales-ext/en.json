@@ -5,20 +5,20 @@
   "appDesc": {
     "message": "Enhanced picture in picture video player, support all video controls, subtitle, danmaku, change video in PIP sidebar, etc."
   },
-  "back":{
-    "message":"backward"
+  "back": {
+    "message": "backward"
   },
-  "forward":{
-    "message":"forward"
+  "forward": {
+    "message": "forward"
   },
-  "playOrPause":{
-    "message":"pause/play"
+  "playOrPause": {
+    "message": "pause/play"
   },
-  "hide":{
-    "message":"hide picture-in-picture"
+  "hide": {
+    "message": "hide picture-in-picture"
   },
-  "playbackRate":{
-    "message":"Turn on/off double speed. Default 3x, can change in settings"
+  "playbackRate": {
+    "message": "Turn on/off double speed. Default 3x, can change in settings"
   },
   "quickHideToggle": {
     "message": "Turn on/off PIP quick hide with position change"

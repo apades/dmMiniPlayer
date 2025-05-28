@@ -1,4 +1,4 @@
-import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine'
+import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine'
 
 enum BilibiliDanmakuType {
   normal1 = '1',
@@ -61,8 +61,8 @@ export async function getBiliBiliVideoDanmu(
       text: xmlDan.textContent || '',
       time: +startTime,
       type:
-        (danmakuType == BilibiliDanmakuType.bottom && /* 'bottom' */ 'top') ||
-        (danmakuType == BilibiliDanmakuType.top && 'top') ||
+        (danmakuType === BilibiliDanmakuType.bottom && /* 'bottom' */ 'top') ||
+        (danmakuType === BilibiliDanmakuType.top && 'top') ||
         'right',
     }
 

@@ -1,8 +1,8 @@
+import { getTextWidth, type noop } from '@root/utils'
 import { autorun } from 'mobx'
-import { getTextWidth, noop } from '@root/utils'
 import { DanmakuBase } from '../'
 import type { DanmakuInitProps } from '../DanmakuBase'
-import CanvasDanmakuEngine from './CanvasDanmakuEngine'
+import type CanvasDanmakuEngine from './CanvasDanmakuEngine'
 
 export default class CanvasDanmaku extends DanmakuBase {
   declare danmakuEngine: CanvasDanmakuEngine
@@ -32,12 +32,12 @@ export default class CanvasDanmaku extends DanmakuBase {
   onInit(props: DanmakuInitProps): void {
     if (this.initd) return
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
-    if (this.tunnel == -1) {
+    if (this.tunnel === -1) {
       this.disabled = true
       return
     }
 
-    if (this.type != 'right') {
+    if (this.type !== 'right') {
       this.autorun(() => {
         this.endTime =
           this.startTime + this.danmakuEngine.unmovingDanmakuSaveTime
@@ -55,12 +55,12 @@ export default class CanvasDanmaku extends DanmakuBase {
         fontFamily: this.danmakuEngine.fontFamily,
         fontWeight: this.danmakuEngine.fontWeight,
       })
-      if (this.type != 'right') {
+      if (this.type !== 'right') {
         this.x = (canvas.width - this.width) / 2
       }
     })
 
-    if (this.type != 'right') {
+    if (this.type !== 'right') {
       this.autorun(() => {
         this.x = (canvas.width - this.width) / 2 / window.devicePixelRatio
       })

@@ -4,8 +4,8 @@ import { getRandom } from './utils'
     By: 小淳
 */
 class Ex_WebSocket_UnLogin {
-  ws: WebSocket
-  timer: NodeJS.Timeout
+  ws!: WebSocket
+  timer!: NodeJS.Timeout
 
   // 调用方法：
   // 连接：let a = new Ex_WebSocket_UnLogin("房间号", 消息回调函数);
@@ -36,8 +36,8 @@ class Ex_WebSocket_UnLogin {
       this.ws.onmessage = (e) => {
         let reader = new FileReader()
         reader.onload = () => {
-          let arr = String(reader.result).split('\0') // 分包
-          reader = null
+          const arr = String(reader.result).split('\0') // 分包
+          reader = null as any
           for (let i = 0; i < arr.length; i++) {
             if (arr[i].length > 12) {
               // 过滤第一条和心跳包
@@ -66,14 +66,14 @@ class Ex_WebSocket_UnLogin {
 
 function WebSocket_Packet(str: string) {
   const MSG_TYPE = 689
-  let bytesArr = stringToByte(str)
-  let buffer = new Uint8Array(bytesArr.length + 4 + 4 + 2 + 1 + 1 + 1)
-  let p_content = new Uint8Array(bytesArr.length) // 消息内容
+  const bytesArr = stringToByte(str)
+  const buffer = new Uint8Array(bytesArr.length + 4 + 4 + 2 + 1 + 1 + 1)
+  const p_content = new Uint8Array(bytesArr.length) // 消息内容
   for (let i = 0; i < p_content.length; i++) {
     p_content[i] = bytesArr[i]
   }
-  let p_length = new Uint32Array([bytesArr.length + 4 + 2 + 1 + 1 + 1]) // 消息长度
-  let p_type = new Uint32Array([MSG_TYPE]) // 消息类型
+  const p_length = new Uint32Array([bytesArr.length + 4 + 2 + 1 + 1 + 1]) // 消息长度
+  const p_type = new Uint32Array([MSG_TYPE]) // 消息类型
 
   buffer.set(new Uint8Array(p_length.buffer), 0)
   buffer.set(new Uint8Array(p_length.buffer), 4)
@@ -84,7 +84,7 @@ function WebSocket_Packet(str: string) {
 }
 
 function stringToByte(str: string) {
-  let bytes = []
+  const bytes = []
   let len, c
   len = str.length
   for (let i = 0; i < len; i++) {

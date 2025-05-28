@@ -1,6 +1,6 @@
-import { defineConfig } from 'tsup'
-import fs from 'fs-extra'
 import { omit } from '@root/utils'
+import fs from 'fs-extra'
+import { defineConfig } from 'tsup'
 import { manifest, outDir, shareConfig } from './tsup.shared'
 import { pr } from './utils.mjs'
 

@@ -1,6 +1,6 @@
-import { FC, useContext, useState } from 'react'
 import { LoadingOutlined } from '@ant-design/icons'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
+import { type FC, useContext, useState } from 'react'
 import { checkJumpInBufferArea } from '../VideoPlayer/utls'
 import vpContext from './context'
 

@@ -3,16 +3,12 @@
     "baseUrl": ".",
     "paths": {
       "@root/*": ["src/*"],
-      "@pkgs/*": ["packages/*"],
+      "@pkgs/*": ["packages/*"]
     },
     "outDir": "./dist/",
     "sourceMap": true,
     "noImplicitAny": true,
-    "lib": [
-      "DOM",
-      "ESNext",
-      "DOM.Iterable"
-    ],
+    "lib": ["DOM", "ESNext", "DOM.Iterable"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -24,12 +20,6 @@
     "resolveJsonModule": true,
     "strict": true
   },
-  "include": [
-    "./src/**/*",
-    "./scripts/**/*",
-    "./packages/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["./src/**/*", "./scripts/**/*", "./packages/**/*"],
+  "exclude": ["node_modules"]
 }
