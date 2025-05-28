@@ -637,3 +637,12 @@ export function calculateNewDimensions(
 function isClose(a: number, b: number, tolerance = 1e-5) {
   return Math.abs(a - b) < tolerance
 }
+
+export function configStringArrValid(tar: string, configs: string[] = []) {
+  return configs.find((config) => {
+    const isRegex = config.startsWith('/') && config.endsWith('/')
+    if (isRegex)
+      return new RegExp(config.match(/^\/(.*)\/$/)?.[1] ?? '').test(tar)
+    return tar.includes(config)
+  })
+}

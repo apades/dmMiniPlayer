@@ -3,7 +3,7 @@ import { get } from '@root/utils'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './createElementHacker'
-import './fetchHacker'
+// import './fetchHacker'
 
 onMessage_inject('run-code', async (data) => {
   // console.log('runFn', data)

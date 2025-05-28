@@ -8,11 +8,11 @@ export const { offMessage, onMessage, onMessageOnce, sendMessage } =
     sendType: 'inject-request',
   })
 
-// @typescript-eslint/no-unsafe-function-type
-export function runCodeInTopWindow<T extends (...args: any) => void>(
-  fn: T,
-  args: Parameters<T>,
-) {
+type First<T extends any[]> = T[0]
+export function runCodeInTopWindow<
+  Arg extends any[],
+  T extends (...args: Arg) => void,
+>(...[fn, args]: First<Arg> extends never ? [T] : [T, Arg]) {
   return sendMessage('run-code', { function: fn.toString(), args })
 }
 

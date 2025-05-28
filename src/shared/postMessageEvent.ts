@@ -17,6 +17,7 @@ enum PostMessageEvent {
   fullInWeb_close = 'fullInWeb_close',
   fullInWeb_eventProxy = 'fullInWeb_eventProxy',
   closeDocPIP = 'closeDocPIP',
+  asyncData = 'asyncData',
 }
 
 export type BaseVideoState = {
@@ -77,6 +78,11 @@ export interface PostMessageProtocolMap {
   [PostMessageEvent.closeDocPIP]: {
     type?: 'autoPIP_closeInReturnToOriginPos'
   } | void
+
+  [PostMessageEvent.asyncData]: {
+    data: any
+    key: string
+  }
 }
 
 export default PostMessageEvent

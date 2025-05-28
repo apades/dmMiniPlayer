@@ -6,6 +6,10 @@ export const DEFAULT_EVENT_INJECT_SITE = [
   '/https:\\/\\/www\\.bilibili\\.com\\/.*/',
 ]
 
+export const DEFAULT_FETCH_INJECT_SITE = [
+  '/https:\\/\\/live\\.bilibili\\.com\\/.*/',
+]
+
 export const ATTR_DISABLE = 'dm-disable'
 export const ATTR_EVENT_INJECT_SITES = 'dm-event-inject-sites'
 export const ATTR_URL = 'dm-url'

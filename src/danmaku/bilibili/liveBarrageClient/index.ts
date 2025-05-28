@@ -1,7 +1,13 @@
 import cookie from '@pkgs/js-cookie'
 import API_bilibili from '@root/api/bilibili'
 import BarrageClient from '@root/core/danmaku/BarrageClient'
+import {
+  sendMessage,
+  onMessage,
+  runCodeInTopWindow,
+} from '@root/inject/contentSender'
 import { tryCatch } from '@root/utils'
+import AsyncLock from '@root/utils/AsyncLock'
 import { t } from '@root/utils/i18n'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
 import toast from 'react-hot-toast'
@@ -22,12 +28,7 @@ const getRoomid = async (short: number) => {
 }
 
 export const getConf = async (roomid: number) => {
-  const raw = await fetch(
-    `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomid}&type=0`,
-    {
-      credentials: 'include',
-    },
-  ).then((w) => w.json())
+  const raw = await runCodeInTopWindow(() => window.__danmuInfo)
   const {
     data: {
       token: key,
