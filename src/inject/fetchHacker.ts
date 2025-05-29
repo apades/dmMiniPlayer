@@ -25,7 +25,7 @@ function main() {
     let res = await ofetch.apply(this, arguments as any)
     let fn = triggerMap.get(hasTrigger)
     try {
-      fn?.(args[0], args, await res.text())
+      fn?.(args[0], args, await res.clone().text())
     } catch (error) {
       console.warn(`fetch hacker没法触发回调，该地址返回数据的非text`, args[0])
     }
