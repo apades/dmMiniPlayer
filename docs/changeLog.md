@@ -1,3 +1,6 @@
+## v0.6.45
+Fixed the legacy issue of bilibili live at 0.6.43
+
 ## v0.6.44
 After opening the PIP, modify the web page title so that the window manager can distinguish windows by tshanli
 
