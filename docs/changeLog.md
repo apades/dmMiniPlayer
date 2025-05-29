@@ -1,3 +1,6 @@
+## v0.6.44
+After opening the PIP, modify the web page title so that the window manager can distinguish windows by tshanli
+
 ## v0.6.43
 1. Fixed the issue that the keyboard control in replacement mode does not take effect on some websites
 2. Temporarily fix the problem of failed connection of bilibili live danmaku ws
@@ -131,7 +134,7 @@ Urgently fix the PIP black screen problem caused by the latest version of chrome
 2. Added load danmaku from local or url feature
 
 ## v0.6.11
-1. Improve sidebar easier to trigger
+1. Improve sidebar easier to trigger by Xmarmalade
 2. Improve Youtube is live check
 
 ## v0.6.10
