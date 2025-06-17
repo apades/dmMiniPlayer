@@ -1,3 +1,6 @@
+## v0.6.46
+Fixed the issue of YouTube's subtitle loading failure
+
 ## v0.6.45
 Fixed the legacy issue of bilibili live at 0.6.43
 
