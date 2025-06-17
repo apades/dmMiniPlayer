@@ -15,10 +15,7 @@ export const translateMode = {
   single: t('subtitleTranslate.single'),
   none: t('subtitleTranslate.none'),
 } as const
-class SubtitleManager
-  extends Events2<SubtitleManagerEvents>
-  implements PlayerComponent
-{
+class SubtitleManager extends Events2<SubtitleManagerEvents> {
   initd = false
   subtitleItems: SubtitleItem[] = []
 
@@ -56,14 +53,16 @@ class SubtitleManager
   }
 
   async init(video: HTMLVideoElement) {
+    if (this.initd) return
     this.reset()
+    this.initd = true
     this.video = video
 
     const [err] = await tryCatch(async () => this.onInit())
     if (err) {
       toast.error(t('error.subtitleLoad'))
+      this.initd = false
     }
-    this.initd = true
     this.addOnUnloadFn(
       autorun(() => {
         this.autoloadSubtitle()
@@ -207,7 +206,7 @@ class SubtitleManager
           this.loadSubtitle(subtitleItemsValue),
         )
 
-        if (err) {
+        if (err || !subtitleRows.length) {
           toast.error(t('error.subtitleLoad'))
           return
         }

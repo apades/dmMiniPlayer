@@ -13,7 +13,8 @@ export default class YoutubeSubtitleManager extends SubtitleManager {
   }
   async loadSubtitle(value: string): Promise<SubtitleRow[]> {
     const subtitleRows = await getSubtitle(value)
-    if (!configStore.youtube_mergeSubtitleAtSimilarTimes) return subtitleRows
+    return subtitleRows
+    // if (!configStore.youtube_mergeSubtitleAtSimilarTimes) return subtitleRows
 
     const newSubtitleRows: SubtitleRow[] = []
 

@@ -21,14 +21,29 @@ export async function getVideoInfo(url = location.href) {
 export async function getSubtitles(
   url = location.href,
 ): Promise<SubtitleItem[]> {
-  const videoInfo = await getVideoInfo(url)
+  const id = new URLSearchParams(location.search).get('v')
+  const videoInfo = await fetch('/youtubei/v1/player', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      videoId: id,
+      context: {
+        client: {
+          clientName: 'WEB_EMBEDDED_PLAYER',
+          clientVersion: '1.20241009.01.00',
+        },
+      },
+    }),
+  }).then((res) => res.json())
 
   const subtitles =
     videoInfo?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
 
   console.log('subtitles', subtitles)
   return subtitles.map((s: any) => ({
-    label: s.name.simpleText,
+    label: s?.name?.simpleText || s?.name?.runs?.[0]?.text || s.languageCode,
     value: s.baseUrl,
   }))
 }
