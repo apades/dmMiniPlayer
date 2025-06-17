@@ -7,12 +7,12 @@ import { useRef } from 'react'
 function useDebounceTimeoutCallback(callback: () => void, timeout = 500) {
   const timerRef = useRef<NodeJS.Timeout>()
 
-  const run = useMemoizedFn((fn: () => void) => {
+  const run = useMemoizedFn((fn?: () => void) => {
     if (timerRef.current) {
       clearTimeout(timerRef.current)
     }
 
-    fn()
+    fn?.()
     timerRef.current = setTimeout(() => {
       callback()
     }, timeout)
