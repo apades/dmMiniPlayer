@@ -94,10 +94,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
         this.container.classList.add('paused')
       })
       el.addEventListener('seeking', () => {
-        this.danmakus.forEach((d) => d.reset())
-        this.tunnelManager.resetTunnelsMap()
-        this.hasSeek = true
-        this.nowPos = 0
+        this.forceRerenderDanmaku()
       })
       el.addEventListener('timeupdate', () => {
         if (!this.danmakus.length) return
@@ -205,5 +202,10 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     this.unbindEvent()
     this.media = video
     this.bindEvent(video)
+  }
+
+  override forceRerenderDanmaku(): void {
+    super.forceRerenderDanmaku()
+    this.nowPos = 0
   }
 }

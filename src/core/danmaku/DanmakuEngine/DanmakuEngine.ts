@@ -197,7 +197,8 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
 
   forceRerenderDanmaku() {
     if (!this.media) return
-    this.media.dispatchEvent(new Event('seeking'))
-    this.media.dispatchEvent(new Event('seeked'))
+    this.danmakus.forEach((d) => d.reset())
+    this.tunnelManager.resetTunnelsMap()
+    this.hasSeek = true
   }
 }

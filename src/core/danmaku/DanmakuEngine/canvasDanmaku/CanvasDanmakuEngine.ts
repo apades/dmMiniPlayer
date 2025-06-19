@@ -201,4 +201,10 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     this.nowPos = 0
     this.hasDraw = false
   }
+
+  override forceRerenderDanmaku(): void {
+    super.forceRerenderDanmaku()
+    this.canvasDanmakuVideo && (this.canvasDanmakuVideo.hasSeek = true)
+    this.nowPos = 0
+  }
 }
