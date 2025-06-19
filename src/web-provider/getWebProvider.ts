@@ -10,6 +10,7 @@ import DouyuLiveProvider from './douyu'
 import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
 import HuyaProvider from './huya'
+import NetflixProvider from './netflix'
 
 export default function getWebProvider(): WebProvider {
   const providerKey = getProviderConfig(location.href)
@@ -33,6 +34,8 @@ export default function getWebProvider(): WebProvider {
       return new YoutubeProvider()
     case 'huya':
       return new HuyaProvider()
+    case 'netflix':
+      return new NetflixProvider()
     default:
       return new CommonProvider()
   }
