@@ -1,3 +1,7 @@
+## v0.6.47
+1. Supports Netflix, including sidebar switching + subtitle function
+2. Fixed the problem of the failure of the Douyin danmaku, but the danmaku input cannot be fixed for the time being
+
 ## v0.6.46
 Fixed the issue of YouTube's subtitle loading failure
 
