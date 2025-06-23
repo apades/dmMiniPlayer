@@ -6,11 +6,11 @@ import classNames from 'classnames'
 import { FC, useContext, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react'
 import configStore from '@root/store/config'
+import { VideoPreviewData } from '@root/core/VideoPreviewManager'
 import ProgressBar from '../../ProgressBar'
 import vpContext from '../context'
 import { useTogglePlayState } from '../hooks'
 import style from './PlayerProgressBar.less?inline'
-import { VideoPreviewData } from '@root/core/VideoPreviewManager'
 
 const previewImageWidth = 200
 

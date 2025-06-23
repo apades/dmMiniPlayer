@@ -63,7 +63,10 @@ class NetflixSubtitle extends SubtitleManager {
     const vttText = await fetch(url).then((res) => res.text())
     const subtitle = srtParser(vttText)
 
-    return subtitle
+    return subtitle.map((v) => ({
+      ...v,
+      text: v.text.replace(/[\r\n]+/g, '\n'),
+    }))
   }
 }
 
@@ -94,7 +97,27 @@ export default class NetflixProvider extends WebProvider {
 
   async update() {
     await this.subtitleManager.init(this.webVideo)
+    await this.updateVideoDurationData()
     this.initSideData()
+  }
+
+  async updateVideoDurationData() {
+    const duration = await runCodeInTopWindow(() => {
+      const sid = window.netflix.appContext.state.playerApp
+        .getAPI()
+        .videoPlayer.getAllPlayerSessionIds()[0]
+      const vp = window.netflix.appContext.state.playerApp
+        .getAPI()
+        .videoPlayer.getVideoPlayerBySessionId(sid)
+
+      return vp.getDuration() / 1000
+    })
+
+    Object.defineProperty(this.webVideo, 'duration', {
+      get: () => duration,
+      set: () => {},
+    })
+    this.webVideo.dispatchEvent(new Event('durationchange'))
   }
 
   async runWithAPI<T, Arg extends any[]>(
