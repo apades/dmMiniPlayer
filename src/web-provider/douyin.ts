@@ -39,13 +39,14 @@ export default class DouyinProvider extends HtmlDanmakuProvider {
   getObserveHtmlDanmakuConfig() {
     return {
       container: dq1<HTMLDivElement>(
-        '.webcast-chatroom___items>div:first-child',
+        '.webcast-chatroom___list>div:first-child>div:first-child',
       )!,
-      child: '.webcast-chatroom___item',
+      child: '*',
       text: '.webcast-chatroom___content-with-emoji-text',
     }
   }
   getDanmakuSenderConfig() {
+    // TODO 不好修复，抖音换了个富文本编辑器，不像之前的简单编辑textContent就可行的
     return {
       webTextInput: dq1<HTMLInputElement>(
         '.webcast-chatroom___input-container textarea',
