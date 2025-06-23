@@ -95,7 +95,7 @@ const config_danmaku = {
   }),
 
   adjustFontsizeByPIPWidthResize: config({
-    defaultValue: false,
+    defaultValue: true,
     label: t('settingPanel.adjustFontsizeByPIPWidthResize'),
     desc: t('settingPanel.adjustFontsizeByPIPWidthResizeDesc'),
   }),
@@ -107,14 +107,14 @@ const config_danmaku = {
     relateByValue: true,
   }),
   adjustFontsizeScaleRate: config({
-    defaultValue: 0.6,
+    defaultValue: 0.8,
     label: t('settingPanel.adjustFontsizeScaleRate'),
     desc: t('settingPanel.adjustFontsizeScaleRateDesc'),
     relateBy: 'adjustFontsizeByPIPWidthResize',
     relateByValue: true,
   }),
   adjustFontsizeMaxSize: config({
-    defaultValue: 24,
+    defaultValue: 32,
     label: t('settingPanel.adjustFontsizeMaxSize'),
     desc: t('settingPanel.adjustFontsizeMaxSizeDesc'),
     relateBy: 'adjustFontsizeByPIPWidthResize',
