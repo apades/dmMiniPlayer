@@ -13,9 +13,9 @@ export type VideoItem = {
   /**spa点击切换路由的link元素 */
   linkEl: HTMLElement
   title: string
-  link: string
+  link?: string
   /**item的容器 */
-  el: HTMLElement
+  el?: HTMLElement
 
   isActive?: boolean
   cover?: string
