@@ -3,6 +3,7 @@ import { get } from '@root/utils'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './createElementHacker'
+import './netflix'
 // import './fetchHacker'
 
 onMessage_inject('run-code', async (data) => {
@@ -38,6 +39,7 @@ try {
     'https://www.bilibili.com',
     'https://ddys.art',
     'https://ddys.pro',
+    // 'https://www.netflix.com',
   ]
 
   // youtube的history.pushState是提前存好地址了的，这后面再改就没用了，所以需要提前修改

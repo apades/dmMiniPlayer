@@ -50,24 +50,23 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
       translateMode: true,
       nowSubtitleItemsLabel: true,
     })
-  }
 
-  async init(video: HTMLVideoElement) {
-    if (this.initd) return
-    this.reset()
-    this.initd = true
-    this.video = video
-
-    const [err] = await tryCatch(async () => this.onInit())
-    if (err) {
-      toast.error(t('error.subtitleLoad'))
-      this.initd = false
-    }
     this.addOnUnloadFn(
       autorun(() => {
         this.autoloadSubtitle()
       }),
     )
+  }
+
+  async init(video: HTMLVideoElement) {
+    this.reset()
+    this.video = video
+
+    const [err] = await tryCatch(async () => this.onInit())
+    if (err) {
+      toast.error(t('error.subtitleLoad'))
+    }
+    this.initd = true
   }
   onInit() {}
   unload() {

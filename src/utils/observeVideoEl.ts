@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { dqParents } from './dom'
-import { wait } from '.'
+import { wait, waitLoopCallback } from '.'
 
 export function observeVideoEl(
   videoEl: HTMLVideoElement,
@@ -72,7 +72,15 @@ export function observeVideoEl(
       await wait()
       console.log('newParent', newParent)
       videoEl = newParent.querySelector('video')!
-      if (!videoEl) throw Error('无法找到新的videoEl')
+      if (!videoEl) {
+        await waitLoopCallback(() => {
+          videoEl = newParent.querySelector('video')!
+          return !!videoEl
+        })
+
+        // 还是没有
+        if (!videoEl) throw Error('无法找到新的videoEl')
+      }
       onChange(videoEl)
     }
   })()

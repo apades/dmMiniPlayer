@@ -77,6 +77,7 @@
 - [tailwindcss-container-queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
 - [ts-key-enum](https://www.npmjs.com/package/ts-key-enum)
 - [@ironkinoko/danmaku](https://github.com/IronKinoko/danmaku)
+- [netflix-subtitle-downloader](https://greasyfork.org/en/scripts/26654-netflix-subtitle-downloader)
 
 ## 🍔 投喂
 如果您很喜欢这个项目, 欢迎打赏, 金额随意. 您的支持是我的动力(=・ω・=)

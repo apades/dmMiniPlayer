@@ -1,12 +1,16 @@
 function search(obj, toSearch, keys = [], rs = []) {
   for (let key in obj) {
     const val = obj[key]
+    if (key.includes(toSearch)) {
+      console.log(`🔍 key: ${[...keys, key].join('.')}: ${key}`)
+    }
     if (typeof val == 'object') {
       search(val, toSearch, [...keys, key])
     }
     if (typeof val == 'string' || typeof val == 'number') {
-      if ((val + '').includes(toSearch))
+      if ((val + '').includes(toSearch)) {
         console.log(`🔍 ${[...keys, key].join('.')}: ${val}`)
+      }
     }
   }
 }

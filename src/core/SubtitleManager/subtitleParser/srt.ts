@@ -1,3 +1,4 @@
+import domParser from 'node-html-parser'
 import type { SubtitleRow } from '../types'
 
 // TODO 一些复杂的pos之类的？
@@ -60,12 +61,17 @@ function timestampToSeconds(srtTimestamp: string) {
   return Math.round(result * 1000) / 1000
 }
 
-window.timestampToSeconds = timestampToSeconds
+// window.timestampToSeconds = timestampToSeconds
 
 export default function srtParser(content: string): SubtitleRow[] {
   content = content.trim()
   const srtLines = content.split('\n')
-  const domParser = new DOMParser()
+
+  const startIndex = srtLines.findIndex(
+    (line) => line.trim() === '1' || line.trim() === '0',
+  )
+
+  srtLines.splice(0, startIndex)
 
   const subtitles: SubtitleRow[] = []
   let subtitle: SubtitleRow = {
@@ -103,15 +109,15 @@ export default function srtParser(content: string): SubtitleRow[] {
       const htmlText = `<p>${fullText}</p>`
       subtitle.htmlText = htmlText
 
-      const parser = domParser.parseFromString(htmlText, 'text/xml')
-      const root = parser.children[0]
-      const hasMultiChild = !!root.children.length
+      const parser = domParser(htmlText)
+      const root = parser.childNodes[0]
+      const hasMultiChild = !!root.childNodes.length
       const text = hasMultiChild
-        ? Array.from(root.children)
+        ? Array.from(root.childNodes)
             .map((node) => node.textContent)
             .join('\n')
         : root.textContent
-      subtitle.text = text
+      subtitle.text = text ?? ''
 
       subtitles.push(subtitle)
     } else {
