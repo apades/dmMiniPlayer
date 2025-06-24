@@ -4,7 +4,8 @@
   "license": "MIT",
   "author": "apades",
   "engines": {
-    "pnpm": ">=10.0.0"
+    "pnpm": ">=10.0.0",
+    "node": ">=18.20.0"
   },
   "scripts": {
     "dev": "nodemon --exec \"run-p dev:*\"",
