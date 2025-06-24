@@ -13,8 +13,9 @@ import { onMessage, sendMessage } from 'webext-bridge/background'
 import Browser from 'webextension-polyfill'
 import './commands'
 import './docPIP'
+// import '../entry/vite.bg'
 
-console.log('run bg')
+console.log('run bg333')
 getBrowserLocalStorage(LOCALE).then((locale) => {
   if (!locale) return
   ;(globalThis as any).__LOCALE = locale

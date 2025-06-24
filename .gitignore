@@ -47,7 +47,7 @@ yarn-error.log*
 .env*
 
 out/
-build/
+/build/
 dist/
 
 # bpp - http://bpp.browser.market/

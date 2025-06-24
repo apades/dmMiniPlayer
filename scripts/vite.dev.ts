@@ -79,6 +79,9 @@ export default defineConfig({
     port: DEV_PORT,
     cors: true,
   },
+  legacy: {
+    skipWebSocketTokenCheck: true,
+  },
   build: {
     write: true,
     outDir,

@@ -31,7 +31,7 @@ export default defineConfig({
   },
   treeshake: false,
   minify: false,
-  watch: true,
+  watch: false,
   sourcemap: 'inline',
   splitting: false,
   clean: false,
