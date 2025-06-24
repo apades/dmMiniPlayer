@@ -15,7 +15,6 @@
 
 - [chrome商店<img src="https://img.shields.io/chrome-web-store/v/nahbabjlllhocabmecfjmcblchhpoclj?label=chrome" />](https://chrome.google.com/webstore/detail/nahbabjlllhocabmecfjmcblchhpoclj)
 - [edge商店<img src="https://img.shields.io/badge/dynamic/json?label=edge&query=%24.version&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fhohfhljppjpiemblilibldgppjpclfbl" /> 更新比较慢，如果有什么紧急bug修复一般都要一周后才能上架](https://microsoftedge.microsoft.com/addons/detail/hohfhljppjpiemblilibldgppjpclfbl)
-- [crx搜搜](https://www.crxsoso.com/webstore/detail/nahbabjlllhocabmecfjmcblchhpoclj)
 - [最新发布<img src="https://img.shields.io/github/v/release/apades/dmMiniPlayer?color=green" />](https://github.com/apades/dmMiniPlayer/releases/latest)
 
 
@@ -33,10 +32,10 @@
   - youtube直播 *
   - twitch直播 *
   - 抖音直播 *
-- 针对 bilibili、youtube 的特殊功能支持
+- 针对 bilibili、Youtube、Netflix 的特殊功能支持
   - 视频播放侧边栏，可直接在画中画里切换播放列表、推荐视频
   - 网站的字幕列表
-  - 进度条的预览功能
+  - 进度条的预览功能(Netflix暂不支持)
 - 支持外挂.xml .ass弹幕文件，下载可以使用[Bilibili-Evolved](https://github.com/the1812/Bilibili-Evolved)或[ACG助手](https://chromewebstore.google.com/detail/kpbnombpnpcffllnianjibmpadjolanh)，也可以通过输入bilibili url的下载弹幕并播放
 - 字幕功能
   - 支持.srt .ass外挂功能
