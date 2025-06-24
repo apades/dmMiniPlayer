@@ -15,7 +15,7 @@ import './commands'
 import './docPIP'
 // import '../entry/vite.bg'
 
-console.log('run bg333')
+console.log('run bg321')
 getBrowserLocalStorage(LOCALE).then((locale) => {
   if (!locale) return
   ;(globalThis as any).__LOCALE = locale

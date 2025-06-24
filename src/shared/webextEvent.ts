@@ -20,6 +20,8 @@ enum WebextEvent {
   beforeStartPIP = 'beforeStartPIP',
   afterStartPIP = 'afterStartPIP',
   closePIP = 'closePIP',
+
+  'dev:reloadExt' = 'dev:reloadExt',
 }
 
 export default WebextEvent

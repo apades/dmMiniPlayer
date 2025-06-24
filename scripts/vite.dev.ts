@@ -12,12 +12,57 @@ import { getChangeLog, pr } from './utils.mjs'
 export const outDir = pr('../dist')
 const version = packageJson.version
 
+function handleDefineValue(value: any): string {
+  if (typeof value === 'undefined') return 'undefined'
+  if (typeof value === 'string') return value
+  return JSON.stringify(value)
+}
+
+function serializeDefine(define: Record<string, any>): string {
+  let res = `{`
+  const keys = Object.keys(define).sort()
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    const val = define[key]
+    res += `${JSON.stringify(key)}: ${handleDefineValue(val)}`
+    if (i !== keys.length - 1) {
+      res += `, `
+    }
+  }
+  return res + `}`
+}
+
 export default defineConfig({
   plugins: [
     react(),
     {
       name: 'onSuccess',
-      configResolved() {
+      config(config, env) {
+        // 处理自定义的 @vite/client 通信脚本
+        const fileContent = fs.readFileSync(
+          pr('../src/core/vite.client.js'),
+          'utf-8',
+        )
+        const newFileContent = fileContent.replace(
+          '__DEFINES__',
+          serializeDefine(config.define!),
+        )
+
+        const newFileSrc = pr('../src/entry/vite.client.dev.js')
+
+        fs.outputFileSync(newFileSrc, newFileContent, 'utf-8')
+
+        config.resolve ??= {}
+        config.resolve.alias ??= {}
+        config.resolve.alias = {
+          ...config.resolve.alias,
+          '@vite/client': newFileSrc,
+          '/@vite/client': newFileSrc,
+        }
+
+        return config
+      },
+      configResolved(config) {
         const locales = fs.readdirSync(pr('../src/locales-ext'))
         locales.forEach((locale) => {
           if (locale === '.translated.json') return

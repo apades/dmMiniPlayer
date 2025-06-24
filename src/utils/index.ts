@@ -646,3 +646,7 @@ export function configStringArrValid(tar: string, configs: string[] = []) {
     return tar.includes(config)
   })
 }
+
+export function normalizePath(path: string) {
+  return path.replace(/\\/g, '/')
+}

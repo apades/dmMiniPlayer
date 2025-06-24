@@ -1,27 +1,29 @@
-// const context = (() => {
-//   if (typeof globalThis !== 'undefined') {
-//     return globalThis
-//   } else if (typeof self !== 'undefined') {
-//     return self
-//   } else if (typeof window !== 'undefined') {
-//     return window
-//   } else {
-//     return Function('return this')()
-//   }
-// })()
-// const defines = __DEFINES__
-// Object.keys(defines).forEach((key) => {
-//   const segments = key.split('.')
-//   let target = context
-//   for (let i = 0; i < segments.length; i++) {
-//     const segment = segments[i]
-//     if (i === segments.length - 1) {
-//       target[segment] = defines[key]
-//     } else {
-//       target = target[segment] || (target[segment] = {})
-//     }
-//   }
-// })
+const context = (() => {
+  if (typeof globalThis !== 'undefined') {
+    return globalThis
+  } else if (typeof self !== 'undefined') {
+    return self
+  } else if (typeof window !== 'undefined') {
+    return window
+  } else {
+    return Function('return this')()
+  }
+})()
+const defines = __DEFINES__
+Object.keys(defines).forEach((key) => {
+  const segments = key.split('.')
+  let target = context
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i]
+    if (i === segments.length - 1) {
+      target[segment] = defines[key]
+    } else {
+      target = target[segment] || (target[segment] = {})
+    }
+  }
+})
+
+const bgTriggerReload = ['/src/background']
 
 class HMRContext {
   constructor(hmrClient, ownerPath) {
@@ -922,8 +924,7 @@ const debounceReload = (time) => {
       timer = null
     }
     timer = setTimeout(() => {
-      console.log('[reload] debounceReload')
-      //   location.reload()
+      location.reload()
     }, time)
   }
 }
@@ -969,8 +970,7 @@ async function handleMessage(payload) {
       notifyListeners('vite:beforeUpdate', payload)
       if (hasDocument) {
         if (isFirstUpdate && hasErrorOverlay()) {
-          console.log('first reload')
-          //   location.reload()
+          location.reload()
           return
         } else {
           if (enableOverlay) {
@@ -1028,22 +1028,31 @@ async function handleMessage(payload) {
     case 'full-reload':
       notifyListeners('vite:beforeFullReload', payload)
       console.log('full reload')
-      //   if (hasDocument) {
-      //     if (payload.path && payload.path.endsWith('.html')) {
-      //       const pagePath = decodeURI(location.pathname)
-      //       const payloadPath = base + payload.path.slice(1)
-      //       if (
-      //         pagePath === payloadPath ||
-      //         payload.path === '/index.html' ||
-      //         (pagePath.endsWith('/') && pagePath + 'index.html' === payloadPath)
-      //       ) {
-      //         pageReload()
-      //       }
-      //       return
-      //     } else {
-      //       pageReload()
-      //     }
-      //   }
+      const nPath = normalizePath(payload.triggeredBy)
+      const reloadExt = bgTriggerReload.find((t) => nPath.includes(t))
+
+      if (reloadExt) {
+        console.log('reloadExt')
+        window.dispatchEvent(new Event('dm-ext:reload'))
+        return
+      }
+
+      if (hasDocument) {
+        if (payload.path && payload.path.endsWith('.html')) {
+          const pagePath = decodeURI(location.pathname)
+          const payloadPath = base + payload.path.slice(1)
+          if (
+            pagePath === payloadPath ||
+            payload.path === '/index.html' ||
+            (pagePath.endsWith('/') && pagePath + 'index.html' === payloadPath)
+          ) {
+            pageReload()
+          }
+          return
+        } else {
+          pageReload()
+        }
+      }
       break
     case 'prune':
       notifyListeners('vite:beforePrune', payload)
@@ -1192,6 +1201,10 @@ function injectQuery(url, queryToInject) {
   const pathname = url.replace(/[?#].*$/, '')
   const { search, hash } = new URL(url, 'http://vite.dev')
   return `${pathname}?${queryToInject}${search ? `&` + search.slice(1) : ''}${hash || ''}`
+}
+
+function normalizePath(path) {
+  return path.replace(/\\/g, '/')
 }
 
 export { ErrorOverlay, createHotContext, injectQuery, removeStyle, updateStyle }
