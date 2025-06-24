@@ -42,6 +42,7 @@
     "@types/react-dom": "^18.3.5",
     "@types/uuid": "^9.0.8",
     "@types/webextension-polyfill": "0.9.0",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^4.3.4",
     "archiver": "^7.0.1",
     "autoprefixer": "^10.4.21",
@@ -96,7 +97,8 @@
     "react-hot-toast": "^2.5.2",
     "uuid": "^9.0.1",
     "webext-bridge": "^6.0.1",
-    "webextension-polyfill": "^0.9.0"
+    "webextension-polyfill": "^0.9.0",
+    "ws": "^8.18.2"
   },
   "pnpm": {
     "patchedDependencies": {

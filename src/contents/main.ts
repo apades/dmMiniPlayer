@@ -22,10 +22,10 @@ import {
 } from '@root/utils/windowMessages'
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import { DocPIPRenderType } from '@root/types/config'
-import _getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
 import API_bilibili from '@root/api/bilibili'
 import isDev from '@root/shared/isDev'
+import _getWebProvider from '../web-provider/getWebProvider'
 
 // iframe里就不用运行了
 if (isTop) {
@@ -160,6 +160,10 @@ function main() {
   // 从popup点击的弹出设置
   onBgMessage(WebextEvent.openSetting, () => {
     window.openSettingPanel()
+  })
+
+  onBgMessage(WebextEvent.reloadPage, () => {
+    location.reload()
   })
 
   const getTime = () => new Date().getTime()

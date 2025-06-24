@@ -1,9 +1,14 @@
 import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
-import { FLOAT_BTN_HIDDEN, LOCALE } from '@root/shared/storeKey'
+import {
+  FLOAT_BTN_HIDDEN,
+  LOCALE,
+  NEED_RELOAD as NEED_RELOAD_PAGE,
+} from '@root/shared/storeKey'
 import WebextEvent from '@root/shared/webextEvent'
 import { t } from '@root/utils/i18n'
 import {
   getBrowserLocalStorage,
+  setBrowserLocalStorage,
   setBrowserSyncStorage,
   useBrowserLocalStorage,
   useBrowserSyncStorage,
@@ -13,13 +18,60 @@ import { onMessage, sendMessage } from 'webext-bridge/background'
 import Browser from 'webextension-polyfill'
 import './commands'
 import './docPIP'
+import { WS_PORT } from '../../scripts/shared'
 // import '../entry/vite.bg'
 
-console.log('run bg321')
+console.log('run bg 123')
 getBrowserLocalStorage(LOCALE).then((locale) => {
   if (!locale) return
   ;(globalThis as any).__LOCALE = locale
 })
+
+const ws = new WebSocket(`ws://localhost:${WS_PORT}`)
+
+ws.addEventListener('open', () => {
+  ws.send('ping')
+})
+ws.addEventListener('message', (e) => {
+  console.log('ws message', e.data)
+  const str = e.data
+  switch (str) {
+    case 'pageReload':
+      reloadPage()
+      break
+    case 'extReload':
+      setBrowserLocalStorage(NEED_RELOAD_PAGE, true).then((res) => {
+        chrome.runtime.reload()
+      })
+  }
+})
+
+getBrowserLocalStorage(NEED_RELOAD_PAGE).then(async (needReload) => {
+  console.log('NEED_RELOAD', needReload)
+  if (!needReload) return
+  await setBrowserLocalStorage(NEED_RELOAD_PAGE, false)
+  reloadPage()
+})
+
+async function reloadPage() {
+  const tabs = await chrome.tabs.query({ active: true })
+  console.log('tabs', tabs)
+
+  tabs.forEach((tab) => {
+    if (!tab.id) return
+    if (!tab.url) return
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => {
+        location.reload()
+      },
+    })
+    // sendMessage(WebextEvent.reloadPage, null, {
+    //   tabId: tab.id,
+    //   context: 'content-script',
+    // })
+  })
+}
 
 onMessage(WebextEvent.needClickWebToOpenPIP, (req) => {
   Browser.notifications.create(new Date().getTime() + '', {

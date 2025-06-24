@@ -8,6 +8,7 @@ import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
 import { DEV_PORT } from '../src/shared/constants'
 import { getChangeLog, pr } from './utils.mjs'
+import { isDev } from './shared'
 
 export const outDir = pr('../dist')
 const version = packageJson.version
@@ -90,6 +91,8 @@ export default defineConfig({
             matches: ['<all_urls>'],
           },
         ]
+
+        manifest.permissions?.push('scripting')
         fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
 
         const popupHtmlFile = pr('../src/popup/index.html')

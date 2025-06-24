@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import { omit } from '@root/utils'
 import { manifest, outDir, shareConfig } from './tsup.shared'
 import { pr } from './utils.mjs'
+import { isDev } from './shared'
 
 export default defineConfig({
   ...omit(shareConfig, ['onSuccess']),
@@ -17,6 +18,8 @@ export default defineConfig({
         matches: ['<all_urls>'],
       },
     ]
+
+    manifest.permissions?.push('scripting')
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
   },
   entry: {

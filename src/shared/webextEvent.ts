@@ -21,7 +21,7 @@ enum WebextEvent {
   afterStartPIP = 'afterStartPIP',
   closePIP = 'closePIP',
 
-  'dev:reloadExt' = 'dev:reloadExt',
+  reloadPage = 'reloadPage',
 }
 
 export default WebextEvent

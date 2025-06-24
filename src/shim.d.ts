@@ -50,5 +50,7 @@ declare module 'webext-bridge' {
     } & Partial<{ left: number; top: number; width: number; height: number }>
 
     [WebextEvent.afterStartPIP]: { width: number }
+
+    [WebextEvent.reloadPage]: null
   }
 }
