@@ -18,10 +18,11 @@ import { onMessage, sendMessage } from 'webext-bridge/background'
 import Browser from 'webextension-polyfill'
 import './commands'
 import './docPIP'
+import isDev from '@root/shared/isDev'
 import { WS_PORT } from '../../scripts/shared'
 // import '../entry/vite.bg'
 
-console.log('run bg 123')
+console.log('run bg')
 getBrowserLocalStorage(LOCALE).then((locale) => {
   if (!locale) return
   ;(globalThis as any).__LOCALE = locale
@@ -34,7 +35,7 @@ ws.addEventListener('open', () => {
 
   setInterval(() => {
     ws.send('ping')
-  }, 1000)
+  }, 5000)
 })
 ws.addEventListener('message', (e) => {
   console.log('ws message', e.data)
@@ -49,6 +50,15 @@ ws.addEventListener('message', (e) => {
       })
   }
 })
+
+if (isDev) {
+  // 好像只要有这个就可以keep alive了
+  chrome.runtime.onConnect.addListener((port) => {
+    port.onMessage.addListener((msg) => {
+      // keep alive
+    })
+  })
+}
 
 getBrowserLocalStorage(NEED_RELOAD_PAGE).then(async (needReload) => {
   console.log('NEED_RELOAD', needReload)
