@@ -47,7 +47,7 @@ yarn-error.log*
 .env*
 
 out/
-build/
+/build/
 dist/
 
 # bpp - http://bpp.browser.market/
@@ -63,3 +63,5 @@ sample-mp4-file.mp4
 metafile-*.json
 
 tsup.*.bundled_*.mjs
+
+vite.client.dev.js

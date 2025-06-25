@@ -6,6 +6,7 @@ import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
 import { getChangeLog, getDefinesConfig } from './utils.mjs'
 import { inlineImport } from './plugin/inlineImport'
+import { isDev } from './shared'
 
 const version = packageJson.version
 export const pr = (...p: any) => path.resolve(__dirname, ...p)
@@ -70,6 +71,10 @@ export const shareConfig = {
         matches: ['<all_urls>'],
       },
     ]
+
+    if (isDev) {
+      manifest.permissions?.push('scripting')
+    }
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
 
     const popupHtmlFile = pr('../src/popup/index.html')

@@ -1,7 +1,5 @@
-import fs2 from 'fs/promises'
-import path from 'path'
-import fs from 'fs-extra'
 import react from '@vitejs/plugin-react'
+import fs from 'fs-extra'
 import { defineConfig } from 'vite'
 import { manifest } from '../src/manifest'
 
@@ -17,7 +15,7 @@ export default defineConfig({
     react(),
     {
       name: 'onSuccess',
-      configResolved() {
+      configResolved(config) {
         const locales = fs.readdirSync(pr('../src/locales-ext'))
         locales.forEach((locale) => {
           if (locale === '.translated.json') return
@@ -45,6 +43,8 @@ export default defineConfig({
             matches: ['<all_urls>'],
           },
         ]
+
+        manifest.permissions?.push('scripting')
         fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
 
         const popupHtmlFile = pr('../src/popup/index.html')
@@ -78,6 +78,9 @@ export default defineConfig({
   server: {
     port: DEV_PORT,
     cors: true,
+  },
+  legacy: {
+    skipWebSocketTokenCheck: true,
   },
   build: {
     write: true,

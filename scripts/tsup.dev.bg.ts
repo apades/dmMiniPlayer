@@ -3,9 +3,12 @@ import fs from 'fs-extra'
 import { omit } from '@root/utils'
 import { manifest, outDir, shareConfig } from './tsup.shared'
 import { pr } from './utils.mjs'
+import { isDev } from './shared'
+import { outputListener } from './plugin/outputListener'
 
 export default defineConfig({
   ...omit(shareConfig, ['onSuccess']),
+  esbuildPlugins: [...shareConfig.esbuildPlugins, outputListener()],
   async onSuccess() {
     manifest.web_accessible_resources = [
       {
@@ -17,6 +20,8 @@ export default defineConfig({
         matches: ['<all_urls>'],
       },
     ]
+
+    manifest.permissions?.push('scripting')
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
   },
   entry: {
