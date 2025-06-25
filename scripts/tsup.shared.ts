@@ -6,7 +6,6 @@ import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
 import { getChangeLog, getDefinesConfig } from './utils.mjs'
 import { inlineImport } from './plugin/inlineImport'
-import { outputListener } from './plugin/outputListener'
 import { isDev } from './shared'
 
 const version = packageJson.version
@@ -16,11 +15,7 @@ export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
 
 export const shareConfig = {
-  esbuildPlugins: [
-    inlineImport({}),
-    (esbuildMetaUrl as any)({}),
-    outputListener(),
-  ],
+  esbuildPlugins: [inlineImport({}), (esbuildMetaUrl as any)({})],
   esbuildOptions(options, ctx) {
     options.alias ??= {}
     Object.assign(options.alias, {
