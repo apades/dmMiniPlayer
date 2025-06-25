@@ -31,6 +31,10 @@ const ws = new WebSocket(`ws://localhost:${WS_PORT}`)
 
 ws.addEventListener('open', () => {
   ws.send('ping')
+
+  setInterval(() => {
+    ws.send('ping')
+  }, 1000)
 })
 ws.addEventListener('message', (e) => {
   console.log('ws message', e.data)
