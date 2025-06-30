@@ -31,16 +31,20 @@ function injectCreateElement() {
           Object.defineProperty(iframeEl, 'contentWindow', {
             get() {
               const contentWindow = srcGetter.call(iframeEl) as Window
-              contentWindow.history.pushState = window.history.pushState
-              contentWindow.history.replaceState = window.history.replaceState
-              contentWindow.history.forward = window.history.forward
+              try {
+                contentWindow.history.pushState = window.history.pushState
+                contentWindow.history.replaceState = window.history.replaceState
+                contentWindow.history.forward = window.history.forward
 
-              contentWindow.History.prototype.pushState = history.pushState
-              contentWindow.History.prototype.replaceState =
-                history.replaceState
-              contentWindow.History.prototype.forward = history.forward
-              // console.log('someone get contentWindow', iframeEl)
-              return contentWindow
+                contentWindow.History.prototype.pushState = history.pushState
+                contentWindow.History.prototype.replaceState =
+                  history.replaceState
+                contentWindow.History.prototype.forward = history.forward
+                // console.log('someone get contentWindow', iframeEl)
+                return contentWindow
+              } catch (error) {
+                return contentWindow
+              }
             },
           })
         } else {
