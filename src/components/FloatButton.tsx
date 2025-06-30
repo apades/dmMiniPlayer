@@ -388,7 +388,7 @@ const FloatButton: FC<Props> = (props) => {
                     provider.openPlayer({ videoEl })
                   }}
                 >
-                  <ReplaceIcon className="w-[16px]" />
+                  <ReplaceIcon width={16} height={16} className="w-[16px]" />
                 </div>
               )}
               <div
@@ -407,7 +407,7 @@ const FloatButton: FC<Props> = (props) => {
                   handleOpenSetting()
                 }}
               >
-                <SettingOutlined />
+                <SettingOutlined width={16} height={16} />
               </div>
             </div>
 
