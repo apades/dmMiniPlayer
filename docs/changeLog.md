@@ -1,3 +1,8 @@
+## v0.6.48
+1. Fixed the problem of using input method in Youtube live danmaku input box to fill undefined
+2. Fixed some pop-up iframe exception problem in Youtube live
+3. Fixed the problem that floating buttons can sometimes be huge in the initial situation
+
 ## v0.6.47
 1. Supports Netflix, including sidebar switching + subtitle function
 2. Fixed the problem of the failure of the Douyin danmaku, but the danmaku input cannot be fixed for the time being
