@@ -1,4 +1,5 @@
 import { addEventListener, wait } from '@root/utils'
+import { isUndefined } from 'lodash-es'
 
 function getDom<T extends HTMLElement>(el: T | string) {
   return typeof el == 'string' ? (document.querySelector(el) as T) : el
@@ -66,6 +67,7 @@ export default class DanmakuSender {
       addEventListener(this.webTextInput, (webTextInput) => {
         webTextInput.addEventListener('input', (e) => {
           const val = webTextInput.value
+          if (isUndefined(val)) return
           this.textInput.value = val
         })
       }),
