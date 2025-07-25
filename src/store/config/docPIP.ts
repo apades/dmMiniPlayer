@@ -125,7 +125,7 @@ export const docPIPConfig = {
   }),
   sameOriginIframeCaptureModePriority: config({
     label: t('settingPanel.sameOriginIframe'),
-    defaultValue: DocPIPRenderType.capture_captureStreamWithCanvas,
+    defaultValue: DocPIPRenderType.capture_captureStream,
     type: 'group',
     group: [
       {
