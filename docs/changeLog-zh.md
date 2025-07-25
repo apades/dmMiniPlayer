@@ -1,3 +1,6 @@
+## v0.6.49
+调整[同源iframe模式]设置默认为[Only captureStream]
+
 ## v0.6.48
 1. 修复Youtube live弹幕输入框中使用输入法会填充undefined问题
 2. 修复Youtube live的部分弹窗iframe异常问题

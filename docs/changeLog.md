@@ -1,3 +1,6 @@
+## v0.6.49
+Adjust the [Same-origin iframe mode] setting default to [Only captureStream]
+
 ## v0.6.48
 1. Fixed the problem of using input method in Youtube live danmaku input box to fill undefined
 2. Fixed some pop-up iframe exception problem in Youtube live
