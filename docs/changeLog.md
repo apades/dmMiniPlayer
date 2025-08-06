@@ -1,3 +1,6 @@
+## v0.6.50
+Fixed an error problem when loading custom subtitles
+
 ## v0.6.49
 Adjust the [Same-origin iframe mode] setting default to [Only captureStream]
 
