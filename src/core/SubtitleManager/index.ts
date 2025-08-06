@@ -106,7 +106,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     console.log('解析后的rows', rows)
 
     this.subtitleItems.push({ label, value: label })
-    this.subtitleCache.set(label, { rows })
+    this.subtitleCache.set(`custom-${label}`, { rows })
     this.useSubtitle(label)
   }
 
@@ -201,9 +201,11 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
 
     await (async () => {
       if (!subtitleData && subtitleItemsValue) {
-        const [err, subtitleRows] = await tryCatch(() =>
-          this.loadSubtitle(subtitleItemsValue),
-        )
+        const [err, subtitleRows] = await tryCatch(() => {
+          const cache = this.subtitleCache.get(`custom-${subtitleItemsValue}`)
+          if (cache) return cache.rows
+          return this.loadSubtitle(subtitleItemsValue)
+        })
 
         if (err || !subtitleRows.length) {
           toast.error(t('error.subtitleLoad'))
