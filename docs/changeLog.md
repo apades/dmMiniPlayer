@@ -1,3 +1,6 @@
+## v0.6.51
+Fixed the problem of displaying video danmaku on Twitch
+
 ## v0.6.50
 Fixed an error problem when loading custom subtitles
 
