@@ -4,7 +4,22 @@ about: Help wanted/需要帮助
 title: ''
 labels: help wanted
 assignees: ''
-
+body:
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: Validations
+      description: Before submitting the issue, please make sure you know something about the project.
+      options:
+        - label: DO NOT SUPPORT FIREFOX OR CORE WITH FIREFOX
+    validations:
+      required: true 
+  - type: textarea
+    id: description
+    attributes:
+      label: Description 描述
+    validations:
+      required: true
 ---
 
 
