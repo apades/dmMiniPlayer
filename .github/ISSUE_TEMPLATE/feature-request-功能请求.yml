@@ -9,8 +9,7 @@ body:
       description: Before submitting the issue, please make sure you know something about the project.
       options:
         - label: DO NOT SUPPORT FIREFOX OR CORE WITH FIREFOX
-    validations:
-      required: true 
+          required: true 
   - type: textarea
     id: description
     attributes:
