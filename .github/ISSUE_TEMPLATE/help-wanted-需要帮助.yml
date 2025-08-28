@@ -1,8 +1,6 @@
 name: Help wanted/需要帮助
-about: Help wanted/需要帮助
-title: ''
+description: Help wanted/需要帮助
 labels: help wanted
-assignees: ''
 body:
   - type: checkboxes
     id: checkboxes

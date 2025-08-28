@@ -1,8 +1,6 @@
 name: Feature request/功能请求
-about: Feature request/功能请求
-title: ''
+description: Feature request/功能请求
 labels: enhancement
-assignees: ''
 body:
   - type: checkboxes
     id: checkboxes
