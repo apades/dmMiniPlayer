@@ -1,3 +1,6 @@
+## v0.6.52
+Replace the dropdown component to fix the problem of moving the subtitles and barrage buttons up in some cases.
+
 ## v0.6.51
 Fixed the problem of displaying video danmaku on Twitch
 
