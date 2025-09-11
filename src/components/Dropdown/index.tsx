@@ -1,6 +1,8 @@
 import Trigger, { TriggerProps } from '@rc-component/trigger'
+import { useAppRootElRef } from '@root/hook/useAppRootEl'
 import classNames from 'classnames'
 import {
+  useContext,
   useRef,
   useState,
   type FC,
@@ -15,7 +17,8 @@ type Props = PropsWithChildren<{
 const Dropdown: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setVisible] = useState(false)
-
+  const rootRef = useAppRootElRef()
+  
   return (
     <Trigger
       popup={props.menuRender}
@@ -33,7 +36,9 @@ const Dropdown: FC<Props> = (props) => {
         offset: [-4, -6],
       }}
       getPopupContainer={() =>
-        containerRef.current?.ownerDocument?.body || document.body
+        rootRef.current ||
+        containerRef.current?.ownerDocument?.body ||
+        document.body
       }
       {...props}
     >

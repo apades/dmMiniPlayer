@@ -1,4 +1,5 @@
 import { useOnce } from '@root/hook'
+import { appRootContext } from '@root/hook/useAppRootEl'
 import isDev from '@root/shared/isDev'
 import { createElement, wait, waitLoopCallback } from '@root/utils'
 import { useUpdate } from 'ahooks'
@@ -55,14 +56,16 @@ const AppRoot: FC<Props> = (props) => {
   })
 
   return (
-    <div
-      ref={containerRef}
-      style={{ all: 'initial', visibility: isDev ? undefined : 'hidden' }}
-    >
-      {root instanceof ShadowRoot
-        ? createPortal(props.children, root)
-        : props.children}
-    </div>
+    <appRootContext.Provider value={{ rootRef: containerRef }}>
+      <div
+        ref={containerRef}
+        style={{ all: 'initial', visibility: isDev ? undefined : 'hidden' }}
+      >
+        {root instanceof ShadowRoot
+          ? createPortal(props.children, root)
+          : props.children}
+      </div>
+    </appRootContext.Provider>
   )
 }
 
