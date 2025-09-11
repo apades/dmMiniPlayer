@@ -187,4 +187,9 @@ export const docPIPConfig = {
     defaultValue: true,
     notRecommended: true,
   }),
+  injectPIPFn: config({
+    label: t('settingPanel.injectPIPFn'),
+    desc: t('settingPanel.injectPIPFnDesc'),
+    defaultValue: true,
+  })
 } as const

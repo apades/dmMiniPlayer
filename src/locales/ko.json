@@ -112,6 +112,8 @@
     "movePIPInOpen_basePos": "위치",
     "movePIPInOpen_offsetX": "위치 오프셋 x",
     "movePIPInOpen_offsetY": "위치 오프셋 y",
+    "injectPIPFn": "웹 사이트 PIP 기능을 주입하십시오",
+    "injectPIPFnDesc": "설정을 적용하려면 페이지를 다시로드하십시오",
     "quickHide_pos": "빠른 가죽 위치",
     "showReplacerBtn": "비디오 교체 버튼 표시",
     "showReplacerBtnDesc": "웹페이지의 비디오 플레이어를 확장 비디오 플레이어로 교체",

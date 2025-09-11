@@ -112,6 +112,8 @@
     "movePIPInOpen_basePos": "Position",
     "movePIPInOpen_offsetX": "Position offset X",
     "movePIPInOpen_offsetY": "Position offset Y",
+    "injectPIPFn": "Inject website PIP function",
+    "injectPIPFnDesc": "Reload the page to take effect settings",
     "quickHide_pos": "Quick hide position",
     "showReplacerBtn": "Show replace video button",
     "showReplacerBtnDesc": "Replace the video player in the web page with the extension video player",

@@ -112,6 +112,8 @@
     "movePIPInOpen_basePos": "位置",
     "movePIPInOpen_offsetX": "位置偏移x",
     "movePIPInOpen_offsetY": "位置偏移y",
+    "injectPIPFn": "注入网站画中画功能",
+    "injectPIPFnDesc": "重新加载页面进行生效设置",
     "quickHide_pos": "快速隐藏位置",
     "showReplacerBtn": "显示替换视频按钮",
     "showReplacerBtnDesc": "将网页中的视频播放器替换成插件的视频播放器",

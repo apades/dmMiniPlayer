@@ -1,4 +1,8 @@
-import { ATTR_DISABLE, ATTR_URL } from '@root/shared/config'
+import {
+  ATTR_DISABLE,
+  ATTR_DISABLE_INJECT_PIP,
+  ATTR_URL,
+} from '@root/shared/config'
 import isDev from '@root/shared/isDev'
 import { DM_MINI_PLAYER_CONFIG } from '@root/shared/storeKey'
 import { getBrowserSyncStorage } from '@root/utils/storage'
@@ -9,6 +13,10 @@ if (isDev) {
 }
 
 getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG).then((config) => {
+  if (config?.injectPIPFn === false) {
+    document.documentElement.setAttribute(ATTR_DISABLE_INJECT_PIP, 'true')
+  }
+
   const isDisable = (config?.disable_sites ?? []).find((site) => {
     const isRegex = site.startsWith('/') && site.endsWith('/')
     if (isRegex)
