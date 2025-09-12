@@ -29,28 +29,30 @@ getBrowserLocalStorage(LOCALE).then((locale) => {
   ;(globalThis as any).__LOCALE = locale
 })
 
-const ws = new WebSocket(`ws://localhost:${WS_PORT}`)
+if (isDev) {
+  const ws = new WebSocket(`ws://localhost:${WS_PORT}`)
 
-ws.addEventListener('open', () => {
-  ws.send('ping')
-
-  setInterval(() => {
+  ws.addEventListener('open', () => {
     ws.send('ping')
-  }, 5000)
-})
-ws.addEventListener('message', (e) => {
-  console.log('ws message', e.data)
-  const str = e.data
-  switch (str) {
-    case 'pageReload':
-      reloadPage()
-      break
-    case 'extReload':
-      setBrowserLocalStorage(NEED_RELOAD_PAGE, true).then((res) => {
-        chrome.runtime.reload()
-      })
-  }
-})
+
+    setInterval(() => {
+      ws.send('ping')
+    }, 5000)
+  })
+  ws.addEventListener('message', (e) => {
+    console.log('ws message', e.data)
+    const str = e.data
+    switch (str) {
+      case 'pageReload':
+        reloadPage()
+        break
+      case 'extReload':
+        setBrowserLocalStorage(NEED_RELOAD_PAGE, true).then((res) => {
+          chrome.runtime.reload()
+        })
+    }
+  })
+}
 
 if (isDev) {
   // 好像只要有这个就可以keep alive了
