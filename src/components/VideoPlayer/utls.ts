@@ -11,6 +11,7 @@ export function handleOnPressEnter<T extends (e: KeyboardEvent) => void>(
   cb: T,
 ): (e: KeyboardEvent) => void {
   return (e) => {
+    e.stopPropagation()
     if (e.nativeEvent.isComposing) return
     if (e.key === 'Enter') {
       e.preventDefault()

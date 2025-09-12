@@ -114,6 +114,7 @@ const DanmakuInputInner: FC<Props> = (props) => {
           danmakuInputRef.current?.blur()
         }}
         onKeyDown={(e) => {
+          e.stopPropagation()
           if (e.code == 'Escape') {
             e.stopPropagation()
             danmakuInputRef.current?.blur()

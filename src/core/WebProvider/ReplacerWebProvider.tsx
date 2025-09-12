@@ -49,6 +49,10 @@ export default class ReplacerWebProvider extends WebProvider {
 
       useOnce(() => {
         const stopPropagationKeyEvent = (e: Event) => {
+          const target = e.target as HTMLElement
+          const isShadowDom = target?.shadowRoot
+          // shadowDom就放行
+          if (isShadowDom) return
           e.stopPropagation()
 
           window.dispatchEvent(
@@ -58,6 +62,15 @@ export default class ReplacerWebProvider extends WebProvider {
             }),
           )
         }
+        const shadowRootKeyEvent = (e: Event) => {
+          window.dispatchEvent(
+            new CustomEvent(`dm-${e.type}`, {
+              detail: e,
+              bubbles: true,
+            }),
+          )
+        }
+
         const events: (keyof WindowEventMap)[] = [
           'keydown',
           'keyup',
@@ -70,6 +83,13 @@ export default class ReplacerWebProvider extends WebProvider {
           document.body.addEventListener(event, stopPropagationKeyEvent, {
             capture: true,
           })
+
+          if (!containerRef.current) return
+          // TODO 这里如果有嵌套shadowDom，就失效。但目前AppRoot只有一层shadowDom，暂时不考虑修复
+          containerRef.current.addEventListener(event, shadowRootKeyEvent)
+          containerRef.current.addEventListener(event, shadowRootKeyEvent, {
+            capture: true,
+          })
         })
 
         return () => {
@@ -78,6 +98,16 @@ export default class ReplacerWebProvider extends WebProvider {
             document.body.removeEventListener(event, stopPropagationKeyEvent, {
               capture: true,
             })
+
+            if (!containerRef.current) return
+            containerRef.current.removeEventListener(event, shadowRootKeyEvent)
+            containerRef.current.removeEventListener(
+              event,
+              shadowRootKeyEvent,
+              {
+                capture: true,
+              },
+            )
           })
         }
       })

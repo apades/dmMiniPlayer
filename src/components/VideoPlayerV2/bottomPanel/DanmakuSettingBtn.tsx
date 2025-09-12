@@ -9,12 +9,11 @@ import { useOnce } from '@root/hook'
 import { useReactBrowserSyncStorage } from '@root/hook/browserStorage'
 import { DANMAKU_VISIBLE } from '@root/shared/storeKey'
 import WebextEvent from '@root/shared/webextEvent'
-import { getAnyObjToString } from '@root/utils'
+import { getAnyObjToString, tryCatch } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 import { t } from '@root/utils/i18n'
 import { setBrowserSyncStorage } from '@root/utils/storage'
 import { useMemoizedFn } from 'ahooks'
-import classNames from 'classnames'
 import { isUndefined } from 'lodash-es'
 import { runInAction } from 'mobx'
 import { observer } from 'mobx-react'
@@ -58,6 +57,8 @@ const Menu: FC = observer((props) => {
       }
       if (data.err) {
         setError(data.err)
+        setDownloading(false)
+        setDownloaded(true)
       }
     })
 

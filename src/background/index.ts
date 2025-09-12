@@ -19,6 +19,7 @@ import Browser from 'webextension-polyfill'
 import './commands'
 import './docPIP'
 import isDev from '@root/shared/isDev'
+import { tryCatch } from '@root/utils'
 import { WS_PORT } from '../../scripts/shared'
 // import '../entry/vite.bg'
 
@@ -148,7 +149,18 @@ onMessage(WebextEvent.setGetDanmaku, (req) => {
   const { data, sender } = req
   const senderId = sender.tabId
   const id = uuid()
-  const danmakuGetter = getDanmakuGetter(data)
+  const [err, danmakuGetter] = tryCatch(() => getDanmakuGetter(data))
+  if (err) {
+    sendMessage(
+      WebextEvent.getDanmaku,
+      { err: err.message },
+      {
+        tabId: senderId,
+        context: 'content-script',
+      },
+    )
+    return { id }
+  }
   danmakuGetter.init()
   danmakuGetter.on('addDanmakus', (data) => {
     sendMessage(
