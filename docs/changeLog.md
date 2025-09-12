@@ -1,5 +1,9 @@
+## v0.6.53
+1. Added settings: Inject the website PIP function as the function of launching the extension. It was turned on by default before, but now it can be turned off.
+2. Fixed some functions failure issues in replacement mode
+
 ## v0.6.52
-Replace the dropdown component to fix the problem of moving the subtitles and barrage buttons up in some cases.
+Replace the dropdown component to fix the problem of moving the subtitles and danmaku buttons up in some cases.
 
 ## v0.6.51
 Fixed the problem of displaying video danmaku on Twitch
