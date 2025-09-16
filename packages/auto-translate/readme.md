@@ -1,0 +1,1 @@
+# @apad/auto-translate

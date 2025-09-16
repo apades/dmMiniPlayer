@@ -1,4 +1,4 @@
-desc: >-
+desc: |
   Adopt the latest picture-in-picture API functions for a better
   picture-in-picture playback experience.
 
@@ -6,10 +6,7 @@ desc: >-
   floating button in the upper left corner to pop up the picture in picture.
 
   Main functional features:
-
-  ✅ Drag or keyboard to control the progress bar, volume, playback rate, etc. of
-  the picture-in-picture window
-
+  ✅ Drag or keyboard to control the progress bar, volume, playback rate, etc. of the picture-in-picture window
   ✅ Danmaku playback and send
     - bilibili video + live broadcast
     - Douyu Live
@@ -18,8 +15,7 @@ desc: >-
     - youtube live broadcast
     - twitch live
     - Douyin Live
-  ✅ Video playback sidebar, you can directly switch playlists and recommended
-  videos in picture-in-picture
+  ✅ Video playback sidebar, you can directly switch playlists and recommended videos in picture-in-picture
     - Video playback sidebar, you can directly switch playlists and recommended videos in picture-in-picture
     - Subtitle list of websites
     - Preview function of progress bar (Netflix does not support it yet)
@@ -34,22 +30,16 @@ desc: >-
   ✅ Supports most https websites, and even supports Crunchyroll, Youtube
   embedded videos
 
-  **If you have any questions, please go to
+  ** If you have any questions, please go to
   https://github.com/apades/dmMiniPlayer/issues to submit the issue, do not
   mention it in the comments**
 
-  *If you are using edge and the tab bar is red, it is recommended to upgrade
-  your browser to 126.0.2592.102 or above
-
-  * It is recommended to use Chrome 116 or above to support all the above
-  functions
-
-  *This plugin also supports local playback, but it is a bit irreversible
-      1. Right-click the plug-in in the plug-in bar and click [Manage Extensions]
-      2. Open [Allow access to file URL]
-      3. Drag the video into the browser to enable the picture-in-picture function
-  **Please switch to non-HEVC mode on the B site, otherwise it will not be used
-  normally**
+  * If you are using edge and the tab bar is red, it is recommended to upgrade your browser to 126.0.2592.102 or above
+  * It is recommended to use Chrome 116 or above to support all the above  functions
+  * This plugin also supports local playback, but it is a bit irreversible
+    1. Right-click the plug-in in the plug-in bar and click [Manage Extensions]
+    2. Open [Allow access to file URL]
+    3. Drag the video into the browser to enable the picture-in-picture function
 
   ChangeLog:
   https://github.com/apades/dmMiniPlayer/blob/main/docs/changeLog.md

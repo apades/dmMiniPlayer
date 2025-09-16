@@ -1,2 +1,3 @@
 packages:
   - 'packages/auto-input-devconsole-ext'
+  - 'packages/auto-translate'

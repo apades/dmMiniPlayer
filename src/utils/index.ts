@@ -189,7 +189,7 @@ export function splitArray<T>(arr: T[], count: number): T[][] {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function isPromiseFunction(fn: Function): boolean {
   return (
-    (fn as any).__proto__.constructor ==
+    (fn as any).__proto__?.constructor ==
     'function AsyncFunction() { [native code] }'
   )
 }
@@ -452,9 +452,6 @@ export async function readTextFromFile(file: File) {
   return text
 }
 
-export const onceLog = onceCall((...e: any) => {
-  console.log(...e)
-})
 export function getDeepPrototype<T = any>(from: any, equal: T): T | null {
   const root = Object.getPrototypeOf(from)
   if (!root) return null

@@ -1,0 +1,22 @@
+{
+  "name": "@apad/auto-translate",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "./dist/index.js",
+  "scripts": {
+    "build": ""
+  },
+  "keywords": [
+    "translate",
+    "cli",
+    "auto translate",
+    "file translate",
+    "google translate",
+    "openai translate"
+  ],
+  "author": "apades",
+  "license": "MIT",
+  "dependencies": {
+    "minimal-promise-pool": "^5.0.0"
+  }
+}
