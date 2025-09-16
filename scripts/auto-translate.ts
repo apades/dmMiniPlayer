@@ -1,17 +1,34 @@
 import path from 'path'
-import fetch from 'node-fetch'
+import { ArgumentParser } from 'argparse'
 import fs from 'fs-extra'
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import { cloneDeep, get, isEqual, isEqualWith, set } from 'lodash-es'
-import { Language } from '@root/utils/i18n'
+import { cloneDeep, get, isEqual, set } from 'lodash-es'
+import fetch from 'node-fetch'
+import { parse, stringify } from 'smol-toml'
+import { stringify as jStringify } from '@ltd/j-toml'
+import { load as yamlLoad, dump as yamlDump } from 'js-yaml'
 
-const proxyPort = process.argv[2] || 7890
-const proxyUrl = `http://127.0.0.1:${proxyPort}`
+const parser = new ArgumentParser()
+parser.add_argument('-port', { help: 'proxy port', default: 7890 })
+parser.add_argument('-e', { help: 'entry file' })
+
+const args = parser.parse_args()
+
+const proxyUrl = `http://127.0.0.1:${args.port}`
 const proxyAgent = new HttpsProxyAgent(proxyUrl)
+const fileName = (args.e as string).split('/').pop()?.split('.').shift()
 
-const transForLangs = Object.values(Language).filter(
-  (v) => v !== Language.English,
-)
+enum Language {
+  English = 'en',
+  'Chinese(Simplified)' = 'zh_CN',
+  'Chinese(Traditional)' = 'zh_TW',
+  // 按知名度排序
+  Spanish = 'es',
+  French = 'fr',
+  Japanese = 'ja',
+  Korean = 'ko',
+}
+const transForLangs = Object.values(Language).filter((v) => v !== fileName)
 
 const googleTranslate = (textArr: string[], target: string) => {
   const url = `https://translate.googleapis.com/translate_a/t?client=gtx&sl=auto&tl=${target}&hl=zh-CN&dt=t&dt=bd&ie=UTF-8&oe=UTF-8&dj=1&source=icon`
@@ -33,16 +50,89 @@ async function main(props: { targetDir: string; sourceFile: string }) {
   const { sourceFile, targetDir } = props
   const translatedSaveFile = path.resolve(targetDir, './.translated.json')
 
+  const [mode, endName, readFile, writeFile] = (() => {
+    const endName = sourceFile.split('.').pop()
+    const mode = (() => {
+      switch (endName) {
+        case 'json':
+          return 'json'
+        case 'toml':
+          return 'toml'
+        case 'yaml':
+        case 'yml':
+          return 'yaml'
+        default:
+          return endName
+      }
+    })()
+
+    return [
+      mode,
+      endName,
+      ...(() => {
+        switch (mode) {
+          case 'json':
+            return [
+              fs.readJsonSync,
+              (file: string, data: any) => {
+                fs.writeJsonSync(file, data, { spaces: 2 })
+              },
+            ] as const
+          case 'toml':
+            return [
+              (file: string) => {
+                return parse(fs.readFileSync(file, 'utf-8'))
+              },
+              (file: string, data: any) => {
+                const str = jStringify(data, {
+                  xBeforeNewlineInMultilineTable: ',',
+                })
+                console.log('str', str)
+                // const p = parse(str)
+
+                // str = str.replaceAll('')
+                fs.writeFileSync(file, str, 'utf-8')
+              },
+            ] as const
+          case 'yaml':
+            return [
+              (file: string) => {
+                return yamlLoad(fs.readFileSync(file, 'utf-8'))
+              },
+              (file: string, data: any) => {
+                fs.writeFileSync(
+                  file,
+                  yamlDump(data).replaceAll('\n\n\n', '\n\n'),
+                  'utf-8',
+                )
+              },
+            ] as const
+          default:
+            return [() => {}, () => {}] as const
+        }
+      })(),
+    ]
+  })()
+
+  if (!fs.existsSync(translatedSaveFile)) {
+    fs.writeJsonSync(translatedSaveFile, {})
+  }
+
+  console.log('mode', mode)
+
   const translatedJson = fs.readJsonSync(translatedSaveFile)
-  const sourceJson = fs.readJsonSync(sourceFile)
+  const sourceJson = readFile(sourceFile)
 
   try {
     for (const lang of transForLangs) {
       const translateTargetFile = path.resolve(
         targetDir,
-        `./${lang.replace('-', '_')}.json`,
+        `./${lang.replace('-', '_')}.${endName}`,
       )
-      const translateTargetJson = fs.readJsonSync(translateTargetFile)
+
+      const translateTargetJson = fs.existsSync(translateTargetFile)
+        ? readFile(translateTargetFile)
+        : {}
       const copySource = cloneDeep(sourceJson)
 
       /** deepKey -> val */
@@ -87,7 +177,7 @@ async function main(props: { targetDir: string; sourceFile: string }) {
 
       console.log(lang, needTranslateMap)
 
-      fs.writeJsonSync(translateTargetFile, copySource, { spaces: 2 })
+      writeFile(translateTargetFile, copySource)
     }
 
     // 完成了就复制source到translated
@@ -98,11 +188,6 @@ async function main(props: { targetDir: string; sourceFile: string }) {
 }
 
 main({
-  targetDir: path.resolve(__dirname, '../src/locales'),
-  sourceFile: path.resolve(__dirname, '../src/locales/en.json'),
-})
-
-main({
-  targetDir: path.resolve(__dirname, '../src/locales-ext'),
-  sourceFile: path.resolve(__dirname, '../src/locales-ext/en.json'),
+  targetDir: path.resolve(process.cwd(), args.e, '../'),
+  sourceFile: path.resolve(process.cwd(), args.e),
 })

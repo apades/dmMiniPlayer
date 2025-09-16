@@ -1,0 +1,57 @@
+desc: >-
+  Adoptez les dernières fonctions API d'image dans une meilleure expérience de
+  lecture d'image dans l'image.
+
+  Cliquez sur l'icône du plug-in ou déplacez la souris dans la vidéo et cliquez
+  sur le bouton flottant dans le coin supérieur gauche pour faire apparaître
+  l'image en image.
+
+  Caractéristiques fonctionnelles principales:
+
+  ✅ Faites glisser ou clavier pour contrôler la barre de progression, le volume,
+  le taux de lecture, etc. de la fenêtre d'image dans la situation
+
+  ✅ La lecture du barrage et envoyez
+    - Bilibili Video + Live Broadcast
+    - Douyu en direct
+    - L'animation folle
+    - Huya en direct
+    - YouTube Live Broadcast
+    - Twitch Live
+    - Douyin Live
+  ✅ Barbaire latérale de lecture vidéo, vous pouvez changer directement les
+  listes de lecture et les vidéos recommandées dans l'image dans l'image
+    - Barbaire latérale de lecture vidéo, vous pouvez changer directement les listes de lecture et les vidéos recommandées dans l'image dans l'image
+    - Liste des sous-titres des sites Web
+    - Fonction de prévisualisation de la barre de progression (Netflix ne le prend pas encore en charge)
+  ✅ Plugin de prise en charge .xml.
+    - Il a également la fonction intégrée pour télécharger le barrage en entrant dans l'URL de Bilibili
+  ✅ Fonction de sous-titre
+    - Prise en charge de la fonction de plug-in .ass.
+    - Traduction de sous-titre + fonction bilingue
+  ✅ Appuyez longtemps sur le bouton droit pour doubler la vitesse, en avant et
+  en arrière rapide et vers l'arrière, capture d'écran et autres fonctions +
+  touches de raccourci personnalisées
+  ✅ Remplacez le lecteur vidéo Web par un lecteur vidéo par une extension
+  ✅ prend en charge la plupart des sites Web HTTP
+
+  ** Si vous avez des questions, veuillez vous rendre sur
+  https://github.com/apades/dmminiplayer/issues pour soumettre le problème, ne
+  le mentionnez pas dans les commentaires **
+
+  * Si vous utilisez Edge et que la barre d'onglet est rouge, il est recommandé
+  de mettre à niveau votre navigateur à 126.0.2592.102 ou supérieur
+
+  * Il est recommandé d'utiliser Chrome 116 ou plus pour prendre en charge
+  toutes les fonctions ci-dessus
+
+  * Ce plugin prend également en charge la lecture locale, mais c'est un peu
+  irréversible
+      1. Cliquez avec le bouton droit sur le plug-in dans la barre de plug-in et cliquez sur [Gérer les extensions]
+      2. Ouvrir [Autoriser l'accès à l'URL du fichier]
+      3. Faites glisser la vidéo dans le navigateur pour activer la fonction d'image dans la situation
+  ** Veuillez passer en mode non-HEVC sur le site B, sinon il ne sera pas
+  utilisé normalement **
+
+  ChangeLog:
+  https://github.com/apades/dmminiplayer/blob/main/docs/changelog.md

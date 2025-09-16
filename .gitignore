@@ -1,6 +1,8 @@
 **/export/*
 .DS_store
 node_modules
+.wxt
+.output
 
 logs
 *.log

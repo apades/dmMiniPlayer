@@ -1,0 +1,58 @@
+desc: >-
+  Adopte las últimas funciones de API de imagen en imagen para una mejor
+  experiencia de reproducción de imagen en imagen.
+
+  Haga clic en el icono de complemento, o mueva el mouse al video y haga clic en
+  el botón flotante en la esquina superior izquierda para aparecer la imagen en
+  la imagen.
+
+  Características funcionales principales:
+
+  ✅ Arrastre o teclado para controlar la barra de progreso, el volumen, la tasa
+  de reproducción, etc. de la ventana de imagen en imagen
+  ✅ Reproducción y envío de bombardeo
+    - video bilibili + transmisión en vivo
+    - Douyu Live
+    - Animación Crazy
+    - Huya Live
+    - Transmisión en vivo de YouTube
+    - Twitch Live
+    - Douyin Live
+  ✅ Barra lateral de reproducción de video, puede cambiar directamente las
+  listas de reproducción y los videos recomendados en la imagen en imagen
+    -Barra lateral de reproducción de video, puedes cambiar directamente las listas de reproducción y los videos recomendados en la imagen en imagen
+    - Lista de subtítulos de sitios web
+    - Vista previa de la barra de progreso (Netflix aún no lo admite)
+  ✅ Soporte de archivos de bombardeo .xml .sass.
+    - También tiene la función incorporada para descargar Barrage ingresando la URL de Bilibili
+  ✅ Función de subtítulo
+    - Soporte de la función de complemento .srt .ass
+    - Traducción de subtítulos + función bilingüe
+  ✅ Long Presione el botón derecho para duplicar la velocidad, rápido hacia
+  adelante y el marco hacia atrás por marco, captura de pantalla y otras
+  funciones + teclas de acceso directo personalizado
+  ✅ Reemplace el reproductor de video web con reproductor de video con extensión
+  ✅ Admite la mayoría de los sitios web HTTPS, e incluso admite videos
+  incrustados de Crunchyroll, YouTube
+
+
+  ** Si tiene alguna pregunta, vaya a
+  https://github.com/apades/dminiplayer/issues para enviar el problema, no lo
+  mencione en los comentarios **
+
+  *Si está usando Edge y la barra de pestaña está roja, se recomienda actualizar
+  su navegador a 126.0.2592.102 o superior
+
+  * Se recomienda usar Chrome 116 o superior para admitir todas las funciones
+  anteriores
+
+  *Este complemento también admite la reproducción local, pero es un poco
+  irreversible
+      1. Haga clic con el botón derecho en el complemento en la barra de complemento y haga clic en [Administrar extensiones]
+      2. Abra [Permitir acceso a la URL de archivo]
+      3. Arrastre el video al navegador para habilitar la función de imagen en imagen
+  ** Cambie al modo no HEVC en el sitio B, de lo contrario no se usará
+  normalmente **
+
+  ChangeLog:
+  https://github.com/apades/dminiplayer/blob/main/docs/changelog.md
