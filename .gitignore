@@ -1,6 +1,7 @@
 **/export/*
 .DS_store
 node_modules
+userDataDir
 
 logs
 *.log

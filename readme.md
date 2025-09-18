@@ -86,6 +86,9 @@
 > 🙏 thanks list
 > 
 > - 2025/3/4 我爱吃肉
+> - 2025/6/9 zzzzz
+> - 2025/7/2 真空
+> - 2025/9/18 匿名用户
 
 ## 📜 License
 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
