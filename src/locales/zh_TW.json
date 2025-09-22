@@ -23,6 +23,7 @@
     "pauseInClose_video": "關閉影片時暫停",
     "pauseInClose_live": "關閉直播也暫停",
     "pauseInClose_liveDesc": "並不是很推薦",
+    "disable_scrollToChangeVolume": "停用滾輪改變音量",
     "performanceInfo": "效能面版",
     "performanceUpdateFrame": "效能面版更新頻率",
     "performanceUpdateFrameDesc": "效能面板每觸發request幾次更新一次",

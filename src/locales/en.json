@@ -23,6 +23,7 @@
     "pauseInClose_video": "Pause when closing video",
     "pauseInClose_live": "Pause when closing live",
     "pauseInClose_liveDesc": "Not recommended",
+    "disable_scrollToChangeVolume": "Disable scroll to change volume",
     "performanceInfo": "Performance info",
     "performanceUpdateFrame": "Performance info update frequency",
     "performanceUpdateFrameDesc": "Update info when trigger request in {val} times",

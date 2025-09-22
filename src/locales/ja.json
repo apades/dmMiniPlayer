@@ -23,6 +23,7 @@
     "pauseInClose_video": "ビデオを閉じるときに一時停止します",
     "pauseInClose_live": "ライブブロードキャストを閉じて一時停止します",
     "pauseInClose_liveDesc": "あまり推奨されません",
+    "disable_scrollToChangeVolume": "スクロールホイールを無効にしてボリュームを変更します",
     "performanceInfo": "パフォーマンスパネル",
     "performanceUpdateFrame": "パフォーマンス パネルの更新頻度",
     "performanceUpdateFrameDesc": "リクエストがトリガーされるたびにパフォーマンス パネルが更新される回数",

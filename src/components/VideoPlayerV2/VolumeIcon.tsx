@@ -25,7 +25,7 @@ const VolumeIcon: FC = (props) => {
     isVisible && (
       <div className="z-10 ab-center pointer-events-none">
         <div className="f-i-center relative gap-2 vp-cover-icon-bg rounded-[8px] px-3 py-1 mb:text-[14px] text-[18px]">
-          <Iconfont type="iconicon_player_volume" />
+          <Iconfont type="iconicon_player_volume" className="mt-1" />
           <span>{volume}%</span>
         </div>
       </div>

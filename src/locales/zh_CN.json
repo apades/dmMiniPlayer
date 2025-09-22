@@ -23,6 +23,7 @@
     "pauseInClose_video": "关闭视频时暂停",
     "pauseInClose_live": "关闭直播也暂停",
     "pauseInClose_liveDesc": "并不是很推荐",
+    "disable_scrollToChangeVolume": "禁用滚轮改变音量",
     "performanceInfo": "性能面版",
     "performanceUpdateFrame": "性能面版更新频率",
     "performanceUpdateFrameDesc": "性能面板每触发request多少次更新一次",

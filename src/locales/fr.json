@@ -23,6 +23,7 @@
     "pauseInClose_video": "Pause à la fermeture de la vidéo",
     "pauseInClose_live": "Fermez la diffusion en direct et mettez-la en pause",
     "pauseInClose_liveDesc": "Pas très recommandé",
+    "disable_scrollToChangeVolume": "Désactivez la roue de défilement pour modifier le volume",
     "performanceInfo": "Panneau de performances",
     "performanceUpdateFrame": "Fréquence de mise à jour du panneau de performances",
     "performanceUpdateFrameDesc": "Combien de fois le panneau de performances est mis à jour à chaque fois qu'une requête est déclenchée",

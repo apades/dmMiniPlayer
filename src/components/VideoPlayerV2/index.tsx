@@ -32,6 +32,7 @@ import {
   useMemo,
   useRef,
   useState,
+  WheelEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
 import AppRoot from '../AppRoot'
@@ -339,6 +340,18 @@ const VideoPlayerV2Inner = observer(
       }
     })
 
+    const handleWheelInVideo = useMemoizedFn(
+      (e: WheelEvent<HTMLDivElement>) => {
+        if (configStore.disable_scrollToChangeVolume) return
+        const isUp = e.deltaY < 0
+        const video = videoRef.current
+        if (!video) return
+        e.stopPropagation()
+        // e.preventDefault()
+        video.volume = isUp ? video.volume + 0.01 : video.volume - 0.01
+      },
+    )
+
     const el = (
       <div
         tabIndex={-1}
@@ -372,6 +385,7 @@ const VideoPlayerV2Inner = observer(
           onMouseMove={() => {
             handleChangeActionArea(true)
           }}
+          onWheel={handleWheelInVideo}
         >
           <div ref={videoInsertRef}></div>
           <style>

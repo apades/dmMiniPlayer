@@ -154,6 +154,10 @@ export const baseConfigMap = {
     defaultValue: true,
     label: t('settingPanel.pauseInClose_video'),
   }),
+  disable_scrollToChangeVolume: config({
+    defaultValue: false,
+    label: t('settingPanel.disable_scrollToChangeVolume'),
+  }),
   // pauseInClose_live: config({
   //   defaultValue: false,
   //   label: t('settingPanel.pauseInClose_live'),

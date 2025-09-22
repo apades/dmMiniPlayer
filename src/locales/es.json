@@ -23,6 +23,7 @@
     "pauseInClose_video": "Pausar al cerrar el vídeo",
     "pauseInClose_live": "Cierra la transmisión en vivo y pausala",
     "pauseInClose_liveDesc": "No muy recomendado",
+    "disable_scrollToChangeVolume": "Desactivar la rueda de desplazamiento para cambiar el volumen",
     "performanceInfo": "Información de rendimiento",
     "performanceUpdateFrame": "Frecuencia de actualización del panel de rendimiento",
     "performanceUpdateFrameDesc": "Cuántas veces se actualiza el panel de rendimiento cada vez que se activa una solicitud",

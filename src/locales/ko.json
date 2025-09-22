@@ -23,6 +23,7 @@
     "pauseInClose_video": "동영상을 닫을 때 일시중지",
     "pauseInClose_live": "생방송을 닫고 일시중지하세요",
     "pauseInClose_liveDesc": "별로 권장되지 않음",
+    "disable_scrollToChangeVolume": "스크롤 휠을 비활성화하여 볼륨을 변경하십시오",
     "performanceInfo": "성능 패널",
     "performanceUpdateFrame": "성능 패널 업데이트 빈도",
     "performanceUpdateFrameDesc": "요청이 트리거될 때마다 성능 패널이 업데이트되는 횟수",
