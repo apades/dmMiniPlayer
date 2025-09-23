@@ -18,7 +18,7 @@ const Dropdown: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setVisible] = useState(false)
   const rootRef = useAppRootElRef()
-  
+
   return (
     <Trigger
       popup={props.menuRender}
@@ -35,7 +35,8 @@ const Dropdown: FC<Props> = (props) => {
         points: ['bl', 'tl'],
         offset: [-4, -6],
       }}
-      getPopupContainer={() =>
+      getPopupContainer={(node) =>
+        props?.getPopupContainer?.(node) ||
         rootRef.current ||
         containerRef.current?.ownerDocument?.body ||
         document.body

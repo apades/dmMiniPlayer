@@ -21,7 +21,7 @@ type Props = {
 const SubtitleSelectionInner: FC<Props> = observer((props) => {
   const { subtitleManager } = props
   const activeLabel = subtitleManager.activeSubtitleLabel
-  const { eventBus } = useContext(vpContext)
+  const { eventBus, videoPlayerRef } = useContext(vpContext)
 
   const handleChangeVisible = useMemoizedFn(() => {
     runInAction(() => {
@@ -45,7 +45,12 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
   )
 
   return (
-    <Dropdown menuRender={() => <Menu {...props} />}>
+    <Dropdown
+      menuRender={() => <Menu {...props} />}
+      getPopupContainer={(node) =>
+        videoPlayerRef.current || node.ownerDocument.body!
+      }
+    >
       <ActionButton
         isUnActive={!subtitleManager.showSubtitle}
         onClick={handleChangeVisible}
