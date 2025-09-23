@@ -133,6 +133,7 @@ export default class DocPIPWebProvider extends WebProvider {
     const handleWheel = (e: WheelEvent) => {
       if (!e.ctrlKey) return
       e.preventDefault()
+      e.stopPropagation()
       const isUp = e.deltaY < 0
 
       const {
@@ -193,7 +194,10 @@ export default class DocPIPWebProvider extends WebProvider {
         }
       }
     }
-    pipWindow.addEventListener('wheel', handleWheel, { passive: false })
+    pipWindow.addEventListener('wheel', handleWheel, {
+      passive: false,
+      capture: true,
+    })
 
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {
@@ -214,7 +218,7 @@ export default class DocPIPWebProvider extends WebProvider {
         })
       }
       this.emit(PlayerEvent.close)
-      pipWindow.removeEventListener('wheel', handleWheel)
+      pipWindow.removeEventListener('wheel', handleWheel, { capture: true })
       sendMessage(WebextEvent.closePIP, null)
 
       // 恢复原始标题
