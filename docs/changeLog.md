@@ -1,3 +1,7 @@
+## v0.6.54
+1. Add the scroll wheel to adjust the volume function
+2. Fixed the issue of scrolling + no highlighting in the subtitle function list
+
 ## v0.6.53
 1. Added settings: Inject the website PIP function as the function of launching the extension. It was turned on by default before, but now it can be turned off.
 2. Fixed some functions failure issues in replacement mode
