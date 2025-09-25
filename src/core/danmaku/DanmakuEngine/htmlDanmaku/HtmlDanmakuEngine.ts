@@ -202,6 +202,9 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     this.unbindEvent()
     this.media = video
     this.bindEvent(video)
+    if (!video.paused) {
+      this.container.classList.remove('paused')
+    }
   }
 
   override forceRerenderDanmaku(): void {
