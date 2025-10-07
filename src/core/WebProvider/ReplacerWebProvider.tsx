@@ -15,6 +15,7 @@ import { dqParents, getDomAbsolutePosition } from '@root/utils/dom'
 import { sendMessage } from '@root/inject/contentSender'
 import { onPostMessage } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
+import playerConfig from '@root/store/playerConfig'
 import { PlayerEvent } from '../event'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { WebProvider } from '.'
@@ -28,8 +29,7 @@ export default class ReplacerWebProvider extends WebProvider {
     await this.miniPlayer.init()
 
     const videoEl = this.webVideo
-    const [topParentWithPosition, , isFixedPos] =
-      getVideoElInitFloatButtonData(videoEl)
+    const { topContainerEl: topParentWithPosition, isFixedPos } = playerConfig
 
     const replacerParent = isFixedPos
       ? this.webVideo.parentElement

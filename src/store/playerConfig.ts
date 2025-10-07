@@ -3,13 +3,17 @@ import { VideoPosData } from '@root/shared/postMessageEvent'
 import { DocPIPRenderType } from '@root/types/config'
 
 type PlayerConfig = {
-  cropTarget?: CropTarget
-  restrictionTarget?: RestrictionTarget
-  forceDocPIPRenderType?: DocPIPRenderType
-  posData?: VideoPosData
-  webRTCMediaStream?: MediaStream
   clear(): void
-}
+} & Partial<{
+  cropTarget: CropTarget
+  restrictionTarget: RestrictionTarget
+  forceDocPIPRenderType: DocPIPRenderType
+  posData: VideoPosData
+  webRTCMediaStream: MediaStream
+  topContainerEl: HTMLElement
+  isFixedPos: boolean
+}>
+
 const playerConfig: PlayerConfig = {
   clear() {
     const ignores = ['clear']

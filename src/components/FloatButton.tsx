@@ -385,7 +385,11 @@ const FloatButton: FC<Props> = (props) => {
                       DocPIPRenderType.replaceWebVideoDom
                     const provider = getWebProvider()
                     window.provider = provider
-                    provider.openPlayer({ videoEl })
+                    playerConfig.topContainerEl = props.container
+                    playerConfig.isFixedPos = true
+                    provider.openPlayer({
+                      videoEl,
+                    })
                   }}
                 >
                   <ReplaceIcon width={16} height={16} className="w-[16px]" />
