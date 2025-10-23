@@ -1,3 +1,8 @@
+## v0.6.55
+1. Fixed the problem that ctrl + scroll wheel cannot zoom in the picture-in-picture function
+2. Fixed the issue where the danmakus would be paused when the video was replaced.
+3. Fixed the problem that the video button may not be displayed properly when clicking the replace video button under the floating button.
+
 ## v0.6.54
 1. Add the scroll wheel to adjust the volume function
 2. Fixed the issue of scrolling + no highlighting in the subtitle function list
