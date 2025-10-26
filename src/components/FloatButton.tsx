@@ -386,7 +386,7 @@ const FloatButton: FC<Props> = (props) => {
                     const provider = getWebProvider()
                     window.provider = provider
                     playerConfig.topContainerEl = props.container
-                    playerConfig.isFixedPos = true
+                    playerConfig.isFixedPos = !!fixedPos
                     provider.openPlayer({
                       videoEl,
                     })
