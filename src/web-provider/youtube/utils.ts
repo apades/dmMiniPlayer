@@ -2,7 +2,7 @@ import type {
   SubtitleItem,
   SubtitleRow,
 } from '@root/core/SubtitleManager/types'
-import { dq } from '@root/utils'
+import { dq, onceCall } from '@root/utils'
 
 export async function getVideoInfo(url = location.href) {
   const htmlText = await fetch(url).then((res) => res.text())
@@ -22,6 +22,19 @@ export async function getSubtitles(
   url = location.href,
 ): Promise<SubtitleItem[]> {
   const id = new URLSearchParams(location.search).get('v')
+  if (!id) return []
+
+  const subtitles = await getVideoSubtitlesInfo(id)
+
+  console.log('subtitles', subtitles)
+  return subtitles.map((s: any) => ({
+    label: s?.name?.simpleText || s?.name?.runs?.[0]?.text || s.languageCode,
+    value: s.baseUrl,
+  }))
+}
+
+const getVideoSubtitlesInfo = onceCall(async (id: string | number) => {
+  // 这里1秒内重复请求会出现数据不对的情况，也不知道怎么触发了重复请求，就不管了
   const videoInfo = await fetch('/youtubei/v1/player', {
     method: 'post',
     headers: {
@@ -41,12 +54,8 @@ export async function getSubtitles(
   const subtitles =
     videoInfo?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
 
-  console.log('subtitles', subtitles)
-  return subtitles.map((s: any) => ({
-    label: s?.name?.simpleText || s?.name?.runs?.[0]?.text || s.languageCode,
-    value: s.baseUrl,
-  }))
-}
+  return subtitles
+})
 
 export async function getSubtitle(subtitleUrl: string): Promise<SubtitleRow[]> {
   const xmlText = await fetch(subtitleUrl).then((res) => res.text())
