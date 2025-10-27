@@ -33,9 +33,8 @@ if (isDev) {
   const ws = new WebSocket(`ws://localhost:${WS_PORT}`)
 
   ws.addEventListener('open', () => {
-    ws.send('ping')
-
     setInterval(() => {
+      if (ws.readyState !== ws.CONNECTING) return
       ws.send('ping')
     }, 5000)
   })
