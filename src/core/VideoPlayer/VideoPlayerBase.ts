@@ -76,6 +76,8 @@ export default class VideoPlayerBase
   private unobserveVideoElChange = () => {}
   private unlistenOnClose = () => {}
   protected onUnload() {}
+
+  private src = ''
   async init() {
     this.unlistenOnClose = this.on2(PlayerEvent.close, () => {
       console.log('PlayerEvent.close')
@@ -100,6 +102,15 @@ export default class VideoPlayerBase
         },
       )
     }
+
+    this.src = this.webVideoEl.src
+
+    this.webVideoEl.addEventListener('loadedmetadata', () => {
+      if (this.src !== this.webVideoEl.src) {
+        this.src = this.webVideoEl.src
+        this.emit(PlayerEvent.videoSrcChanged)
+      }
+    })
 
     runInAction(() => {
       if (this.danmakuSender) {

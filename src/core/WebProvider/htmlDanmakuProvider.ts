@@ -3,6 +3,7 @@ import { dq1 } from '@root/utils'
 import DanmakuSender, {
   Props as DanmakuSenderProps,
 } from '../danmaku/DanmakuSender'
+import { PlayerEvent } from '../event'
 import { WebProvider } from '.'
 
 /**
@@ -56,6 +57,23 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     sendMessage('run-code', { function: fn.toString() })
 
     this.startObserveHtmlDanmaku(this.getObserveHtmlDanmakuConfig())
+
+    this.addOnUnloadFn(
+      this.on2(PlayerEvent.webVideoChanged, () => {
+        setTimeout(() => {
+          this.stopObserveHtmlDanmaku()
+          this.startObserveHtmlDanmaku(this.getObserveHtmlDanmakuConfig())
+        }, 500)
+      }),
+    )
+    this.addOnUnloadFn(
+      this.on2(PlayerEvent.videoSrcChanged, () => {
+        setTimeout(() => {
+          this.stopObserveHtmlDanmaku()
+          this.startObserveHtmlDanmaku(this.getObserveHtmlDanmakuConfig())
+        }, 500)
+      }),
+    )
   }
 
   abstract getObserveHtmlDanmakuConfig(): Parameters<
@@ -98,7 +116,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     if (!props.container) return
     this.htmlDanmakuObserver = new MutationObserver((list) => {
       const nodes = list.map((l) => [...l.addedNodes]).flat()
-      console.log('nodes', list.length, nodes)
+      // console.log('nodes', list.length, nodes)
       if (!nodes)
         return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
 
@@ -110,7 +128,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
         const isDanmu = props?.isDanmu?.(node) ?? true
         if (!isDanmu) return
         const text = dq1(props.text, node)?.textContent
-        console.log('text', text)
+        // console.log('text', text)
         if (!text) return
 
         this.danmakuEngine?.addDanmakus([

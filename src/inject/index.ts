@@ -65,3 +65,27 @@ try {
 } catch (error) {
   console.error(error)
 }
+
+// chrome.scripting.executeScript({
+//   world: ''
+// })
+
+// ;(()=>{
+//   let code = `let rsv = new Function('return 1')()`
+//   let file = new File([code], 'test.js', { type: 'text/javascript' })
+//   let src = URL.createObjectURL(file)
+
+//   let myPolicy = trustedTypes.createPolicy('myPolicy', {
+//     createHTML: (string) => string, // Or implement sanitization logic here
+//     createScriptURL: (string) => string,
+//     createScript: (string) => string,
+//   })
+
+//   let el = document.createElement('script')
+//   // let txt = myPolicy.createScript(`let rsv = new Function('return 1')()`)
+//   let txt = myPolicy.createScriptURL(src)
+
+//   el.src = txt
+//   // el.innerHTML = txt
+//   document.body.appendChild(el)
+// })()
