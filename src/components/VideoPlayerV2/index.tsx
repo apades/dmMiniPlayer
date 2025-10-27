@@ -3,7 +3,6 @@ import {
   CloseOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
-  LeftOutlined,
   QuestionCircleFilled,
   SettingOutlined,
   ShrinkOutlined,
@@ -32,7 +31,6 @@ import {
   useMemo,
   useRef,
   useState,
-  WheelEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
 import AppRoot from '../AppRoot'
@@ -46,6 +44,10 @@ import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
 import PlayedTime from './bottomPanel/PlayedTime'
 import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
 import TogglePlayActionButton from './bottomPanel/TogglePlayActionButton'
+import {
+  ChangeNextVideoButton,
+  ChangePreVideoButton,
+} from './bottomPanel/VideoChangeButton'
 import VolumeBar from './bottomPanel/VolumeBar'
 import vpContext, { ContextData, defaultVpContext } from './context'
 import DanmakuContainer from './DanmakuContainer'
@@ -63,10 +65,6 @@ import ScreenshotTips from './ScreenshotTips'
 import SpeedIcon from './SpeedIcon'
 import Toast from './Toast'
 import VolumeIcon from './VolumeIcon'
-import {
-  ChangeNextVideoButton,
-  ChangePreVideoButton,
-} from './bottomPanel/VideoChangeButton'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -340,18 +338,6 @@ const VideoPlayerV2Inner = observer(
       }
     })
 
-    const handleWheelInVideo = useMemoizedFn(
-      (e: WheelEvent<HTMLDivElement>) => {
-        if (configStore.disable_scrollToChangeVolume) return
-        const isUp = e.deltaY < 0
-        const video = videoRef.current
-        if (!video) return
-        e.stopPropagation()
-        // e.preventDefault()
-        video.volume = isUp ? video.volume + 0.01 : video.volume - 0.01
-      },
-    )
-
     const el = (
       <div
         tabIndex={-1}
@@ -385,7 +371,7 @@ const VideoPlayerV2Inner = observer(
           onMouseMove={() => {
             handleChangeActionArea(true)
           }}
-          onWheel={handleWheelInVideo}
+          // onWheel={handleWheelInVideo}
         >
           <div ref={videoInsertRef}></div>
           <style>

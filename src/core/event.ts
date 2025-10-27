@@ -54,6 +54,8 @@ export enum PlayerEvent {
   toast = 'toast',
   /**视频的url改变了，用来检测切换了视频，但video el不变的情况 */
   videoSrcChanged = 'videoSrcChanged',
+
+  volumeChanged = 'volumeChanged',
 }
 
 type ToastArgs = Parameters<typeof toast>
