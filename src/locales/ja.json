@@ -23,7 +23,7 @@
     "pauseInClose_video": "ビデオを閉じるときに一時停止します",
     "pauseInClose_live": "ライブブロードキャストを閉じて一時停止します",
     "pauseInClose_liveDesc": "あまり推奨されません",
-    "disable_scrollToChangeVolume": "スクロールホイールを無効にしてボリュームを変更します",
+    "disable_scrollToChangeVolume": "音量変更のためのスクロールを無効にする",
     "performanceInfo": "パフォーマンスパネル",
     "performanceUpdateFrame": "パフォーマンス パネルの更新頻度",
     "performanceUpdateFrameDesc": "リクエストがトリガーされるたびにパフォーマンス パネルが更新される回数",
@@ -188,7 +188,8 @@
     "getDanmakuFromUrlTips": "現在,bilibili からの弾幕の取得のみをサポートしています",
     "getDanmakuFromUrl": "URL から読み込み",
     "danmakuTimeOffsetTips": "現在,HTML レンダリングの弾幕のみがこの機能をサポートしています",
-    "danmakuTimeOffset": "時差"
+    "danmakuTimeOffset": "時差",
+    "pressToUncappedVolume": "もう一度押すとボリュームキャップが解除されます"
   },
   "error": {
     "danmakuLoad": "danmakuロードエラー、再びプレーヤーまたはログインWebサイトを試してみてください",

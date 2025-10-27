@@ -4,7 +4,9 @@ import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import configStore from '@root/store/config'
 import { dq1, minmax } from '@root/utils'
-import { FC, useContext, useMemo, useState } from 'react'
+import { useMemoizedFn, useUnmount } from 'ahooks'
+import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { t } from '@root/utils/i18n'
 import Iconfont from '../Iconfont'
 import vpContext from './context'
 
@@ -12,7 +14,15 @@ const VolumeIcon: FC = (props) => {
   const [isVisible, setVisible] = useState(false)
   const [volume, setVolume] = useState(0)
   const { webVideo, eventBus, videoPlayerRef } = useContext(vpContext)
+  const uncappedLockRef = useRef(true)
 
+  const [audioContext] = useState(() => new AudioContext())
+  const gainNodeRef = useRef<GainNode>()
+
+  const { run: updateUncappedLock } = useDebounceTimeoutCallback(() => {
+    if (!webVideo) return
+    uncappedLockRef.current = webVideo.volume < 1
+  }, 250)
   const { run } = useDebounceTimeoutCallback(() => setVisible(false), 800)
 
   useOnce(() =>
@@ -20,7 +30,6 @@ const VolumeIcon: FC = (props) => {
       run(() => setVisible(true))
     }),
   )
-
   useOnce(() =>
     eventBus.on(PlayerEvent.command_volumeUp, () => {
       eventBus.emit(PlayerEvent.volumeChanged)
@@ -32,9 +41,68 @@ const VolumeIcon: FC = (props) => {
     }),
   )
 
+  useEffect(() => {
+    if (!webVideo) return
+    setVolume(webVideo.volume * 100)
+  }, [webVideo])
+
+  const getUpdateUncappedVolumeNode = useMemoizedFn(() => {
+    if (gainNodeRef.current) return gainNodeRef.current
+    if (!webVideo) return
+    const source = audioContext.createMediaElementSource(webVideo)
+    const gainNode = audioContext.createGain()
+    source.connect(gainNode)
+    gainNode.connect(audioContext.destination)
+    gainNodeRef.current = gainNode
+    return gainNode
+  })
+
+  const updateVolume = useMemoizedFn((add: number) => {
+    if (!webVideo) return
+    // 突破上音量上限
+    if (
+      webVideo.volume === 1 &&
+      !uncappedLockRef.current &&
+      ((volume >= 100 && add > 0) || (volume > 100 && add < 0))
+    ) {
+      const node = getUpdateUncappedVolumeNode()
+      if (!node) return
+      let newVol = volume / 100 + add
+      node.gain.value = newVol
+      setVolume(Math.round(newVol * 100))
+      eventBus.emit(PlayerEvent.volumeChanged)
+      return
+    }
+
+    let newVol = webVideo.volume + add
+    newVol = minmax(newVol, 0, 1)
+    webVideo.volume = newVol
+    updateUncappedLock()
+    eventBus.emit(PlayerEvent.volumeChanged)
+  })
+
+  // 释放audioContext
+  useUnmount(async () => {
+    await audioContext.resume()
+    audioContext.close()
+  })
+
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_volumeUp, () => {
+      if (!webVideo) return
+      updateVolume(0.1)
+    }),
+  )
+  useOnce(() =>
+    eventBus.on2(PlayerEvent.command_volumeDown, () => {
+      if (!webVideo) return
+      updateVolume(-0.1)
+    }),
+  )
+
   const wheelTarget = useMemo(
     () => dq1('.video-container', videoPlayerRef.current),
-    [videoPlayerRef.current],
+    [videoPlayerRef],
   )
   useTargetEventListener(
     'wheel',
@@ -45,9 +113,7 @@ const VolumeIcon: FC = (props) => {
       if (!video) return
       e.stopPropagation()
       e.preventDefault()
-      const newVol = isUp ? video.volume + 0.01 : video.volume - 0.01
-      video.volume = minmax(newVol, 0, 1)
-      eventBus.emit(PlayerEvent.volumeChanged)
+      updateVolume(isUp ? 0.01 : -0.01)
     },
     wheelTarget,
   )
@@ -67,9 +133,14 @@ const VolumeIcon: FC = (props) => {
   return (
     isVisible && (
       <div className="z-10 ab-center pointer-events-none">
-        <div className="f-i-center relative gap-2 vp-cover-icon-bg rounded-[8px] px-3 py-1 mb:text-[14px] text-[18px]">
-          <Iconfont type="iconicon_player_volume" className="mt-1" />
-          <span>{volume}%</span>
+        <div className="relative vp-cover-icon-bg rounded-[8px] px-3 py-1 mb:text-[14px] text-[18px]">
+          <div className="f-i-center gap-2 justify-center">
+            <Iconfont type="iconicon_player_volume" className="mt-1" />
+            <span>{volume}%</span>
+          </div>
+          {volume === 100 && (
+            <div className="text-[12px]">{t('vp.pressToUncappedVolume')}</div>
+          )}
         </div>
       </div>
     )

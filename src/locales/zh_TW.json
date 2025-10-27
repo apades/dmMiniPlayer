@@ -23,7 +23,7 @@
     "pauseInClose_video": "關閉影片時暫停",
     "pauseInClose_live": "關閉直播也暫停",
     "pauseInClose_liveDesc": "並不是很推薦",
-    "disable_scrollToChangeVolume": "停用滾輪改變音量",
+    "disable_scrollToChangeVolume": "禁用滾動來改變音量",
     "performanceInfo": "效能面版",
     "performanceUpdateFrame": "效能面版更新頻率",
     "performanceUpdateFrameDesc": "效能面板每觸發request幾次更新一次",
@@ -188,7 +188,8 @@
     "getDanmakuFromUrlTips": "目前只支援從bilibili取得彈幕",
     "getDanmakuFromUrl": "從url載入",
     "danmakuTimeOffsetTips": "目前只有HTML渲染彈幕支援此功能",
-    "danmakuTimeOffset": "時間差"
+    "danmakuTimeOffset": "時間差",
+    "pressToUncappedVolume": "再次按下即可取消音量上限"
   },
   "error": {
     "danmakuLoad": "彈幕負載錯誤，請嘗試重新打開播放器或登錄網站",

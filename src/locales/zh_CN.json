@@ -23,7 +23,7 @@
     "pauseInClose_video": "关闭视频时暂停",
     "pauseInClose_live": "关闭直播也暂停",
     "pauseInClose_liveDesc": "并不是很推荐",
-    "disable_scrollToChangeVolume": "禁用滚轮改变音量",
+    "disable_scrollToChangeVolume": "禁用滚动来改变音量",
     "performanceInfo": "性能面版",
     "performanceUpdateFrame": "性能面版更新频率",
     "performanceUpdateFrameDesc": "性能面板每触发request多少次更新一次",
@@ -188,7 +188,8 @@
     "getDanmakuFromUrlTips": "目前只支持从bilibili获取弹幕",
     "getDanmakuFromUrl": "从url加载",
     "danmakuTimeOffsetTips": "目前只有HTML渲染弹幕支持该功能",
-    "danmakuTimeOffset": "时间差"
+    "danmakuTimeOffset": "时间差",
+    "pressToUncappedVolume": "再次按下即可取消音量上限"
   },
   "error": {
     "danmakuLoad": "弹幕加载错误，请尝试重新打开播放器或登录网站",

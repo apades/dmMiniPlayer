@@ -23,7 +23,7 @@
     "pauseInClose_video": "Pause when closing video",
     "pauseInClose_live": "Pause when closing live",
     "pauseInClose_liveDesc": "Not recommended",
-    "disable_scrollToChangeVolume": "Disable the scroll wheel to change the volume",
+    "disable_scrollToChangeVolume": "Disable scroll to change volume",
     "performanceInfo": "Performance info",
     "performanceUpdateFrame": "Performance info update frequency",
     "performanceUpdateFrameDesc": "Update info when trigger request in {val} times",
@@ -188,7 +188,8 @@
     "getDanmakuFromUrlTips": "Currently only support bilibili url",
     "getDanmakuFromUrl": "From url",
     "danmakuTimeOffsetTips": "Currently only support in [HTML render danmakus]",
-    "danmakuTimeOffset": "Time offset"
+    "danmakuTimeOffset": "Time offset",
+    "pressToUncappedVolume": "Press again to uncapped volume cap"
   },
   "error": {
     "danmakuLoad": "Danmaku load error, please try reopen player or login website",

@@ -23,7 +23,7 @@
     "pauseInClose_video": "Pause à la fermeture de la vidéo",
     "pauseInClose_live": "Fermez la diffusion en direct et mettez-la en pause",
     "pauseInClose_liveDesc": "Pas très recommandé",
-    "disable_scrollToChangeVolume": "Désactivez la roue de défilement pour modifier le volume",
+    "disable_scrollToChangeVolume": "Désactiver le défilement pour changer le volume",
     "performanceInfo": "Panneau de performances",
     "performanceUpdateFrame": "Fréquence de mise à jour du panneau de performances",
     "performanceUpdateFrameDesc": "Combien de fois le panneau de performances est mis à jour à chaque fois qu'une requête est déclenchée",
@@ -188,7 +188,8 @@
     "getDanmakuFromUrlTips": "Actuellement, ne prend en charge que l'obtention de Danmaku depuis bilibili",
     "getDanmakuFromUrl": "Charger depuis l'URL",
     "danmakuTimeOffsetTips": "Actuellement, seuls les barrages de rendu HTML prennent en charge cette fonction",
-    "danmakuTimeOffset": "Différence horaire"
+    "danmakuTimeOffset": "Différence horaire",
+    "pressToUncappedVolume": "Appuyez à nouveau pour déverrouiller le plafond de volume."
   },
   "error": {
     "danmakuLoad": "Erreur de chargement de Danmaku, veuillez essayer de rouvrir le joueur ou le site Web de connexion",

@@ -23,7 +23,7 @@
     "pauseInClose_video": "동영상을 닫을 때 일시중지",
     "pauseInClose_live": "생방송을 닫고 일시중지하세요",
     "pauseInClose_liveDesc": "별로 권장되지 않음",
-    "disable_scrollToChangeVolume": "스크롤 휠을 비활성화하여 볼륨을 변경하십시오",
+    "disable_scrollToChangeVolume": "볼륨을 변경하려면 스크롤을 비활성화하세요.",
     "performanceInfo": "성능 패널",
     "performanceUpdateFrame": "성능 패널 업데이트 빈도",
     "performanceUpdateFrameDesc": "요청이 트리거될 때마다 성능 패널이 업데이트되는 횟수",
@@ -188,7 +188,8 @@
     "getDanmakuFromUrlTips": "현재 bilibili에서 Danmaku 가져오기만 지원합니다.",
     "getDanmakuFromUrl": "URL에서 로드",
     "danmakuTimeOffsetTips": "현재 HTML 렌더링 공격만이 이 기능을 지원합니다",
-    "danmakuTimeOffset": "시차"
+    "danmakuTimeOffset": "시차",
+    "pressToUncappedVolume": "볼륨 캡을 해제하려면 다시 누르세요."
   },
   "error": {
     "danmakuLoad": "Danmaku로드 오류, 플레이어 또는 로그인 웹 사이트를 다시 열어보십시오.",

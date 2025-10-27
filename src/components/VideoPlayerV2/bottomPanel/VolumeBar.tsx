@@ -50,20 +50,6 @@ const VolumeBar: FC<Props> = (props) => {
       })
     }),
   )
-  useOnce(() =>
-    eventBus.on2(PlayerEvent.command_volumeUp, () => {
-      if (!webVideo) return
-      const v = webVideo.volume
-      webVideo.volume = v + 0.1 <= 1 ? v + 0.1 : 1
-    }),
-  )
-  useOnce(() =>
-    eventBus.on2(PlayerEvent.command_volumeDown, () => {
-      if (!webVideo) return
-      const v = webVideo.volume
-      webVideo.volume = v - 0.1 >= 0 ? v - 0.1 : 0
-    }),
-  )
 
   const { run } = useDebounceTimeoutCallback(() => {
     setActive(false)
