@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。",
     "replacerDbClickAction": "ダブルクリックアクション",
     "features": "特徴",
-    "bpPlaybackRate": "再生速度"
+    "bpPlaybackRate": "再生速度",
+    "bpResize": "自動サイズ変更"
   },
   "pos": {
     "topLeft": "左上",

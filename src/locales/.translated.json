@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "Replace the video player in the web page with the extension video player",
     "replacerDbClickAction": "Double click action",
     "features": "Features",
-    "bpPlaybackRate": "Playback speed"
+    "bpPlaybackRate": "Playback speed",
+    "bpResize": "Auto resize"
   },
   "pos": {
     "topLeft": "Top left",

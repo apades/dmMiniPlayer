@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "將網頁中的影片播放器替換為擴展影片播放器",
     "replacerDbClickAction": "雙擊動作",
     "features": "特徵",
-    "bpPlaybackRate": "播放速度"
+    "bpPlaybackRate": "播放速度",
+    "bpResize": "自動調整大小"
   },
   "pos": {
     "topLeft": "左上",

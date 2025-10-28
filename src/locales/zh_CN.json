@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "将网页中的视频播放器替换成插件的视频播放器",
     "replacerDbClickAction": "双击动作",
     "features": "功能",
-    "bpPlaybackRate": "播放速度"
+    "bpPlaybackRate": "播放速度",
+    "bpResize": "自动调整大小"
   },
   "pos": {
     "topLeft": "左上",

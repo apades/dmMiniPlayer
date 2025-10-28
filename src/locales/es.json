@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "Reemplace el reproductor de video en la página web con el reproductor de video de extensión",
     "replacerDbClickAction": "Acción de doble clic",
     "features": "Características",
-    "bpPlaybackRate": "Velocidad de reproducción"
+    "bpPlaybackRate": "Velocidad de reproducción",
+    "bpResize": "Cambio de tamaño automático"
   },
   "pos": {
     "topLeft": "Arriba a la izquierda",

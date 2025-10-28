@@ -33,6 +33,10 @@ const config_features = {
     label: t('settingPanel.bpPlaybackRate'),
     defaultValue: true,
   }),
+  bp_resize: config({
+    label: t('settingPanel.bpResize'),
+    defaultValue: true,
+  }),
   keyboardTips_show: config({
     label: t('shortcut.showShortcutTips'),
     defaultValue: true,

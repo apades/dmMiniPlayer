@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "Remplacez le lecteur vidéo de la page Web par l'extension lecteur vidéo",
     "replacerDbClickAction": "Action de double-clic",
     "features": "Caractéristiques",
-    "bpPlaybackRate": "Vitesse de lecture"
+    "bpPlaybackRate": "Vitesse de lecture",
+    "bpResize": "Redimensionnement automatique"
   },
   "pos": {
     "topLeft": "En haut à gauche",

@@ -120,7 +120,8 @@
     "showReplacerBtnDesc": "웹페이지의 비디오 플레이어를 확장 비디오 플레이어로 교체",
     "replacerDbClickAction": "더블클릭 동작",
     "features": "특징",
-    "bpPlaybackRate": "재생 속도"
+    "bpPlaybackRate": "재생 속도",
+    "bpResize": "자동 크기 조정"
   },
   "pos": {
     "topLeft": "왼쪽 상단",
