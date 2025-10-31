@@ -159,6 +159,10 @@ const config_shortcut = {
     defaultValue: keys('Ctrl', t('shortcut.wheel') as any),
     render: disableRender,
   }),
+  shortcut_autoResize: config({
+    label: t('settingPanel.bpResize'),
+    defaultValue: keys('R'),
+  }),
 } as const
 
 export default config_shortcut

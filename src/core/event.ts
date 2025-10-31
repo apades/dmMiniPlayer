@@ -34,6 +34,7 @@ export enum PlayerEvent {
   command_danmakuShowInput = 'command_danmakuShowInput',
   command_preVideo = 'command_preVideo',
   command_nextVideo = 'command_nextVideo',
+  command_autoResize = 'command_autoResize',
 
   /**长按倍速功能 */
   longTabPlaybackRate = 'longTabPlaybackRate',
