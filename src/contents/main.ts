@@ -25,6 +25,8 @@ import { DocPIPRenderType } from '@root/types/config'
 import './floatButton'
 import API_bilibili from '@root/api/bilibili'
 import isDev from '@root/shared/isDev'
+import { autorun } from 'mobx'
+import configStore from '@root/store/config'
 import _getWebProvider from '../web-provider/getWebProvider'
 
 // iframe里就不用运行了
@@ -400,7 +402,12 @@ function main() {
 
   // chrome右上角媒体控制的启动画中画按钮
   try {
+    let isAutoPIP = false
+    autorun(() => {
+      isAutoPIP = configStore.autoPIP_inPageHide
+    })
     navigator.mediaSession.setActionHandler('enterpictureinpicture', (e) => {
+      if (!isAutoPIP) return
       requestVideoPIP()
     })
   } catch (error) {
