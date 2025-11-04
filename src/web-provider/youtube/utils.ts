@@ -52,10 +52,7 @@ const getVideoSubtitlesInfo = onceCall(async (id: string | number) => {
     credentials: 'include',
   }).then((res) => res.json())
 
-  const subtitles =
-    videoInfo?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
-
-  return subtitles
+  return videoInfo.captions.playerCaptionsTracklistRenderer.captionTracks
 })
 
 export async function getSubtitle(subtitleUrl: string): Promise<SubtitleRow[]> {
