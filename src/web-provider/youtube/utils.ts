@@ -44,11 +44,12 @@ const getVideoSubtitlesInfo = onceCall(async (id: string | number) => {
       videoId: id,
       context: {
         client: {
-          clientName: 'WEB_EMBEDDED_PLAYER',
-          clientVersion: '1.20241009.01.00',
+          clientName: 'WEB',
+          clientVersion: '2.20250626.01.00',
         },
       },
     }),
+    credentials: 'include',
   }).then((res) => res.json())
 
   const subtitles =
@@ -58,7 +59,9 @@ const getVideoSubtitlesInfo = onceCall(async (id: string | number) => {
 })
 
 export async function getSubtitle(subtitleUrl: string): Promise<SubtitleRow[]> {
-  const xmlText = await fetch(subtitleUrl).then((res) => res.text())
+  const xmlText = await fetch(subtitleUrl, {
+    credentials: 'include',
+  }).then((res) => res.text())
   const parse = new DOMParser()
   const document = parse.parseFromString(xmlText, 'text/xml').documentElement
 
