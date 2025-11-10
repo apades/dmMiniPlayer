@@ -3,12 +3,19 @@ import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import configStore from '@root/store/config'
-import { dq1, minmax } from '@root/utils'
+import { dq1, minmax, onceCallWithMap } from '@root/utils'
 import { useMemoizedFn, useUnmount } from 'ahooks'
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@root/utils/i18n'
 import Iconfont from '../Iconfont'
 import vpContext from './context'
+
+const getMediaSource = onceCallWithMap(
+  (audioContext: AudioContext, videoEl: HTMLVideoElement) => {
+    const source = audioContext.createMediaElementSource(videoEl)
+    return source
+  },
+)
 
 const VolumeIcon: FC = (props) => {
   const [isVisible, setVisible] = useState(false)
@@ -16,7 +23,13 @@ const VolumeIcon: FC = (props) => {
   const { webVideo, eventBus, videoPlayerRef } = useContext(vpContext)
   const uncappedLockRef = useRef(true)
 
-  const [audioContext] = useState(() => new AudioContext())
+  const [audioContext] = useState<AudioContext>(() => {
+    if (!window.audioContext) {
+      window.audioContext = new AudioContext()
+    }
+
+    return window.audioContext
+  })
   const gainNodeRef = useRef<GainNode>()
 
   const { run: updateUncappedLock } = useDebounceTimeoutCallback(() => {
@@ -49,7 +62,7 @@ const VolumeIcon: FC = (props) => {
   const getUpdateUncappedVolumeNode = useMemoizedFn(() => {
     if (gainNodeRef.current) return gainNodeRef.current
     if (!webVideo) return
-    const source = audioContext.createMediaElementSource(webVideo)
+    const source = getMediaSource(audioContext, webVideo)
     const gainNode = audioContext.createGain()
     source.connect(gainNode)
     gainNode.connect(audioContext.destination)
@@ -83,8 +96,11 @@ const VolumeIcon: FC = (props) => {
 
   // 释放audioContext
   useUnmount(async () => {
-    await audioContext.resume()
-    audioContext.close()
+    const node = getUpdateUncappedVolumeNode()
+    if (!node) return
+    node.gain.value = 0
+    // await audioContext.resume()
+    // audioContext.close()
   })
 
   useOnce(() =>
