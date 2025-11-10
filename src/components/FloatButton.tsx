@@ -420,7 +420,8 @@ const FloatButton: FC<Props> = (props) => {
                 <div className="absolute top-[-2px] right-[-2px] rounded-full wh-[8px] bg-red-500"></div>
                 <div
                   className={classNames(
-                    'absolute max-w-[200px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded',
+                    'absolute max-w-[250px] w-max bg-bg overflow-hidden max-h-0 transition-all group-hover:max-h-[300px] text-[12px] rounded',
+                    'flex flex-col',
                     {
                       'left-[var(--x)] top-[var(--y)]':
                         configStore.floatButtonPos === FloatButtonPos.leftTop,
@@ -439,38 +440,35 @@ const FloatButton: FC<Props> = (props) => {
                     '--x': '0',
                   }}
                 >
-                  <div className="p-1 text-left whitespace-pre-wrap">
-                    <p className="f-i-center mb-1">
-                      NEW: {savedVer || ''} -&gt; {env.version}{' '}
-                      <a
-                        href={
-                          'https://github.com/apades/dmMiniPlayer/blob/main/docs/changeLog' +
-                          `${getIsZh() ? '-zh' : ''}` +
-                          `.md#v${env.version.replaceAll('.', '')}`
-                        }
-                        target="_blank"
-                        className="ml-auto text-blue-500"
-                      >
-                        More
-                      </a>
-                    </p>
+                  <p className="f-i-center mb-1 px-1 pt-1">
+                    NEW: {savedVer || ''} -&gt; {env.version}{' '}
+                    <a
+                      href={
+                        'https://github.com/apades/dmMiniPlayer/blob/main/docs/changeLog' +
+                        `${getIsZh() ? '-zh' : ''}` +
+                        `.md#v${env.version.replaceAll('.', '')}`
+                      }
+                      target="_blank"
+                      className="ml-auto text-blue-500"
+                    >
+                      More
+                    </a>
+                  </p>
+                  <div className="flex-1 overflow-auto px-1 custom-scrollbar text-left whitespace-pre-wrap">
                     {changeLog}
-                    <div className="f-i-center">
-                      <div
-                        className="ml-auto cursor-pointer bg-bg-hover px-1 rounded"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          e.preventDefault()
-                          setBrowserLocalStorage(
-                            LATEST_SAVE_VERSION,
-                            env.version,
-                          )
-                          setUpgradeShow(false)
-                          isHoverLockRef.current = false
-                        }}
-                      >
-                        OK
-                      </div>
+                  </div>
+                  <div className="f-i-center px-1 pb-1">
+                    <div
+                      className="ml-auto cursor-pointer bg-bg-hover px-1 rounded"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        setBrowserLocalStorage(LATEST_SAVE_VERSION, env.version)
+                        setUpgradeShow(false)
+                        isHoverLockRef.current = false
+                      }}
+                    >
+                      OK
                     </div>
                   </div>
                 </div>
