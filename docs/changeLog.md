@@ -1,3 +1,6 @@
+## v0.6.57
+Fixed the problem of video sound loss after PIP is turned off
+
 ## v0.6.56
 1. Fixed the problem that the scroll wheel scrolls the web page in the replacement mode when adjusting the volume, and the zoom function of the PIP mode is occupied
 2. Fixed the problem that the danmaku did not switch when switching some videos on Twitch
