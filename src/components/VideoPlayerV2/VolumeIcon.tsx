@@ -96,9 +96,12 @@ const VolumeIcon: FC = (props) => {
 
   // 释放audioContext
   useUnmount(async () => {
-    const node = getUpdateUncappedVolumeNode()
-    if (!node) return
-    node.gain.value = 0
+    if (!webVideo) return
+    if (gainNodeRef.current) {
+      gainNodeRef.current.disconnect(audioContext.destination)
+      const source = getMediaSource(audioContext, webVideo)
+      source.connect(audioContext.destination)
+    }
     // await audioContext.resume()
     // audioContext.close()
   })
