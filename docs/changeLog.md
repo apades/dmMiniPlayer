@@ -1,3 +1,11 @@
+## v0.6.56
+1. Fixed the problem that the scroll wheel scrolls the web page in the replacement mode when adjusting the volume, and the zoom function of the PIP mode is occupied
+2. Fixed the problem that the danmaku did not switch when switching some videos on Twitch
+3. Fixed the problem of YouTube subtitle acquisition failure
+4. Fixed the problem that the automatic PIP function of the latest Chromium does not follow the settings and starts by default
+5. Added volume 100 upper limit breakthrough function
+6. Added the function of automatically adjusting the size of PIP
+
 ## v0.6.55
 1. Fixed the problem that ctrl + scroll wheel cannot zoom in the picture-in-picture function
 2. Fixed the issue where the danmakus would be paused when the video was replaced.
