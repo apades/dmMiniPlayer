@@ -2,12 +2,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@root/*": ["src/*"],
-      "@pkgs/*": ["packages/*"],
+      "@root/*": [
+        "src/*"
+      ],
+      "@pkgs/*": [
+        "packages/*"
+      ],
     },
     "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": true,
     "lib": [
       "DOM",
       "ESNext",
@@ -15,14 +17,19 @@
     ],
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "jsx": "react-jsx",
+    // lint
+    "noEmit": true,
     "allowJs": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "sourceMap": true,
+    "noImplicitAny": true
   },
   "include": [
     "./src/**/*",

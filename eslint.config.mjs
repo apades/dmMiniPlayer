@@ -18,7 +18,7 @@ export default tsEslint.config(
         ...globals.node,
         ...globals.browser,
         ...globals.commonjs,
-        ...globals.es2021,
+        ...globals.es2025,
       },
     },
     // plugins: {

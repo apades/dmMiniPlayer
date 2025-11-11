@@ -2,7 +2,7 @@ import enquirer from 'enquirer'
 import fs from 'fs-extra'
 import archiver from 'archiver'
 import chalk from 'chalk'
-import packageData from '../package.json' assert { type: 'json' }
+import packageData from '../package.json' with { type: 'json' }
 import { spawn, pr } from './utils.mjs'
 
 const nowVersion = packageData.version
