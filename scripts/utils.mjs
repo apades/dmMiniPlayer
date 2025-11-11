@@ -23,6 +23,20 @@ export function spawn(...args) {
   })
 }
 
+export function spawnWithoutLog(...args) {
+  const child = _spawn(...args, {
+    env: process.env,
+    shell: true,
+  })
+
+  return new Promise((res) => {
+    let rs = ''
+    child.on('close', () => res(rs))
+    child.stdout.on('data', (data) => (rs += data.toString()))
+    child.stderr.on('data', (data) => (rs += data.toString()))
+  })
+}
+
 export function pr(...args) {
   return path.resolve(__dirname, ...args).replaceAll('\\', '/')
 }
