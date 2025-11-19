@@ -1,21 +1,22 @@
 diff --git a/es/Dom/findDOMNode.js b/es/Dom/findDOMNode.js
-index 93d27d197bcf493f6944bfbf4f9c421b6b9c6ce2..fbbadc5c8fdbc9231a3db14917e1a1ff60fb3f51 100644
+index 93d27d197bcf493f6944bfbf4f9c421b6b9c6ce2..f37b7b569c9e3911eef39d312bd22daeb891067c 100644
 --- a/es/Dom/findDOMNode.js
-+++ b/es/Dom/findDOMNode.js	
-@@ -1,7 +1,8 @@
++++ b/es/Dom/findDOMNode.js
+@@ -1,7 +1,9 @@
  export function isDOM(node) {
 +  const win = (node?.ownerDocument?.defaultView || window)
    // https://developer.mozilla.org/en-US/docs/Web/API/Element
    // Since XULElement is also subclass of Element, we only need HTMLElement and SVGElement
 -  return node instanceof HTMLElement || node instanceof SVGElement;
-+  return node instanceof win.HTMLElement || node instanceof win.SVGElement;
++  // preact创建的node是固定从top来创建的，而react的要判断defaultView环境的
++  return node instanceof win.HTMLElement || node instanceof win.SVGElement || node instanceof HTMLElement || node instanceof SVGElement;
  }
  
  /**
 diff --git a/lib/Dom/findDOMNode.js b/lib/Dom/findDOMNode.js
 index 108bcca04eb2e7aea2d302bf43149e7599c46e23..0f86c5df9f08331c4347f9c88ea7eb72c708d13c 100644
 --- a/lib/Dom/findDOMNode.js
-+++ b/lib/Dom/findDOMNode.js	
++++ b/lib/Dom/findDOMNode.js
 @@ -7,9 +7,10 @@ exports.default = findDOMNode;
  exports.getDOM = getDOM;
  exports.isDOM = isDOM;

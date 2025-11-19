@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react'
+import preact from '@preact/preset-vite'
 import fs from 'fs-extra'
 import { defineConfig } from 'vite'
 import { manifest } from '../src/manifest'
@@ -12,7 +13,7 @@ const version = packageJson.version
 
 export default defineConfig({
   plugins: [
-    react(),
+    preact(),
     {
       name: 'onSuccess',
       configResolved(config) {
@@ -62,6 +63,10 @@ export default defineConfig({
     alias: {
       '@root': pr('../src'),
       '@pkgs': pr('../packages'),
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat', // 必须放在 test-utils 下面
+      'react/jsx-runtime': 'preact/jsx-runtime',
     },
   },
   define: {

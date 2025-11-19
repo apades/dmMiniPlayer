@@ -21,6 +21,10 @@ export const shareConfig = {
     Object.assign(options.alias, {
       '@root': pr('../src'),
       '@pkgs': pr('../packages'),
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat', // 必须放在 test-utils 下面
+      'react/jsx-runtime': 'preact/jsx-runtime',
     })
     options.charset = 'utf8'
   },
