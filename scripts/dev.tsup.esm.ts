@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 import fs from 'fs-extra'
 import { omit } from '@root/utils'
-import { manifest, outDir, shareConfig } from './tsup.shared'
+import { manifest, outDir, shareConfig } from './shared.tsup'
 import { pr } from './utils.mjs'
 import { isDev } from './shared'
 import { outputListener } from './plugin/outputListener'
@@ -24,20 +24,10 @@ export default defineConfig({
     manifest.permissions?.push('scripting')
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
   },
-  entry: {
-    background: shareConfig.entry.background,
-    css: shareConfig.entry.css,
-    inject: shareConfig.entry.inject,
-    'inject-pip': shareConfig.entry['inject-pip'],
-    'before-init-main': pr('../src/contents/before-init-main.ts'),
-    world: pr('../src/contents/world.dev.ts'),
-    'world-pip': pr('../src/contents/world-pip.dev.ts'),
-    popup: shareConfig.entry.popup,
-  },
+  entry: omit(shareConfig.entry, ['entry-all-frames']),
   treeshake: false,
   minify: false,
   watch: true,
-  sourcemap: 'inline',
   splitting: false,
   clean: false,
 })

@@ -1,12 +1,16 @@
+import API_bilibili from '@root/api/bilibili'
 import { PlayerEvent } from '@root/core/event'
 import { WebProvider } from '@root/core/WebProvider'
+import isDev from '@root/shared/isDev'
 import isTop from '@root/shared/isTop'
 import PostMessageEvent, {
   BaseVideoState,
   PostMessageProtocolMap,
 } from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
+import configStore from '@root/store/config'
 import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
 import {
   createElement,
   dq,
@@ -20,14 +24,10 @@ import {
   postMessageToChild,
   postMessageToTop,
 } from '@root/utils/windowMessages'
-import { onMessage as onBgMessage } from 'webext-bridge/content-script'
-import { DocPIPRenderType } from '@root/types/config'
-import './floatButton'
-import API_bilibili from '@root/api/bilibili'
-import isDev from '@root/shared/isDev'
 import { autorun } from 'mobx'
-import configStore from '@root/store/config'
+import { onMessage as onBgMessage } from 'webext-bridge/content-script'
 import _getWebProvider from '../web-provider/getWebProvider'
+import './floatButton'
 
 // iframe里就不用运行了
 if (isTop) {

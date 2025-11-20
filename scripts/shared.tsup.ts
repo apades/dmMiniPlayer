@@ -14,6 +14,8 @@ export const pr = (...p: any) => path.resolve(__dirname, ...p)
 export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
 
+const envFileName = isDev ? 'dev' : 'prod'
+
 export const shareConfig = {
   esbuildPlugins: [inlineImport({}), (esbuildMetaUrl as any)({})],
   esbuildOptions(options, ctx) {
@@ -35,18 +37,23 @@ export const shareConfig = {
   },
   target: 'esnext',
   tsconfig,
-  splitting: true,
   format: 'esm',
   clean: true,
   shims: true,
+  sourcemap: isDev ? 'inline' : false,
   outDir,
   entry: {
     background: pr('../src/background/index.ts'),
     // 包含player的cs
     main: pr('../src/contents/main.ts'),
-    // 注入world: main的脚本
-    inject: pr('../src/contents/inject.ts'),
-    'inject-pip': pr('../src/contents/inject-pip.ts'),
+    // ---- entry -----
+    'entry-inject-top': pr(`../src/entry/entry-inject-top.${envFileName}.ts`),
+    'entry-inject-all-frames-top': pr(
+      `../src/entry/entry-inject-all-frames-top.${envFileName}.ts`,
+    ),
+    'entry-all-frames': pr(`../src/entry/entry-all-frames.${envFileName}.ts`),
+    'entry-init-ext-config': pr(`../src/entry/entry-init-ext-config.ts`),
+    // ---- entry -----
     // 修改cs的clog脚本
     clogInject: pr('../src/contents/clogInject.ts'),
     // popup的脚本
@@ -94,7 +101,7 @@ export const shareConfig = {
     'process.env.NODE_ENV': process.env.NODE_ENV
       ? `"${process.env.NODE_ENV}"`
       : '"development"',
-    ...getDefinesConfig('dev', {
+    ...getDefinesConfig(envFileName, {
       upgrade_en: getChangeLog(version)?.replaceAll('\n', '\\n'),
       upgrade_zh: getChangeLog(version, 'zh')?.replaceAll('\n', '\\n'),
       version,

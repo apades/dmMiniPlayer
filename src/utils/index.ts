@@ -22,6 +22,11 @@ export function omit<T, K extends keyof T>(obj: T, key: K[]): Omit<T, K> {
   key.forEach((k) => delete rs[k])
   return rs
 }
+export function pick<T, K extends keyof T>(obj: T, key: K[]): Pick<T, K> {
+  let rs = {} as Pick<T, K>
+  key.forEach((k) => (rs[k] = obj[k]))
+  return rs
+}
 export function get<T>(tar: any, key: string, defaultVal?: T): T {
   const keyArr = key.split('.')
   let val = tar

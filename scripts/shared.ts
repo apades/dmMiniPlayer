@@ -3,8 +3,8 @@ export const NEED_EXT_RELOAD = ['background']
 export const NEED_PAGE_RELOAD = [
   'inject',
   'inject-pip',
-  'before-init-main',
+  'entry-init-ext-config',
   'world',
-  'world-pip',
+  'entry-inject-all-frames-top',
 ]
 export const WS_PORT = 4966

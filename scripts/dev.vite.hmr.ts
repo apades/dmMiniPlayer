@@ -30,8 +30,10 @@ export default defineConfig({
         })
         fs.copySync(pr('../assets'), pr(outDir, './assets'))
 
-        fs.readdirSync(pr('../src/entry')).forEach((file) => {
-          fs.copySync(pr('../src/entry', file), pr(outDir, file))
+        console.log('tsup')
+        const entryAllFramesPath = pr('../src/entry/entry-all-frames.dev')
+        fs.readdirSync(entryAllFramesPath).forEach((file) => {
+          fs.copySync(pr(entryAllFramesPath, file), pr(outDir, file))
         })
 
         manifest.web_accessible_resources = [

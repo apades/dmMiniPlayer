@@ -39,28 +39,28 @@ export const manifest: chrome.runtime.ManifestV3 = {
   },
   content_scripts: [
     {
-      js: ['before-init-main.js'],
+      js: ['entry-init-ext-config.js'],
       run_at: 'document_start',
       matches: ['<all_urls>'],
       all_frames: true,
     },
     {
-      js: ['world.js'],
+      js: ['entry-inject-top.js'],
       run_at: 'document_start',
       world: 'MAIN',
       matches: ['<all_urls>'],
     },
     {
-      js: ['world-pip.js'],
+      js: ['entry-inject-all-frames-top.js'],
       run_at: 'document_start',
       world: 'MAIN',
       matches: ['<all_urls>'],
       all_frames: true,
     },
     {
-      matches: ['<all_urls>'],
       js: ['entry-all-frames.js'],
       run_at: 'document_end',
+      matches: ['<all_urls>'],
       all_frames: true,
     },
   ],
