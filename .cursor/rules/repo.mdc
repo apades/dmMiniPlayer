@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+项目背景：
+
+此项目是一个基于documentPictureInPicture API开发的画中画播放器的浏览器插件，[这个文档](https://developer.chrome.com/docs/web-platform/document-picture-in-picture/)写明了使用方式，且从documentPictureInPicture.requestWindow的获取到的窗口docWindow有点类似于新建的一个空url的iframe，里面和top windows是不同对象，但docWindow.top可以访问到top windows对象
