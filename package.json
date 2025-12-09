@@ -16,7 +16,7 @@
     "build:iife": "cross-env NODE_ENV=production tsup --config scripts/prod.tsup.iife.ts --metafile",
     "build:clean": "rm ./dist/icon-* && mv dist/metafile-*.json ./",
     "build:after-clean": "tsx scripts/afterClean.ts",
-    "test": "sh ./scripts/run-test.sh",
+    "playground": "sh ./scripts/run-playground.sh",
     "release": "node ./scripts/release.mjs",
     "archive": "node ./scripts/archive.mjs",
     "sizetest": "pnpm build && pnpm archive --size-test",

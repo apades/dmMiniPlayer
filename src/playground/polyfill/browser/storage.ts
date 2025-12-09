@@ -1,7 +1,7 @@
 import { isArray, isNull, isObject } from 'lodash-es'
 import _env from '../env'
 import { sendMessageWaitResp } from '../message'
-import { addCallback, executeCallback, removeCallback } from './'
+import { addCallback, executeCallback, removeCallback } from '.'
 
 const storageFnObj = {
   get: async (_keys?: null | string | string[] | Record<string, any>) => {

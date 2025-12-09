@@ -5,4 +5,4 @@
 # fi
 # # 生成localhost https key
 # test -z "$(ls -a | grep .pem)" && echo "没有https key，正在生成一个" && mkcert.exe localhost
-vite serve -c ./src/test/vite.config.js ./src/test
+vite serve -c ./src/playground/vite.config.js ./src/playground
