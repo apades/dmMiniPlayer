@@ -48,7 +48,10 @@ export default defineConfig({
     plasmoDataTextReplace(),
     react({
       babel: {
-        plugins: [['@babel/plugin-proposal-decorators', { legacy: true }]],
+        plugins: [
+          ['@babel/plugin-proposal-decorators', { legacy: true }],
+          'babel-plugin-react-compiler',
+        ],
       },
     }),
   ],
