@@ -33,7 +33,7 @@ const DraggerContainer: FC<Props> = (props) => {
   } = props
   const [startPos, setStartPos] = useState(0)
   const [isDragging, setDragging] = useState(false)
-  const nodeRef = useRef<HTMLDivElement>()
+  const nodeRef = useRef<HTMLDivElement>(null)
   const [x, setX] = useState(initPosition.x)
   const [y, setY] = useState(initPosition.y)
 

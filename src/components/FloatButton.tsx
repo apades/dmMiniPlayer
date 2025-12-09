@@ -42,7 +42,7 @@ type Props = {
 const FloatButton: FC<Props> = (props) => {
   const { container, vel, fixedPos } = props
 
-  const videoRef = useRef<HTMLVideoElement>()
+  const videoRef = useRef<HTMLVideoElement>(null)
   const [changeLog] = useState(() => {
     const log = getIsZh() ? env.upgrade_zh : env.upgrade_en
     return log || t('floatButton.smallUpdate')

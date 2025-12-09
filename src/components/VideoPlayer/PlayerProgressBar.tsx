@@ -48,7 +48,7 @@ const HandleWithToolTips: FC<
   Parameters<Required<HandlesProps>['handleRender']>[1] & { duration: number }
 > = (props) => {
   const [isVisible, setVisible] = useState(false)
-  const handleRef = useRef<HTMLDivElement>()
+  const handleRef = useRef<HTMLDivElement>(null)
   const [isInitd, setInitd] = useState(false)
   useOnce(() => {
     setInitd(true)

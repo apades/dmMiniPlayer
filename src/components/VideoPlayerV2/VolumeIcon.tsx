@@ -30,7 +30,7 @@ const VolumeIcon: FC = (props) => {
 
     return window.audioContext
   })
-  const gainNodeRef = useRef<GainNode>()
+  const gainNodeRef = useRef<GainNode>(null)
 
   const { run: updateUncappedLock } = useDebounceTimeoutCallback(() => {
     if (!webVideo) return

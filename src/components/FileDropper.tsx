@@ -28,11 +28,11 @@ type Props = {
 
 /**拖拽文件进来的handler组件 */
 const FileDropper: FC<Props> = (props) => {
-  const childRef = useRef<HTMLElement>()
+  const childRef = useRef<HTMLElement>(null)
   const coverRef = useRef<HTMLDivElement>(null)
   const [isDragover, setDragover] = useState(false)
   const [rect, setRect] = useState<DOMRect>()
-  const leaveTimer = useRef<NodeJS.Timeout>()
+  const leaveTimer = useRef<NodeJS.Timeout>(null)
 
   const isGlobal = props.global
   let dBody = childRef.current?.ownerDocument?.body ?? document.body
@@ -52,7 +52,7 @@ const FileDropper: FC<Props> = (props) => {
       //   console.log('enter')
       if (!e.dataTransfer?.types.includes('Files')) return
       setDragover(true)
-      clearTimeout(leaveTimer.current)
+      leaveTimer.current && clearTimeout(leaveTimer.current)
       if (isGlobal) return
       setRect(getClientRect(target))
     },
@@ -74,7 +74,7 @@ const FileDropper: FC<Props> = (props) => {
     (e) => {
       if (!e.dataTransfer?.types.includes('Files')) return
       e.preventDefault()
-      clearTimeout(leaveTimer.current)
+      leaveTimer.current && clearTimeout(leaveTimer.current)
     },
     target,
   )

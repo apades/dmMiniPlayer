@@ -49,7 +49,7 @@ const SubtitleText: FC<Props> = (props) => {
       unListenReset()
     }
   })
-  
+
   const updateFontSize = useMemoizedFn(() => {
     if (!configStore.subtitle_autoSize)
       return setFontSize(configStore.subtitle_fontSize)

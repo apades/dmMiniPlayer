@@ -72,7 +72,7 @@ export type VideoPlayerHandle = {
   togglePlayState: ReturnType<typeof useTogglePlayState>
   updateVideo: (video: HTMLVideoElement) => void
   updateVideoStream: (videoStream: MediaStream) => void
-  ref: React.MutableRefObject<HTMLVideoElement | undefined>
+  ref: React.RefObject<HTMLVideoElement | null>
 }
 
 type Props = {
@@ -125,9 +125,9 @@ const VideoPlayerV2Inner = observer(
     const videoPlayerRef = useRef<HTMLDivElement>(null)
     /**video插入替换位置 */
     const videoInsertRef = useRef<HTMLDivElement>(null)
-    const videoRef = useRef<HTMLVideoElement>()
+    const videoRef = useRef<HTMLVideoElement>(null)
     /**这个专属于vp的ref，videoRef是专属于传入的webVideo */
-    const inVpVideoRef = useRef<HTMLVideoElement>()
+    const inVpVideoRef = useRef<HTMLVideoElement>(null)
 
     useEffect(() => {
       if (!videoPlayerRef.current) return
@@ -153,7 +153,9 @@ const VideoPlayerV2Inner = observer(
       if (!parent) return
       console.log('替换video node')
       parent.insertBefore(videoRef.current, videoInsertRef.current)
-      updateVideoRef(videoRef.current)
+      setTimeout(() => {
+        videoRef.current && updateVideoRef(videoRef.current)
+      }, 0)
 
       // return () => {
       //   try {

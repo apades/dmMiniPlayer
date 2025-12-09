@@ -37,11 +37,11 @@ const ProgressBar: FC<Props> = (props) => {
 
   let barBgColor = bgColor
 
-  let progressDragTimmer = useRef<NodeJS.Timeout>()
+  let progressDragTimmer = useRef<NodeJS.Timeout>(null)
   let [isProgressDragging, setProgressDragging] = useState(false)
   useEffect(() => {
     if (isProgressDragging) {
-      clearTimeout(progressDragTimmer.current)
+      progressDragTimmer.current && clearTimeout(progressDragTimmer.current)
       progressDragTimmer.current = setTimeout(() => {
         setProgressDragging(false)
       }, 1000)

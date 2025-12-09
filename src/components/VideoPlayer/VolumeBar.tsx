@@ -24,7 +24,7 @@ const VolumeBar: FC<Props> = (props) => {
     },
   ])
 
-  const timmer = useRef<NodeJS.Timeout>()
+  const timmer = useRef<NodeJS.Timeout>(null)
 
   return (
     <div className={className}>
@@ -43,7 +43,7 @@ const VolumeBar: FC<Props> = (props) => {
             }
             setVolume(p)
             setActive(true)
-            clearTimeout(timmer.current)
+            timmer.current && clearTimeout(timmer.current)
             timmer.current = setTimeout(() => {
               setActive(false)
             }, 1000)
