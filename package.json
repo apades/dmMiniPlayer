@@ -10,9 +10,11 @@
     "node": ">=24.11.0"
   },
   "scripts": {
+    "predev": "pnpm auto-use-node",
     "dev": "nodemon --exec \"run-p dev:*\"",
     "dev:esm": "tsup --config scripts/dev.tsup.esm.ts",
     "dev:hmr": "vite --config scripts/dev.vite.hmr.ts",
+    "prebuild": "pnpm auto-use-node",
     "build": "cross-env NODE_ENV=production run-s build:*",
     "build:esm-chunks": "tsup --config scripts/prod.tsup.esm-chunks.ts --metafile && mv ./dist/metafile-esm.json ./dist/metafile-esm-chunks.json",
     "build:iife": "tsup --config scripts/prod.tsup.iife.ts --metafile",
@@ -26,7 +28,8 @@
     "sizetest": "pnpm build && pnpm archive --size-test",
     "translate": "tsx ./scripts/auto-translate.ts",
     "eslint": "npx eslint",
-    "update-deps": "pnpm update --depth Infinity"
+    "update-deps": "pnpm update --depth Infinity",
+    "auto-use-node": "sh ./scripts/nvm-auto-use.sh"
   },
   "devDependencies": {
     "@apad/env-tools": "^1.0.6",
