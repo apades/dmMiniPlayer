@@ -12,7 +12,6 @@ export default defineConfig({
     'entry-init-ext-config',
   ]),
   treeshake: true,
-  minify: true,
   splitting: false,
   clean: false,
   format: 'iife',

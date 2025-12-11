@@ -337,6 +337,7 @@ const FloatButton: FC<Props> = (props) => {
           <div
             ref={floatBtn}
             className={classNames(
+              'rc-float-btn',
               'group z-[100] text-[14px] text-white text-center cursor-pointer opacity-100 transition-opacity [&.hidden-btn]:opacity-0 hidden-btn',
             )}
             style={{ ...posStyle, position: 'absolute' }}

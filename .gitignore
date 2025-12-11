@@ -12,7 +12,6 @@ pnpm-debug.log*
 lerna-debug.log*
 
 dist
-.vscode/*
 
 assets/temp.ass
 assets/temp.mp4
@@ -58,8 +57,6 @@ keys.json
 .tsbuildinfo
 
 sample-mp4-file.mp4
-
-!.vscode/launch.json
 
 metafile-*.json
 

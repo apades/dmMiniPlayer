@@ -4,12 +4,11 @@ import fs from 'fs-extra'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
 import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
-import { getChangeLog, getDefinesConfig } from './utils.mjs'
+import { getChangeLog, getDefinesConfig, pr } from './utils.mjs'
 import { inlineImport } from './plugin/inlineImport'
-import { isDev } from './shared'
+import { isDev, isTest } from './shared'
 
 const version = packageJson.version
-export const pr = (...p: any) => path.resolve(__dirname, ...p)
 
 export const tsconfig = pr('../tsconfig.json')
 export const outDir = pr('../dist')
@@ -40,7 +39,9 @@ export const shareConfig = {
   format: 'esm',
   clean: true,
   shims: true,
-  sourcemap: isDev ? 'inline' : false,
+  // save sourcemap + source code in dev/test mode
+  sourcemap: isDev || isTest ? 'inline' : false,
+  minify: !isDev && !isTest,
   outDir,
   entry: {
     background: pr('../src/background/index.ts'),

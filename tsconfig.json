@@ -7,7 +7,7 @@
       ],
       "@pkgs/*": [
         "packages/*"
-      ],
+      ]
     },
     "outDir": "./dist/",
     "lib": [
@@ -34,7 +34,8 @@
   "include": [
     "./src/**/*",
     "./scripts/**/*",
-    "./packages/**/*"
+    "./packages/**/*",
+    "./e2e/**/*"
   ],
   "exclude": [
     "node_modules"
