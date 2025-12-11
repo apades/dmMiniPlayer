@@ -352,7 +352,10 @@ const FloatButton: FC<Props> = (props) => {
           >
             <div className="f-i-center w-fit overflow-hidden rounded h-[28px]">
               <div
-                className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+                className={classNames(
+                  'start-pip-btn',
+                  'f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors',
+                )}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleStartPIP()
@@ -371,7 +374,10 @@ const FloatButton: FC<Props> = (props) => {
               </div>
               {configStore.showReplacerBtn && (
                 <div
-                  className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+                  className={classNames(
+                    'replace-btn',
+                    'f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors',
+                  )}
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
@@ -397,7 +403,10 @@ const FloatButton: FC<Props> = (props) => {
                 </div>
               )}
               <div
-                className="f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors"
+                className={classNames(
+                  'setting-btn',
+                  'f-center wh-[32px,28px] bg-bg hover:bg-bg-hover transition-colors',
+                )}
                 onClick={(e) => {
                   e.preventDefault()
                   e.stopPropagation()

@@ -1,7 +1,13 @@
 import { isFunction } from 'lodash-es'
+import type { Page } from '@playwright/test'
 
 export async function wait(time = 0) {
   return new Promise<void>((res) => setTimeout(res, time))
+}
+
+export async function onPageAndExtensionLoaded(page: Page) {
+  await page.waitForLoadState('load')
+  await page.waitForSelector('html[dm-loaded="true"]')
 }
 
 type Fn1<T> = (args: T[]) => void
