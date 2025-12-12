@@ -25,7 +25,7 @@ jobs:
           node-version: 24
           cache: 'pnpm'
       - run: pnpm i
-      - run: npx playwright install-deps chromium
+      - run: npx playwright install chromium
       - run: pnpm build
       - run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" pnpm test
       - name: upload video
