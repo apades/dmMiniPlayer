@@ -50,7 +50,6 @@ export const test = base.extend<{
       recordVideo: {
         dir: videoDir,
       },
-      channel: 'chromium',
       // executablePath: chromeExePath,
     })
     await use(context)
