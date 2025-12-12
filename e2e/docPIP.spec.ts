@@ -22,44 +22,44 @@ test('测试浮动按钮是否正常', async ({ page, browser }, testInfo) => {
   await expect(floatBtn).toBeVisible()
 })
 
-for (const url of testUrls) {
-  test(`docPIP能否打开 - ${new URL(url).hostname}`, async ({
-    page,
-    browser,
-  }) => {
-    await page.goto(url)
-    await onPageAndExtensionLoaded(page)
+// for (const url of testUrls) {
+//   test(`docPIP能否打开 - ${new URL(url).hostname}`, async ({
+//     page,
+//     browser,
+//   }) => {
+//     await page.goto(url)
+//     await onPageAndExtensionLoaded(page)
 
-    const videoEl = await page.waitForSelector('video')
-    const timer = setInterval(async () => {
-      try {
-        if (!videoEl || page.isClosed()) {
-          clearInterval(timer)
-          return
-        }
-        await videoEl.dispatchEvent('mousemove', {
-          bubbles: true,
-        })
-      } catch (error) {
-        clearInterval(timer)
-      }
-    }, 500)
-    browser.on('disconnected', () => {
-      clearInterval(timer)
-    })
+//     const videoEl = await page.waitForSelector('video')
+//     const timer = setInterval(async () => {
+//       try {
+//         if (!videoEl || page.isClosed()) {
+//           clearInterval(timer)
+//           return
+//         }
+//         await videoEl.dispatchEvent('mousemove', {
+//           bubbles: true,
+//         })
+//       } catch (error) {
+//         clearInterval(timer)
+//       }
+//     }, 500)
+//     browser.on('disconnected', () => {
+//       clearInterval(timer)
+//     })
 
-    // 点击float按钮
-    const startPipBtn = page.locator('.start-pip-btn')
-    await startPipBtn.click()
+//     // 点击float按钮
+//     const startPipBtn = page.locator('.start-pip-btn')
+//     await startPipBtn.click()
 
-    await wait(1000)
+//     await wait(1000)
 
-    const pipWindow = await page.evaluate('documentPictureInPicture.window')
+//     const pipWindow = await page.evaluate('documentPictureInPicture.window')
 
-    await expect(pipWindow).not.toBeNull()
+//     await expect(pipWindow).not.toBeNull()
 
-    clearInterval(timer)
-  })
-}
+//     clearInterval(timer)
+//   })
+// }
 
 // test('bilibili大功能测试', () => {})

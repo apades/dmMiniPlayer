@@ -8,19 +8,30 @@ import packageJson from '../package.json' with { type: 'json' }
 
 export const { name } = packageJson
 
-export const extensionPath = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '../dist',
-)
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+export const extensionPath = path.resolve(__dirname, '../dist')
 
 const chromeExePath = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string
 }>({
-  context: async ({ headless, browser }, use) => {
+  context: async ({ headless, browser }, use, testInfo) => {
     // workaround for the Vite server has started but contentScript is not yet.
     await sleep(1000)
+
+    // Create a sanitized folder name from test title
+    const sanitizeTitle = (title: string) => {
+      return title
+        .replace(/[<>:"/\\|?*]/g, '_')
+        .replace(/\s+/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+    }
+
+    const testDirName = sanitizeTitle(testInfo.title)
+    const videoDir = path.resolve(__dirname, '../videos', testDirName)
+
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
@@ -36,6 +47,9 @@ export const test = base.extend<{
         '--disable-software-rasterizer',
         '--disable-features=VaapiVideoDecoder',
       ],
+      recordVideo: {
+        dir: videoDir,
+      },
       // executablePath: chromeExePath,
     })
     await use(context)
