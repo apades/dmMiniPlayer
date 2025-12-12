@@ -8,6 +8,7 @@ export default defineConfig({
   use: {
     headless: false,
     video: 'on',
+    channel: 'chrome',
   },
   // webServer: {
   //   command: 'npm run dev',
