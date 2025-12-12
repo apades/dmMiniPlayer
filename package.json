@@ -28,6 +28,7 @@
     "sizetest": "pnpm build && pnpm archive --size-test",
     "translate": "tsx ./scripts/auto-translate.ts",
     "eslint": "npx eslint",
+    "test": "playwright test",
     "update-deps": "pnpm update --depth Infinity",
     "auto-use-node": "sh ./scripts/nvm-auto-use.sh"
   },
@@ -36,7 +37,7 @@
     "@babel/plugin-proposal-decorators": "^7.28.0",
     "@babel/plugin-transform-react-jsx": "^7.27.1",
     "@chialab/esbuild-plugin-meta-url": "^0.18.2",
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "1.52.0",
     "@preact/preset-vite": "^2.10.2",
     "@types/chrome": "0.1.27",
     "@types/color": "^4.2.0",

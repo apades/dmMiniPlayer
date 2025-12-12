@@ -41,12 +41,13 @@ type EvaluateType<T> = T extends {
 //  : never
 export async function evaluate<
   T extends {
-    evaluate: (...args: any) => any
+    evaluate: (...args: any) => Promise<Result>
   },
   Arg extends any[],
   Arg0 = Parameters<Parameters<T['evaluate']>[0]>[0],
+  Result = ReturnType<Parameters<T['evaluate']>[0]>,
   // Fn = EvaluateType<T>,
->(tar: T, fn: (arg0: Arg0, args: Arg) => any, args?: readonly [...Arg]) {
+>(tar: T, fn: (arg0: Arg0, args: Arg) => Result, args?: readonly [...Arg]) {
   return tar.evaluate(
     (arg0: any, args: any) => {
       const isArray = (val: any): val is Array<any> => val instanceof Array

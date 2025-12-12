@@ -2,7 +2,7 @@ name: Auto release
 
 on:
   push:
-    tags: 
+    tags:
       - v*
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
           cache: 'pnpm'
       - run: pnpm i
       - run: node scripts/getChangeLog.mjs > CHANGELOG.txt

@@ -4,7 +4,7 @@ import { onPageAndExtensionLoaded, wait } from './utils'
 const testUrls = [
   'https://www.bilibili.com/video/BV17E411k7kv/?vd_source=8e6ad3d5f5612b1d591931b1eff4dea7',
   'https://live.douyin.com/870887192950',
-  'https://www.youtube.com/watch?v=SXC2wO1XdMI&ab_channel=Picon%2F%E3%83%94%E3%82%B3%E3%83%B3OFFICIALCHANNEL',
+  // 'https://www.youtube.com/watch?v=SXC2wO1XdMI&ab_channel=Picon%2F%E3%83%94%E3%82%B3%E3%83%B3OFFICIALCHANNEL',
 ]
 const testUrl = testUrls[0]
 

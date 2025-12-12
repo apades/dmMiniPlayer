@@ -1,0 +1,29 @@
+name: Auto test
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      - run: pnpm i
+      - run: playwright install chromium
+      - run: pnpm test

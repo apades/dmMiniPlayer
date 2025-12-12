@@ -1,2 +1,3 @@
 patchedDependencies:
   '@rc-component/util': patches/@rc-component__util.patch
+  # playwright-core: patches/playwright-core.patch
