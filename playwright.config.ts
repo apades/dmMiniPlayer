@@ -6,6 +6,9 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
   retries: 2,
+  use: {
+    headless: false,
+  },
   // webServer: {
   //   command: 'npm run dev',
   //   // start e2e test after the Vite server is fully prepared
