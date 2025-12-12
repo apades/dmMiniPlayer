@@ -5,9 +5,9 @@ import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: './e2e',
-  retries: 2,
   use: {
     headless: false,
+    video: 'retain-on-failure',
   },
   // webServer: {
   //   command: 'npm run dev',

@@ -28,3 +28,10 @@ jobs:
       - run: npx playwright install chromium
       - run: pnpm build
       - run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" pnpm test
+      - name: upload video
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: video
+          path: playwright-report/video
+          retention-days: 3

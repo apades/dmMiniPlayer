@@ -27,6 +27,14 @@ export const test = base.extend<{
         // ...(headless ? ['--headless=new'] : []),
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
+        // Enable video playback in CI environments
+        '--autoplay-policy=no-user-gesture-required',
+        '--use-fake-ui-for-media-stream',
+        '--use-fake-device-for-media-stream',
+        // Force software rendering for CI environments without GPU
+        '--disable-gpu',
+        '--disable-software-rasterizer',
+        '--disable-features=VaapiVideoDecoder',
       ],
       // executablePath: chromeExePath,
     })
