@@ -14,7 +14,7 @@ nvm_auto_use() {
     fi
 
     # Try to resolve nvmrc_version to installed node version (if exists)
-    node_version="$(nvm current 2>/dev/null)"
+    node_version="$(node -v 2>/dev/null)"
     if [[ "$node_version" == "none" ]]; then
       node_version=""
     fi
@@ -47,6 +47,11 @@ nvm_auto_use() {
     }
 
     if [[ -z "$node_version" ]] || ! is_version_compatible "$nvmrc_version" "$node_version"; then
+      # Check if nvm command exists
+      if ! command -v nvm >/dev/null 2>&1; then
+        echo -e "\033[31m[nvm-auto-use] Error: nvm命令不存在。当前版本$node_version，不符合.nvmrc中的版本$nvmrc_version\033[0m"
+        return 1
+      fi
       previous_version="${node_version:-none}"
       nvm use "$nvmrc_version" >/dev/null 2>&1
       new_version="$(nvm current 2>/dev/null)"
@@ -54,10 +59,6 @@ nvm_auto_use() {
     fi
   fi
 }
-# Check if nvm command exists
-if ! command -v nvm >/dev/null 2>&1; then
-  echo "[nvm-auto-use] Error: nvm命令不存在。请确保nodejs版本和package.json中的node版本一致。"
-  return 1
-fi
+
 
 nvm_auto_use
