@@ -7,7 +7,7 @@ export default defineConfig({
   testDir: './e2e',
   use: {
     headless: false,
-    video: 'retain-on-failure',
+    video: 'on',
   },
   // webServer: {
   //   command: 'npm run dev',
