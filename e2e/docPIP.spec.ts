@@ -48,10 +48,27 @@ test('测试浮动按钮是否正常', async ({ page, browser }, testInfo) => {
 
   await expect(page.locator('.rc-float-btn')).not.toBeVisible()
 
-  const videoHandles = await page.waitForSelector('video')
-  await videoHandles.dispatchEvent('mousemove', {
-    bubbles: true,
+  const videoEl = await page.waitForSelector('video')
+  const timer = setInterval(async () => {
+    try {
+      if (!videoEl || page.isClosed()) {
+        clearInterval(timer)
+        return
+      }
+      await videoEl.dispatchEvent('mousemove', {
+        bubbles: true,
+      })
+    } catch (error) {
+      clearInterval(timer)
+    }
+  }, 500)
+  browser.on('disconnected', () => {
+    clearInterval(timer)
   })
+  // const videoHandles = await page.waitForSelector('video')
+  // await videoHandles.dispatchEvent('mousemove', {
+  //   bubbles: true,
+  // })
   const floatBtn = await page.locator('.rc-float-btn')
   await expect(floatBtn).toBeVisible()
 })
