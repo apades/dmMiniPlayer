@@ -4,7 +4,8 @@ import packageData from '../package.json' with { type: 'json' }
 import { pr, spawn } from './utils.mjs'
 
 const args = process.argv.slice(2)
-const isSizeTest = args[0] === '--size-test'
+const arg0 = args[0]
+const isSizeTest = arg0 === '--size-test'
 
 const version = packageData.version
 const getBuildName = (ver) => `chrome-mv3-prod-${ver}.zip`
@@ -17,6 +18,7 @@ if (!fs.existsSync(zipOutDir)) {
 }
 
 const getName = () => {
+  if (!isSizeTest && arg0 && !arg0.startsWith('-')) return arg0
   if (!isSizeTest) return getBuildName(version)
   let count = 0
   while (true) {
@@ -37,7 +39,7 @@ async function main() {
   archive.directory(codeBuildOutDir, false)
   await archive.finalize()
   if (!isSizeTest) {
-    await spawn('rm', [pr(zipOutDir, getSizeTestName('*')), '-f'])
+    await spawn('rm', [getSizeTestName('*'), '-f'], { cwd: zipOutDir })
   }
 }
 

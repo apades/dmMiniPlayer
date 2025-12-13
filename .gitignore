@@ -64,3 +64,4 @@ tsup.*.bundled_*.mjs
 
 vite.client.dev.js
 /videos
+/test-results

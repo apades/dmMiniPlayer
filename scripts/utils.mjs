@@ -6,12 +6,17 @@ import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
 export const __filename = url.fileURLToPath(import.meta.url)
 export const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
-export function spawn(...args) {
-  const child = _spawn(...args, {
+export function spawn(command, args = [], options = {}) {
+  const commandStr =
+    args.length > 0
+      ? `${command} ${args.map((arg) => (typeof arg === 'string' && arg.includes(' ') ? `"${arg}"` : arg)).join(' ')}`
+      : command
+  const child = _spawn(commandStr, [], {
     env: process.env,
     shell: true,
+    ...options,
   })
-  console.log(`⚡ ${args[0]} ${args[1].join(' ')}`)
+  console.log(`⚡ ${commandStr}`)
   return new Promise((res) => {
     let rs = ''
     child.on('close', () => res(rs))
@@ -23,10 +28,16 @@ export function spawn(...args) {
   })
 }
 
-export function spawnWithoutLog(...args) {
-  const child = _spawn(...args, {
+export function spawnWithoutLog(command, args = [], options = {}) {
+  // When using shell: true, construct the full command string to avoid deprecation warning
+  const commandStr =
+    args.length > 0
+      ? `${command} ${args.map((arg) => (typeof arg === 'string' && arg.includes(' ') ? `"${arg}"` : arg)).join(' ')}`
+      : command
+  const child = _spawn(commandStr, [], {
     env: process.env,
     shell: true,
+    ...options,
   })
 
   return new Promise((res) => {

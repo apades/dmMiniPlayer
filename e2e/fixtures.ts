@@ -35,6 +35,7 @@ export const test = base.extend<{
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
+        '--disable-features=DisableLoadExtensionCommandLineSwitch',
         // ...(headless ? ['--headless=new'] : []),
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
@@ -51,7 +52,6 @@ export const test = base.extend<{
       recordVideo: {
         dir: videoDir,
       },
-      channel: 'chromium',
       // executablePath: chromeExePath,
     })
     await use(context)
