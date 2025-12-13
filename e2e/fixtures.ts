@@ -11,7 +11,38 @@ export const { name } = packageJson
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 export const extensionPath = path.resolve(__dirname, '../dist')
 
-const chromeExePath = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
+// Chrome executable path detection for different platforms
+function getChromeExecutablePath(): string | undefined {
+  const platform = process.platform
+  if (platform === 'win32') {
+    const possiblePaths = [
+      'C:/Program Files/Google/Chrome/Application/chrome.exe',
+      'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
+      process.env.LOCALAPPDATA + '/Google/Chrome/Application/chrome.exe',
+    ]
+    for (const chromePath of possiblePaths) {
+      if (chromePath && fs.existsSync(chromePath)) {
+        return chromePath
+      }
+    }
+  } else if (platform === 'darwin') {
+    return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  } else if (platform === 'linux') {
+    const possiblePaths = [
+      '/usr/bin/google-chrome',
+      '/usr/bin/google-chrome-stable',
+      '/usr/bin/chromium-browser',
+    ]
+    for (const chromePath of possiblePaths) {
+      if (fs.existsSync(chromePath)) {
+        return chromePath
+      }
+    }
+  }
+  return undefined
+}
+
+const chromeExePath = getChromeExecutablePath()
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string
@@ -34,6 +65,8 @@ export const test = base.extend<{
 
     const context = await chromium.launchPersistentContext('', {
       headless: false,
+      // Use Chrome executable for video codec support, fallback to Chromium if not found
+      ...(chromeExePath ? { executablePath: chromeExePath } : {}),
       args: [
         '--disable-features=DisableLoadExtensionCommandLineSwitch',
         // ...(headless ? ['--headless=new'] : []),
@@ -52,7 +85,6 @@ export const test = base.extend<{
       recordVideo: {
         dir: videoDir,
       },
-      // executablePath: chromeExePath,
     })
     await use(context)
     // let [serviceWorker] = context.serviceWorkers()

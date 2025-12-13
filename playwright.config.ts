@@ -8,7 +8,8 @@ export default defineConfig({
   use: {
     headless: false,
     video: 'on',
-    channel: 'chrome',
+    // Note: executablePath is set in fixtures.ts to use Chrome for video codec support
+    // while still allowing extension loading via --load-extension args
   },
   // webServer: {
   //   command: 'npm run dev',
