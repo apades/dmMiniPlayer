@@ -43,6 +43,7 @@ function getChromeExecutablePath(): string | undefined {
 }
 
 const chromeExePath = getChromeExecutablePath()
+console.log('chromeExePath', chromeExePath)
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string
