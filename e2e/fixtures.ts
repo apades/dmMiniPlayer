@@ -46,10 +46,12 @@ export const test = base.extend<{
         '--disable-gpu',
         '--disable-software-rasterizer',
         '--disable-features=VaapiVideoDecoder',
+        '--enable-features=MediaRecorderHEVCSupport',
       ],
       recordVideo: {
         dir: videoDir,
       },
+      channel: 'chromium',
       // executablePath: chromeExePath,
     })
     await use(context)
