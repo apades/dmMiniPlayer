@@ -67,7 +67,7 @@ export const test = base.extend<{
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       // Use Chrome executable for video codec support, fallback to Chromium if not found
-      ...(chromeExePath ? { executablePath: chromeExePath } : {}),
+      // ...(chromeExePath ? { executablePath: chromeExePath } : {}),
       args: [
         '--disable-features=DisableLoadExtensionCommandLineSwitch',
         // ...(headless ? ['--headless=new'] : []),
