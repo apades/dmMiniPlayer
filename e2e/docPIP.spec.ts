@@ -11,37 +11,37 @@ const testUrl = testUrls[0]
 
 test('测试浮动按钮是否正常', async ({ page, browser }, testInfo) => {
   // loaded extension
-  // await page.goto('chrome://extensions/')
-  // const openExtensionBtn = await page.locator('#devMode')
-  // await openExtensionBtn.click()
-  // const input = await page.evaluateHandle(() => {
-  //   const input = document.createElement('INPUT')
-  //   input.setAttribute('type', 'file')
-  //   input.id = 'id_drop_file'
-  //   document.documentElement.appendChild(input)
-  //   return input
-  // })
-  // await page
-  //   .locator('#id_drop_file')
-  //   .setInputFiles(path.resolve(extensionPath, '../build/build.zip'))
-  // const dropTarget = await page.locator('html').evaluateHandle((dom) => dom)
-  // await page.evaluate(
-  //   (arg) => {
-  //     const _drop = arg[0]
-  //     const _input = arg[1] as HTMLInputElement
-  //     const _dataTransfer = new DataTransfer()
-  //     _dataTransfer.items.add(_input.files![0])
-  //     const _event = new DragEvent('drop', {
-  //       dataTransfer: _dataTransfer,
-  //       bubbles: true,
-  //       cancelable: true,
-  //     })
-  //     _drop.dispatchEvent(_event)
-  //   },
-  //   [dropTarget, input],
-  // )
+  await page.goto('chrome://extensions/')
+  const openExtensionBtn = await page.locator('#devMode')
+  await openExtensionBtn.click()
+  const input = await page.evaluateHandle(() => {
+    const input = document.createElement('INPUT')
+    input.setAttribute('type', 'file')
+    input.id = 'id_drop_file'
+    document.documentElement.appendChild(input)
+    return input
+  })
+  await page
+    .locator('#id_drop_file')
+    .setInputFiles(path.resolve(extensionPath, '../build/build.zip'))
+  const dropTarget = await page.locator('html').evaluateHandle((dom) => dom)
+  await page.evaluate(
+    (arg) => {
+      const _drop = arg[0]
+      const _input = arg[1] as HTMLInputElement
+      const _dataTransfer = new DataTransfer()
+      _dataTransfer.items.add(_input.files![0])
+      const _event = new DragEvent('drop', {
+        dataTransfer: _dataTransfer,
+        bubbles: true,
+        cancelable: true,
+      })
+      _drop.dispatchEvent(_event)
+    },
+    [dropTarget, input],
+  )
 
-  // await wait(1000)
+  await wait(1000)
 
   await page.goto(testUrl)
   await onPageAndExtensionLoaded(page)
