@@ -24,10 +24,10 @@ jobs:
         with:
           node-version: 24
           cache: 'pnpm'
-      - name: Install Google Chrome 136
+      - name: Install Google Chrome 142
         uses: browser-actions/setup-chrome@v2
         with:
-          chrome-version: 136
+          chrome-version: 142
           install-dependencies: true
       - run: pnpm i
       - run: npx playwright install --with-deps
