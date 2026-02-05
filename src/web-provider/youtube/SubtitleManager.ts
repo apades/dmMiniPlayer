@@ -1,46 +1,43 @@
-import SubtitleManager from '@root/core/SubtitleManager'
-import type { SubtitleRow } from '@root/core/SubtitleManager/types'
-import { runInAction } from 'mobx'
-import configStore from '@root/store/config'
-import { getSubtitles, getSubtitle } from './utils'
+import SubtitleDomCaptureManager from '@root/core/SubtitleManager/SubtitleDomCaptureManager'
 
-export default class YoutubeSubtitleManager extends SubtitleManager {
-  async onInit() {
-    await runInAction(async () => {
-      this.subtitleItems.length = 0
-      this.subtitleItems = await getSubtitles(location.href)
-    })
-  }
-  async loadSubtitle(value: string): Promise<SubtitleRow[]> {
-    const subtitleRows = await getSubtitle(value)
-    return subtitleRows
-    // if (!configStore.youtube_mergeSubtitleAtSimilarTimes) return subtitleRows
-
-    const newSubtitleRows: SubtitleRow[] = []
-
-    const existSet = new Set<SubtitleRow>()
-    for (let i = 0; i < subtitleRows.length; i++) {
-      const row = subtitleRows[i],
-        lastRow = subtitleRows[i + 1]
-
-      if (!row) break
-
-      if (lastRow && lastRow.startTime <= row.endTime) {
-        const newRow: SubtitleRow = {
-          ...row,
-          startTime: row.startTime,
-          endTime: row.endTime,
-          text: row.text + ' ' + lastRow.text,
-          htmlText: row.text + ' ' + lastRow.text,
-        }
-        newSubtitleRows.push(newRow)
-        i++
-      } else {
-        newSubtitleRows.push(row)
-        existSet.add(row)
-      }
-    }
-
-    return newSubtitleRows
+export default class YoutubeSubtitleManager extends SubtitleDomCaptureManager {
+  override getConfig(): ReturnType<SubtitleDomCaptureManager['getConfig']> {
+    return [
+      {
+        type: 'event',
+        event: new MouseEvent('mousemove', { bubbles: true }),
+        targetEl: '.html5-video-player',
+      },
+      {
+        type: 'event',
+        event: new MouseEvent('click', { bubbles: true }),
+        targetEl: '[data-tooltip-target-id="ytp-settings-button"]',
+      },
+      {
+        type: 'event',
+        event: new MouseEvent('click', { bubbles: true }),
+        targetEl:
+          '.ytp-popup.ytp-settings-menu .ytp-menuitem:nth-last-child(4)',
+        wait: 1000,
+      },
+      {
+        type: 'subtitleElList',
+        container: '.ytp-panel-menu',
+        isActive: '[aria-checked="false"]',
+        filter(list) {
+          const [l1, ...rlist] = list
+          return rlist
+        },
+      },
+      {
+        type: 'subtitleDom',
+        targetEls: [
+          {
+            container: '.ytp-caption-window-container',
+            el: '.caption-window.ytp-caption-window-bottom',
+          },
+        ],
+      },
+    ]
   }
 }
