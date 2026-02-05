@@ -72,22 +72,6 @@ const config_subtitle = {
     relateBy: 'subtitle_autoSize',
     relateByValue: true,
   }),
-  youtube_subtitleMode: config<'api' | 'dom'>({
-    label: t('settingPanel.youtube_subtitleMode'),
-    desc: t('settingPanel.youtube_subtitleModeDesc'),
-    defaultValue: 'api',
-    type: 'group',
-    group: [
-      {
-        label: t('settingPanel.youtube_subtitleMode_api'),
-        value: 'api',
-      },
-      {
-        label: t('settingPanel.youtube_subtitleMode_dom'),
-        value: 'dom',
-      },
-    ],
-  }),
 }
 
 export default config_subtitle

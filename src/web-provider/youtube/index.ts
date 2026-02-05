@@ -7,7 +7,6 @@ import { VideoItem } from '@root/components/VideoPlayer/Side'
 import configStore from '@root/store/config'
 import YoutubePreviewManager from './PreviewManager'
 import YoutubeSubtitleManager from './SubtitleManager'
-import DomSubtitleManager from './DomSubtitleManager'
 
 const getIframe = () => dq1<HTMLIFrameElement>('.ytd-live-chat-frame')
 const getLiveClass = () => dq1<HTMLDivElement>('.ytp-live')
@@ -16,8 +15,6 @@ const isLive = () =>
     ? !!getIframe()
     : !!getLiveClass()
 export default class YoutubeProvider extends HtmlDanmakuProvider {
-  private domSubtitleManager?: DomSubtitleManager
-
   onInit() {
     super.onInit()
     this.isLive = isLive()
@@ -26,12 +23,6 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
     this.sideSwitcher = new SideSwitcher()
     if (!this.isLive) {
       this.videoPreviewManager = new YoutubePreviewManager()
-    }
-
-    // Initialize DOM subtitle manager if DOM mode is selected
-    if (configStore.youtube_subtitleMode === 'dom') {
-      this.domSubtitleManager = new DomSubtitleManager()
-      this.domSubtitleManager.init()
     }
   }
 
@@ -63,29 +54,10 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
         }),
       )
     }
-
-    // Handle DOM subtitle mode: enter PiP
-    if (this.domSubtitleManager && window.documentPictureInPicture?.window) {
-      const pipWindow = window.documentPictureInPicture.window
-      const pipContainer = pipWindow.document.body
-      this.domSubtitleManager.enterPiP(pipWindow, pipContainer)
-    }
-  }
-
-  onUnload() {
-    // Handle DOM subtitle mode: exit PiP
-    if (this.domSubtitleManager) {
-      this.domSubtitleManager.exitPiP()
-      this.domSubtitleManager.unload()
-    }
-    super.onUnload?.()
   }
 
   update() {
-    // Skip API subtitle manager init if using DOM mode
-    if (configStore.youtube_subtitleMode !== 'dom') {
-      this.subtitleManager.init(this.webVideo)
-    }
+    this.subtitleManager.init(this.webVideo)
     if (this.videoPreviewManager) {
       this.videoPreviewManager.init(this.webVideo)
     }
