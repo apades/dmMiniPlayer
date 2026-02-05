@@ -2,7 +2,7 @@ import { HtmlDanmakuProvider } from '@root/core/WebProvider'
 import { dq1 } from '@root/utils'
 
 export default class TwitchProvider extends HtmlDanmakuProvider {
-  isLive = true
+  override isLive = true
   getObserveHtmlDanmakuConfig() {
     const liveParent = dq1<HTMLDivElement>(
       '.chat-scrollable-area__message-container',

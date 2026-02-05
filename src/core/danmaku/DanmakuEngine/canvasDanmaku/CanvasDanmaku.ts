@@ -21,7 +21,7 @@ export default class CanvasDanmaku extends DanmakuBase {
 
   drawSuccess = false
 
-  get speed() {
+  override get speed() {
     return super.speed / 10
   }
 
@@ -29,7 +29,7 @@ export default class CanvasDanmaku extends DanmakuBase {
     super(props)
     this.startTime = this.time
   }
-  onInit(props: DanmakuInitProps): void {
+  override onInit(props: DanmakuInitProps): void {
     if (this.initd) return
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
     if (this.tunnel == -1) {
@@ -93,7 +93,7 @@ export default class CanvasDanmaku extends DanmakuBase {
   }
   private unlistens: noop[] = []
 
-  onUnload(): void {
+  override onUnload(): void {
     if (!this.tunnelOuted) {
       this.danmakuEngine.tunnelManager.popTunnel(this)
       this.danmakuEngine.emit('danmaku-leaveTunnel', this)
@@ -106,7 +106,7 @@ export default class CanvasDanmaku extends DanmakuBase {
     // this.reset()
   }
 
-  reset(): void {
+  override reset(): void {
     if (!this.initd) return
     this.initd = false
     this.disabled = false

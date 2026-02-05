@@ -292,7 +292,7 @@ export class CommonSubtitleManager extends SubtitleManager {
   constructor() {
     super()
   }
-  async loadSubtitle(value: string): Promise<SubtitleRow[]> {
+  override async loadSubtitle(value: string): Promise<SubtitleRow[]> {
     return []
   }
 }

@@ -5,11 +5,11 @@ import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import { dq, dq1, wait } from '@root/utils'
 
 export default class DdrkProvider extends WebProvider {
-  onInit(): void {
+  override onInit(): void {
     this.sideSwitcher = new SideSwitcher()
   }
 
-  onPlayerInitd(): void {
+  override onPlayerInitd(): void {
     this.initSideSwitcherData()
 
     this.addOnUnloadFn(

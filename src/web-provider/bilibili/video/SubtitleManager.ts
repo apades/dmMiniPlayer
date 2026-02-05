@@ -4,13 +4,13 @@ import { runInAction } from 'mobx'
 import { getSubtitle, getSubtitles } from '../utils'
 
 export default class BilibiliSubtitleManager extends SubtitleManager {
-  async onInit() {
+  override async onInit() {
     await runInAction(async () => {
       this.subtitleItems.length = 0
       this.subtitleItems = await getSubtitles()
     })
   }
-  async loadSubtitle(value: string): Promise<SubtitleRow[]> {
+  override async loadSubtitle(value: string): Promise<SubtitleRow[]> {
     const subtitleRes = await getSubtitle(value)
     return subtitleRes.body.map((d, i) => {
       return {

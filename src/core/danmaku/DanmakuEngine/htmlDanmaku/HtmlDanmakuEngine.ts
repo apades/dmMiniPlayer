@@ -6,7 +6,7 @@ import Danmaku from './HtmlDanmaku'
 import style from './index.less?inline'
 
 export default class HtmlDanmakuManager extends DanmakuEngine {
-  Danmaku = Danmaku
+  override Danmaku = Danmaku
   declare danmakus: Danmaku[]
   declare runningDanmakus: Set<Danmaku>
 
@@ -15,7 +15,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
   })
 
   /**canvas的速度受fps影响，要想dom的速度和canvas一样需要乘上fps值 */
-  get speed() {
+  override get speed() {
     return (super.speed * this.fps) / 10
   }
 
@@ -183,12 +183,12 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     }
   }
 
-  resetState() {
+  override resetState() {
     this.runningDanmakus.forEach((d) => d.reset())
     this.nowPos = 0
     super.resetState()
   }
-  changeVisible(visible?: boolean): void {
+  override changeVisible(visible?: boolean): void {
     super.changeVisible(visible)
 
     if (this.visible) {
@@ -198,7 +198,7 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
     }
   }
 
-  updateVideo(video: HTMLVideoElement): void {
+  override updateVideo(video: HTMLVideoElement): void {
     this.unbindEvent()
     this.media = video
     this.bindEvent(video)

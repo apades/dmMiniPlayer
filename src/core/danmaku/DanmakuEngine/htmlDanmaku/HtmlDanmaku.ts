@@ -10,7 +10,7 @@ export default class HtmlDanmaku extends DanmakuBase {
   /**给tunnelManager监听 */
   outTunnelObserveEl?: HTMLSpanElement
 
-  onInit(props: DanmakuInitProps): void {
+  override onInit(props: DanmakuInitProps): void {
     this.tunnel = this.danmakuEngine.tunnelManager.getTunnel(this)
     if (this.tunnel == -1) {
       this.disabled = true
@@ -73,7 +73,7 @@ export default class HtmlDanmaku extends DanmakuBase {
     }
   }
 
-  updateState() {
+  override updateState() {
     const w = getTextWidth(this.text, {
       fontSize: this.danmakuEngine.fontSize + 'px',
       fontFamily: this.danmakuEngine.fontFamily,
@@ -112,7 +112,7 @@ export default class HtmlDanmaku extends DanmakuBase {
     })
   }
 
-  onUnload(): void {
+  override onUnload(): void {
     this.el = undefined
     this.outTunnelObserveEl = undefined
   }
@@ -121,7 +121,7 @@ export default class HtmlDanmaku extends DanmakuBase {
     this.unload()
     this.danmakuEngine.runningDanmakus.delete(this)
   }
-  reset() {
+  override reset() {
     if (!this.el) return
     if (!this.initd) return
     this.initd = false

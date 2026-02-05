@@ -26,7 +26,7 @@ type RecommendVideo = {
 }
 
 export default class BilibiliVideoProvider extends WebProvider {
-  onInit(): void {
+  override onInit(): void {
     this.subtitleManager = new BilibiliSubtitleManager()
     // danmakuSender
     this.danmakuSender = new DanmakuSender()
@@ -42,7 +42,7 @@ export default class BilibiliVideoProvider extends WebProvider {
   private lastAid = ''
   private lastCid = ''
 
-  async onPlayerInitd() {
+  override async onPlayerInitd() {
     this.update()
 
     this.addOnUnloadFn(

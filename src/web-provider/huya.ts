@@ -2,7 +2,7 @@ import { HtmlDanmakuProvider } from '@root/core/WebProvider'
 import { dq1 } from '@root/utils'
 
 export default class HuyaProvider extends HtmlDanmakuProvider {
-  isLive = true
+  override isLive = true
   getObserveHtmlDanmakuConfig(): Parameters<
     (typeof this)['startObserveHtmlDanmaku']
   >[0] {

@@ -29,7 +29,8 @@
     "resolveJsonModule": true,
     "strict": true,
     "sourceMap": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "noImplicitOverride": true
   },
   "include": [
     "./src/**/*",

@@ -86,7 +86,7 @@ export type PlayerEvents = Merge<
 
 const getMitt = onceCall(() => mitt())
 export class EventBus extends Events2<PlayerEvents> {
-  mitt = getMitt() as any
+  override mitt = getMitt() as any
 }
 
 export const eventBus = new EventBus()

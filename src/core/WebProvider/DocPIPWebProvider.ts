@@ -16,11 +16,11 @@ import { WebProvider } from '.'
 
 export default class DocPIPWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
-  protected MiniPlayer = HtmlVideoPlayer
+  protected override MiniPlayer = HtmlVideoPlayer
 
   pipWindow?: Window
 
-  async onOpenPlayer() {
+  override async onOpenPlayer() {
     // 在标题后添加 ' - PIP'
     const title = document.title
     const pipTitle = title + ' - PIP'
@@ -258,7 +258,7 @@ canvas{
     playerEl.appendChild(docPIPRootStyle)
   }
 
-  close(): void {
+  override close(): void {
     this.pipWindow?.close?.()
   }
 }
