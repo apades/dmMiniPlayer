@@ -22,9 +22,9 @@ import { WebProvider } from '.'
 
 export default class ReplacerWebProvider extends WebProvider {
   declare miniPlayer: HtmlVideoPlayer
-  protected MiniPlayer = HtmlVideoPlayer
+  protected override MiniPlayer = HtmlVideoPlayer
 
-  async onOpenPlayer() {
+  override async onOpenPlayer() {
     const paused = this.webVideo.paused
     await this.miniPlayer.init()
 

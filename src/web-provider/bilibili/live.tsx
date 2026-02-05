@@ -4,8 +4,8 @@ import BilibiliLiveBarrageClient from '@root/danmaku/bilibili/liveBarrageClient'
 import { dq1Adv } from '@root/utils'
 
 export default class BilibiliLiveProvider extends WebProvider {
-  isLive = true
-  onInit(): void {
+  override isLive = true
+  override onInit(): void {
     this.danmakuSender = new DanmakuSender()
     this.danmakuSender.setData({
       webSendButton:
@@ -17,7 +17,7 @@ export default class BilibiliLiveProvider extends WebProvider {
     })
   }
 
-  async onPlayerInitd() {
+  override async onPlayerInitd() {
     this.connectDanmakuWs()
   }
 
@@ -44,7 +44,7 @@ export default class BilibiliLiveProvider extends WebProvider {
     )
   }
 
-  onUnload(): void {
+  override onUnload(): void {
     this.danmakuWs?.close()
   }
 }

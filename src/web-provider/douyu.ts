@@ -5,7 +5,7 @@ import { sendMessage } from '@root/inject/contentSender'
 import { dq1Adv } from '@root/utils'
 
 export default class DouyuLiveProvider extends WebProvider {
-  onInit(): void {
+  override onInit(): void {
     sendMessage('event-hacker:disable', { qs: 'window', event: 'pagehide' })
     sendMessage('event-hacker:disable', {
       qs: 'document',
@@ -19,7 +19,7 @@ export default class DouyuLiveProvider extends WebProvider {
     })
   }
 
-  async onPlayerInitd() {
+  override async onPlayerInitd() {
     this.connectDanmakuWs()
   }
 
@@ -46,7 +46,7 @@ export default class DouyuLiveProvider extends WebProvider {
     )
   }
 
-  onUnload(): void {
+  override onUnload(): void {
     this.danmakuWs?.close()
     sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
     sendMessage('event-hacker:enable', {

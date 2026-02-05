@@ -10,7 +10,7 @@ import { WebProvider } from '.'
  * 监听html弹幕的provider，带有工具
  */
 export default abstract class HtmlDanmakuProvider extends WebProvider {
-  onInit() {
+  override onInit() {
     console.log('HtmlDanmakuProvider')
     this.danmakuSender = new DanmakuSender()
     this.danmakuSender.setData(this.getDanmakuSenderConfig())
@@ -85,7 +85,7 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
     'textInput'
   >
 
-  onUnload() {
+  override onUnload() {
     this.stopObserveHtmlDanmaku()
     sendMessage('event-hacker:enable', { qs: 'window', event: 'pagehide' })
     sendMessage('event-hacker:enable', {

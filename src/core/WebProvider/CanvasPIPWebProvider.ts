@@ -7,12 +7,12 @@ import { WebProvider } from '.'
 
 export default class CanvasPIPWebProvider extends WebProvider {
   declare miniPlayer: CanvasVideoPlayer
-  protected MiniPlayer = CanvasVideoPlayer
+  protected override MiniPlayer = CanvasVideoPlayer
 
   private pipVideoEl = createElement('video')
 
   private unlistenPipVideoEl = () => {}
-  onOpenPlayer(): Promise<void> | void {
+  override onOpenPlayer(): Promise<void> | void {
     this.pipVideoEl = createElement('video')
 
     if (!this.danmakuEngine) {
@@ -78,13 +78,13 @@ export default class CanvasPIPWebProvider extends WebProvider {
     this.emit(PlayerEvent.close)
   }
 
-  onUnload() {
+  override onUnload() {
     console.log('CanvasPIPWebProvider on unload')
     this.pipVideoEl.srcObject = null
     this.unlistenPipVideoEl()
   }
 
-  close() {
+  override close() {
     document.exitPictureInPicture()
   }
 }

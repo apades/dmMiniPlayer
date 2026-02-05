@@ -6,13 +6,13 @@ import VideoPlayerBase from './VideoPlayerBase'
 
 export class CanvasVideoPlayer extends VideoPlayerBase {
   videoEl?: HTMLVideoElement
-  onInit(): void {
+  override onInit(): void {
     this.videoEl = createElement('video')
 
     this.initVideoPlayer()
   }
 
-  onUnload(): void {
+  override onUnload(): void {
     this.videoEl = undefined
   }
 

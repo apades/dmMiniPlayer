@@ -15,7 +15,7 @@ import { t } from '@root/utils/i18n'
 import { runInAction } from 'mobx'
 
 class NetflixSubtitle extends SubtitleManager {
-  async onInit() {
+  override async onInit() {
     const list = await runCodeInTopWindow(() => {
       const sid = window.netflix.appContext.state.playerApp
         .getAPI()
@@ -43,7 +43,7 @@ class NetflixSubtitle extends SubtitleManager {
     })
   }
 
-  async loadSubtitle(value: string): Promise<SubtitleRow[]> {
+  override async loadSubtitle(value: string): Promise<SubtitleRow[]> {
     const id = getWatchId()
     if (!id) throw 'not found id'
     const url = await runCodeInTopWindow(
@@ -75,12 +75,12 @@ const getWatchId = () => location.href.match(/watch\/(\d+)/)?.[1]
 type First<T extends any[]> = T[0]
 
 export default class NetflixProvider extends WebProvider {
-  onInit(): void {
+  override onInit(): void {
     this.subtitleManager = new NetflixSubtitle()
     this.sideSwitcher = new SideSwitcher()
   }
 
-  onPlayerInitd(): void {
+  override onPlayerInitd(): void {
     this.injectWebVideoCurrentTimeSetter(this.webVideo)
 
     this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {

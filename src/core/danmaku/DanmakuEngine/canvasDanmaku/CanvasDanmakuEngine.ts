@@ -5,7 +5,7 @@ import Danmaku from './CanvasDanmaku'
 import CanvasDanmakuVideo from './CanvasDanmakuVideo'
 
 export default class CanvasDanmakuEngine extends DanmakuEngine {
-  Danmaku = Danmaku
+  override Danmaku = Danmaku
   declare danmakus: Danmaku[]
   declare runningDanmakus: Set<Danmaku>
 
@@ -27,7 +27,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     return this.canvasDanmakuVideo.ctx
   }
 
-  get opacity() {
+  override get opacity() {
     if (!this.visible) return 0
     return super.opacity
   }
@@ -196,7 +196,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     dansToDraw.forEach((dan) => this.runningDanmakus.add(dan))
   }
 
-  resetState() {
+  override resetState() {
     super.resetState()
     this.nowPos = 0
     this.hasDraw = false

@@ -28,7 +28,7 @@ export default class CanvasDanmakuVideo extends CanvasVideo {
       unListenerClose()
     })
   }
-  drawCanvas(): void {
+  override drawCanvas(): void {
     if (!this.canvas.width || !this.canvas.height) return
     if (this.hasSeek) {
       this.danmakuEngine.drawInSeek()

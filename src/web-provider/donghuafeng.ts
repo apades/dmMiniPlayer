@@ -6,7 +6,7 @@ import { t } from '@root/utils/i18n'
 import toast from 'react-hot-toast'
 
 export default class DonghuafengProvider extends WebProvider {
-  onInit(): void {
+  override onInit(): void {
     this.danmakuSender = new DanmakuSender()
     this.danmakuSender?.setData({
       webTextInput: dq1<HTMLInputElement>('.danmu-text'),
@@ -14,7 +14,7 @@ export default class DonghuafengProvider extends WebProvider {
     })
   }
 
-  async onPlayerInitd() {
+  override async onPlayerInitd() {
     const id = new URLSearchParams(location.search).get('sn') ?? ''
 
     const [err, danmakus] = await tryCatch(() => getDonghuafengDanmu(id))

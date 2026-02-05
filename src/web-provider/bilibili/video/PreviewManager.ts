@@ -89,7 +89,7 @@ export default class BiliBiliPreviewManager extends VideoPreviewManager {
     },
   )
 
-  protected onUnload(): void {
+  protected override onUnload(): void {
     this.asyncLock.reWaiting()
     this.data = null
   }

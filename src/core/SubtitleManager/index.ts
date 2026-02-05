@@ -110,7 +110,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     this.useSubtitle(label)
   }
 
-  private listenVideoEvents(video = this.video) {
+  protected listenVideoEvents(video = this.video) {
     if (!video) throw Error(ERROR_MSG.unInitVideoEl)
     const rowUnListenMap = new Map<SubtitleRow, () => void>()
     const unListenRows = () => {
@@ -185,7 +185,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     })
   }
 
-  private async autoloadSubtitle() {
+  protected async autoloadSubtitle() {
     const subtitleItemsLabel = this.nowSubtitleItemsLabel
     const translateMode = this.translateMode
     if (!subtitleItemsLabel) return
@@ -292,7 +292,7 @@ export class CommonSubtitleManager extends SubtitleManager {
   constructor() {
     super()
   }
-  async loadSubtitle(value: string): Promise<SubtitleRow[]> {
+  override async loadSubtitle(value: string): Promise<SubtitleRow[]> {
     return []
   }
 }

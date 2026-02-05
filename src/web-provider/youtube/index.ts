@@ -15,7 +15,7 @@ const isLive = () =>
     ? !!getIframe()
     : !!getLiveClass()
 export default class YoutubeProvider extends HtmlDanmakuProvider {
-  onInit() {
+  override onInit() {
     super.onInit()
     this.isLive = isLive()
 
@@ -26,7 +26,7 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
     }
   }
 
-  async onPlayerInitd() {
+  override async onPlayerInitd() {
     this.initSideSwitcherData()
 
     const listDom = dq1('ytd-watch-next-secondary-results-renderer')

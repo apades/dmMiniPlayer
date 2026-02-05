@@ -35,7 +35,7 @@ import { dq1 } from '@root/utils'
   content是弹幕内容
  */
 export default class DouyinProvider extends HtmlDanmakuProvider {
-  isLive = true
+  override isLive = true
   getObserveHtmlDanmakuConfig() {
     return {
       container: dq1<HTMLDivElement>(

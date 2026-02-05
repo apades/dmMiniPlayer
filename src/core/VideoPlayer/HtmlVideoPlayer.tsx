@@ -21,7 +21,7 @@ const docPIPStyleEl = createElement('style', {
 export class HtmlVideoPlayer extends VideoPlayerBase {
   playerRootEl?: HTMLElement
 
-  async onInit() {
+  override async onInit() {
     await this.renderReactVideoPlayer()
     // this.on(PlayerEvent.close, () => {})
   }
@@ -83,6 +83,8 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
         vpRef = ref
       },
       isLive: this.isLive,
+      setContext: () => {},
+      videoPlayerRef: { current: null },
     }
 
     const renderMode =
