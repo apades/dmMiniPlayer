@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react'
-import preact from '@preact/preset-vite'
 import fs from 'fs-extra'
 import { defineConfig } from 'vite'
 import { manifest } from '../src/manifest'

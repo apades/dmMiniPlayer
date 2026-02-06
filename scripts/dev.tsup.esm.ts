@@ -24,7 +24,11 @@ export default defineConfig({
     manifest.permissions?.push('scripting')
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
   },
-  entry: omit(shareConfig.entry, ['entry-all-frames']),
+  entry: {
+    ...omit(shareConfig.entry, ['entry-all-frames']),
+    'inject-top': pr('../src/contents/inject-top.ts'),
+    'inject-all-frames-top': pr('../src/contents/inject-all-frames-top.ts'),
+  },
   treeshake: false,
   minify: false,
   watch: true,

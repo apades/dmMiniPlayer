@@ -11,7 +11,7 @@
   },
   "scripts": {
     "predev": "pnpm auto-use-node",
-    "dev": "nodemon --exec \"run-p dev:*\"",
+    "dev": "cross-env NODE_ENV=development nodemon --exec \"rm -rf dist && run-p dev:*\"",
     "dev:esm": "tsup --config scripts/dev.tsup.esm.ts",
     "dev:hmr": "vite --config scripts/dev.vite.hmr.ts",
     "prebuild": "pnpm auto-use-node",
