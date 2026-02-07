@@ -58,11 +58,16 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     )
   }
 
+  protected initing = false
   async init(video: HTMLVideoElement) {
+    if (this.initing) return
+    // console.trace('init subtitleManager')
     this.reset()
     this.video = video
 
+    this.initing = true
     const [err] = await tryCatch(async () => this.onInit())
+    this.initing = false
     if (err) {
       toast.error(t('error.subtitleLoad'))
     }
@@ -73,6 +78,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     this.reset()
     this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
+    this.offAll()
   }
   onUnload() {}
 

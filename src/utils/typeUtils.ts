@@ -29,6 +29,9 @@ export type KeyOfType<T, V> = keyof {
 }
 
 export type OrPromise<T> = Promise<T> | T
+/** use for extract promise type from OrPromise */
+export type ExtractPromise<T> =
+  T extends Promise<infer U> ? Promise<U> : Promise<T>
 
 export type Rec<T = any> = {
   [key: string]: T

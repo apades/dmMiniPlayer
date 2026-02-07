@@ -38,8 +38,12 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
   }
 
   #labelToClickChildElMap = new Map<string, HTMLElement>()
-  override async init(video: HTMLVideoElement) {
-    super.init(video)
+  override async onInit() {
+    this.on('reset', () => {
+      this.#hasObserveSubtitleDom = false
+      this.#observeSubtitleDomUnlisten()
+    })
+
     const config = await this.getConfig()
 
     const console = logBox('SubtitleDomCaptureManager')
@@ -58,7 +62,8 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
           await wait(node.wait ?? 50)
           break
         case 'subtitleElList':
-          const container = dq1(node.container)
+          await wait(500)
+          const container = dq(node.container).pop()
           if (!container) {
             console.log(`container: ${node.container} not found`)
             continue
@@ -87,17 +92,20 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
           break
       }
     }
-    document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    if (notHasSubtitleDomConfig) {
+    if (notHasSubtitleDomConfig && config.length) {
       throw Error(ERROR_MSG.subtitleDomConfigNotFound)
     }
-
-    this.startObserveSubtitleDom()
+    if (config.length) {
+      await wait(500)
+      document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+      this.startObserveSubtitleDom()
+    }
   }
 
   protected override listenVideoEvents(): void {}
 
   #hasObserveSubtitleDom = false
+  #observeSubtitleDomUnlisten = () => {}
   private startObserveSubtitleDom() {
     if (this.#hasObserveSubtitleDom) return
     this.#hasObserveSubtitleDom = true
@@ -129,7 +137,11 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
       })
       observer.observe(container, { childList: true, subtree: true })
 
-      this.addOnUnloadFn(() => observer.disconnect())
+      // this.addOnUnloadFn(() => observer.disconnect())
+      this.#observeSubtitleDomUnlisten = () => {
+        observer.disconnect()
+        this.#observeSubtitleDomUnlisten = () => {}
+      }
     }
   }
 
@@ -146,5 +158,10 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
 
     this.listenVideoEvents()
     this.showSubtitle = true
+  }
+
+  override unload(): void {
+    super.unload()
+    this.#observeSubtitleDomUnlisten()
   }
 }

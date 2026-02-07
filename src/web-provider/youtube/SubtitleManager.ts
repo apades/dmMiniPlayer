@@ -1,7 +1,20 @@
 import SubtitleDomCaptureManager from '@root/core/SubtitleManager/SubtitleDomCaptureManager'
+import { tryCatch } from '@root/utils'
+import { ExtractPromise } from '@root/utils/typeUtils'
+import { getVideoInfo } from './utils'
 
 export default class YoutubeSubtitleManager extends SubtitleDomCaptureManager {
-  override getConfig(): ReturnType<SubtitleDomCaptureManager['getConfig']> {
+  override async getConfig(): ExtractPromise<
+    ReturnType<SubtitleDomCaptureManager['getConfig']>
+  > {
+    const [error, hasSubtitle] = await tryCatch(
+      async () =>
+        !!(await getVideoInfo()).captions.playerCaptionsTracklistRenderer
+          .captionTracks,
+    )
+
+    if (!hasSubtitle || error) return []
+
     return [
       {
         type: 'event',
