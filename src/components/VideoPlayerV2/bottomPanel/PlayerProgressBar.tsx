@@ -59,29 +59,41 @@ const PlayerProgressBar: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div
-      ref={containerRef}
-      className={classNames(
-        'played-progress-bar',
-        configStore.videoProgress_show && 'use-bottom-progress',
+    <>
+      {configStore.videoProgress_show && (
+        <div
+          className="bottom-progress"
+          style={{
+            height: configStore.videoProgress_height + 'px',
+            backgroundColor: configStore.videoProgress_color,
+            width: playedPercent + '%',
+          }}
+        ></div>
       )}
-      style={{
-        '--bottom-progress-color': configStore.videoProgress_color,
-        '--bottom-progress-height': configStore.videoProgress_height + 'px',
-      }}
-    >
-      <style dangerouslySetInnerHTML={{ __html: style }}></style>
-      <ProgressBar
-        percent={playedPercent}
-        onClick={handleOnclick}
-        loadColor="#0669ff"
-        handleRender={(node, _props) => {
-          return <HandleWithToolTips {..._props} duration={duration} />
+      <div
+        ref={containerRef}
+        className={classNames(
+          'played-progress-bar',
+          configStore.videoProgress_show && 'use-bottom-progress',
+        )}
+        style={{
+          '--bottom-progress-color': configStore.videoProgress_color,
+          '--bottom-progress-height': configStore.videoProgress_height + 'px',
         }}
-      ></ProgressBar>
+      >
+        <style dangerouslySetInnerHTML={{ __html: style }}></style>
+        <ProgressBar
+          percent={playedPercent}
+          onClick={handleOnclick}
+          loadColor="#0669ff"
+          handleRender={(node, _props) => {
+            return <HandleWithToolTips {..._props} duration={duration} />
+          }}
+        ></ProgressBar>
 
-      <ToolTips containerRef={containerRef} duration={duration} />
-    </div>
+        <ToolTips containerRef={containerRef} duration={duration} />
+      </div>
+    </>
   )
 }
 
