@@ -47,6 +47,17 @@
 > [!NOTE]
 > *标记为目前只有监听网页弹幕DOM模式，可能会有意料之外的问题
 
+## How to Dev
+### env
+pnpm >=10.0.0
+node >=24.11.0
+### dev
+```bash
+pnpm i
+pnpm run dev
+```
+Drag `dist` folder and drop to `chrome://extensions/` page in Chrome (Open development mode before)
+
 ## 📚 主要实现方法
 ### 旧版本PIP
 用一个单独canvas画video + 弹幕，再把canvas的stream附加到一个单独的video上，最后开启画中画功能
