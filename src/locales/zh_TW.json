@@ -130,6 +130,8 @@
     "bottomRight": "右下"
   },
   "shortcut": {
+    "descTitle": "說明",
+    "descContent": "退格鍵清除快捷鍵",
     "fullscreen": "全螢幕",
     "fullpage": "整頁",
     "none": "無操作",
@@ -161,7 +163,10 @@
     "cate_speed": "速度",
     "cate_other": "其他",
     "longPress": "長按",
-    "wheel": "鼠標滾動輪"
+    "wheel": "鼠標滾動輪",
+    "keydown": "按下",
+    "keyup": "鬆開",
+    "press": "長按"
   },
   "popup": {
     "tips": "需要點擊下頁面才能觸發畫中畫播放",

@@ -130,11 +130,13 @@
     "bottomRight": "Bottom right"
   },
   "shortcut": {
+    "descTitle": "Description",
+    "descContent": "Backspace to clear hotkey",
     "fullscreen": "Full-screen",
     "fullpage": "Full-page",
     "none": "None",
-    "showShortcutTips": "Show shortcut tips",
-    "shortcut": "Shortcut",
+    "showShortcutTips": "Show hotkey tips",
+    "shortcut": "Hotkey",
     "feat": "Action",
     "play/pause": "Play/Pause",
     "rewind": "Rewind 5 seconds",
@@ -144,6 +146,7 @@
     "preVideo": "Previous video",
     "nextVideo": "Next video",
     "speedMode": "Long press to speed mode",
+    "speedModeDesc": "Only compatible with long press trigger",
     "volumeUp": "Volume up",
     "volumeDown": "Volume down",
     "mute/unmute": "Mute/Unmute",
@@ -161,7 +164,10 @@
     "cate_speed": "Speed",
     "cate_other": "Others",
     "longPress": "Long press",
-    "wheel": "Mouse scroll wheel"
+    "wheel": "Mouse scroll wheel",
+    "keydown": "KeyDown",
+    "keyup": "KeyUp",
+    "press": "Press"
   },
   "popup": {
     "tips": "Click on the web page to trigger picture-in-picture",

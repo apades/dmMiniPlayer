@@ -130,6 +130,8 @@
     "bottomRight": "En bas à droite"
   },
   "shortcut": {
+    "descTitle": "Description",
+    "descContent": "Retour arrière pour effacer",
     "fullscreen": "Plein écran",
     "fullpage": "Pleine page",
     "none": "Aucun",
@@ -161,7 +163,10 @@
     "cate_speed": "Vitesse",
     "cate_other": "Autres",
     "longPress": "Appui long",
-    "wheel": "Rouge de défilement de souris"
+    "wheel": "Rouge de défilement de souris",
+    "keydown": "Appuyer",
+    "keyup": "Relâcher",
+    "press": "Maintenir enfoncé"
   },
   "popup": {
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",

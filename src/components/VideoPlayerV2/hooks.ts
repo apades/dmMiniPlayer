@@ -48,86 +48,55 @@ export const useInWindowKeydown = () => {
   useEffect(() => {
     if (!keydownWindow) return
 
-    let speedModeTimer: NodeJS.Timeout | null,
-      isSpeedMode = false
-
     const oneFrame = 1 / 60
+    let beforeLongPressSpeedModePlaybackRate: number = 1
     const callbackFns = [
-      keyBinding.onKeydown((e) => {
+      eventBus.on2(PlayerEvent.command_rewind, () => {
         if (!webVideo) return
+        if (isLive) return
+        let getNewTime = () =>
+          minmax(webVideo.currentTime - 5, 0, webVideo.duration)
 
-        switch (e.code as Key) {
-          case 'ArrowLeft': {
-            if (isLive) return
-            let getNewTime = () =>
-              minmax(webVideo.currentTime - 5, 0, webVideo.duration)
-
-            if (webVideo.paused) {
-              togglePlayState('play').then(() => {
-                webVideo.currentTime = getNewTime()
-                eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
-              })
-            } else {
-              webVideo.currentTime = getNewTime()
-              eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
-            }
-            break
-          }
-          case 'ArrowRight': {
-            if (isLive) return
-            if (speedModeTimer) return
-
-            speedModeTimer = setTimeout(() => {
-              isSpeedMode = true
-              webVideo.playbackRate = configStore.playbackRate
-              eventBus.emit(PlayerEvent.longTabPlaybackRate)
-            }, 200)
-            break
-          }
+        if (webVideo.paused) {
+          togglePlayState('play').then(() => {
+            webVideo.currentTime = getNewTime()
+            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
+          })
+        } else {
+          webVideo.currentTime = getNewTime()
+          eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
         }
       }),
-
-      keyBinding.onKeyup((e) => {
+      eventBus.on2(PlayerEvent.command_forward, () => {
         if (!webVideo) return
+        if (isLive) return
+        const getNewTime = () =>
+          minmax(webVideo.currentTime + 5, 0, webVideo.duration)
 
-        const { shiftKey, ctrlKey } = e
-        switch (e.code) {
-          case 'ArrowRight': {
-            if (isLive) return
-            if (shiftKey || ctrlKey) return
-
-            if (speedModeTimer) {
-              clearTimeout(speedModeTimer)
-            }
-
-            speedModeTimer = null
-            // https://github.com/apades/dmMiniPlayer/issues/9
-
-            webVideo.currentTime = webVideo.currentTime
-            setTimeout(() => {
-              eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
-            }, 0)
-
-            if (isSpeedMode) {
-              webVideo.playbackRate = 1
-              isSpeedMode = false
-            } else {
-              const getNewTime = () =>
-                minmax(webVideo.currentTime + 5, 0, webVideo.duration)
-
-              if (webVideo.paused) {
-                togglePlayState('play').then(() => {
-                  webVideo.currentTime = getNewTime()
-                  eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
-                })
-              } else {
-                webVideo.currentTime = getNewTime()
-                eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
-              }
-            }
-          }
+        if (webVideo.paused) {
+          togglePlayState('play').then(() => {
+            webVideo.currentTime = getNewTime()
+            eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
+          })
+        } else {
+          webVideo.currentTime = getNewTime()
+          eventBus.emit(PlayerEvent.changeCurrentTimeByKeyboard)
         }
       }),
+      eventBus.on2(PlayerEvent.command_pressSpeedMode, () => {
+        if (!webVideo) return
+        if (isLive) return
+        beforeLongPressSpeedModePlaybackRate = webVideo.playbackRate
+        webVideo.playbackRate = configStore.playbackRate
+        eventBus.emit(PlayerEvent.longTabPlaybackRate)
+      }),
+      eventBus.on2(PlayerEvent.command_pressSpeedMode_release, () => {
+        if (!webVideo) return
+        if (isLive) return
+        webVideo.playbackRate = beforeLongPressSpeedModePlaybackRate
+        eventBus.emit(PlayerEvent.longTabPlaybackRateEnd)
+      }),
+
       eventBus.on2(PlayerEvent.command_playToggle, () => togglePlayState()),
       eventBus.on2(PlayerEvent.command_fineForward, () => {
         if (!webVideo) return

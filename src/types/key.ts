@@ -1,3 +1,5 @@
+import { ValueOf } from 'type-fest'
+
 export const invertObj = <Obj extends Record<string, any>>(
   obj: Obj,
 ): { [P in keyof Obj as Obj[P]]: P } =>
@@ -104,4 +106,11 @@ export const getKeyboardCodesByKey = (key: keyof typeof keyToKeyCodeMap) => {
   }
 }
 
-export type Key = `${keyof typeof keyToKeyCodeMap}` /* | (string & {}) */
+export const KeyType = {
+  keydown: '(keydown)',
+  keyup: '(keyup)',
+  press: '(press)',
+} as const
+export type Key =
+  | keyof typeof keyToKeyCodeMap /* | (string & {}) */
+  | ValueOf<typeof KeyType>

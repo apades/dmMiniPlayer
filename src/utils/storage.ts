@@ -1,8 +1,8 @@
 import { LATEST_SAVE_VERSION } from '@root/shared/storeKey'
-// import Browser from 'webextension-polyfill'
-const Browser = chrome
+import Browser from 'webextension-polyfill'
+// const Browser = chrome
 
-Browser.storage.local.onChanged.addListener((changes) => {
+Browser.storage.local.onChanged.addListener((changes: any) => {
   console.log('onChanged', localCallbacksMap, changes)
   Object.keys(changes).forEach((key) => {
     localCallbacksMap[key]?.forEach?.((cb) => cb(changes[key].newValue))
@@ -49,7 +49,7 @@ export function getBrowserLocalStorage<
     )
 }
 
-Browser.storage.sync.onChanged.addListener((changes) => {
+Browser.storage.sync.onChanged.addListener((changes: any) => {
   Object.keys(changes).forEach((key) => {
     syncCallbacksMap[key]?.forEach?.((cb) => cb(changes[key].newValue))
   })

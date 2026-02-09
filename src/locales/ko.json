@@ -130,6 +130,8 @@
     "bottomRight": "오른쪽 하단"
   },
   "shortcut": {
+    "descTitle": "설명",
+    "descContent": "백스페이스로 지우기",
     "fullscreen": "전체 화면",
     "fullpage": "전체 페이지",
     "none": "없음",
@@ -161,7 +163,10 @@
     "cate_speed": "속도",
     "cate_other": "기타",
     "longPress": "길게 누르기",
-    "wheel": "마우스 스크롤 휠"
+    "wheel": "마우스 스크롤 휠",
+    "keydown": "누르기",
+    "keyup": "놓기",
+    "press": "길게 누르기"
   },
   "popup": {
     "tips": "Picture-in-Picture 재생을 시작하려면 다음 페이지를 클릭해야 합니다",

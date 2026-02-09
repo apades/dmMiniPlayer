@@ -1,34 +1,72 @@
 import type { config as _config } from '@apad/setting-panel'
-import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
+import { Key, keyCodeToCode, keyToKeyCodeMap, KeyType } from '@root/types/key'
 import { t } from '@root/utils/i18n'
 
+const keyTypeValues = Object.values(KeyType)
 const category = t('shortcut.shortcut')
 const config: typeof _config = (props) => ({
   category,
   render: ((val: Key[], onChange: (val: Key[]) => void) => {
+    const [keyType, hasKeyType] = (() => {
+      const lastKey = val[val.length - 1]
+      if (keyTypeValues.includes(lastKey as any)) return [lastKey, true]
+      return [KeyType.keydown, false]
+    })()
+    const value = (() => {
+      if (hasKeyType) {
+        const nv = [...val]
+        nv.pop()
+        return nv.join(' + ')
+      }
+      return val.join(' + ')
+    })()
+
     return (
-      <input
-        value={val.join(' + ')}
-        onKeyDown={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          const { keyCode, shiftKey, ctrlKey } = e
+      <>
+        <input
+          value={value}
+          onKeyDown={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            const { keyCode, shiftKey, ctrlKey } = e
 
-          const actions: Key[] = []
-          if (!keyCode) return
-          if (shiftKey && keyCode !== keyToKeyCodeMap.Shift)
-            actions.push('Shift')
-          if (ctrlKey && keyCode !== keyToKeyCodeMap.Ctrl) actions.push('Ctrl')
+            const actions: Key[] = []
+            if (!keyCode) return
+            if (shiftKey && keyCode !== keyToKeyCodeMap.Shift)
+              actions.push('Shift')
+            if (ctrlKey && keyCode !== keyToKeyCodeMap.Ctrl)
+              actions.push('Ctrl')
 
-          actions.push(...formatKeys((keyCodeToCode as any)[keyCode]))
+            actions.push(...formatKeys((keyCodeToCode as any)[keyCode]))
+            actions.push(keyType)
 
-          if (keyCode === keyToKeyCodeMap.Backspace) {
-            actions.length = 0
-          }
-          onChange(actions)
-        }}
-        onChange={() => {}}
-      />
+            if (keyCode === keyToKeyCodeMap.Backspace) {
+              actions.length = 0
+            }
+            onChange(actions)
+          }}
+          onChange={() => {}}
+          className="flex-1 min-w-0"
+        />
+        <select
+          defaultValue={KeyType.keydown}
+          className="!min-w-0 w-auto"
+          value={keyType}
+          onChange={(e) => {
+            const keyType = e.target.value as Key
+            const nv = [...val]
+            if (hasKeyType) {
+              nv.pop()
+            }
+            nv.push(keyType)
+            onChange(nv)
+          }}
+        >
+          <option value={KeyType.keydown}>{t('shortcut.keydown')}</option>
+          <option value={KeyType.keyup}>{t('shortcut.keyup')}</option>
+          <option value={KeyType.press}>{t('shortcut.press')}</option>
+        </select>
+      </>
     )
   }) as any,
   ...props,
@@ -65,6 +103,10 @@ const cateProgress = t('shortcut.cate_progress'),
   cateVolume = t('shortcut.cate_volume')
 
 const config_shortcut = {
+  shortcut_desc: config({
+    label: t('shortcut.descTitle'),
+    render: () => <div>{t('shortcut.descContent')}</div>,
+  }),
   shortcut_playToggle: config({
     label: t('shortcut.play/pause'),
     defaultValue: keys('Space'),
@@ -73,13 +115,11 @@ const config_shortcut = {
   shortcut_rewind: config({
     label: t('shortcut.rewind'),
     defaultValue: keys('ArrowLeft'),
-    render: disableRender,
     ext: cateProgress,
   }),
   shortcut_forward: config({
     label: t('shortcut.forward'),
-    defaultValue: keys('ArrowRight'),
-    render: disableRender,
+    defaultValue: keys('ArrowRight', KeyType.keyup),
     ext: cateProgress,
   }),
   shortcut_fineRewind: config({
@@ -142,8 +182,8 @@ const config_shortcut = {
   }),
   shortcut_pressSpeedMode: config({
     label: t('shortcut.speedMode'),
-    defaultValue: keys(t('shortcut.longPress') as any, 'ArrowRight'),
-    render: disableRender,
+    defaultValue: keys('ArrowRight', KeyType.press),
+    desc: t('shortcut.speedModeDesc'),
     ext: cateSpeed,
   }),
   shortcut_screenshot: config({

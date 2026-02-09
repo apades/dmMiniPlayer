@@ -3,7 +3,7 @@ import config_shortcut, {
   disableRender,
   formatKeys,
 } from '@root/store/config/shortcut'
-import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
+import { Key, keyCodeToCode, keyToKeyCodeMap, KeyType } from '@root/types/key'
 import { autorun } from 'mobx'
 import { addEventListener } from '@root/utils'
 import { eventBus } from './event'
@@ -20,7 +20,10 @@ import { eventBus } from './event'
 
 export const getShortcutConfigs = () => {
   const keys = Object.entries(config_shortcut)
-    .filter(([_, val]) => (val as any).render !== disableRender)
+    .filter(
+      ([key, val]) =>
+        (val as any).render !== disableRender && key !== 'shortcut_desc',
+    )
     .map(([key]) => key)
 
   return Object.fromEntries(
@@ -41,11 +44,15 @@ export class KeyBinding {
 
   constructor() {}
 
-  private configKeyMap: Record<string, () => void> = {}
+  protected configKeyMap: Record<string, () => void> = {}
+  protected pressingKeyMap: Record<string, number> = {}
+  protected releasePressingKeyFnMap: Record<string, () => void> = {}
 
-  private unListens: (() => void)[] = []
-  private onKeydownFns = new Set<(e: KeyboardEvent) => void>()
-  private onKeyupFns = new Set<(e: KeyboardEvent) => void>()
+  protected unListens: (() => void)[] = []
+  protected onKeydownFns = new Set<(e: KeyboardEvent) => void>()
+  protected onKeyupFns = new Set<(e: KeyboardEvent) => void>()
+
+  protected pressingConstant = 3
 
   updateKeydownWindow(keydownWindow: Window) {
     this.unload()
@@ -77,12 +84,22 @@ export class KeyBinding {
       autorun(() => {
         this.configKeyMap = {}
         const configs = getShortcutConfigs()
-        Object.entries(configs).forEach(([name, keys]) => {
-          const key = keys.join('+')
+        Object.entries(configs).forEach(([name, _keys]) => {
+          const keys = _keys as Key[]
+          const key = (keys as string[]).join('+')
+
           this.configKeyMap[key] = () => {
             const command = name.replace('shortcut_', 'command_') as any
             console.log('command', command)
             eventBus.emit(command)
+          }
+
+          if (keys[keys.length - 1] === KeyType.press) {
+            this.configKeyMap[`${key}_release`] = () => {
+              const command = name.replace('shortcut_', 'command_') as any
+              console.log('command', `${command}_release`)
+              eventBus.emit(`${command}_release` as any)
+            }
           }
         })
 
@@ -104,7 +121,7 @@ export class KeyBinding {
       tar.contentEditable === 'true'
     )
       return
-    e.stopPropagation()
+    // e.stopPropagation()
 
     const { keyCode, shiftKey, ctrlKey, altKey } = e
     // if (key.length === 1) key = key.toLowerCase()
@@ -118,16 +135,35 @@ export class KeyBinding {
 
     const mapKey = actions.join('+')
 
-    // console.log('mapKey', mapKey)
-
-    if (this.configKeyMap[mapKey]) {
-      e.preventDefault()
-
+    // pressing
+    if (
+      this.pressingKeyMap[mapKey] >= this.pressingConstant &&
+      this.configKeyMap[`${mapKey}+${KeyType.press}`]
+    ) {
+      // e.preventDefault()
+      const fn = this.configKeyMap[`${mapKey}+${KeyType.press}`]
+      fn()
+      this.releasePressingKeyFnMap[mapKey] = () => {
+        this.configKeyMap[`${mapKey}+${KeyType.press}`] = fn
+        this.configKeyMap[`${mapKey}+${KeyType.press}_release`]?.()
+      }
+      delete this.configKeyMap[`${mapKey}+${KeyType.press}`]
+    }
+    // +keydown
+    else if (this.configKeyMap[`${mapKey}+${KeyType.keydown}`]) {
+      // e.preventDefault()
+      this.configKeyMap[`${mapKey}+${KeyType.keydown}`]()
+    }
+    // +keydown default 格式
+    else if (this.configKeyMap[mapKey]) {
+      // e.preventDefault()
       this.configKeyMap[mapKey]()
-      return
+    } else {
+      this.onKeydownFns.forEach((fn) => fn(e))
     }
 
-    this.onKeydownFns.forEach((fn) => fn(e))
+    this.pressingKeyMap[mapKey] ??= 0
+    this.pressingKeyMap[mapKey]++
   }
   protected handleKeyUp(e: KeyboardEvent) {
     const tar = e.target as HTMLElement
@@ -137,7 +173,7 @@ export class KeyBinding {
       tar.contentEditable === 'true'
     )
       return
-    e.stopPropagation()
+    // e.stopPropagation()
 
     const { keyCode, shiftKey, ctrlKey } = e
     // if (key.length === 1) key = key.toLowerCase()
@@ -150,7 +186,22 @@ export class KeyBinding {
 
     const mapKey = actions.join('+')
 
-    this.onKeyupFns.forEach((fn) => fn(e))
+    if (this.releasePressingKeyFnMap[mapKey]) {
+      this.releasePressingKeyFnMap[mapKey]()
+      delete this.releasePressingKeyFnMap[mapKey]
+    }
+
+    if (
+      this.configKeyMap[`${mapKey}+${KeyType.keyup}`] &&
+      this.pressingKeyMap[mapKey] < this.pressingConstant
+    ) {
+      // e.preventDefault()
+      this.configKeyMap[`${mapKey}+${KeyType.keyup}`]()
+    } else {
+      this.onKeyupFns.forEach((fn) => fn(e))
+    }
+
+    delete this.pressingKeyMap[mapKey]
   }
   // 这是给replacer模式监听的，keydown keyup已经被阻止了，通过一层代理转发和监听
   protected handleCustomKeyDown(e: KeyboardEvent) {

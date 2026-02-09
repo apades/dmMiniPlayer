@@ -79,3 +79,11 @@ declare namespace chrome.runtime {
       | undefined
   }
 }
+
+// Test types for KeyBinding playground
+interface Window {
+  testEvents?: string[]
+  testKeyBinding?: import('@root/core/KeyBinding').KeyBinding
+  testEventBus?: import('@root/core/event').EventBus
+  testReady?: boolean
+}

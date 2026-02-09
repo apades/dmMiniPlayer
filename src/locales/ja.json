@@ -130,6 +130,8 @@
     "bottomRight": "右下"
   },
   "shortcut": {
+    "descTitle": "説明",
+    "descContent": "バックスペースでクリア",
     "fullscreen": "全画面表示",
     "fullpage": "全ページ",
     "none": "なし",
@@ -161,7 +163,10 @@
     "cate_speed": "スピード",
     "cate_other": "その他",
     "longPress": "長押し",
-    "wheel": "マウススクロールホイール"
+    "wheel": "マウススクロールホイール",
+    "keydown": "押す",
+    "keyup": "離す",
+    "press": "長押し"
   },
   "popup": {
     "tips": "ピクチャーインピクチャー再生をトリガーするには,次のページをクリックする必要があります",

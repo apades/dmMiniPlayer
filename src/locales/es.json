@@ -130,6 +130,8 @@
     "bottomRight": "Abajo a la derecha"
   },
   "shortcut": {
+    "descTitle": "Descripción",
+    "descContent": "Retroceso para borrar",
     "fullscreen": "Pantalla completa",
     "fullpage": "Página llena",
     "none": "Ninguno",
@@ -161,7 +163,10 @@
     "cate_speed": "Velocidad",
     "cate_other": "Otros",
     "longPress": "Pulsación larga",
-    "wheel": "Rueda de desplazamiento del ratón"
+    "wheel": "Rueda de desplazamiento del ratón",
+    "keydown": "Presionar",
+    "keyup": "Soltar",
+    "press": "Mantener presionado"
   },
   "popup": {
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",

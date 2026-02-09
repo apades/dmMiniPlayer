@@ -130,6 +130,8 @@
     "bottomRight": "右下"
   },
   "shortcut": {
+    "descTitle": "说明",
+    "descContent": "退格键清除快捷键",
     "fullscreen": "全屏",
     "fullpage": "整页",
     "none": "无操作",
@@ -143,11 +145,12 @@
     "forward_fine": "前进1帧",
     "preVideo": "上一个视频",
     "nextVideo": "下一个视频",
-    "speedMode": "长按速度模式",
+    "speedMode": "长按倍速模式",
+    "speedModeDesc": "只适配长按触发",
     "volumeUp": "音量+",
     "volumeDown": "音量-",
     "mute/unmute": "静音/取消静音",
-    "speedMode/normal": "速度模式/重置倍速",
+    "speedMode/normal": "倍速模式/重置倍速",
     "speedUp": "速度+0.25x",
     "speedDown": "速度-0.25x",
     "popupDanmakuInput": "弹出弹幕输入框",
@@ -161,7 +164,10 @@
     "cate_speed": "速度",
     "cate_other": "其他",
     "longPress": "长按",
-    "wheel": "鼠标滚轮"
+    "wheel": "鼠标滚轮",
+    "keydown": "按下",
+    "keyup": "松开",
+    "press": "长按"
   },
   "popup": {
     "tips": "需要点击下页面才能触发画中画播放",
