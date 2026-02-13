@@ -37,7 +37,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
   }
 
   /**停止监听所有video事件 */
-  private videoUnListen = () => {}
+  private videoUnListen = () => { }
   constructor() {
     super()
     // makover(this, { video: false, activeRows: false })
@@ -73,14 +73,14 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     }
     this.initd = true
   }
-  onInit() {}
+  onInit() { }
   unload() {
     this.reset()
     this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
     this.offAll()
   }
-  onUnload() {}
+  onUnload() { }
 
   // addSubtitle(label: string, rows: SubtitleRow[]) {
   //   this.subtitleItems.push({ label, value: label })
@@ -89,9 +89,17 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
 
   async addFileSubtitle(file: File) {
     const label = file.name
-    if (this.subtitleCache.has(label)) {
-      throw Error('Already add this file')
+    const cacheKey = `custom-${label}`
+
+    // 如果已緩存，直接重新掛載
+    if (this.subtitleCache.has(cacheKey)) {
+      if (!this.subtitleItems.find((item) => item.label === label)) {
+        this.subtitleItems.push({ label, value: label })
+      }
+      this.useSubtitle(label)
+      return
     }
+
     const fileType = (label.split('.').pop() ?? '').toLowerCase()
     let rows: SubtitleRow[] = []
     switch (fileType) {
@@ -106,76 +114,77 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
         break
       }
       default: {
-        throw Error('Unsupported subtitle file. Only support .srt .ass')
+        toast.error('Unsupported subtitle file. Only support .srt .ass')
+        return
       }
     }
     console.log('解析后的rows', rows)
 
     this.subtitleItems.push({ label, value: label })
-    this.subtitleCache.set(`custom-${label}`, { rows })
+    this.subtitleCache.set(cacheKey, { rows })
     this.useSubtitle(label)
   }
 
   protected listenVideoEvents(video = this.video) {
     if (!video) throw Error(ERROR_MSG.unInitVideoEl)
-    const rowUnListenMap = new Map<SubtitleRow, () => void>()
-    const unListenRows = () => {
-      ;[...rowUnListenMap.entries()].forEach(([row, unListen]) => {
-        this.emit('row-leave', row)
-        this.activeRows.delete(row)
-        unListen()
-      })
-    }
-    const mainUnListen = addEventListener(video, (video) => {
-      const handleOnTimeUpdate = () => {
-        const cTime = video.currentTime
-        while (this.rowIndex < this.rows.length) {
-          const row = this.rows[this.rowIndex]
-          if (row.endTime <= cTime) {
-            this.rowIndex++
-            continue
-          }
-          if (row.startTime >= cTime) {
-            break
-          }
-          this.rowIndex++
-          // 触发enter
-          this.emit('row-enter', row)
-          this.activeRows.add(row)
 
-          const rowUnListen = addEventListener(video, (video) => {
-            video.addEventListener('timeupdate', () => {
-              const cTime = video.currentTime
-              if (row.endTime <= cTime) {
-                // 触发leave
-                this.emit('row-leave', row)
-                this.activeRows.delete(row)
+    // 先清理旧监听，防重复绑定
+    this.videoUnListen()
 
-                // 删除监听
-                rowUnListenMap.delete(row)
-                rowUnListen()
-              }
-            })
-          })
-          rowUnListenMap.set(row, rowUnListen)
+    const activeRowEndTimes = new Map<SubtitleRow, number>()
+
+    const handleTimeUpdate = () => {
+      const cTime = video.currentTime
+
+      // 檢查已激活的行是否需要離開
+      for (const [row, _endTime] of activeRowEndTimes) {
+        if (row.endTime <= cTime) {
+          this.emit('row-leave', row)
+          this.activeRows.delete(row)
+          activeRowEndTimes.delete(row)
         }
       }
-      video.addEventListener('timeupdate', () => {
-        handleOnTimeUpdate()
-      })
 
-      // 跳进度条就重置所有字幕
+      // 掃描新的行進入
+      while (this.rowIndex < this.rows.length) {
+        const row = this.rows[this.rowIndex]
+        if (row.endTime <= cTime) {
+          this.rowIndex++
+          continue
+        }
+        if (row.startTime > cTime) {
+          break
+        }
+        this.rowIndex++
+        // 觸發enter
+        this.emit('row-enter', row)
+        this.activeRows.add(row)
+        activeRowEndTimes.set(row, row.endTime)
+      }
+    }
+
+    const clearActiveRows = () => {
+      for (const [row] of activeRowEndTimes) {
+        this.emit('row-leave', row)
+        this.activeRows.delete(row)
+      }
+      activeRowEndTimes.clear()
+    }
+
+    const mainUnListen = addEventListener(video, (video) => {
+      video.addEventListener('timeupdate', handleTimeUpdate)
+
+      // 跳進度條就重置所有字幕
       video.addEventListener('seeked', () => {
-        unListenRows()
-        rowUnListenMap.clear()
+        clearActiveRows()
         this.rowIndex = 0
-        handleOnTimeUpdate()
+        handleTimeUpdate()
       })
     })
 
     this.videoUnListen = () => {
       mainUnListen()
-      unListenRows()
+      clearActiveRows()
     }
   }
 
@@ -213,7 +222,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
           return this.loadSubtitle(subtitleItemsValue)
         })
 
-        if (err || !subtitleRows.length) {
+        if (err || !subtitleRows || !subtitleRows.length) {
           toast.error(t('error.subtitleLoad'))
           return
         }

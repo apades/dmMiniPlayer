@@ -87,6 +87,26 @@ export default function srtParser(content: string): SubtitleRow[] {
   }
   let index = +firstLine
 
+  /** 將字幕文本解析為最終格式並推入結果數組 */
+  const finalizeAndPush = (sub: SubtitleRow) => {
+    const fullText = sub.text.trim()
+    if (!fullText) return
+    const htmlText = `<p>${fullText}</p>`
+    sub.htmlText = htmlText
+
+    const parsed = domParser(htmlText)
+    const root = parsed.childNodes[0]
+    const hasMultiChild = !!root.childNodes.length
+    const text = hasMultiChild
+      ? Array.from(root.childNodes)
+        .map((node) => node.textContent)
+        .join('\n')
+      : root.textContent
+    sub.text = text ?? ''
+
+    subtitles.push(sub)
+  }
+
   for (let i = 0; i < srtLines.length; i++) {
     const line = srtLines[i].trim()
 
@@ -104,22 +124,7 @@ export default function srtParser(content: string): SubtitleRow[] {
       subtitle.startTime = timestampToSeconds(startTime)
       subtitle.endTime = timestampToSeconds(endTime)
     } else if (line === '') {
-      // 开始push subtitleRow进去rs
-      const fullText = subtitle.text.trim()
-      const htmlText = `<p>${fullText}</p>`
-      subtitle.htmlText = htmlText
-
-      const parser = domParser(htmlText)
-      const root = parser.childNodes[0]
-      const hasMultiChild = !!root.childNodes.length
-      const text = hasMultiChild
-        ? Array.from(root.childNodes)
-            .map((node) => node.textContent)
-            .join('\n')
-        : root.textContent
-      subtitle.text = text ?? ''
-
-      subtitles.push(subtitle)
+      finalizeAndPush(subtitle)
     } else {
       if (subtitle.text) {
         subtitle.text += '\n'
@@ -127,6 +132,9 @@ export default function srtParser(content: string): SubtitleRow[] {
       subtitle.text += line
     }
   }
+
+  // 處理最後一條字幕（文件不以空行結尾時）
+  finalizeAndPush(subtitle)
 
   return subtitles
 }
