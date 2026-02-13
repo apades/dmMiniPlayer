@@ -40,6 +40,7 @@ import SubtitleText from '../VideoPlayer/subtitle/SubtitleText'
 import ActionButton from './bottomPanel/ActionButton'
 import CurrentTimeTooltipsWithKeydown from './bottomPanel/CurrentTimeTooltipsWithKeydown'
 import DanmakuSettingBtn from './bottomPanel/DanmakuSettingBtn'
+import SharpeningButton from './bottomPanel/SharpeningButton'
 import PlaybackRateSelection from './bottomPanel/PlaybackRateSelection'
 import PlayedTime from './bottomPanel/PlayedTime'
 import PlayerProgressBar from './bottomPanel/PlayerProgressBar'
@@ -468,6 +469,8 @@ const VideoPlayerV2Inner = observer(
                 )}
 
                 {configStore.bp_playbackRate && <PlaybackRateSelection />}
+
+                {configStore.bp_sharpening && <SharpeningButton />}
 
                 <ActionButton onClick={handleOpenSetting} className="mb:hidden">
                   <SettingOutlined className="block" />

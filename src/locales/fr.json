@@ -121,7 +121,13 @@
     "replacerDbClickAction": "Action de double-clic",
     "features": "Caractéristiques",
     "bpPlaybackRate": "Vitesse de lecture",
-    "bpResize": "Redimensionnement automatique"
+    "bpResize": "Redimensionnement automatique",
+    "exportImportSettings": "Exporter/Importer les paramètres",
+    "exportSettings": "Exporter les paramètres",
+    "importSettings": "Importer les paramètres",
+    "importSuccess": "Paramètres importés avec succès, la page va se recharger",
+    "importError": "Échec de l'importation, format de fichier invalide",
+    "bpSharpening": "Affûtage de la vidéo"
   },
   "pos": {
     "topLeft": "En haut à gauche",

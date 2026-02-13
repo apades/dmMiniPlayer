@@ -121,7 +121,13 @@
     "replacerDbClickAction": "雙擊動作",
     "features": "特徵",
     "bpPlaybackRate": "播放速度",
-    "bpResize": "自動調整大小"
+    "bpResize": "自動調整大小",
+    "exportImportSettings": "匯出/匯入設定",
+    "exportSettings": "匯出設定",
+    "importSettings": "匯入設定",
+    "importSuccess": "設定匯入成功，頁面將刷新",
+    "importError": "匯入失敗，檔案格式不正確",
+    "bpSharpening": "影片銳利化"
   },
   "pos": {
     "topLeft": "左上",

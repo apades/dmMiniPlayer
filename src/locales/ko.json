@@ -121,7 +121,13 @@
     "replacerDbClickAction": "더블클릭 동작",
     "features": "특징",
     "bpPlaybackRate": "재생 속도",
-    "bpResize": "자동 크기 조정"
+    "bpResize": "자동 크기 조정",
+    "exportImportSettings": "설정 내보내기/가져오기",
+    "exportSettings": "설정 내보내기",
+    "importSettings": "설정 가져오기",
+    "importSuccess": "설정을 성공적으로 가져왔습니다. 페이지가 새로고침됩니다",
+    "importError": "가져오기 실패, 잘못된 파일 형식",
+    "bpSharpening": "비디오 선명화"
   },
   "pos": {
     "topLeft": "왼쪽 상단",

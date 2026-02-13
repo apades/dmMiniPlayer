@@ -121,7 +121,13 @@
     "replacerDbClickAction": "Double click action",
     "features": "Features",
     "bpPlaybackRate": "Playback speed",
-    "bpResize": "Auto resize"
+    "bpResize": "Auto resize",
+    "exportImportSettings": "Export/Import Settings",
+    "exportSettings": "Export Settings",
+    "importSettings": "Import Settings",
+    "importSuccess": "Settings imported successfully, page will reload",
+    "importError": "Import failed, invalid file format",
+    "bpSharpening": "Video Sharpening"
   },
   "pos": {
     "topLeft": "Top left",

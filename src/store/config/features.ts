@@ -45,6 +45,10 @@ const config_features = {
     label: t('shortcut.cate_volume'),
     defaultValue: true,
   }),
+  bp_sharpening: config({
+    label: t('settingPanel.bpSharpening' as any),
+    defaultValue: true,
+  }),
 }
 
 export default config_features

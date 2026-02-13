@@ -29,6 +29,7 @@ import {
 import isPluginEnv from '@root/shared/isPluginEnv'
 import { isUndefined } from 'lodash-es'
 import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
+import { createElement } from 'react'
 import isDev from '@root/shared/isDev'
 import Browser from 'webextension-polyfill'
 import config_floatButton from './floatButton'
@@ -241,6 +242,67 @@ export const baseConfigMap = {
     ],
     relateBy: 'showReplacerBtn',
     relateByValue: true,
+  }),
+  exportImportSettings: config({
+    defaultValue: '',
+    label: t('settingPanel.exportImportSettings' as any),
+    render: () => {
+      const btnStyle = {
+        padding: '4px 12px',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+        cursor: 'pointer',
+        fontSize: '13px',
+        background: '#f5f5f5',
+      }
+      const handleExport = () => {
+        const data = JSON.stringify(configStore, null, 2)
+        const blob = new Blob([data], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `dmMiniPlayer-settings-${new Date().toISOString().slice(0, 10)}.json`
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+      const handleImport = () => {
+        const input = document.createElement('input')
+        input.type = 'file'
+        input.accept = '.json'
+        input.onchange = async (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0]
+          if (!file) return
+          try {
+            const text = await file.text()
+            const data = JSON.parse(text)
+            if (typeof data !== 'object' || data === null) {
+              throw new Error('invalid')
+            }
+            _updateConfig(data)
+            saveConfig()
+            alert(t('settingPanel.importSuccess' as any))
+            location.reload()
+          } catch {
+            alert(t('settingPanel.importError' as any))
+          }
+        }
+        input.click()
+      }
+      return createElement(
+        'div',
+        { style: { display: 'flex', gap: '8px' } },
+        createElement(
+          'button',
+          { onClick: handleExport, style: btnStyle },
+          t('settingPanel.exportSettings' as any),
+        ),
+        createElement(
+          'button',
+          { onClick: handleImport, style: btnStyle },
+          t('settingPanel.importSettings' as any),
+        ),
+      )
+    },
   }),
 }
 
