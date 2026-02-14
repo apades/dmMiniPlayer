@@ -37,7 +37,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
   }
 
   /**停止监听所有video事件 */
-  private videoUnListen = () => { }
+  private videoUnListen = () => {}
   constructor() {
     super()
     // makover(this, { video: false, activeRows: false })
@@ -73,14 +73,14 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     }
     this.initd = true
   }
-  onInit() { }
+  onInit() {}
   unload() {
     this.reset()
     this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
     this.offAll()
   }
-  onUnload() { }
+  onUnload() {}
 
   // addSubtitle(label: string, rows: SubtitleRow[]) {
   //   this.subtitleItems.push({ label, value: label })

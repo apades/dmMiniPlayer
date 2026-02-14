@@ -99,8 +99,8 @@ export default function srtParser(content: string): SubtitleRow[] {
     const hasMultiChild = !!root.childNodes.length
     const text = hasMultiChild
       ? Array.from(root.childNodes)
-        .map((node) => node.textContent)
-        .join('\n')
+          .map((node) => node.textContent)
+          .join('\n')
       : root.textContent
     sub.text = text ?? ''
 
