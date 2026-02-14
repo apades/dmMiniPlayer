@@ -46,7 +46,7 @@ const config_features = {
     defaultValue: true,
   }),
   bp_sharpening: config({
-    label: t('settingPanel.bpSharpening' as any),
+    label: t('settingPanel.bpSharpening'),
     defaultValue: true,
   }),
 }

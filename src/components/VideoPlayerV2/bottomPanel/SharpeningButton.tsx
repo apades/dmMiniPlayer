@@ -25,7 +25,7 @@ const SharpeningButton: FC = observer(() => {
   const active = configStore.videoSharpening
 
   const handleToggle = () => {
-    ;(configStore as any).videoSharpening = !active
+    configStore.videoSharpening = !active
     saveConfig()
   }
 

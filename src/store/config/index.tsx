@@ -28,8 +28,6 @@ import {
 } from '@root/shared/storeKey'
 import isPluginEnv from '@root/shared/isPluginEnv'
 import { isUndefined } from 'lodash-es'
-import { DEFAULT_EVENT_INJECT_SITE } from '@root/shared/config'
-import { createElement } from 'react'
 import isDev from '@root/shared/isDev'
 import Browser from 'webextension-polyfill'
 import config_floatButton from './floatButton'
@@ -280,27 +278,23 @@ export const baseConfigMap = {
             }
             _updateConfig(data)
             saveConfig()
-            alert(t('settingPanel.importSuccess' as any))
+            alert(t('settingPanel.importSuccess'))
             location.reload()
           } catch {
-            alert(t('settingPanel.importError' as any))
+            alert(t('settingPanel.importError'))
           }
         }
         input.click()
       }
-      return createElement(
-        'div',
-        { style: { display: 'flex', gap: '8px' } },
-        createElement(
-          'button',
-          { onClick: handleExport, style: btnStyle },
-          t('settingPanel.exportSettings' as any),
-        ),
-        createElement(
-          'button',
-          { onClick: handleImport, style: btnStyle },
-          t('settingPanel.importSettings' as any),
-        ),
+      return (
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={handleExport} style={btnStyle}>
+            {t('settingPanel.exportSettings')}
+          </button>
+          <button onClick={handleImport} style={btnStyle}>
+            {t('settingPanel.importSettings')}
+          </button>
+        </div>
       )
     },
   }),
