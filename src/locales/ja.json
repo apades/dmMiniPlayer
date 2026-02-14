@@ -121,7 +121,13 @@
     "replacerDbClickAction": "ダブルクリックアクション",
     "features": "特徴",
     "bpPlaybackRate": "再生速度",
-    "bpResize": "自動サイズ変更"
+    "bpResize": "自動サイズ変更",
+    "exportImportSettings": "設定のエクスポート/インポート",
+    "exportSettings": "設定をエクスポート",
+    "importSettings": "設定をインポート",
+    "importSuccess": "設定のインポートに成功しました。ページが更新されます",
+    "importError": "インポート失敗、ファイル形式が無効です",
+    "bpSharpening": "ビデオのシャープ化"
   },
   "pos": {
     "topLeft": "左上",

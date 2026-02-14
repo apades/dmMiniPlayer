@@ -121,7 +121,13 @@
     "replacerDbClickAction": "Acción de doble clic",
     "features": "Características",
     "bpPlaybackRate": "Velocidad de reproducción",
-    "bpResize": "Cambio de tamaño automático"
+    "bpResize": "Cambio de tamaño automático",
+    "exportImportSettings": "Exportar/Importar configuración",
+    "exportSettings": "Exportar configuración",
+    "importSettings": "Importar configuración",
+    "importSuccess": "Configuración importada con éxito, la página se recargará",
+    "importError": "Error al importar, formato de archivo no válido",
+    "bpSharpening": "Nitidez de vídeo"
   },
   "pos": {
     "topLeft": "Arriba a la izquierda",
