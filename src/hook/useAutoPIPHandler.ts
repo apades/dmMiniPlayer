@@ -107,7 +107,7 @@ const startPIP = async (
               observer.disconnect()
 
               // 由于b站有下滚自动小窗，跟此功能冲突，用scroll来触发
-              if (now - new Date().getTime() < 1000) {
+              if (new Date().getTime() - now < 1000) {
                 if (type === 'scrollOut') {
                   const unListenScroll = addEventListener(window, (window) => {
                     window.addEventListener('scroll', () => {
@@ -162,12 +162,16 @@ export default function useAutoPIPHandler(videoEl: HTMLVideoElement) {
     'play',
     () => {
       if (!canRun) return
-      videoEl.addEventListener('play', () => {
-        observeVideo(videoEl)
-      })
-      videoEl.addEventListener('volumechange', () => {
-        observeVideo(videoEl)
-      })
+      observeVideo(videoEl)
+    },
+    videoEl,
+  )
+
+  useTargetEventListener(
+    'volumechange',
+    () => {
+      if (!canRun) return
+      observeVideo(videoEl)
     },
     videoEl,
   )

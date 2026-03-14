@@ -164,8 +164,10 @@ export function useKeydown(
 
     return () => {
       keydownWindow.removeEventListener('keydown', handleKeyDown)
-
-      keydownWindow.addEventListener('dm-keydown' as any, handleKeyDownCustom)
+      keydownWindow.removeEventListener(
+        'dm-keydown' as any,
+        handleKeyDownCustom,
+      )
     }
   }, [keydownWindow, isLive])
 }
