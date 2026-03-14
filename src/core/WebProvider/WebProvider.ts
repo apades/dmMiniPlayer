@@ -177,9 +177,11 @@ export default abstract class WebProvider
     })
   }
 
+  eventSwitcher?: EventSwitcher<HTMLVideoElement>
   // 注入video事件监听器
   injectVideoEventsListener(videoEl: HTMLVideoElement) {
     const eventSwitcher = new EventSwitcher(videoEl)
+    this.eventSwitcher = eventSwitcher
 
     this.onUnloadFn.push(
       ...[

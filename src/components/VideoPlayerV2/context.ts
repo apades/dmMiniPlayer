@@ -30,9 +30,11 @@ export type ContextData = {
   setContext: Dispatch<SetStateAction<ContextData>>
 }
 
+let keyBinding = new KeyBinding()
+window.keyBinding = keyBinding
 export const defaultVpContext: ContextData = {
   eventBus,
-  keyBinding: new KeyBinding(),
+  keyBinding,
   videoPlayer: null as any,
   videoPlayerRef: { current: null },
   setContext: () => {},

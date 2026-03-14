@@ -46,6 +46,7 @@ export class KeyBinding {
 
   protected configKeyMap: Record<string, () => void> = {}
   protected pressingKeyMap: Record<string, number> = {}
+  protected triggeredPressingKeyMap: Record<string, boolean> = {}
   protected releasePressingKeyFnMap: Record<string, () => void> = {}
 
   protected unListens: (() => void)[] = []
@@ -121,7 +122,7 @@ export class KeyBinding {
       tar.contentEditable === 'true'
     )
       return
-    // e.stopPropagation()
+    e.stopPropagation()
 
     const { keyCode, shiftKey, ctrlKey, altKey } = e
     // if (key.length === 1) key = key.toLowerCase()
@@ -135,28 +136,42 @@ export class KeyBinding {
 
     const mapKey = actions.join('+')
 
+    // 强制keyup、keypress的都阻止默认行为
+    // 例如→键，现在有长按触发模式，所以默认没有down行为，只有up行为
+    // 会导致网页的一些默认为down滚动网页触发了
+    if (
+      this.configKeyMap[`${mapKey}+${KeyType.keydown}`] ||
+      this.configKeyMap[`${mapKey}+${KeyType.press}`]
+    ) {
+      e.preventDefault()
+    }
+
+    if (this.triggeredPressingKeyMap[mapKey]) {
+      return
+    }
     // pressing
     if (
       this.pressingKeyMap[mapKey] >= this.pressingConstant &&
-      this.configKeyMap[`${mapKey}+${KeyType.press}`]
+      this.configKeyMap[`${mapKey}+${KeyType.press}`] &&
+      !this.triggeredPressingKeyMap[mapKey]
     ) {
-      // e.preventDefault()
+      e.preventDefault()
       const fn = this.configKeyMap[`${mapKey}+${KeyType.press}`]
       fn()
       this.releasePressingKeyFnMap[mapKey] = () => {
-        this.configKeyMap[`${mapKey}+${KeyType.press}`] = fn
         this.configKeyMap[`${mapKey}+${KeyType.press}_release`]?.()
+        delete this.triggeredPressingKeyMap[mapKey]
       }
-      delete this.configKeyMap[`${mapKey}+${KeyType.press}`]
+      this.triggeredPressingKeyMap[mapKey] = true
     }
     // +keydown
     else if (this.configKeyMap[`${mapKey}+${KeyType.keydown}`]) {
-      // e.preventDefault()
+      e.preventDefault()
       this.configKeyMap[`${mapKey}+${KeyType.keydown}`]()
     }
     // +keydown default 格式
     else if (this.configKeyMap[mapKey]) {
-      // e.preventDefault()
+      e.preventDefault()
       this.configKeyMap[mapKey]()
     } else {
       this.onKeydownFns.forEach((fn) => fn(e))
@@ -173,7 +188,7 @@ export class KeyBinding {
       tar.contentEditable === 'true'
     )
       return
-    // e.stopPropagation()
+    e.stopPropagation()
 
     const { keyCode, shiftKey, ctrlKey } = e
     // if (key.length === 1) key = key.toLowerCase()
@@ -187,6 +202,7 @@ export class KeyBinding {
     const mapKey = actions.join('+')
 
     if (this.releasePressingKeyFnMap[mapKey]) {
+      e.preventDefault()
       this.releasePressingKeyFnMap[mapKey]()
       delete this.releasePressingKeyFnMap[mapKey]
     }
@@ -195,7 +211,7 @@ export class KeyBinding {
       this.configKeyMap[`${mapKey}+${KeyType.keyup}`] &&
       this.pressingKeyMap[mapKey] < this.pressingConstant
     ) {
-      // e.preventDefault()
+      e.preventDefault()
       this.configKeyMap[`${mapKey}+${KeyType.keyup}`]()
     } else {
       this.onKeyupFns.forEach((fn) => fn(e))

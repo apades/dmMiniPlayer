@@ -5,12 +5,13 @@ import { PlayerEvent } from '@root/core/event'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
 import { isFunction, isString } from 'lodash-es'
+import { useMemoizedFn } from 'ahooks'
 import vpContext from './context'
 
 export const useTogglePlayState = () => {
   const { webVideo, isLive } = useContext(vpContext)
 
-  const togglePlayState = async (type?: 'play' | 'pause') => {
+  const togglePlayState = useMemoizedFn(async (type?: 'play' | 'pause') => {
     if (!webVideo) return
     // 第一次进来没有can-pause attr，忽略判断能否pause
     const canPauseAttr = webVideo.getAttribute('can-pause')
@@ -34,7 +35,7 @@ export const useTogglePlayState = () => {
           throw err
         })
     }
-  }
+  })
 
   return togglePlayState
 }
