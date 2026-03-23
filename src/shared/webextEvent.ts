@@ -22,6 +22,9 @@ enum WebextEvent {
   closePIP = 'closePIP',
 
   reloadPage = 'reloadPage',
+
+  launchPIPWithReplaceModeFromLink = 'launchPIPWithReplaceModeFromLink',
+  updateContextMenu = 'updateContextMenu',
 }
 
 export default WebextEvent

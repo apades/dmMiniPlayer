@@ -20,7 +20,7 @@ export default class DocPIPWebProvider extends WebProvider {
 
   pipWindow?: Window
 
-  override async onOpenPlayer() {
+  protected async initPipWindow() {
     // 在标题后添加 ' - PIP'
     const title = document.title
     const pipTitle = title + ' - PIP'
@@ -28,41 +28,60 @@ export default class DocPIPWebProvider extends WebProvider {
 
     // 获取应该有的docPIP宽高
     const pipWindowConfig = await getBrowserSyncStorage(PIP_WINDOW_CONFIG)
-    let width = pipWindowConfig?.width ?? this.webVideo.clientWidth,
-      height = pipWindowConfig?.height ?? this.webVideo.clientHeight
+    let width = pipWindowConfig?.width ?? this.webVideo?.clientWidth,
+      height = pipWindowConfig?.height ?? this.webVideo?.clientHeight
 
     console.log('[docPIP_WH] pipWindowConfig', pipWindowConfig)
-    // cw / ch = vw / vh
-    const vw = this.webVideo.videoWidth,
-      vh = this.webVideo.videoHeight
 
-    switch (configStore.videoNoBorder) {
-      // cw = vw / vh * ch
-      case videoBorderType.height: {
-        width = (vw / vh) * height
-        break
-      }
-      // ch = vh / vw * cw
-      case videoBorderType.width: {
-        height = (vh / vw) * width
-        break
+    if (this.webVideo) {
+      // cw / ch = vw / vh
+      const vw = this.webVideo.videoWidth,
+        vh = this.webVideo.videoHeight
+
+      switch (configStore.videoNoBorder) {
+        // cw = vw / vh * ch
+        case videoBorderType.height: {
+          width = (vw / vh) * height
+          break
+        }
+        // ch = vh / vw * cw
+        case videoBorderType.width: {
+          height = (vh / vw) * width
+          break
+        }
       }
     }
 
     await sendMessage(WebextEvent.beforeStartPIP, null)
-    await this.miniPlayer.init()
-    const playerEl = this.miniPlayer.playerRootEl
-    if (!playerEl) {
-      console.error('不正常的miniPlayer.init()，没有 playerEl', this.miniPlayer)
-      throw Error('不正常的miniPlayer.init()')
-    }
 
-    console.log('[docPIP_WH] real width height', { width, height })
     const pipWindow = await window.documentPictureInPicture.requestWindow({
       width,
       height,
     })
     this.pipWindow = pipWindow
+
+    // docPIP有自带的样式，需要覆盖掉
+    const docPIPRootStyle = createElement('style', {
+      innerHTML: `
+html, body { height: 100% }      
+body{
+  margin: 0;
+  background-color: #000;
+}
+video{
+  width: 100%;
+  height: 100%;
+}
+canvas{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  pointer-events: none;
+}`,
+    })
+    pipWindow.document.body.appendChild(docPIPRootStyle)
 
     // 这里await会莫名其妙使webVideo被暂停
     sendMessage(WebextEvent.afterStartPIP, {
@@ -234,28 +253,19 @@ export default class DocPIPWebProvider extends WebProvider {
       } catch (error) {}
     })
 
-    pipWindow.document.body.appendChild(playerEl)
+    console.log('[docPIP_WH] real width height', { width, height })
+  }
 
-    // docPIP有自带的样式，需要覆盖掉
-    const docPIPRootStyle = createElement('style', {
-      innerHTML: `body{
-  margin: 0;
-  background-color: #000;
-}
-video{
-  width: 100%;
-  height: 100%;
-}
-canvas{
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  width: 100%;
-  pointer-events: none;
-}`,
-    })
-    playerEl.appendChild(docPIPRootStyle)
+  override async onOpenPlayer() {
+    await this.initPipWindow()
+    await this.miniPlayer.init()
+    const playerEl = this.miniPlayer.playerRootEl
+    if (!playerEl) {
+      console.error('不正常的miniPlayer.init()，没有 playerEl', this.miniPlayer)
+      throw Error('不正常的miniPlayer.init()')
+    }
+
+    this.pipWindow?.document.body.appendChild(playerEl)
   }
 
   override close(): void {

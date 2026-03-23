@@ -1,5 +1,6 @@
 import { ProtocolWithReturn } from 'webext-bridge'
 import { Props as DanmakuGetterProps } from '@pkgs/danmakuGetter/DanmakuGetter'
+import { Menus } from 'webextension-polyfill'
 import WebextEvent from './shared/webextEvent'
 import { DanmakuInitData } from './core/danmaku/DanmakuEngine'
 
@@ -39,6 +40,7 @@ declare module 'webext-bridge' {
       | { state: string; errType?: string }
     >
     [WebextEvent.openSetting]: void
+    [WebextEvent.launchPIPWithReplaceModeFromLink]: { openUrl: string }
     [WebextEvent.moveDocPIPPos]: { x: number; y: number; docPIPWidth: number }
     [WebextEvent.resizeDocPIP]: {
       width: number
@@ -52,5 +54,9 @@ declare module 'webext-bridge' {
     [WebextEvent.afterStartPIP]: { width: number }
 
     [WebextEvent.reloadPage]: null
+    [WebextEvent.updateContextMenu]: {
+      id: string
+      data: Menus.UpdateUpdatePropertiesType
+    }
   }
 }

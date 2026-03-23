@@ -18,6 +18,8 @@ enum PostMessageEvent {
   fullInWeb_eventProxy = 'fullInWeb_eventProxy',
   closeDocPIP = 'closeDocPIP',
   asyncData = 'asyncData',
+  openReplaceModePlayer = 'openReplaceModePlayer',
+  openReplaceModePlayer_resp = 'openReplaceModePlayer_resp',
 }
 
 export type BaseVideoState = {
@@ -37,6 +39,15 @@ export type VideoPosData = {
 }
 
 export interface PostMessageProtocolMap {
+  [PostMessageEvent.openReplaceModePlayer]: void
+  [PostMessageEvent.openReplaceModePlayer_resp]:
+    | {
+        isOk: true
+      }
+    | {
+        isOk: false
+        reason: string
+      }
   [PostMessageEvent.startPIPFromFloatButton]: {
     cropTarget?: CropTarget
     restrictionTarget?: RestrictionTarget

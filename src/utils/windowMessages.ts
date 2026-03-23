@@ -56,11 +56,13 @@ export function postMessageToChild<
 const eventSource = new Events2()
 window.addEventListener('message', (event) => {
   if (event.data?.ID !== ID) return
+  console.log('message from', event.data, location.href)
   eventSource.emit(event.data.type, {
     data: event.data.data,
     source: event.source,
   })
 })
+window._eventSource = eventSource
 
 export function onPostMessage<T extends PostMessageEvent>(
   type: T,

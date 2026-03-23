@@ -1,5 +1,5 @@
 import API_bilibili from '@root/api/bilibili'
-import { PlayerEvent } from '@root/core/event'
+import { eventBus, PlayerEvent } from '@root/core/event'
 import { WebProvider } from '@root/core/WebProvider'
 import isDev from '@root/shared/isDev'
 import isTop from '@root/shared/isTop'
@@ -16,6 +16,7 @@ import {
   dq,
   dq1Adv,
   getIframeElFromSource,
+  getVideoElInitFloatButtonData,
   tryCatch,
 } from '@root/utils'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
@@ -24,15 +25,29 @@ import {
   postMessageToChild,
   postMessageToTop,
 } from '@root/utils/windowMessages'
+import CommonProvider from '@root/web-provider/common'
 import { autorun } from 'mobx'
 import { onMessage as onBgMessage } from 'webext-bridge/content-script'
-import _getWebProvider from '../web-provider/getWebProvider'
+import getWebProvider from '../web-provider/getWebProvider'
 import './floatButton'
 
+// console.log('running main.ts', location.href, isTop)
 // iframe里就不用运行了
 if (isTop) {
   console.log('run content')
   main()
+  // 1. 从右键菜单点击发起画中画功能，传到background里，再发送事件到这cs中
+  // 开启LaunchPIPWithReplaceModeFromLinkWebProvider
+  onBgMessage(WebextEvent.launchPIPWithReplaceModeFromLink, ({ data }) => {
+    // requestVideoPIP()
+    playerConfig.forceDocPIPRenderType =
+      DocPIPRenderType.launchPIPWithReplaceModeFromLink
+    playerConfig.replaceModeFromLinkUrl = data.openUrl
+
+    const provider = new CommonProvider()
+    window.provider = provider
+    provider.openPlayer()
+  })
 } else {
   // 处理top发来的请求检测video标签
   onPostMessage(PostMessageEvent.detectVideo_req, () => {
@@ -49,12 +64,51 @@ if (isTop) {
       }),
     )
   })
+
+  // 2. 从LaunchPIPWithReplaceModeFromLinkWebProvider中传事件到位于docPIP iframe的该cs中，启动replaceWebVideoDom模式
+  onPostMessage(PostMessageEvent.openReplaceModePlayer, async (_, source) => {
+    const videoEl = document.querySelector('video')
+    console.log('openReplaceModePlayer', videoEl)
+    if (!videoEl)
+      return postMessageToChild(
+        PostMessageEvent.openReplaceModePlayer_resp,
+        {
+          isOk: false,
+          reason: '找不到video元素',
+        },
+        source,
+      )
+
+    playerConfig.forceDocPIPRenderType = DocPIPRenderType.replaceWebVideoDom
+    const provider = getWebProvider()
+    const [container, vel, isFixed] = getVideoElInitFloatButtonData(videoEl)
+    playerConfig.topContainerEl = container
+    playerConfig.isFixedPos = isFixed
+    window.provider = provider
+    setTimeout(async () => {
+      await provider.openPlayer({
+        videoEl,
+      })
+      const unListen = eventBus.on2(PlayerEvent.videoPlayerInitd, () => {
+        unListen()
+        eventBus.emit(PlayerEvent.toggleFullInWeb)
+        postMessageToChild(
+          PostMessageEvent.openReplaceModePlayer_resp,
+          {
+            isOk: true,
+          },
+          source,
+        )
+      })
+    }, 50)
+  })
+  // onPostMessage(PostMessageEvent.openReplaceModePlayer, () => {})
 }
 
 function main() {
   let provider: WebProvider | undefined
   let getProvider = () => {
-    provider = _getWebProvider()
+    provider = getWebProvider()
     window.provider = provider
     return provider
   }
@@ -422,7 +476,7 @@ function main() {
     console.log('🟡 No support mediaSession action enterpictureinpicture')
   }
 
-  window.getWebProvider = _getWebProvider
+  window.getWebProvider = getWebProvider
 }
 
 if (isDev) {

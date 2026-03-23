@@ -2,6 +2,7 @@ import { createElement } from '@root/utils'
 import { ERROR_MSG } from '@root/shared/errorMsg'
 import { CanvasDanmakuEngine } from '../danmaku/DanmakuEngine'
 import CanvasDanmakuVideo from '../danmaku/DanmakuEngine/canvasDanmaku/CanvasDanmakuVideo'
+import { PlayerEvent } from '../event'
 import VideoPlayerBase from './VideoPlayerBase'
 
 export class CanvasVideoPlayer extends VideoPlayerBase {
@@ -57,5 +58,7 @@ export class CanvasVideoPlayer extends VideoPlayerBase {
         this.bindEvent()
       }
     }
+
+    this.emit(PlayerEvent.videoPlayerInitd)
   }
 }
