@@ -13,6 +13,7 @@ import { checkIsLive } from '@root/utils/video'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import WebextEvent from '@root/shared/webextEvent'
 import { DocPIPRenderType, Position } from '@root/types/config'
+import { OrPromise } from '@root/utils/typeUtils'
 import {
   CanvasDanmakuEngine,
   DanmakuEngine,
@@ -27,7 +28,12 @@ import { EventBus, PlayerEvent } from '../event'
 import { SideSwitcher } from '../SideSwitcher'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import VideoPreviewManager from '../VideoPreviewManager'
-import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
+import {
+  CanvasPIPWebProvider,
+  DocPIPWebProvider,
+  ReplacerWebProvider,
+  LaunchPIPWithReplaceModeFromLinkWebProvider,
+} from '.'
 
 // ? 不知道为什么不能集中一起放这里，而且放这里是3个empty😅
 // const FEAT_PROVIDER_LIST = [
@@ -67,13 +73,21 @@ export default abstract class WebProvider
   constructor() {
     super()
     if (
-      [DocPIPWebProvider, CanvasPIPWebProvider, ReplacerWebProvider].includes(
-        Object.getPrototypeOf(this).constructor,
-      )
+      [
+        DocPIPWebProvider,
+        CanvasPIPWebProvider,
+        ReplacerWebProvider,
+        LaunchPIPWithReplaceModeFromLinkWebProvider,
+      ].includes(Object.getPrototypeOf(this).constructor)
     )
       return this
 
     const provider = (() => {
+      if (
+        playerConfig.forceDocPIPRenderType ===
+        DocPIPRenderType.launchPIPWithReplaceModeFromLink
+      )
+        return new LaunchPIPWithReplaceModeFromLinkWebProvider()
       if (
         (playerConfig.forceDocPIPRenderType ||
           configStore.docPIP_renderType) === DocPIPRenderType.replaceWebVideoDom
@@ -84,15 +98,17 @@ export default abstract class WebProvider
     })()
 
     const rootPrototype =
+      getDeepPrototype(this, LaunchPIPWithReplaceModeFromLinkWebProvider) ||
       getDeepPrototype(this, DocPIPWebProvider) ||
       getDeepPrototype(this, CanvasPIPWebProvider) ||
       getDeepPrototype(this, ReplacerWebProvider) ||
       getDeepPrototype(this, WebProvider)
+
     Object.setPrototypeOf(rootPrototype, provider)
     return this
   }
 
-  init() {
+  async init() {
     this.danmakuEngine = (() => {
       if (configStore.useHtmlDanmaku && configStore.useDocPIP) {
         if (configStore.htmlDanmakuEngine === SettingDanmakuEngine.IronKinoko)
@@ -104,10 +120,10 @@ export default abstract class WebProvider
 
     this.subtitleManager = new SubtitleManager()
 
-    this.onInit()
+    await this.onInit()
     this.active = true
   }
-  onInit(): void {}
+  onInit(): OrPromise<void> {}
 
   /**播放器初始化完毕后触发 */
   onPlayerInitd(): void {}
@@ -131,8 +147,8 @@ export default abstract class WebProvider
 
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
-    if (!navigator.userActivation.isActive) return
-    this.init()
+    // if (!navigator.userActivation.isActive) return
+    await this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.injectVideoEventsListener(this.webVideo)
     this.bindCommandsEvent()

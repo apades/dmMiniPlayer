@@ -63,6 +63,7 @@ export enum DocPIPRenderType {
   injectMediaSource = 'injectMediaSource',
 
   replaceWebVideoDom = 'replaceWebVideoDom',
+  launchPIPWithReplaceModeFromLink = 'launchPIPWithReplaceModeFromLink',
 }
 
 export enum Position {

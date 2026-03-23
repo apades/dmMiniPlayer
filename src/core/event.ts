@@ -56,6 +56,10 @@ export const PlayerEvent = {
   videoSrcChanged: 'videoSrcChanged',
 
   volumeChanged: 'volumeChanged',
+
+  toggleFullInWeb: 'toggleFullInWeb',
+  videoPlay: 'videoPlay',
+  videoPause: 'videoPause',
 } as const
 
 type ToastArgs = Parameters<typeof toast>

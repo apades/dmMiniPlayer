@@ -122,7 +122,7 @@ export default class VideoPlayerBase
       }
     })
 
-    this.emit(PlayerEvent.videoPlayerInitd)
+    // this.emit(PlayerEvent.videoPlayerInitd)
   }
   async unload() {
     this.emit(PlayerEvent.videoPlayerBeforeUnload)

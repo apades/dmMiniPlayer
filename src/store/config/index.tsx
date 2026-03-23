@@ -241,6 +241,10 @@ export const baseConfigMap = {
     relateBy: 'showReplacerBtn',
     relateByValue: true,
   }),
+  disableOpenPIPInLinkMenu: config({
+    defaultValue: false,
+    label: t('settingPanel.disableOpenPIPInLinkMenu'),
+  }),
   exportImportSettings: config({
     defaultValue: '',
     label: t('settingPanel.exportImportSettings' as any),

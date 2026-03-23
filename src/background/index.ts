@@ -1,10 +1,12 @@
 import getDanmakuGetter from '@pkgs/danmakuGetter/getDanmakuGetter'
+import isDev from '@root/shared/isDev'
 import {
   FLOAT_BTN_HIDDEN,
   LOCALE,
   NEED_RELOAD as NEED_RELOAD_PAGE,
 } from '@root/shared/storeKey'
 import WebextEvent from '@root/shared/webextEvent'
+import { tryCatch } from '@root/utils'
 import { t } from '@root/utils/i18n'
 import {
   getBrowserLocalStorage,
@@ -13,15 +15,18 @@ import {
   useBrowserLocalStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
+import {
+  FLOAT_BTN_ID,
+  SETTING_ID,
+  LINK_CONTEXTMENU_OPEN_PIP_ID,
+} from '@root/shared/contextmenu'
+import { autorun } from 'mobx'
 import { v4 as uuid } from 'uuid'
 import { onMessage, sendMessage } from 'webext-bridge/background'
 import Browser from 'webextension-polyfill'
+import { WS_PORT } from '../../scripts/shared'
 import './commands'
 import './docPIP'
-import isDev from '@root/shared/isDev'
-import { tryCatch } from '@root/utils'
-import { WS_PORT } from '../../scripts/shared'
-// import '../entry/vite.bg'
 
 console.log('run bg')
 getBrowserLocalStorage(LOCALE).then((locale) => {
@@ -58,7 +63,7 @@ if (isDev) {
 
 if (isDev) {
   // 好像只要有这个就可以keep alive了
-  chrome.runtime.onConnect.addListener((port) => {
+  Browser.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener((msg) => {
       // keep alive
     })
@@ -73,13 +78,13 @@ getBrowserLocalStorage(NEED_RELOAD_PAGE).then(async (needReload) => {
 })
 
 async function reloadPage() {
-  const tabs = await chrome.tabs.query({ active: true })
+  const tabs = await Browser.tabs.query({ active: true })
   console.log('tabs', tabs)
 
   tabs.forEach((tab) => {
     if (!tab.id) return
     if (!tab.url) return
-    chrome.scripting.executeScript({
+    Browser.scripting.executeScript({
       target: { tabId: tab.id },
       func: () => {
         location.reload()
@@ -122,14 +127,19 @@ onMessage(WebextEvent.bgFetch, async (req) => {
 
 onMessage(WebextEvent.getup, () => 'hello')
 
+onMessage(WebextEvent.updateContextMenu, ({ data }) => {
+  Browser.contextMenus.update(data.id, data.data)
+})
+
 const getTabCapturePermission = () =>
-  new Promise<boolean>((res) => {
-    chrome.permissions.contains({ permissions: ['tabCapture'] }, (rs) => {
-      if (rs) return res(true)
-      chrome.permissions.request({ permissions: ['tabCapture'] }, (rs) => {
-        res(rs)
-      })
+  new Promise<boolean>(async (res) => {
+    const rs = await Browser.permissions.contains({
+      permissions: ['tabCapture'],
     })
+    if (rs) return res(true)
+    res(
+      await Browser.permissions.request({ permissions: ['tabCapture'] as any }),
+    )
   })
 
 onMessage(WebextEvent.getTabCapturePermission, getTabCapturePermission)
@@ -208,8 +218,6 @@ onMessage(WebextEvent.stopGetDanmaku, ({ data }) => {
   }
 })
 
-const FLOAT_BTN_ID = 'FLOAT_BTN_ID',
-  SETTING_ID = 'SETTING_ID'
 Browser.runtime.onInstalled.addListener(() => {
   Browser.contextMenus.create({
     contexts: ['action'],
@@ -222,7 +230,19 @@ Browser.runtime.onInstalled.addListener(() => {
     title: t('menu.openSetting'),
     id: SETTING_ID,
   })
+  Browser.contextMenus.create({
+    contexts: ['link'],
+    id: LINK_CONTEXTMENU_OPEN_PIP_ID,
+    title: /* t('menu.openPIP') */ '打开画中画',
+  })
 })
+
+// autorun(() => {
+//   console.log(
+//     'config.disableOpenPIPInLinkMenu',
+//     config.disableOpenPIPInLinkMenu,
+//   )
+// })
 
 // 很奇怪的需要延迟点才不会触发'Cannot find menu item with id'
 setTimeout(() => {
@@ -244,6 +264,7 @@ setTimeout(() => {
 }, 50)
 
 Browser.contextMenus.onClicked.addListener((info, tab) => {
+  console.log('click info', info)
   switch (info.menuItemId) {
     case FLOAT_BTN_ID: {
       setBrowserSyncStorage(FLOAT_BTN_HIDDEN, !info.checked)
@@ -256,6 +277,22 @@ Browser.contextMenus.onClicked.addListener((info, tab) => {
           context: 'content-script',
         })
       }
+      break
+    }
+    case LINK_CONTEXTMENU_OPEN_PIP_ID: {
+      if (tab?.id) {
+        sendMessage(
+          WebextEvent.launchPIPWithReplaceModeFromLink,
+          {
+            openUrl: info.linkUrl ?? '',
+          },
+          {
+            tabId: tab?.id,
+            context: 'content-script',
+          },
+        )
+      }
+      break
     }
   }
 })

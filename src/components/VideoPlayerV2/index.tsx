@@ -15,7 +15,13 @@ import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import PostMessageEvent from '@root/shared/postMessageEvent'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
-import { isDocPIP, isIframe, ownerWindow, wait } from '@root/utils'
+import {
+  createElement,
+  isDocPIP,
+  isIframe,
+  ownerWindow,
+  wait,
+} from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import screenfull from '@root/utils/screenfull'
 import { Omit } from '@root/utils/typeUtils'
@@ -193,6 +199,12 @@ const VideoPlayerV2Inner = observer(
         return toFullInWeb
       })
     })
+    useOnce(() =>
+      eventBus.on2(PlayerEvent.toggleFullInWeb, () => {
+        console.log('toggleFullInWeb')
+        toggleFullInWeb()
+      }),
+    )
     const toggleFullscreen = useMemoizedFn(() => {
       if (screenfull.isFullscreen) {
         screenfull.exit()
@@ -353,6 +365,10 @@ const VideoPlayerV2Inner = observer(
       } else {
         postMessageToTop(PostMessageEvent.openSettingPanel)
       }
+    })
+
+    useOnce(() => {
+      eventBus.emit(PlayerEvent.videoPlayerInitd)
     })
 
     const el = (

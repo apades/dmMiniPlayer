@@ -12,6 +12,7 @@ type PlayerConfig = {
   webRTCMediaStream: MediaStream
   topContainerEl: HTMLElement
   isFixedPos: boolean
+  replaceModeFromLinkUrl: string
 }>
 
 const playerConfig: PlayerConfig = {

@@ -9,7 +9,7 @@ import { useMemoizedFn } from 'ahooks'
 import vpContext from './context'
 
 export const useTogglePlayState = () => {
-  const { webVideo, isLive } = useContext(vpContext)
+  const { webVideo, isLive, eventBus } = useContext(vpContext)
 
   const togglePlayState = useMemoizedFn(async (type?: 'play' | 'pause') => {
     if (!webVideo) return

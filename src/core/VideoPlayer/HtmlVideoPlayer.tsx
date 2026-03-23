@@ -14,10 +14,6 @@ import CanvasVideo from '../CanvasVideo'
 import { PlayerEvent } from '../event'
 import VideoPlayerBase, { supportOnVideoChangeTypes } from './VideoPlayerBase'
 
-const docPIPStyleEl = createElement('style', {
-  innerText: 'html, body { height: 100% }',
-})
-
 export class HtmlVideoPlayer extends VideoPlayerBase {
   playerRootEl?: HTMLElement
 
@@ -66,7 +62,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     })
     this.playerRootEl = createElement('div', {
       className: 'h-full',
-      children: [root, docPIPStyleEl],
+      children: [root],
     })
     const reactRoot = createRoot(root)
 
