@@ -1,3 +1,13 @@
+## v0.6.59
+Features:
+1. Add shortcut to lock the player
+2. Add emoji display for Bilibili live; emoji-only danmaku can be disabled in [Danmaku] settings
+
+Fixes:
+1. Shortcut settings panel styling issues
+2. Media controls sometimes failing to open picture-in-picture
+3. Website picture-in-picture API injection issues
+
 ## v0.6.58
 Features:
 1. Add settings export/import feature
