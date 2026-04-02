@@ -252,7 +252,18 @@ function main() {
   // 从floatButton发起的启动PIP
   onPostMessage(
     PostMessageEvent.startPIPFromFloatButton,
-    async (data, captureSource) => {
+    async (data, source) => {
+      if (
+        data.from === 'HTMLVideoElement.prototype.requestPictureInPicture' &&
+        !configStore.injectPIPFn
+      ) {
+        postMessageToTop(PostMessageEvent.startPIPFromFloatButton_resp, {
+          isOk: false,
+        })
+
+        return
+      }
+
       const fn = () => {
         if (data.cropTarget) {
           playerConfig.cropTarget = data.cropTarget
@@ -276,12 +287,12 @@ function main() {
           case DocPIPRenderType.capture_displayMediaWithCropTarget:
           case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
             // 判断captureSource是iframe里还是top发起的
-            const isIframe = captureSource !== window
+            const isIframe = source !== window
 
             if (isIframe) {
-              const targetIframeEl = getIframeElFromSource(captureSource)
+              const targetIframeEl = getIframeElFromSource(source)
               if (!targetIframeEl) {
-                console.error('captureSource', captureSource)
+                console.error('captureSource', source)
                 throw Error('找不到captureSource iframe')
               }
               const targetIframeRect = targetIframeEl.getBoundingClientRect()
@@ -291,13 +302,13 @@ function main() {
 
             const { videoEl, unMount } = getSimulateVideoEl(
               data.videoState,
-              captureSource,
+              source,
             )
 
             // webRTC模式
             if (isWebRTCMode) {
               const { mediaStream, unMount: unMountMediaStream } =
-                getMediaStreamInGetter({ target: captureSource })
+                getMediaStreamInGetter({ target: source })
               playerConfig.webRTCMediaStream = mediaStream
 
               openPlayer({ videoEl })
@@ -307,7 +318,7 @@ function main() {
                 postMessageToChild(
                   PostMessageEvent.webRTC_close,
                   undefined,
-                  captureSource,
+                  source,
                 )
               })
             } else {
@@ -325,9 +336,9 @@ function main() {
       }
 
       const [err] = await tryCatch(fn)
-      postMessageToChild(PostMessageEvent.startPIPFromFloatButton_resp, {
+      postMessageToTop(PostMessageEvent.startPIPFromFloatButton_resp, {
         isOk: !err,
-        err:
+        errMsg:
           ((err as any)?.toString && (err as any).toString()) ||
           err?.message ||
           err,

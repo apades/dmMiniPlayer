@@ -30,6 +30,7 @@ import isPluginEnv from '@root/shared/isPluginEnv'
 import { isUndefined } from 'lodash-es'
 import isDev from '@root/shared/isDev'
 import Browser from 'webextension-polyfill'
+import { ATTR_DISABLE_INJECT_PIP } from '@root/shared/config'
 import config_floatButton from './floatButton'
 import config_shortcut from './shortcut'
 import config_subtitle from './subtitle'
@@ -377,6 +378,12 @@ let oldConfig: Partial<typeof configStore>
 const updateConfig = async (config?: Partial<typeof configStore>) => {
   config ??= await getBrowserSyncStorage(DM_MINI_PLAYER_CONFIG)
   if (!config) return
+
+  if (config.injectPIPFn === false) {
+    document.documentElement.setAttribute(ATTR_DISABLE_INJECT_PIP, 'true')
+  } else {
+    document.documentElement.removeAttribute(ATTR_DISABLE_INJECT_PIP)
+  }
   _updateConfig(config)
 }
 
@@ -411,7 +418,7 @@ autorun(() => {
 })
 useBrowserSyncStorage(FLOAT_BTN_HIDDEN, async (val) => {
   if (isUndefined(val)) return
-  updateConfig({ floatButtonVisible: !val })
+  _updateConfig({ floatButtonVisible: !val })
   saveConfig()
 })
 

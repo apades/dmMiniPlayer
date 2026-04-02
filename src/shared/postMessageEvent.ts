@@ -43,6 +43,10 @@ export interface PostMessageProtocolMap {
     posData: VideoPosData
     videoState: BaseVideoState
     renderType: DocPIPRenderType | null
+    from?:
+      | 'floatButton'
+      | 'autoPIP'
+      | 'HTMLVideoElement.prototype.requestPictureInPicture'
   }
   [PostMessageEvent.updateVideoState]: Partial<{
     isPause: boolean

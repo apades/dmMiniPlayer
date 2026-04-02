@@ -1,4 +1,6 @@
-import PostMessageEvent from '@root/shared/postMessageEvent'
+import PostMessageEvent, {
+  PostMessageProtocolMap,
+} from '@root/shared/postMessageEvent'
 import { VIDEO_ID_ATTR } from '@root/shared/config'
 import { DocPIPRenderType } from '@root/types/config'
 import { postMessageToTop } from './windowMessages'
@@ -7,6 +9,7 @@ import { createElement } from '.'
 export const postStartPIPDataMsg = async (
   renderType: DocPIPRenderType | null,
   videoEl: HTMLVideoElement,
+  from?: PostMessageProtocolMap[PostMessageEvent.startPIPFromFloatButton]['from'],
 ) => {
   const id = videoEl.getAttribute(VIDEO_ID_ATTR)!
   const rect = videoEl.getBoundingClientRect()
@@ -57,5 +60,6 @@ export const postStartPIPDataMsg = async (
       isPause: videoEl.paused,
     },
     renderType,
+    from,
   })
 }

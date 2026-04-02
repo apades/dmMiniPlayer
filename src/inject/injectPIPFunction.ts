@@ -1,10 +1,13 @@
 import { ATTR_DISABLE_INJECT_PIP, VIDEO_ID_ATTR } from '@root/shared/config'
 import PostMessageEvent from '@root/shared/postMessageEvent'
-import { tryCatch, uuid } from '@root/utils'
+import { tryCatch, uuid, wait } from '@root/utils'
 import { postStartPIPDataMsg } from '@root/utils/pip'
 import { onPostMessage } from '@root/utils/windowMessages'
 
+let hasInit = false
 function main() {
+  if (hasInit) return
+  hasInit = true
   const originReqPIP = HTMLVideoElement.prototype.requestPictureInPicture
 
   HTMLVideoElement.prototype.requestPictureInPicture = function () {
@@ -17,7 +20,11 @@ function main() {
 
     // ? 很奇怪在agemys里requestPictureInPicture不能是async function，不然连第一行都没法运行
     return new Promise(async (res) => {
-      postStartPIPDataMsg(null, this)
+      postStartPIPDataMsg(
+        null,
+        this,
+        'HTMLVideoElement.prototype.requestPictureInPicture',
+      )
       const [{ isOk }] = await onPostMessage(
         PostMessageEvent.startPIPFromFloatButton_resp,
       )
@@ -29,4 +36,13 @@ function main() {
 
 if (!document.documentElement.getAttribute(ATTR_DISABLE_INJECT_PIP)) {
   main()
+} else {
+  const observer = new MutationObserver((mutations) => {
+    if (document.documentElement.getAttribute(ATTR_DISABLE_INJECT_PIP)) return
+    main()
+    observer.disconnect()
+  })
+  observer.observe(document.documentElement, {
+    attributes: true,
+  })
 }
