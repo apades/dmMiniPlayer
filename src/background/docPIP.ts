@@ -74,3 +74,7 @@ onMessage(
 onMessage(WebextEvent.closePIP, () => {
   setDocPIPTabId(null)
 })
+
+onMessage(WebextEvent.keepAlive, () => {
+  console.log('keepAlive')
+})

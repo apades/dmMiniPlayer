@@ -256,6 +256,13 @@ canvas{
 }`,
     })
     playerEl.appendChild(docPIPRootStyle)
+
+    const keepAlive = setInterval(() => {
+      sendMessage(WebextEvent.keepAlive, null)
+    }, 1000)
+    this.addOnUnloadFn(() => {
+      clearInterval(keepAlive)
+    })
   }
 
   override close(): void {

@@ -22,6 +22,8 @@ enum WebextEvent {
   closePIP = 'closePIP',
 
   reloadPage = 'reloadPage',
+
+  keepAlive = 'keepAlive',
 }
 
 export default WebextEvent
