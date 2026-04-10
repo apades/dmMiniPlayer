@@ -8,6 +8,7 @@ import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
 import toast from 'react-hot-toast'
+import { sendMessage } from '@root/inject/contentSender'
 import { getDanmakus } from '../utils'
 import BiliBiliPreviewManager from './PreviewManager'
 import BilibiliSubtitleManager from './SubtitleManager'
@@ -37,6 +38,11 @@ export default class BilibiliVideoProvider extends WebProvider {
     // sideSwitcher
     this.sideSwitcher = new SideSwitcher()
     this.videoPreviewManager = new BiliBiliPreviewManager()
+
+    sendMessage('event-hacker:disable', {
+      qs: 'document',
+      event: 'visibilitychange',
+    })
   }
 
   private lastAid = ''
@@ -50,6 +56,14 @@ export default class BilibiliVideoProvider extends WebProvider {
         this.update()
       }),
     )
+  }
+
+  override onUnload(): void {
+    super.onUnload()
+    sendMessage('event-hacker:enable', {
+      qs: 'document',
+      event: 'visibilitychange',
+    })
   }
 
   update() {
