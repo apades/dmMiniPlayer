@@ -1,3 +1,6 @@
+## v0.6.60
+Temporary fix for an issue where minimizing the browser could pause video for some users on Bilibili
+
 ## v0.6.59
 Features:
 1. Add shortcut to lock the player
