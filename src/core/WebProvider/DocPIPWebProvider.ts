@@ -50,7 +50,7 @@ export default class DocPIPWebProvider extends WebProvider {
     }
 
     await sendMessage(WebextEvent.beforeStartPIP, null)
-    await this.miniPlayer.init()
+    await this.miniPlayer.init(this.config)
     const playerEl = this.miniPlayer.playerRootEl
     if (!playerEl) {
       console.error('不正常的miniPlayer.init()，没有 playerEl', this.miniPlayer)

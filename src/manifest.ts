@@ -2,7 +2,7 @@ import packageJson from '../package.json'
 
 const version = packageJson.version
 
-export const manifest: chrome.runtime.ManifestV3 = {
+export const manifest = {
   name: '__MSG_appName__',
   description: '__MSG_appDesc__',
   author: 'apades' as any,
@@ -115,4 +115,4 @@ export const manifest: chrome.runtime.ManifestV3 = {
       description: '__MSG_quickHideToggle__',
     },
   },
-}
+} satisfies chrome.runtime.ManifestV3

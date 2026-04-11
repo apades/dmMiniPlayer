@@ -27,7 +27,7 @@ const Page_popup: FC = () => {
     )
       return setErrorType('no-support')
 
-    await sendMessage(WebextEvent.requestVideoPIP, null, {
+    await sendMessage(WebextEvent.requestInitPlayerFromExtPopup, null, {
       tabId: tarTab.id!,
       context: 'content-script',
     }).then((res) => {

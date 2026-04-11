@@ -120,8 +120,6 @@ onMessage(WebextEvent.bgFetch, async (req) => {
   return fetchRes
 })
 
-onMessage(WebextEvent.getup, () => 'hello')
-
 const getTabCapturePermission = () =>
   new Promise<boolean>((res) => {
     chrome.permissions.contains({ permissions: ['tabCapture'] }, (rs) => {

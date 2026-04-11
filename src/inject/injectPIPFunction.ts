@@ -1,7 +1,9 @@
+import { requestInitPlayer } from '@root/core/requestPlayerInit'
 import { ATTR_DISABLE_INJECT_PIP, VIDEO_ID_ATTR } from '@root/shared/config'
-import PostMessageEvent from '@root/shared/postMessageEvent'
-import { tryCatch, uuid, wait } from '@root/utils'
-import { postStartPIPDataMsg } from '@root/utils/pip'
+import PostMessageEvent, {
+  RequestPlayerInitFrom,
+} from '@root/shared/postMessageEvent'
+import { tryCatch, uuid } from '@root/utils'
 import { onPostMessage } from '@root/utils/windowMessages'
 
 let hasInit = false
@@ -20,13 +22,12 @@ function main() {
 
     // ? 很奇怪在agemys里requestPictureInPicture不能是async function，不然连第一行都没法运行
     return new Promise(async (res) => {
-      postStartPIPDataMsg(
-        null,
-        this,
-        'HTMLVideoElement.prototype.requestPictureInPicture',
-      )
+      requestInitPlayer({
+        videoEl: this,
+        from: RequestPlayerInitFrom['api.requestPictureInPicture'],
+      })
       const [{ isOk }] = await onPostMessage(
-        PostMessageEvent.startPIPFromFloatButton_resp,
+        PostMessageEvent.requestPlayerInit_resp,
       )
       if (isOk) return res(window as any as PictureInPictureWindow)
       return res(originReqPIP.bind(this)())

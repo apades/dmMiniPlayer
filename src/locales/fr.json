@@ -115,7 +115,7 @@
     "movePIPInOpen_offsetX": "Décalage de position x",
     "movePIPInOpen_offsetY": "Décalage de position y",
     "injectPIPFn": "Injecter la fonction PIP du site Web",
-    "injectPIPFnDesc": "Recharger la page pour prendre effet paramètres",
+    "injectPIPFnDesc": "Concerne l'ouverture du PiP sur le site et l'activation du PiP dans le centre multimédia",
     "quickHide_pos": "Position de peau rapide",
     "showReplacerBtn": "Afficher le bouton de remplacement de la vidéo",
     "showReplacerBtnDesc": "Remplacez le lecteur vidéo de la page Web par l'extension lecteur vidéo",

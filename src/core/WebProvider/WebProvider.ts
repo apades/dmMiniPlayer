@@ -1,31 +1,25 @@
-import { onMessage, sendMessage } from 'webext-bridge/content-script'
-import configStore from '@root/store/config'
-import {
-  createElement,
-  dq,
-  getDeepPrototype,
-  tryCatch,
-  wait,
-} from '@root/utils'
-import EventSwitcher from '@root/utils/EventSwitcher'
-import playerConfig from '@root/store/playerConfig'
-import { checkIsLive } from '@root/utils/video'
-import { SettingDanmakuEngine } from '@root/store/config/danmaku'
+import { PostMessageProtocolMap } from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
+import configStore from '@root/store/config'
+import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import { DocPIPRenderType, Position } from '@root/types/config'
+import { createElement, dq, dq1Adv, getDeepPrototype, wait } from '@root/utils'
+import EventSwitcher from '@root/utils/EventSwitcher'
+import { checkIsLive } from '@root/utils/video'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import {
   CanvasDanmakuEngine,
   DanmakuEngine,
   HtmlDanmakuEngine,
 } from '../danmaku/DanmakuEngine'
+import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
+import DanmakuSender from '../danmaku/DanmakuSender'
+import { EventBus, PlayerEvent } from '../event'
+import { SideSwitcher } from '../SideSwitcher'
 import SubtitleManager from '../SubtitleManager'
 import VideoPlayerBase, {
   ExtendComponent,
 } from '../VideoPlayer/VideoPlayerBase'
-import DanmakuSender from '../danmaku/DanmakuSender'
-import { EventBus, PlayerEvent } from '../event'
-import { SideSwitcher } from '../SideSwitcher'
-import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import VideoPreviewManager from '../VideoPreviewManager'
 import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
 
@@ -51,6 +45,11 @@ export default abstract class WebProvider
   isQuickHiding = false
   doNotUsePauseInCloseConfig = false
 
+  config!: PostMessageProtocolMap['requestPlayerInit'] & {
+    videoEl?: HTMLVideoElement | string
+    mediaStream?: MediaStream
+  }
+
   private _webVideo?: HTMLVideoElement
   get webVideo() {
     if (!this._webVideo)
@@ -64,7 +63,7 @@ export default abstract class WebProvider
   miniPlayer!: VideoPlayerBase
   protected MiniPlayer!: typeof VideoPlayerBase
 
-  constructor() {
+  constructor(props: { renderType?: DocPIPRenderType }) {
     super()
     if (
       [DocPIPWebProvider, CanvasPIPWebProvider, ReplacerWebProvider].includes(
@@ -74,13 +73,10 @@ export default abstract class WebProvider
       return this
 
     const provider = (() => {
-      if (
-        (playerConfig.forceDocPIPRenderType ||
-          configStore.docPIP_renderType) === DocPIPRenderType.replaceWebVideoDom
-      )
-        return new ReplacerWebProvider()
-      if (configStore.useDocPIP) return new DocPIPWebProvider()
-      return new CanvasPIPWebProvider()
+      if (props.renderType === DocPIPRenderType.replaceWebVideoDom)
+        return new ReplacerWebProvider(props)
+      if (configStore.useDocPIP) return new DocPIPWebProvider(props)
+      return new CanvasPIPWebProvider(props)
     })()
 
     const rootPrototype =
@@ -92,7 +88,7 @@ export default abstract class WebProvider
     return this
   }
 
-  init() {
+  private init() {
     this.danmakuEngine = (() => {
       if (configStore.useHtmlDanmaku && configStore.useDocPIP) {
         if (configStore.htmlDanmakuEngine === SettingDanmakuEngine.IronKinoko)
@@ -107,35 +103,47 @@ export default abstract class WebProvider
     this.onInit()
     this.active = true
   }
-  onInit(): void {}
+  protected onInit(): void {}
 
   /**播放器初始化完毕后触发 */
-  onPlayerInitd(): void {}
+  protected onPlayerInitd(): void {}
 
-  protected onUnloadFn: (() => void)[] = []
+  private onUnloadFn: (() => void)[] = []
   protected addOnUnloadFn(fn: () => void) {
     this.onUnloadFn.push(fn)
   }
-  unload() {
+  private unload() {
     console.log('WebProvider unload')
+    this.setExtActive(false)
     this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
     this.onUnloadFn.length = 0
     setTimeout(() => {
       this.active = false
     }, 0)
-  }
-  onUnload() {
+    this.offAllEvent()
     this.isQuickHiding = false
   }
+  protected onUnload() {}
 
-  /**打开播放器 */
+  async initPlayer(config: WebProvider['config']) {
+    this.config = config
+    const videoEl =
+      (typeof config.videoEl === 'string'
+        ? dq1Adv<HTMLVideoElement>(config.videoEl)
+        : config.videoEl) ?? this.getVideoEl()
+    this.openPlayer({ videoEl })
+  }
+
+  /**
+   * @deprecated Use {@link initPlayer} instead
+   */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
     if (!navigator.userActivation.isActive) return
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.injectVideoEventsListener(this.webVideo)
-    this.bindCommandsEvent()
+    this.initExtCommandEventHandler()
     this.isLive ??= checkIsLive(this.webVideo)
 
     const MiniPlayer = (Object.getPrototypeOf(this) as WebProvider).MiniPlayer
@@ -159,7 +167,7 @@ export default abstract class WebProvider
     await this.onOpenPlayer()
     await this.onPlayerInitd()
 
-    sendMessage('PIP-active', { name: 'PIP-active' })
+    this.setExtActive()
 
     this.miniPlayer.on(PlayerEvent.close, () => {
       this.unload()
@@ -170,37 +178,37 @@ export default abstract class WebProvider
         }
       }
 
-      this.offAll()
+      this.offAllEvent()
 
       unListenVideoChanged()
-      playerConfig.clear()
     })
   }
 
+  protected setExtActive(active = true) {
+    sendMessage(WebextEvent.setExtActive, { active })
+  }
+
   eventSwitcher?: EventSwitcher<HTMLVideoElement>
-  // 注入video事件监听器
-  injectVideoEventsListener(videoEl: HTMLVideoElement) {
+  /** 注入video事件监听器 */
+  protected injectVideoEventsListener(videoEl: HTMLVideoElement) {
     const eventSwitcher = new EventSwitcher(videoEl)
     this.eventSwitcher = eventSwitcher
 
-    this.onUnloadFn.push(
-      ...[
-        this.on2(PlayerEvent.longTabPlaybackRate, () => {
-          eventSwitcher.disable('seeking')
-          eventSwitcher.disable('seeked')
-        }),
-        this.on2(PlayerEvent.longTabPlaybackRateEnd, () => {
-          setTimeout(() => {
-            eventSwitcher.enable('seeking')
-            eventSwitcher.enable('seeked')
-          }, 0)
-        }),
-        eventSwitcher.unload,
-      ],
-    )
+    this.on(PlayerEvent.longTabPlaybackRate, () => {
+      eventSwitcher.disable('seeking')
+      eventSwitcher.disable('seeked')
+    })
+    this.on(PlayerEvent.longTabPlaybackRateEnd, () => {
+      setTimeout(() => {
+        eventSwitcher.enable('seeking')
+        eventSwitcher.enable('seeked')
+      }, 0)
+    })
+
+    this.addOnUnloadFn(eventSwitcher.unload)
   }
 
-  /**获取视频 */
+  /** 获取视频 */
   getVideoEl(document = window.document): HTMLVideoElement {
     const videos = [
       ...dq('video', document),
@@ -228,9 +236,9 @@ export default abstract class WebProvider
     return targetVideo
   }
 
-  onOpenPlayer(): Promise<void> | void {}
+  protected onOpenPlayer(): Promise<void> | void {}
 
-  bindCommandsEvent() {
+  protected initExtCommandEventHandler() {
     let lastX = 0,
       lastY = 0,
       lastW = 0,
@@ -249,11 +257,12 @@ export default abstract class WebProvider
       })
 
     this.addOnUnloadFn(
-      onMessage('PIP-action', async (req) => {
-        console.log('PIP-action', req)
+      onMessage(WebextEvent.extCommand, async (req) => {
         if (!this.miniPlayer || !this.webVideo) return
         const videoEl = this.webVideo
-        switch ((req?.data as any)?.body) {
+        const { command } = req.data
+        console.log(WebextEvent.extCommand, command)
+        switch (command) {
           case 'back': {
             videoEl.currentTime -= 5
             break

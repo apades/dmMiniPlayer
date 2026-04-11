@@ -12,31 +12,37 @@ import YoutubeProvider from './youtube'
 import HuyaProvider from './huya'
 import NetflixProvider from './netflix'
 
-export default function getWebProvider(): WebProvider {
+export default function getWebProvider(
+  props: ConstructorParameters<typeof WebProvider>[0],
+): WebProvider {
   const providerKey = getProviderConfig(location.href)
 
-  switch (providerKey) {
-    case 'bilibili-live':
-      return new BilibiliLiveProvider()
-    case 'bilibili-video':
-      return new BilibiliVideoProvider()
-    case 'douyu':
-      return new DouyuLiveProvider()
-    case 'ddrk':
-      return new DdrkProvider()
-    case 'douyin':
-      return new DouyinProvider()
-    case 'donghuafeng':
-      return new DonghuafengProvider()
-    case 'twitch':
-      return new TwitchProvider()
-    case 'youtube':
-      return new YoutubeProvider()
-    case 'huya':
-      return new HuyaProvider()
-    case 'netflix':
-      return new NetflixProvider()
-    default:
-      return new CommonProvider()
-  }
+  const provider = (() => {
+    switch (providerKey) {
+      case 'bilibili-live':
+        return BilibiliLiveProvider
+      case 'bilibili-video':
+        return BilibiliVideoProvider
+      case 'douyu':
+        return DouyuLiveProvider
+      case 'ddrk':
+        return DdrkProvider
+      case 'douyin':
+        return DouyinProvider
+      case 'donghuafeng':
+        return DonghuafengProvider
+      case 'twitch':
+        return TwitchProvider
+      case 'youtube':
+        return YoutubeProvider
+      case 'huya':
+        return HuyaProvider
+      case 'netflix':
+        return NetflixProvider
+      default:
+        return CommonProvider
+    }
+  })()
+
+  return new provider(props)
 }

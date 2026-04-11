@@ -1,4 +1,5 @@
 import { SettingOutlined } from '@ant-design/icons'
+import { requestInitPlayer } from '@root/core/requestPlayerInit'
 import { useOnce } from '@root/hook'
 import useAutoPIPHandler from '@root/hook/useAutoPIPHandler'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
@@ -6,29 +7,28 @@ import useTargetEventListener from '@root/hook/useTargetEventListener'
 import { VIDEO_ID_ATTR } from '@root/shared/config'
 import env from '@root/shared/env'
 import isPluginEnv from '@root/shared/isPluginEnv'
-import PostMessageEvent from '@root/shared/postMessageEvent'
+import PostMessageEvent, {
+  RequestPlayerInitFrom,
+} from '@root/shared/postMessageEvent'
 import { FLOAT_BTN_HIDDEN, LATEST_SAVE_VERSION } from '@root/shared/storeKey'
 import configStore from '@root/store/config'
 import { FloatButtonPos } from '@root/store/config/floatButton'
-import playerConfig from '@root/store/playerConfig'
 import { DocPIPRenderType } from '@root/types/config'
-import { throttle, tryCatch, uuid } from '@root/utils'
+import { throttle, uuid } from '@root/utils'
 import { getIsZh, t } from '@root/utils/i18n'
-import { postStartPIPDataMsg } from '@root/utils/pip'
 import {
   setBrowserLocalStorage,
   useBrowserLocalStorage,
   useBrowserSyncStorage,
 } from '@root/utils/storage'
-import { sendMediaStreamInSender } from '@root/utils/webRTC'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
-import getWebProvider from '@root/web-provider/getWebProvider'
 import { useMemoizedFn, useSize, useUnmount } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { FC, SVGProps, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
+import getWebProvider from '@root/web-provider/getWebProvider'
 import icon from '../../assets/icon.png'
 import AppRoot from './AppRoot'
 
@@ -145,60 +145,10 @@ const FloatButton: FC<Props> = (props) => {
     if (!videoEl) return
     videoRef.current = videoEl
 
-    // 检测可否访问top
-    const [cannotAccessTop] = tryCatch(() => top!.document)
-    if (cannotAccessTop) {
-      const type = configStore.notSameOriginIframeCaptureModePriority
-      console.log(`🟡 非同源iframe，将启用其他模式 ${type}`)
-
-      // 走非同源iframe捕获模式
-      const [isErrorInOtherMode] = await tryCatch(async () => {
-        switch (type) {
-          case DocPIPRenderType.capture_captureStreamWithWebRTC:
-            const stream = videoEl.captureStream()
-            const { unMount } = sendMediaStreamInSender({ stream })
-
-            const handleUnmount = () => {
-              unMount()
-              unListen()
-            }
-            const unListen = onPostMessage(
-              PostMessageEvent.webRTC_close,
-              handleUnmount,
-            )
-            webRTCUnmountRef.current = handleUnmount
-            break
-        }
-
-        await postStartPIPDataMsg(type, videoEl)
-      })
-
-      if (isErrorInOtherMode) {
-        console.error(
-          '🔴 其他模式也不可用，启动保底的旧画中画',
-          isErrorInOtherMode,
-        )
-        videoEl.requestPictureInPicture()
-        throw Error('该视频可能在非同源的iframe中，目前不支持非同源iframe')
-      }
-
-      return true
-    }
-
-    // 检测该video是不是在同源的iframe里
-    const isInIframeVideo = videoEl.ownerDocument !== top?.document
-    // blob:开头的视频不能用replaceVideoEl模式
-    const isBlobSrc = videoEl.src.startsWith('blob:')
-    if (isInIframeVideo && isBlobSrc) {
-      const type = configStore.sameOriginIframeCaptureModePriority
-      console.log(`🟡 同源iframe，将启用其他模式 ${type}`)
-      postStartPIPDataMsg(type, videoEl)
-      return true
-    }
-
-    // 如果都没用上面的模式，则走默认的设置的优先模式
-    postStartPIPDataMsg(configStore.docPIP_renderType, videoEl)
-    return true
+    requestInitPlayer({
+      from: RequestPlayerInitFrom['floatButton.pip'],
+      videoEl,
+    })
   })
 
   const handleOpenSetting = useMemoizedFn(() => {
@@ -223,7 +173,7 @@ const FloatButton: FC<Props> = (props) => {
   )
   // 处理top发来的请求PIP
   useOnce(() =>
-    onPostMessage(PostMessageEvent.requestVideoPIP, (data) => {
+    onPostMessage(PostMessageEvent.requestPlayerInitFromVid, (data) => {
       if (data.id !== id) return
       handleStartPIP()
     }),
@@ -386,16 +336,34 @@ const FloatButton: FC<Props> = (props) => {
                         ? container
                         : container.querySelector('video')
 
-                    if (!videoEl) return
+                    if (!videoEl) throw Error('不正常的videoEl')
                     videoRef.current = videoEl
-                    playerConfig.forceDocPIPRenderType =
-                      DocPIPRenderType.replaceWebVideoDom
-                    const provider = getWebProvider()
+                    const provider = getWebProvider({
+                      renderType: DocPIPRenderType.replaceWebVideoDom,
+                    })
                     window.provider = provider
-                    playerConfig.topContainerEl = props.container
-                    playerConfig.isFixedPos = !!fixedPos
-                    provider.openPlayer({
+
+                    const rect = videoEl.getBoundingClientRect()
+                    provider.initPlayer({
+                      posData: {
+                        x: rect.x,
+                        y: rect.y,
+                        w: rect.width,
+                        h: rect.height,
+                        vw: videoEl.videoWidth,
+                        vh: videoEl.videoHeight,
+                      },
+                      videoState: {
+                        id,
+                        duration: videoEl.duration,
+                        currentTime: videoEl.currentTime,
+                        isPause: videoEl.paused,
+                      },
+                      from: RequestPlayerInitFrom['floatButton.replace'],
+                      renderType: DocPIPRenderType.replaceWebVideoDom,
                       videoEl,
+                      topContainerEl: props.container,
+                      isFixedPos: !!fixedPos,
                     })
                   }}
                 >

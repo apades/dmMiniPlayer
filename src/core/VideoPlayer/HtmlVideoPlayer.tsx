@@ -4,7 +4,6 @@ import VideoPlayerV2, {
 } from '@root/components/VideoPlayerV2'
 import WebextEvent from '@root/shared/webextEvent'
 import configStore from '@root/store/config'
-import playerConfig from '@root/store/playerConfig'
 import { createElement, throttle, tryCatch } from '@root/utils'
 import { ComponentProps } from 'react'
 import { createRoot } from 'react-dom/client'
@@ -87,8 +86,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
       videoPlayerRef: { current: null },
     }
 
-    const renderMode =
-      playerConfig.forceDocPIPRenderType || configStore.docPIP_renderType
+    const renderMode = this.config.renderType
 
     const playerComponent = await (async () => {
       switch (renderMode) {
@@ -112,9 +110,9 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           )
         case DocPIPRenderType.capture_displayMediaWithCropTarget:
         case DocPIPRenderType.capture_displayMediaWithRestrictionTarget: {
-          if (!playerConfig.cropTarget && !playerConfig.restrictionTarget)
+          if (!this.config.cropTarget && !this.config.restrictionTarget)
             throw Error(
-              `没有定义数据 cropTarget:${!playerConfig.cropTarget} restrictionTarget:${!playerConfig.restrictionTarget}`,
+              `没有定义数据 cropTarget:${!this.config.cropTarget} restrictionTarget:${!this.config.restrictionTarget}`,
             )
           const stream = await navigator.mediaDevices.getDisplayMedia({
             preferCurrentTab: true,
@@ -131,16 +129,16 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
             } catch (error) {}
           })
 
-          if (playerConfig.cropTarget) {
-            await track.cropTo(playerConfig.cropTarget)
+          if (this.config.cropTarget) {
+            await track.cropTo(this.config.cropTarget)
           }
-          if (playerConfig.restrictionTarget) {
-            await track.restrictTo(playerConfig.restrictionTarget)
+          if (this.config.restrictionTarget) {
+            await track.restrictTo(this.config.restrictionTarget)
           }
           return <VideoPlayerV2 {...commonProps} videoStream={stream} />
         }
         case DocPIPRenderType.capture_tabCapture:
-          if (!playerConfig.posData) throw Error('没有定义playerConfig.posData')
+          if (!this.config.posData) throw Error('没有定义this.config.posData')
           // TODO 提示用户点击下插件icon
           // 这里必须要用户点击插件icon或者右键菜单功能才能用tapCapture功能 😅
           const data = await sendBgMessage(WebextEvent.startTabCapture, null)
@@ -173,10 +171,10 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
             videoEl.play()
             const canvasVideo = new CanvasVideo({
               videoEl,
-              width: playerConfig.posData.w,
-              height: playerConfig.posData.h,
-              x: -playerConfig.posData.x,
-              y: -playerConfig.posData.y,
+              width: this.config.posData.w,
+              height: this.config.posData.h,
+              x: -this.config.posData.x,
+              y: -this.config.posData.y,
               fps: configStore.capture_tabCapture_FPS,
             })
             return (
@@ -189,12 +187,12 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
             return <VideoPlayerV2 {...commonProps} videoStream={stream} />
           }
         case DocPIPRenderType.capture_captureStreamWithWebRTC:
-          if (!playerConfig.webRTCMediaStream)
-            throw Error('没有定义playerConfig.webRTCMediaStream')
+          if (!this.config.mediaStream)
+            throw Error('没有定义this.config.mediaStream')
           return (
             <VideoPlayerV2
               {...commonProps}
-              videoStream={playerConfig.webRTCMediaStream}
+              videoStream={this.config.mediaStream}
             />
           )
       }

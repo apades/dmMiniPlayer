@@ -1,7 +1,5 @@
 import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { makeObservable, runInAction } from 'mobx'
-import configStore from '@root/store/config'
-import playerConfig from '@root/store/playerConfig'
 import { DocPIPRenderType } from '@root/types/config'
 import { SideSwitcher } from '../SideSwitcher'
 import SubtitleManager from '../SubtitleManager'
@@ -9,6 +7,7 @@ import { DanmakuEngine } from '../danmaku/DanmakuEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
 import { EventBus, PlayerEvent } from '../event'
 import VideoPreviewManager from '../VideoPreviewManager'
+import { WebProvider } from '../WebProvider'
 
 export type ExtendComponent = {
   subtitleManager?: SubtitleManager
@@ -48,6 +47,8 @@ export default class VideoPlayerBase
   canShowDanmaku = false
   showDanmaku = true
 
+  config!: WebProvider['config']
+
   constructor(props: MiniPlayerProps) {
     super()
     this.webVideoEl = props.webVideoEl
@@ -78,7 +79,8 @@ export default class VideoPlayerBase
   protected onUnload() {}
 
   private src = ''
-  async init() {
+  async init(config: WebProvider['config']) {
+    this.config = config
     this.unlistenOnClose = this.on2(PlayerEvent.close, () => {
       console.log('PlayerEvent.close')
       this.unload()
@@ -90,8 +92,7 @@ export default class VideoPlayerBase
 
     await this.onInit()
 
-    const renderMode =
-      playerConfig.forceDocPIPRenderType || configStore.docPIP_renderType
+    const renderMode = this.config.renderType
     const supportOnVideoChange = supportOnVideoChangeTypes.includes(renderMode)
 
     if (supportOnVideoChange) {
