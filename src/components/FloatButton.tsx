@@ -135,21 +135,23 @@ const FloatButton: FC<Props> = (props) => {
   const webRTCUnmountRef = useRef(() => {})
   useUnmount(webRTCUnmountRef.current)
 
-  const handleStartPIP = useMemoizedFn(async () => {
-    const videoEl =
-      container instanceof HTMLVideoElement
-        ? container
-        : container.querySelector('video')
+  const handleStartPIP = useMemoizedFn(
+    async (from = RequestPlayerInitFrom['floatButton.pip']) => {
+      const videoEl =
+        container instanceof HTMLVideoElement
+          ? container
+          : container.querySelector('video')
 
-    console.log('视频容器', videoEl, '父容器', container)
-    if (!videoEl) return
-    videoRef.current = videoEl
+      console.log('视频容器', videoEl, '父容器', container)
+      if (!videoEl) return
+      videoRef.current = videoEl
 
-    requestInitPlayer({
-      from: RequestPlayerInitFrom['floatButton.pip'],
-      videoEl,
-    })
-  })
+      requestInitPlayer({
+        from,
+        videoEl,
+      })
+    },
+  )
 
   const handleOpenSetting = useMemoizedFn(() => {
     postMessageToTop(PostMessageEvent.openSettingPanel)
@@ -176,7 +178,7 @@ const FloatButton: FC<Props> = (props) => {
     onPostMessage(PostMessageEvent.requestPlayerInitFromVid, (data) => {
       console.log('requestPlayerInitFromVid', data)
       if (data.id !== id) return
-      handleStartPIP()
+      handleStartPIP(data.from)
     }),
   )
 

@@ -55,13 +55,13 @@ export type VideoPosData = {
 }
 
 export enum RequestPlayerInitFrom {
-  'floatButton.pip',
-  'floatButton.replace',
-  'autoPIP.scrollOut',
-  'api.requestPictureInPicture',
-  'api.mediaSession.enterpictureinpicture.useraction',
-  'api.mediaSession.enterpictureinpicture.contentoccluded',
-  extensionPopup,
+  'floatButton.pip' = 'floatButton.pip',
+  'floatButton.replace' = 'floatButton.replace',
+  'autoPIP.scrollOut' = 'autoPIP.scrollOut',
+  'api.requestPictureInPicture' = 'api.requestPictureInPicture',
+  'api.mediaSession.enterpictureinpicture.useraction' = 'api.mediaSession.enterpictureinpicture.useraction',
+  'api.mediaSession.enterpictureinpicture.contentoccluded' = 'api.mediaSession.enterpictureinpicture.contentoccluded',
+  extensionPopup = 'extensionPopup',
 }
 
 export enum RequestPlayerInitFromType {
