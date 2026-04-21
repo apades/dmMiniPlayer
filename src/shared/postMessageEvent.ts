@@ -34,7 +34,7 @@ enum PostMessageEvent {
   fullInWeb_request = 'fullInWeb_request',
   fullInWeb_close = 'fullInWeb_close',
   fullInWeb_eventProxy = 'fullInWeb_eventProxy',
-  closeDocPIP = 'closeDocPIP',
+  closePlayer = 'closePlayer',
   asyncData = 'asyncData',
 }
 
@@ -119,8 +119,11 @@ export interface PostMessageProtocolMap {
     isOk: boolean
     errMsg?: string
   }
-  [PostMessageEvent.closeDocPIP]: {
-    type?: 'autoPIP_closeInReturnToOriginPos'
+  [PostMessageEvent.closePlayer]: {
+    type?:
+      | 'autoPIP_closeInReturnToOriginPos'
+      | 'api.exitPictureInPicture'
+      | 'event.leavepictureinpicture'
   } | void
 
   [PostMessageEvent.asyncData]: {

@@ -221,6 +221,8 @@ export default class DocPIPWebProvider extends WebProvider {
       pipWindow.removeEventListener('wheel', handleWheel, { capture: true })
       sendMessage(WebextEvent.closePIP, null)
 
+      this.webVideo.dispatchEvent(new Event('leavepictureinpicture'))
+
       // 恢复原始标题
       document.title = title
     })

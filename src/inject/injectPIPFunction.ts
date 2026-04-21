@@ -3,8 +3,8 @@ import { ATTR_DISABLE_INJECT_PIP, VIDEO_ID_ATTR } from '@root/shared/config'
 import PostMessageEvent, {
   RequestPlayerInitFrom,
 } from '@root/shared/postMessageEvent'
-import { tryCatch, uuid } from '@root/utils'
-import { onPostMessage } from '@root/utils/windowMessages'
+import { getPrototypeGetter, tryCatch, uuid } from '@root/utils'
+import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 
 let hasInit = false
 function main() {
@@ -12,6 +12,7 @@ function main() {
   hasInit = true
   const originReqPIP = HTMLVideoElement.prototype.requestPictureInPicture
 
+  let val: HTMLVideoElement | null
   HTMLVideoElement.prototype.requestPictureInPicture = function () {
     const [cannotAccessTop] = tryCatch(() => top!.document)
     if (cannotAccessTop) return originReqPIP.bind(this)()
@@ -29,7 +30,39 @@ function main() {
       const [{ isOk }] = await onPostMessage(
         PostMessageEvent.requestPlayerInit_resp,
       )
-      if (isOk) return res(window as any as PictureInPictureWindow)
+      if (isOk) {
+        let isClosed = false
+        val = this
+        tryCatch(() => {
+          Object.defineProperty(document, 'pictureInPictureElement', {
+            get: () => val,
+          })
+        })
+        const originClose = document.exitPictureInPicture
+        document.exitPictureInPicture = async () => {
+          if (isClosed) return
+          isClosed = true
+          postMessageToTop(PostMessageEvent.closePlayer, {
+            type: 'api.exitPictureInPicture',
+          })
+          val = null
+          document.exitPictureInPicture = originClose
+        }
+
+        const handleCloseEvent = () => {
+          this.removeEventListener('leavepictureinpicture', handleCloseEvent)
+          if (isClosed) return
+          isClosed = true
+          postMessageToTop(PostMessageEvent.closePlayer, {
+            type: 'event.leavepictureinpicture',
+          })
+          val = null
+          document.exitPictureInPicture = originClose
+        }
+        this.addEventListener('leavepictureinpicture', handleCloseEvent)
+
+        return res(window as any as PictureInPictureWindow)
+      }
       return res(originReqPIP.bind(this)())
     })
   }

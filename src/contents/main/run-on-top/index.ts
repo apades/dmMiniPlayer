@@ -231,7 +231,7 @@ export default function runOnTopMain() {
   })
 
   // MARK: misc
-  onPostMessage(PostMessageEvent.closeDocPIP, () => {
+  onPostMessage(PostMessageEvent.closePlayer, () => {
     const provider = window.provider
     if (!provider) return
     provider.doNotUsePauseInCloseConfig = true

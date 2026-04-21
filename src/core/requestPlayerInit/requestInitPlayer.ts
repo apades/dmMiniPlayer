@@ -68,13 +68,8 @@ type RequestPlayerInitProps =
 export async function requestInitPlayer(props: Props) {
   let videoEl = props.videoEl
 
-  console.log('window.isCsEnv', window.isCsEnv)
-
   const rect = videoEl.getBoundingClientRect()
   const id = videoEl.getAttribute(VIDEO_ID_ATTR)!
-  if (!window.isCsEnv) {
-    return
-  }
 
   // const configStore = (await import('@root/store/config')).default
 

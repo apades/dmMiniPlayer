@@ -101,7 +101,7 @@ const startPIP = async (props: Parameters<typeof requestInitPlayer>[0]) => {
                   const unListenScroll = addEventListener(window, (window) => {
                     window.addEventListener('scroll', () => {
                       if (window.scrollY <= velTop) {
-                        postMessageToTop(PostMessageEvent.closeDocPIP, {
+                        postMessageToTop(PostMessageEvent.closePlayer, {
                           type: 'autoPIP_closeInReturnToOriginPos',
                         })
                         unListenScroll()
@@ -112,7 +112,7 @@ const startPIP = async (props: Parameters<typeof requestInitPlayer>[0]) => {
                 return
               }
 
-              postMessageToTop(PostMessageEvent.closeDocPIP, {
+              postMessageToTop(PostMessageEvent.closePlayer, {
                 type: 'autoPIP_closeInReturnToOriginPos',
               })
             }
