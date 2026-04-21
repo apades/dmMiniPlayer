@@ -6,7 +6,10 @@ import PostMessageEvent, {
 } from '@root/shared/postMessageEvent'
 import { DocPIPRenderType } from '@root/types/config'
 import { createElement, isIframe, tryCatch } from '@root/utils'
-import { sendMediaStreamInSender } from '@root/utils/webRTC'
+import {
+  sendMediaStreamInSender,
+  suggestWebRtcVideoMaxBitrateBpsFromVideoEl,
+} from '@root/utils/webRTC'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 import getWebProvider from '@root/web-provider/getWebProvider'
 import configStore from '@root/store/config'
@@ -181,7 +184,11 @@ export async function requestInitPlayer(props: Props) {
 
       case DocPIPRenderType.capture_captureStreamWithWebRTC: {
         const stream = videoEl.captureStream()
-        const { unMount } = sendMediaStreamInSender({ stream })
+        const { unMount } = sendMediaStreamInSender({
+          stream,
+          videoMaxBitrateBps:
+            suggestWebRtcVideoMaxBitrateBpsFromVideoEl(videoEl),
+        })
 
         const handleUnmount = () => {
           unMount()

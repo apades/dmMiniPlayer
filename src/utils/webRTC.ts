@@ -26,13 +26,53 @@ const servers = {
   iceCandidatePoolSize: 10,
 }
 
-/** Default cap for outbound video; raise if source is 4K and CPU/network allow. */
-const DEFAULT_VIDEO_MAX_BITRATE_BPS = 12_000_000
+/**
+ * Fallback when {@link HTMLVideoElement.videoWidth} / {@link HTMLVideoElement.videoHeight} are not ready yet.
+ * Not the stream's real network bitrate — DOM has no such API.
+ */
+export const DEFAULT_WEBRTC_VIDEO_MAX_BITRATE_BPS = 12_000_000
+
+/** Upper bound for outbound encoded frame rate (`RTCRtpEncodingParameters.maxFramerate`). */
+export const DEFAULT_WEBRTC_VIDEO_MAX_FRAMERATE = 60
+
+type ApplyOutboundVideoEncodingOptions = {
+  maxBitrateBps?: number
+  /**
+   * Encoded RTP max frame rate. Does not raise source fps: `captureStream()` only
+   * produces frames when the video paints; this caps what the encoder sends.
+   */
+  maxFramerate?: number
+}
+
+/**
+ * Suggest outbound WebRTC `maxBitrate` from decoded frame size on the video element.
+ * This is a heuristic cap, not the media manifest or measured network bitrate.
+ */
+export function suggestWebRtcVideoMaxBitrateBpsFromVideoEl(
+  video: HTMLVideoElement,
+): number {
+  const w = video.videoWidth
+  const h = video.videoHeight
+  if (w <= 0 || h <= 0) return DEFAULT_WEBRTC_VIDEO_MAX_BITRATE_BPS
+
+  const longEdge = Math.max(w, h)
+  if (longEdge >= 3840) return 45_000_000
+  if (longEdge >= 2560) return 28_000_000
+  if (longEdge >= 1920) return 12_000_000
+  if (longEdge >= 1280) return 6_000_000
+  if (longEdge >= 854) return 3_500_000
+  return 2_000_000
+}
 
 async function applyHighQualityVideoEncoding(
   pc: RTCPeerConnection,
-  maxBitrateBps = DEFAULT_VIDEO_MAX_BITRATE_BPS,
+  options: ApplyOutboundVideoEncodingOptions = {},
 ) {
+  const maxBitrateBps =
+    options.maxBitrateBps ?? DEFAULT_WEBRTC_VIDEO_MAX_BITRATE_BPS
+  const maxFramerate =
+    options.maxFramerate ?? DEFAULT_WEBRTC_VIDEO_MAX_FRAMERATE
+
   for (const sender of pc.getSenders()) {
     if (sender.track?.kind !== 'video') continue
 
@@ -45,7 +85,7 @@ async function applyHighQualityVideoEncoding(
     for (const enc of encodings) {
       enc.maxBitrate = maxBitrateBps
       enc.scaleResolutionDownBy = 1
-      if (enc.maxFramerate == null) enc.maxFramerate = 60
+      enc.maxFramerate = maxFramerate
     }
 
     try {
@@ -105,13 +145,22 @@ export const sendMediaStreamInSender = (props: {
   target?: Window
   /** Outbound video max bitrate (bps). Default 12 Mbps. */
   videoMaxBitrateBps?: number
+  /** Outbound encoded max frame rate. Default {@link DEFAULT_WEBRTC_VIDEO_MAX_FRAMERATE}. */
+  videoMaxFramerate?: number
 }) => {
   const pc = { current: new RTCPeerConnection(servers) }
   const mediaStream = new MediaStream()
   const stream = props.stream,
     target = props.target
   const videoMaxBitrateBps =
-    props.videoMaxBitrateBps ?? DEFAULT_VIDEO_MAX_BITRATE_BPS
+    props.videoMaxBitrateBps ?? DEFAULT_WEBRTC_VIDEO_MAX_BITRATE_BPS
+  const videoMaxFramerate =
+    props.videoMaxFramerate ?? DEFAULT_WEBRTC_VIDEO_MAX_FRAMERATE
+
+  const encodingOptions: ApplyOutboundVideoEncodingOptions = {
+    maxBitrateBps: videoMaxBitrateBps,
+    maxFramerate: videoMaxFramerate,
+  }
 
   const videoTrack = stream.getVideoTracks()[0]
   // Hint encoder: prefer detail over aggressive temporal filtering (when supported).
@@ -130,7 +179,7 @@ export const sendMediaStreamInSender = (props: {
   const unListens = [
     onPostMessage(PostMessageEvent.webRTC_answer, async (data) => {
       await pc.current.setRemoteDescription(new RTCSessionDescription(data))
-      await applyHighQualityVideoEncoding(pc.current, videoMaxBitrateBps)
+      await applyHighQualityVideoEncoding(pc.current, encodingOptions)
     }),
   ]
 
@@ -154,7 +203,7 @@ export const sendMediaStreamInSender = (props: {
   void (async () => {
     const offer = await pc.current.createOffer()
     await pc.current.setLocalDescription(offer)
-    await applyHighQualityVideoEncoding(pc.current, videoMaxBitrateBps)
+    await applyHighQualityVideoEncoding(pc.current, encodingOptions)
     if (!isTop) {
       postMessageToTop(PostMessageEvent.webRTC_offer, offer)
     } else {
