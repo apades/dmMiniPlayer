@@ -9,7 +9,18 @@ import {
 const servers = {
   iceServers: [
     {
-      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
+      urls: [
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302',
+        'stun:stun.cloudflare.com:3478',
+        'stun:stun.nextcloud.com:443',
+        'stun:stun.hitv.com:3478',
+        'stun:stun.miwifi.com:3478',
+        'stun:stun.voip.aebc.com:3478',
+        'stun:stun.voipbuster.com:3478',
+        'stun:stun.voipstunt.com:3478',
+        'stun:relay.webwormhole.io',
+      ],
     },
   ],
   iceCandidatePoolSize: 10,
