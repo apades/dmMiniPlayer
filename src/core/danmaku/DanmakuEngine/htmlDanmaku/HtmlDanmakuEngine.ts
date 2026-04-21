@@ -86,6 +86,9 @@ export default class HtmlDanmakuManager extends DanmakuEngine {
   private nowPos = 0
   private unbindEvent = () => {}
   private bindEvent(media: HTMLMediaElement) {
+    if (!media.paused) {
+      this.container.classList.remove('paused')
+    }
     const mediaUnbind = addEventListener(media, (el) => {
       el.addEventListener('play', () => {
         this.container.classList.remove('paused')
