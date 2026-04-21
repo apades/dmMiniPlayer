@@ -147,7 +147,11 @@ export async function requestInitPlayer(props: Props) {
   // if (canNotUseWebRTCMode && isNotSameOriginMode) {
   // }
 
-  await waitingUserClickToMakingPageActive()
+  // await waitingUserClickToMakingPageActive()
+  postMessageToTop(PostMessageEvent.checkUserActivationActive)
+  const [{ isActive }] = await onPostMessage(
+    PostMessageEvent.checkUserActivationActive_resp,
+  )
 
   // TODO Loop try
   const [isError] = await tryCatch(async () => {

@@ -17,6 +17,8 @@ import { DocPIPRenderType } from '@root/types/config'
 enum PostMessageEvent {
   requestPlayerInit = 'requestPlayerInit',
   requestPlayerInit_resp = 'requestPlayerInit_resp',
+  checkUserActivationActive = 'checkUserActivationActive',
+  checkUserActivationActive_resp = 'checkUserActivationActive_resp',
   requestPlayerInitFromVid = 'requestPlayerInitFromVid',
   startPIPWithWebRTC = 'startPIPWithWebRTC',
   updateVideoState = 'updateVideoState',
@@ -94,6 +96,8 @@ export interface PostMessageProtocolMap {
     isMute: boolean
     isPlaying: boolean
   }[]
+  [PostMessageEvent.checkUserActivationActive]: void
+  [PostMessageEvent.checkUserActivationActive_resp]: { isActive: boolean }
   [PostMessageEvent.startPIPWithWebRTC]: BaseVideoState
   [PostMessageEvent.requestPlayerInitFromVid]: {
     id: string

@@ -4,7 +4,7 @@ import PostMessageEvent, {
   PostMessageProtocolMap,
   RequestPlayerInitFrom,
 } from '@root/shared/postMessageEvent'
-import { createElement, dq1Adv } from '@root/utils'
+import { createElement, dq1, dq1Adv } from '@root/utils'
 import { onPostMessage, postMessageToChild } from '@root/utils/windowMessages'
 
 export const getTime = () => new Date().getTime()
@@ -93,7 +93,7 @@ export const getSimulateVideoEl = (
 export const requestInitPlayerFromMainCs = async (props: {
   from: RequestPlayerInitFrom
 }) => {
-  let videoEl = dq1Adv('video')
+  let videoEl = dq1('video')
   let isIframeMode = false
 
   // if not found videoEl, try to find in all iframe

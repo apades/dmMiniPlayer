@@ -65,7 +65,7 @@ const FloatButton: FC<Props> = (props) => {
     }),
   )
 
-  const [id] = useState(() => uuid())
+  const [id] = useState(() => vel.getAttribute(VIDEO_ID_ATTR) || uuid())
 
   useOnce(() => {
     vel.setAttribute(VIDEO_ID_ATTR, id)
@@ -174,6 +174,7 @@ const FloatButton: FC<Props> = (props) => {
   // 处理top发来的请求PIP
   useOnce(() =>
     onPostMessage(PostMessageEvent.requestPlayerInitFromVid, (data) => {
+      console.log('requestPlayerInitFromVid', data)
       if (data.id !== id) return
       handleStartPIP()
     }),

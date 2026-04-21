@@ -6,7 +6,12 @@ import PostMessageEvent, {
 } from '@root/shared/postMessageEvent'
 import configStore from '@root/store/config'
 import { autorun } from 'mobx'
-import { dq1Adv, getIframeElFromSource, tryCatch } from '@root/utils'
+import {
+  createElement,
+  dq1Adv,
+  getIframeElFromSource,
+  tryCatch,
+} from '@root/utils'
 import {
   onPostMessage,
   postMessageToChild,
@@ -16,6 +21,7 @@ import { DocPIPRenderType } from '@root/types/config'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import getWebProvider from '@root/web-provider/getWebProvider'
 import { PlayerEvent } from '@root/core/event'
+import { VIDEO_ID_ATTR } from '@root/shared/config'
 import { getSimulateVideoEl, requestInitPlayerFromMainCs } from './utils'
 
 export default function runOnTopMain() {
@@ -99,7 +105,9 @@ export default function runOnTopMain() {
           return
         }
         default: {
-          const videoEl = dq1Adv<HTMLVideoElement>(`video[data-dm-vid="${id}"]`)
+          const videoEl = dq1Adv<HTMLVideoElement>(
+            `video[${VIDEO_ID_ATTR}="${id}"]`,
+          )
           if (!videoEl) throw Error('videoEl not found')
           return provider.initPlayer({
             ...data,
@@ -255,4 +263,44 @@ export default function runOnTopMain() {
       source,
     )
   })
+
+  // MARK: check user active
+  /**
+   * this is system limitations, user must click the page to make it active and PIP can be opened
+   */
+  onPostMessage(
+    PostMessageEvent.checkUserActivationActive,
+    async (data, source) => {
+      if (navigator.userActivation.isActive) {
+        postMessageToChild(
+          PostMessageEvent.checkUserActivationActive_resp,
+          {
+            isActive: true,
+          },
+          source,
+        )
+      } else {
+        await new Promise<void>((res) => {
+          const coverEl = createElement('div')
+          ;(coverEl as any).style =
+            'width:100%;height:100%;position:fixed;top:0;left:0;z-index:9999999;'
+          document.body.appendChild(coverEl)
+          coverEl.addEventListener('click', (e) => {
+            if (!e.isTrusted) return
+            if (!navigator.userActivation.isActive) return
+            document.body.removeChild(coverEl)
+            res()
+          })
+        })
+
+        postMessageToChild(
+          PostMessageEvent.checkUserActivationActive_resp,
+          {
+            isActive: true,
+          },
+          source,
+        )
+      }
+    },
+  )
 }
