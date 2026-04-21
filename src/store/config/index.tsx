@@ -222,6 +222,10 @@ export const baseConfigMap = {
   //   defaultValue: DEFAULT_EVENT_INJECT_SITE,
   //   notRecommended: true,
   // }),
+  showDebugInfo: config({
+    defaultValue: false,
+    notRecommended: true,
+  }),
   showReplacerBtn: config({
     defaultValue: false,
     label: t('settingPanel.showReplacerBtn'),

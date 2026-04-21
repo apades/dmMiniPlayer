@@ -33,6 +33,7 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
+import isDev from '@root/shared/isDev'
 import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
@@ -548,6 +549,15 @@ const VideoPlayerV2Inner = observer(
             }}
           >
             <CloseOutlined />
+          </div>
+        )}
+
+        {configStore.showDebugInfo && (
+          <div className="absolute top-0 left-0 z-1000 pointer-events-none bg-black/40 text-xs text-white p-2">
+            <p>debugInfo: </p>
+            <p className="text-green-500">
+              mode: {window.provider?.config.renderType}
+            </p>
           </div>
         )}
       </div>
