@@ -94,6 +94,10 @@ export const docPIPConfig = {
     type: 'group',
     group: [
       {
+        value: DocPIPRenderType.auto,
+        label: 'Auto',
+      },
+      {
         value: DocPIPRenderType.replaceVideoEl,
         label: t('settingPanel.reactVP_webVideo'),
         desc: t('settingPanel.reactVP_webVideoDesc'),

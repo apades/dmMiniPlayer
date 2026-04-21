@@ -123,6 +123,7 @@ export default abstract class WebProvider
     }, 0)
     this.offAllEvent()
     this.isQuickHiding = false
+    this.config = {} as any
   }
   protected onUnload() {}
 

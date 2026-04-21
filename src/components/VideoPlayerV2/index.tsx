@@ -256,16 +256,19 @@ const VideoPlayerV2Inner = observer(
 
       const isLive = props.isLive || video.duration === Infinity
 
-      const keydownWindow = props.useWebVideo
-        ? ownerWindow(video)
-        : ownerWindow(videoPlayerRef.current)
-      props.setContext((v) => ({
-        ...v,
-        isLive,
-        webVideo: video,
-        keydownWindow,
-        videoPlayerRef: videoPlayerRef,
-      }))
+      setTimeout(() => {
+        const keydownWindow = props.useWebVideo
+          ? ownerWindow(video)
+          : ownerWindow(videoPlayerRef.current)
+
+        props.setContext((v) => ({
+          ...v,
+          isLive,
+          webVideo: video,
+          keydownWindow,
+          videoPlayerRef: videoPlayerRef,
+        }))
+      }, 0)
 
       if (!props.useWebVideo && props.videoStream) {
         updateVideoStream(props.videoStream)

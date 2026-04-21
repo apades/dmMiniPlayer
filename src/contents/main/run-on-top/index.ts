@@ -233,7 +233,7 @@ export default function runOnTopMain() {
     location.reload()
   })
 
-  onPostMessage(PostMessageEvent.getRenderType, (data) => {
+  onPostMessage(PostMessageEvent.getRenderType, (data, source) => {
     const { fromType } = data
     let renderType = configStore.docPIP_renderType
     if (renderType === DocPIPRenderType.auto) {
@@ -249,6 +249,10 @@ export default function runOnTopMain() {
           break
       }
     }
-    postMessageToTop(PostMessageEvent.getRenderType_resp, { renderType })
+    postMessageToChild(
+      PostMessageEvent.getRenderType_resp,
+      { renderType },
+      source,
+    )
   })
 }
