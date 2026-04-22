@@ -16,6 +16,13 @@ export const PIP_WINDOW_CONFIG = key<{
   mainDPR: number
   pipDPR: number
 }>('PIP_WINDOW_CONFIG')
+export const PIP_WINDOW_OFFSET_CONFIG = key<{
+  left: number
+  top: number
+  width: number
+  height: number
+}>('PIP_WINDOW_OFFSET_CONFIG')
+
 export const DM_MINI_PLAYER_CONFIG =
   key<Partial<typeof configStore>>('LOCAL_CONFIG')
 

@@ -1,15 +1,21 @@
-import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
+import {
+  PIP_WINDOW_CONFIG,
+  PIP_WINDOW_OFFSET_CONFIG,
+} from '@root/shared/storeKey'
 import WebextEvent from '@root/shared/webextEvent'
 import configStore, { videoBorderType } from '@root/store/config'
-import { calculateNewDimensions, createElement } from '@root/utils'
+import { calculateNewDimensions, createElement, wait } from '@root/utils'
 import { getDocPIPBorderSize } from '@root/utils/docPIP'
 import {
+  getBrowserLocalStorage,
   getBrowserSyncStorage,
+  setBrowserLocalStorage,
   setBrowserSyncStorage,
 } from '@root/utils/storage'
 import { sendMessage } from 'webext-bridge/content-script'
 import { MovePIPAfterOpenType, Position } from '@root/types/config'
 import { autorun } from 'mobx'
+import { isEqual } from 'lodash-es'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { PlayerEvent } from '../event'
 import { WebProvider } from '.'
@@ -27,7 +33,16 @@ export default class DocPIPWebProvider extends WebProvider {
     document.title = pipTitle
 
     // 获取应该有的docPIP宽高
-    const pipWindowConfig = await getBrowserSyncStorage(PIP_WINDOW_CONFIG)
+    const pipWindowConfig = await getBrowserLocalStorage(PIP_WINDOW_CONFIG)
+    const pipWindowOffsetConfig = await getBrowserLocalStorage(
+      PIP_WINDOW_OFFSET_CONFIG,
+      {
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+      },
+    )
     let width = pipWindowConfig?.width ?? this.webVideo.clientWidth,
       height = pipWindowConfig?.height ?? this.webVideo.clientHeight
 
@@ -64,12 +79,14 @@ export default class DocPIPWebProvider extends WebProvider {
     })
     this.pipWindow = pipWindow
 
+    let isUpdatePosOk = false
     // 这里await会莫名其妙使webVideo被暂停
     sendMessage(WebextEvent.afterStartPIP, {
       width: pipWindow.innerWidth,
-    }).then(() => {
+    }).then(async () => {
       switch (configStore.movePIPInOpen) {
         case MovePIPAfterOpenType.lastPos: {
+          if (!pipWindowConfig) break
           const [borX, borY] = getDocPIPBorderSize(pipWindow)
           console.log('borX, borY', borX, borY)
 
@@ -85,19 +102,50 @@ export default class DocPIPWebProvider extends WebProvider {
           }
 
           // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
-          sendMessage(WebextEvent.updateDocPIPRect, {
-            width: realWidth,
-            height: realHeight,
+          await sendMessage(WebextEvent.updateDocPIPRect, {
             docPIPWidth: pipWindow.innerWidth,
-            left: pipWindowConfig?.left,
-            top: pipWindowConfig?.top,
+            width: realWidth - pipWindowOffsetConfig.width,
+            height: realHeight - pipWindowOffsetConfig.height,
+            left: pipWindowConfig.left - pipWindowOffsetConfig.left,
+            top: pipWindowConfig.top - pipWindowOffsetConfig.top,
           })
+
+          // 移动完有细小的偏移，需要调整一下
+          // TODO: 得知窗口实际变化后的时间，现在先用固定秒代替
+          // TODO: 多个屏幕的偏移都不一样，或许能记录下是在哪个屏幕下的再套用偏移
+          await wait(500)
+          const offsetData = {
+            left: pipWindow.screenLeft - pipWindowConfig.left,
+            top: pipWindow.screenTop - pipWindowConfig.top,
+            width: pipWindow.innerWidth - pipWindowConfig.width,
+            height: pipWindow.innerHeight - pipWindowConfig.height,
+          }
+
+          console.log('[docPIP_WH] offsetData', offsetData, pipWindowConfig)
+          setBrowserLocalStorage(PIP_WINDOW_OFFSET_CONFIG, {
+            left: pipWindowOffsetConfig.left + offsetData.left,
+            top: pipWindowOffsetConfig.top + offsetData.top,
+            width: pipWindowOffsetConfig.width + offsetData.width,
+            height: pipWindowOffsetConfig.height + offsetData.height,
+          })
+          if (Object.values(offsetData).some((v) => v !== 0)) {
+            // await wait(1000)
+            console.log('[docPIP_WH] update')
+            await sendMessage(WebextEvent.updateDocPIPRect, {
+              docPIPWidth: pipWindow.innerWidth,
+              width: realWidth - pipWindowOffsetConfig.width,
+              height: realHeight - pipWindowOffsetConfig.height,
+              left: pipWindowConfig.left - pipWindowOffsetConfig.left,
+              top: pipWindowConfig.top - pipWindowOffsetConfig.top,
+            })
+          }
+
           break
         }
         case MovePIPAfterOpenType.custom: {
           const [borX, borY] = getDocPIPBorderSize(pipWindow)
           // ! 已经确定是chrome的bug，第二次打开不会按照width和height来设置窗口大小
-          sendMessage(WebextEvent.resizeDocPIP, {
+          await sendMessage(WebextEvent.resizeDocPIP, {
             width: width + borX,
             height: height + borY,
             docPIPWidth: pipWindow.innerWidth,
@@ -128,6 +176,8 @@ export default class DocPIPWebProvider extends WebProvider {
           break
         }
       }
+
+      isUpdatePosOk = true
     })
 
     const handleWheel = (e: WheelEvent) => {
@@ -199,24 +249,55 @@ export default class DocPIPWebProvider extends WebProvider {
       capture: true,
     })
 
+    let lastSavedPIPRect:
+      | {
+          width: number
+          height: number
+          left: number
+          top: number
+          mainDPR: number
+          pipDPR: number
+        }
+      | undefined
+    let firstSave = true
+
+    const savePIPPosData = (force = false) => {
+      if (!force && firstSave) {
+        firstSave = false
+        return
+      }
+      if (!isUpdatePosOk) return
+      if (this.isQuickHiding) return
+
+      const newPosData = {
+        width: pipWindow.innerWidth + configStore.saveWidthOnDocPIPCloseOffset,
+        height:
+          pipWindow.innerHeight + configStore.saveHeightOnDocPIPCloseOffset,
+        left: pipWindow.screenLeft,
+        top: pipWindow.screenTop,
+        mainDPR: window.devicePixelRatio,
+        pipDPR: pipWindow.devicePixelRatio,
+      }
+
+      const prev = lastSavedPIPRect
+      if (prev && isEqual(prev, newPosData)) {
+        return
+      }
+
+      lastSavedPIPRect = newPosData
+      setBrowserLocalStorage(PIP_WINDOW_CONFIG, {
+        ...newPosData,
+      })
+      console.log('[docPIP_WH] save pos data', newPosData)
+    }
+
+    const interval = setInterval(() => {
+      savePIPPosData()
+    }, 5000)
     // 挂载事件
     pipWindow.addEventListener('pagehide', () => {
-      // 保存画中画的大小
-      if (!this.isQuickHiding) {
-        const [width, height] = [
-          pipWindow.innerWidth + configStore.saveWidthOnDocPIPCloseOffset,
-          pipWindow.innerHeight + configStore.saveHeightOnDocPIPCloseOffset,
-        ]
-        console.log('[docPIP_WH] save width and height', { width, height })
-        setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
-          height,
-          width,
-          left: pipWindow.screenLeft,
-          top: pipWindow.screenTop,
-          mainDPR: window.devicePixelRatio,
-          pipDPR: pipWindow.devicePixelRatio,
-        })
-      }
+      savePIPPosData(true)
+      clearInterval(interval)
       this.emit(PlayerEvent.close)
       pipWindow.removeEventListener('wheel', handleWheel, { capture: true })
       sendMessage(WebextEvent.closePIP, null)
@@ -228,6 +309,7 @@ export default class DocPIPWebProvider extends WebProvider {
     })
     pipWindow.addEventListener('resize', () => {
       this.emit(PlayerEvent.resize)
+      savePIPPosData()
     })
 
     this.on(PlayerEvent.close, () => {

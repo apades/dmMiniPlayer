@@ -68,6 +68,7 @@ import SpeedIcon from './SpeedIcon'
 import Toast from './Toast'
 import VolumeIcon from './VolumeIcon'
 import ResizeButton from './bottomPanel/ResizeButton'
+import DebugInfo from './DebugInfo'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -552,14 +553,7 @@ const VideoPlayerV2Inner = observer(
           </div>
         )}
 
-        {configStore.showDebugInfo && (
-          <div className="absolute top-0 left-0 z-1000 pointer-events-none bg-black/40 text-xs text-white p-2">
-            <p>debugInfo: </p>
-            <p className="text-green-500">
-              mode: {window.provider?.config.renderType}
-            </p>
-          </div>
-        )}
+        <DebugInfo />
       </div>
     )
 
