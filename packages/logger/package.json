@@ -1,0 +1,14 @@
+{
+  "name": "@apades/logger",
+  "version": "1.0.0",
+  "author": "apades",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./ext": "./ext.ts",
+    "./inject": "./inject.ts"
+  },
+  "dependencies": {
+    "serialize": "link:../serialize"
+  }
+}

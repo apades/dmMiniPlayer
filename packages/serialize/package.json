@@ -1,0 +1,7 @@
+{
+    "name": "serialize",
+    "version": "1.0.0",
+    "author": "Eric Ferraiuolo <edf@ericf.me>",
+    "license": "BSD-3-Clause",
+    "homepage": "https://github.com/yahoo/serialize-javascript"
+}

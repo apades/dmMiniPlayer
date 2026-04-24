@@ -7,6 +7,15 @@
       ],
       "@pkgs/*": [
         "packages/*"
+      ],
+      "@apades/logger": [
+        "packages/logger/index.ts"
+      ],
+      "@apades/logger/ext": [
+        "packages/logger/ext.ts"
+      ],
+      "@apades/logger/inject": [
+        "packages/logger/inject.ts"
       ]
     },
     "outDir": "./dist/",

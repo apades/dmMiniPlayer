@@ -22,6 +22,9 @@ importers:
       '@apad/setting-panel':
         specifier: ^0.6.6
         version: 0.6.6(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@apades/logger':
+        specifier: link:packages/logger
+        version: link:packages/logger
       '@rc-component/trigger':
         specifier: ^3.6.15
         version: 3.6.15(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -73,6 +76,9 @@ importers:
       react-hot-toast:
         specifier: ^2.6.0
         version: 2.6.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      serialize:
+        specifier: link:packages/serialize
+        version: link:packages/serialize
       uuid:
         specifier: ^13.0.0
         version: 13.0.0

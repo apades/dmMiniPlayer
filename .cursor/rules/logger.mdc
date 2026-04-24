@@ -1,0 +1,7 @@
+---
+description: @apades/logger 约定（见 packages/logger/promote.md）
+globs: packages/logger/**
+alwaysApply: false
+---
+
+Follow the file `packages/logger/promote.md`

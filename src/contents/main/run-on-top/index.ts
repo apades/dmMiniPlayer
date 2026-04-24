@@ -17,6 +17,7 @@ import {
   postMessageToChild,
   postMessageToTop,
 } from '@root/utils/windowMessages'
+import { appendLoggerLinesToChromeStorage } from '@apades/logger/ext'
 import { DocPIPRenderType } from '@root/types/config'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
 import getWebProvider from '@root/web-provider/getWebProvider'
@@ -228,6 +229,11 @@ export default function runOnTopMain() {
       })
       iframe.setAttribute('style', originStyle)
     })
+  })
+
+  // MARK: logger (inject world → storage under inject_* key)
+  onPostMessage(PostMessageEvent.loggerPersist, (data) => {
+    appendLoggerLinesToChromeStorage('inject', data.lines)
   })
 
   // MARK: misc

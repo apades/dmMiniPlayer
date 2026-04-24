@@ -36,6 +36,11 @@ enum PostMessageEvent {
   fullInWeb_eventProxy = 'fullInWeb_eventProxy',
   closePlayer = 'closePlayer',
   asyncData = 'asyncData',
+  /** Persist inject-world logger lines to extension storage (handled in main content script). */
+  loggerPersist = 'loggerPersist',
+  /** Extension content script: iframe requests shared `ext_cs` logger session uuid from top. */
+  loggerExtCsUuid_req = 'loggerExtCsUuid_req',
+  loggerExtCsUuid_resp = 'loggerExtCsUuid_resp',
 }
 
 export type BaseVideoState = {
@@ -130,6 +135,9 @@ export interface PostMessageProtocolMap {
     data: any
     key: string
   }
+  [PostMessageEvent.loggerPersist]: { lines: string[] }
+  [PostMessageEvent.loggerExtCsUuid_req]: void
+  [PostMessageEvent.loggerExtCsUuid_resp]: { uuid: string }
 }
 
 export default PostMessageEvent
