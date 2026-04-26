@@ -13,7 +13,7 @@ Important: After making changes, update the `packages/logger/promote.md` documen
 
 ### Entry points
 
-- **`ext.ts`** — extension scripts (content script or background). Import **`logger`** from `@apades/logger/ext`. Extension context (**cs** vs **bg**) is inferred with `/src/shared/isBG.ts` (do not pass context manually). Also exports **`appendLoggerLinesToChromeStorage`** for the main content script when persisting inject-origin batches.
+- **`ext.ts`** — extension scripts (content script or background). Import **`logger`** from `@apades/logger/ext`. Extension context (**cs** vs **bg**) is inferred with `/src/shared/isBG.ts` (do not pass context manually). Also exports **`appendLoggerLinesToChromeStorage`** for the main content script when persisting inject-origin batches, and installs **`globalThis.$clearLoggerLogs()`** for clearing logger memory, pending batches, and persisted storage logs.
 - **`inject.ts`** — injected (page) scripts. Import **`logger`** from `@apades/logger/inject`.
 - **`index.ts`** — shared exports (`createRootLogger`, `createNamespacedLogger`, `setLoggerNamespaceEnabled`, types, helpers) for code that does not use the `ext` / `inject` singletons.
 
@@ -37,9 +37,11 @@ Types: **`ExtensionLogger`** (`ext.ts`), **`InjectLogger`** (`inject.ts`).
 ### Console and persistence rules
 
 - API mirrors **`console`** for the listed methods; **`userAction`** is an extra channel for user-intent events.
+- In development, logger output, memory mirroring, and persistence are enabled by default. In production, the `ext` / `inject` singletons emit only when logging is explicitly enabled. Extension content scripts read the current frame document's **`dm-show-log`** attribute; extension background reads the **`SHOW_LOG`** sync-storage value; injected scripts read the current document and also check `window.top.document` for document Picture-in-Picture windows.
 - Namespaced console lines use a **`[namespace]`** prefix styled with **`%c`**; color is deterministic from the namespace string and **cached** after first use.
-- Each log is mirrored in **local memory** as raw `LogPayload` (see `getLoggerMemorySnapshot` in `index.ts` / `core.ts`); the **persist** path flattens lines with **`/packages/serialize`** before storage.
+- Each log is mirrored in **local memory** as raw `LogPayload` (see `getLoggerMemorySnapshot` in `index.ts` / `core.ts`); the **persist** path writes `LoggerPersistEntry` objects with `level`, `timestamp`, optional `namespace`, and `parts`. Only `parts` is serialized via **`/packages/serialize`**; metadata fields are kept as plain values.
 - **Storage keys** differ by origin:
   - **`inject_…`** vs **`ext_cs_…`** vs **`ext_bg_…`** (cs = content script, bg = background).
 - Key shape: **`environment_YYMMDDHHmm_uuid`** where **`uuid`** is **4 hex characters**, generated once per runtime for that environment (not restored after tab close). For **`ext_cs`**, the uuid is **created when the top-frame script runs** and shared by all content-script instances in the same tab: same-origin frames read a **`data-apades-logger-ext-cs`** attribute on the top `documentElement`; cross-origin iframes request it from top via **`PostMessageEvent.loggerExtCsUuid_req` / `loggerExtCsUuid_resp`** (`/src/utils/windowMessages.ts`). **`ext_bg`** / **`inject`** uuids are in-memory in that extension context only.
-- Stored value: an array of strings, each line **`serializedPayload ---- timestamp`** (flattened as specified).
+- Stored value: an array of `LoggerPersistEntry` objects, one per log line. `parts` is the serialized message content; `level`, `timestamp`, and optional `namespace` are stored directly.
+- **`globalThis.$clearLoggerLogs()`** is available from the extension logger entry and returns a Promise. It clears this runtime's memory log buffer, pending persist queues, in-session chrome-storage buffers, and persisted keys matching the logger storage-key format.

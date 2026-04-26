@@ -40,3 +40,5 @@ export const LOCALE = key<Language>('LOCALE')
 export const DANMAKU_VISIBLE = key<boolean>('DANMAKU_VISIBLE')
 
 export const NEED_RELOAD = key<boolean>('NEED_RELOAD')
+
+export const SHOW_LOG = key<boolean>('SHOW_LOG')

@@ -1,16 +1,29 @@
 import isBG from '@root/shared/isBG'
 import {
+  clearLoggerRuntimeState,
   createRootLogger,
   type NamespacedLogger,
   type RootLogger,
 } from './core'
-import { appendLoggerLinesToChromeStorage } from './persist-chrome'
+import {
+  appendLoggerLinesToChromeStorage,
+  clearChromeLoggerStorage,
+} from './persist-chrome'
 import { setLoggerNamespaceEnabled } from './namespaces'
+import { isLoggerEnabledForExtension } from './show-log'
 import type { LoggerStorageEnv } from './types'
 
 function extensionStorageEnv(): LoggerStorageEnv {
   return isBG ? 'ext_bg' : 'ext_cs'
 }
+
+function clearAllLoggerLogs(): Promise<void> {
+  clearLoggerRuntimeState()
+  return clearChromeLoggerStorage()
+}
+
+;(globalThis as { $clearLoggerLogs?: () => Promise<void> }).$clearLoggerLogs =
+  clearAllLoggerLogs
 
 export type ExtensionLogger = Omit<RootLogger, 'namespace'> & {
   namespace: ((name: string) => NamespacedLogger) & {
@@ -19,6 +32,7 @@ export type ExtensionLogger = Omit<RootLogger, 'namespace'> & {
 }
 
 const base = createRootLogger({
+  shouldEmit: () => isLoggerEnabledForExtension(isBG),
   persist: (lines) => {
     appendLoggerLinesToChromeStorage(extensionStorageEnv(), lines)
   },
@@ -40,4 +54,7 @@ const logger: ExtensionLogger = {
 }
 
 export default logger
-export { appendLoggerLinesToChromeStorage } from './persist-chrome'
+export {
+  appendLoggerLinesToChromeStorage,
+  clearChromeLoggerStorage,
+} from './persist-chrome'

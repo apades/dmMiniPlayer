@@ -6,8 +6,10 @@ import {
   type RootLogger,
 } from './core'
 import { setLoggerNamespaceEnabled } from './namespaces'
+import { isLoggerEnabledForInjectDocument } from './show-log'
+import type { LoggerPersistEntry } from './types'
 
-function injectPersist(lines: string[]): void {
+function injectPersist(lines: LoggerPersistEntry[]): void {
   postMessageToTop(PostMessageEvent.loggerPersist, { lines })
 }
 
@@ -18,6 +20,7 @@ export type InjectLogger = Omit<RootLogger, 'namespace'> & {
 }
 
 const base = createRootLogger({
+  shouldEmit: isLoggerEnabledForInjectDocument,
   persist: injectPersist,
 })
 

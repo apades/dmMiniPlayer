@@ -16,6 +16,11 @@ export type LogPayload = {
   namespace?: string
 }
 
+export type LoggerPersistEntry = Omit<LogPayload, 'parts'> & {
+  parts: string
+}
+
 export type LoggerPersistConfig = {
-  persist: (lines: string[]) => void | Promise<void>
+  persist: (lines: LoggerPersistEntry[]) => void | Promise<void>
+  shouldEmit?: () => boolean
 }

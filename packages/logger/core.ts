@@ -1,10 +1,16 @@
 import serialize from 'serialize'
 import { getNamespaceConsoleColor } from './namespace-style'
 import { isLoggerNamespaceEnabled } from './namespaces'
-import type { LoggerLevel, LoggerPersistConfig, LogPayload } from './types'
+import type {
+  LoggerLevel,
+  LoggerPersistConfig,
+  LoggerPersistEntry,
+  LogPayload,
+} from './types'
 
 const FLUSH_DEBOUNCE_MS = 80
 const memoryLogEntries: LogPayload[] = []
+const pendingPersistQueues = new Set<LoggerPersistEntry[]>()
 
 ;(globalThis as any).memoryLogEntries = memoryLogEntries
 const MEMORY_CAP = 5000
@@ -29,17 +35,30 @@ function pushMemory(entry: LogPayload): void {
   }
 }
 
-function formatPersistLine(payload: LogPayload): string {
-  const serialized = serialize(payload, { ignoreFunction: true })
-  return `${serialized} ---- ${payload.timestamp}`
+function shouldEmit(config: LoggerPersistConfig): boolean {
+  return config.shouldEmit?.() ?? true
+}
+
+/** Persist metadata directly; only message parts need the custom serializer. */
+function formatPersistEntry(payload: LogPayload): LoggerPersistEntry {
+  return {
+    level: payload.level,
+    parts: serialize(payload.parts, { ignoreFunction: true }),
+    timestamp: payload.timestamp,
+    ...(payload.namespace ? { namespace: payload.namespace } : {}),
+  }
 }
 
 function buildEmit(
   config: LoggerPersistConfig,
-  schedule: (line: string) => void,
+  schedule: (entry: LoggerPersistEntry) => void,
   namespace?: string,
 ) {
   return (level: LoggerLevel, parts: unknown[]) => {
+    if (!shouldEmit(config)) {
+      return
+    }
+
     if (namespace && !isLoggerNamespaceEnabled(namespace)) {
       return
     }
@@ -51,7 +70,7 @@ function buildEmit(
       ...(namespace ? { namespace } : {}),
     }
 
-    const line = formatPersistLine(payload)
+    const persistEntry = formatPersistEntry(payload)
 
     if (namespace) {
       const color = getNamespaceConsoleColor(namespace)
@@ -89,12 +108,13 @@ function buildEmit(
     }
 
     pushMemory(payload)
-    schedule(line)
+    schedule(persistEntry)
   }
 }
 
 function createSchedulePersist(config: LoggerPersistConfig) {
-  const pending: string[] = []
+  const pending: LoggerPersistEntry[] = []
+  pendingPersistQueues.add(pending)
   let timer: ReturnType<typeof setTimeout> | null = null
 
   const flush = () => {
@@ -104,8 +124,8 @@ function createSchedulePersist(config: LoggerPersistConfig) {
     void Promise.resolve(config.persist(batch))
   }
 
-  return (line: string) => {
-    pending.push(line)
+  return (entry: LoggerPersistEntry) => {
+    pending.push(entry)
     if (timer) return
     timer = setTimeout(flush, FLUSH_DEBOUNCE_MS)
   }
@@ -169,4 +189,11 @@ export function createNamespacedLogger(
 /** In-memory ring buffer of recent log payloads (not serialized; see persist path for string lines). */
 export function getLoggerMemorySnapshot(): readonly LogPayload[] {
   return memoryLogEntries
+}
+
+export function clearLoggerRuntimeState(): void {
+  memoryLogEntries.splice(0, memoryLogEntries.length)
+  pendingPersistQueues.forEach((pending) => {
+    pending.splice(0, pending.length)
+  })
 }

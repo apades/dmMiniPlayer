@@ -1,6 +1,12 @@
 export { setLoggerNamespaceEnabled } from './namespaces'
-export type { LoggerLevel, LoggerStorageEnv, LogPayload } from './types'
+export type {
+  LoggerLevel,
+  LoggerPersistEntry,
+  LoggerStorageEnv,
+  LogPayload,
+} from './types'
 export {
+  clearLoggerRuntimeState,
   createNamespacedLogger,
   createRootLogger,
   getLoggerMemorySnapshot,
