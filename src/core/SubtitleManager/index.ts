@@ -5,7 +5,6 @@ import { ERROR_MSG } from '@root/shared/errorMsg'
 import toast from 'react-hot-toast'
 import { getNowLang, t } from '@root/utils/i18n'
 import { googleTranslate } from '@root/utils/translate'
-import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
@@ -78,7 +77,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     this.reset()
     this.onUnload()
     this.onUnloadFn.forEach((fn) => fn())
-    this.offAll()
+    this.offAllEvent()
   }
   onUnload() {}
 

@@ -115,4 +115,4 @@ export const manifest: chrome.runtime.ManifestV3 = {
       description: '__MSG_quickHideToggle__',
     },
   },
-}
+} as const

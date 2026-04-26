@@ -1,8 +1,10 @@
+import { requestInitPlayer } from '@root/core/requestPlayerInit'
 import { ATTR_DISABLE_INJECT_PIP, VIDEO_ID_ATTR } from '@root/shared/config'
-import PostMessageEvent from '@root/shared/postMessageEvent'
-import { tryCatch, uuid, wait } from '@root/utils'
-import { postStartPIPDataMsg } from '@root/utils/pip'
-import { onPostMessage } from '@root/utils/windowMessages'
+import PostMessageEvent, {
+  RequestPlayerInitFrom,
+} from '@root/shared/postMessageEvent'
+import { getPrototypeGetter, tryCatch, uuid } from '@root/utils'
+import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
 
 let hasInit = false
 function main() {
@@ -10,6 +12,7 @@ function main() {
   hasInit = true
   const originReqPIP = HTMLVideoElement.prototype.requestPictureInPicture
 
+  let val: HTMLVideoElement | null
   HTMLVideoElement.prototype.requestPictureInPicture = function () {
     const [cannotAccessTop] = tryCatch(() => top!.document)
     if (cannotAccessTop) return originReqPIP.bind(this)()
@@ -20,15 +23,46 @@ function main() {
 
     // ? 很奇怪在agemys里requestPictureInPicture不能是async function，不然连第一行都没法运行
     return new Promise(async (res) => {
-      postStartPIPDataMsg(
-        null,
-        this,
-        'HTMLVideoElement.prototype.requestPictureInPicture',
-      )
+      requestInitPlayer({
+        videoEl: this,
+        from: RequestPlayerInitFrom['api.requestPictureInPicture'],
+      })
       const [{ isOk }] = await onPostMessage(
-        PostMessageEvent.startPIPFromFloatButton_resp,
+        PostMessageEvent.requestPlayerInit_resp,
       )
-      if (isOk) return res(window as any as PictureInPictureWindow)
+      if (isOk) {
+        let isClosed = false
+        val = this
+        tryCatch(() => {
+          Object.defineProperty(document, 'pictureInPictureElement', {
+            get: () => val,
+          })
+        })
+        const originClose = document.exitPictureInPicture
+        document.exitPictureInPicture = async () => {
+          if (isClosed) return
+          isClosed = true
+          postMessageToTop(PostMessageEvent.closePlayer, {
+            type: 'api.exitPictureInPicture',
+          })
+          val = null
+          document.exitPictureInPicture = originClose
+        }
+
+        const handleCloseEvent = () => {
+          this.removeEventListener('leavepictureinpicture', handleCloseEvent)
+          if (isClosed) return
+          isClosed = true
+          postMessageToTop(PostMessageEvent.closePlayer, {
+            type: 'event.leavepictureinpicture',
+          })
+          val = null
+          document.exitPictureInPicture = originClose
+        }
+        this.addEventListener('leavepictureinpicture', handleCloseEvent)
+
+        return res(window as any as PictureInPictureWindow)
+      }
       return res(originReqPIP.bind(this)())
     })
   }

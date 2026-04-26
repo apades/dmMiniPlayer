@@ -16,6 +16,13 @@ export const PIP_WINDOW_CONFIG = key<{
   mainDPR: number
   pipDPR: number
 }>('PIP_WINDOW_CONFIG')
+export const PIP_WINDOW_OFFSET_CONFIG = key<{
+  left: number
+  top: number
+  width: number
+  height: number
+}>('PIP_WINDOW_OFFSET_CONFIG')
+
 export const DM_MINI_PLAYER_CONFIG =
   key<Partial<typeof configStore>>('LOCAL_CONFIG')
 
@@ -33,3 +40,5 @@ export const LOCALE = key<Language>('LOCALE')
 export const DANMAKU_VISIBLE = key<boolean>('DANMAKU_VISIBLE')
 
 export const NEED_RELOAD = key<boolean>('NEED_RELOAD')
+
+export const SHOW_LOG = key<boolean>('SHOW_LOG')

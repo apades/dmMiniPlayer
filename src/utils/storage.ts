@@ -3,7 +3,7 @@ import Browser from 'webextension-polyfill'
 // const Browser = chrome
 
 Browser.storage.local.onChanged.addListener((changes: any) => {
-  console.log('onChanged', localCallbacksMap, changes)
+  // console.log('onChanged', localCallbacksMap, changes)
   Object.keys(changes).forEach((key) => {
     localCallbacksMap[key]?.forEach?.((cb) => cb(changes[key].newValue))
   })
@@ -36,17 +36,33 @@ export function setBrowserLocalStorage<
   return Browser.storage.local.set({ [key]: value })
 }
 
-export function getBrowserLocalStorage<
+type LocalStorageValue<T extends (string & { __key: any }) | string> =
+  T extends string & { __key: infer V } ? V : any
+
+export async function getBrowserLocalStorage<
   T extends (string & { __key: any }) | string,
->(key: T) {
-  return Browser.storage.local
-    .get(key)
-    .then(
-      ({ [key as any]: val }) =>
-        val as
-          | (T extends string & { __key: any } ? T['__key'] : any)
-          | undefined,
-    )
+>(key: T, defaultValue: LocalStorageValue<T>): Promise<LocalStorageValue<T>>
+export async function getBrowserLocalStorage<
+  T extends (string & { __key: any }) | string,
+>(key: T): Promise<LocalStorageValue<T> | undefined>
+export async function getBrowserLocalStorage<
+  T extends (string & { __key: any }) | string,
+>(
+  key: T,
+  defaultValue?: LocalStorageValue<T>,
+): Promise<LocalStorageValue<T> | undefined> {
+  const result = (await Browser.storage.local.get(key as string)) as Record<
+    string,
+    unknown
+  >
+  const k = key as string
+  if (k in result) {
+    return result[k] as LocalStorageValue<T>
+  }
+  if (arguments.length > 1) {
+    return defaultValue as LocalStorageValue<T>
+  }
+  return undefined
 }
 
 Browser.storage.sync.onChanged.addListener((changes: any) => {
@@ -81,15 +97,28 @@ export function setBrowserSyncStorage<
   return Browser.storage.sync.set({ [key]: value })
 }
 
-export function getBrowserSyncStorage<
+export async function getBrowserSyncStorage<
   T extends (string & { __key: any }) | string,
->(key: T) {
-  return Browser.storage.sync
-    .get(key)
-    .then(
-      ({ [key as any]: val }) =>
-        val as
-          | (T extends string & { __key: any } ? T['__key'] : any)
-          | undefined,
-    )
+>(key: T, defaultValue: LocalStorageValue<T>): Promise<LocalStorageValue<T>>
+export async function getBrowserSyncStorage<
+  T extends (string & { __key: any }) | string,
+>(key: T): Promise<LocalStorageValue<T> | undefined>
+export async function getBrowserSyncStorage<
+  T extends (string & { __key: any }) | string,
+>(
+  key: T,
+  defaultValue?: LocalStorageValue<T>,
+): Promise<LocalStorageValue<T> | undefined> {
+  const result = (await Browser.storage.sync.get(key as string)) as Record<
+    string,
+    unknown
+  >
+  const k = key as string
+  if (k in result) {
+    return result[k] as LocalStorageValue<T>
+  }
+  if (arguments.length > 1) {
+    return defaultValue as LocalStorageValue<T>
+  }
+  return undefined
 }

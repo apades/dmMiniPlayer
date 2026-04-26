@@ -89,10 +89,14 @@ export const docPIPConfig = {
   docPIP_renderType: config<DocPIPRenderType>({
     // notRecommended: true,
     label: t('settingPanel.docPIP_renderType'),
-    defaultValue: DocPIPRenderType.replaceVideoEl,
+    defaultValue: DocPIPRenderType.auto,
     desc: 'Force mode to debugger',
     type: 'group',
     group: [
+      {
+        value: DocPIPRenderType.auto,
+        label: 'Auto',
+      },
       {
         value: DocPIPRenderType.replaceVideoEl,
         label: t('settingPanel.reactVP_webVideo'),
@@ -123,6 +127,9 @@ export const docPIPConfig = {
     relateBy: 'useDocPIP',
     relateByValue: true,
   }),
+  /**
+   * default {@link DocPIPRenderType.capture_captureStream}
+   */
   sameOriginIframeCaptureModePriority: config({
     label: t('settingPanel.sameOriginIframe'),
     defaultValue: DocPIPRenderType.capture_captureStream,
@@ -136,13 +143,26 @@ export const docPIPConfig = {
         value: DocPIPRenderType.capture_captureStream,
         label: 'Only captureStream',
       },
+      {
+        label: t('settingPanel.captureStreamWithWebRTC'),
+        value: DocPIPRenderType.capture_captureStreamWithWebRTC,
+        desc: t('settingPanel.captureStreamWithWebRTCDesc'),
+      },
     ],
   }),
+  /**
+   * default {@link DocPIPRenderType.capture_captureStreamWithWebRTC}
+   */
   notSameOriginIframeCaptureModePriority: config({
     label: t('settingPanel.notSameOriginIframe'),
-    defaultValue: DocPIPRenderType.capture_displayMediaWithCropTarget,
+    defaultValue: DocPIPRenderType.capture_captureStreamWithWebRTC,
     type: 'group',
     group: [
+      {
+        label: t('settingPanel.captureStreamWithWebRTC'),
+        value: DocPIPRenderType.capture_captureStreamWithWebRTC,
+        desc: t('settingPanel.captureStreamWithWebRTCDesc'),
+      },
       {
         label: t('settingPanel.displayMediaWithCropTarget'),
         value: DocPIPRenderType.capture_displayMediaWithCropTarget,
@@ -158,11 +178,6 @@ export const docPIPConfig = {
       //   value: DocPIPRenderType.capture_tabCapture,
       //   desc: 'No browser sharing top bar, but performance is not good. Recommended to turn the web video into full screen before turning on this function.',
       // },
-      {
-        label: t('settingPanel.captureStreamWithWebRTC'),
-        value: DocPIPRenderType.capture_captureStreamWithWebRTC,
-        desc: t('settingPanel.captureStreamWithWebRTCDesc'),
-      },
       // DocPIPRenderType.injectMediaSource,
     ],
   }),
@@ -189,7 +204,7 @@ export const docPIPConfig = {
   }),
   injectPIPFn: config({
     label: t('settingPanel.injectPIPFn'),
-    // desc: t('settingPanel.injectPIPFnDesc'),
+    desc: t('settingPanel.injectPIPFnDesc'),
     defaultValue: true,
   }),
 } as const

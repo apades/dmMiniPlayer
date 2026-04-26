@@ -32,6 +32,7 @@ declare global {
     openSettingPanel: typeof openSettingPanel
     __LOCALE: Language
     provider?: WebProvider
+    isCsEnv: boolean
 
     // RestrictionTarget: {
     //   fromElement: (el: HTMLElement) => RestrictionTarget

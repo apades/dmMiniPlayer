@@ -33,6 +33,7 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
+import isDev from '@root/shared/isDev'
 import AppRoot from '../AppRoot'
 import VideoPlayerSide from '../VideoPlayer/Side'
 import SubtitleSelection from '../VideoPlayer/subtitle/SubtitleSelection'
@@ -67,6 +68,7 @@ import SpeedIcon from './SpeedIcon'
 import Toast from './Toast'
 import VolumeIcon from './VolumeIcon'
 import ResizeButton from './bottomPanel/ResizeButton'
+import DebugInfo from './DebugInfo'
 
 export type VideoPlayerHandle = {
   setCurrentTime: (time: number, pause?: boolean) => void
@@ -256,16 +258,19 @@ const VideoPlayerV2Inner = observer(
 
       const isLive = props.isLive || video.duration === Infinity
 
-      const keydownWindow = props.useWebVideo
-        ? ownerWindow(video)
-        : ownerWindow(videoPlayerRef.current)
-      props.setContext((v) => ({
-        ...v,
-        isLive,
-        webVideo: video,
-        keydownWindow,
-        videoPlayerRef: videoPlayerRef,
-      }))
+      setTimeout(() => {
+        const keydownWindow = props.useWebVideo
+          ? ownerWindow(video)
+          : ownerWindow(videoPlayerRef.current)
+
+        props.setContext((v) => ({
+          ...v,
+          isLive,
+          webVideo: video,
+          keydownWindow,
+          videoPlayerRef: videoPlayerRef,
+        }))
+      }, 0)
 
       if (!props.useWebVideo && props.videoStream) {
         updateVideoStream(props.videoStream)
@@ -547,6 +552,8 @@ const VideoPlayerV2Inner = observer(
             <CloseOutlined />
           </div>
         )}
+
+        <DebugInfo />
       </div>
     )
 

@@ -2,6 +2,9 @@ import { ProtocolWithReturn } from 'webext-bridge'
 import { Props as DanmakuGetterProps } from '@pkgs/danmakuGetter/DanmakuGetter'
 import WebextEvent from './shared/webextEvent'
 import { DanmakuInitData } from './core/danmaku/DanmakuEngine'
+import type { manifest } from './manifest'
+
+type Command = keyof typeof manifest.commands
 
 declare module 'webext-bridge' {
   export interface ProtocolMap {
@@ -30,9 +33,8 @@ declare module 'webext-bridge' {
       null,
       { streamId?: string; error?: string }
     >
-    [WebextEvent.getup]: ProtocolWithReturn<null, string>
     [WebextEvent.getTabCapturePermission]: ProtocolWithReturn<null, boolean>
-    [WebextEvent.requestVideoPIP]: ProtocolWithReturn<
+    [WebextEvent.requestInitPlayerFromExtPopup]: ProtocolWithReturn<
       null,
       | { state: 'ok' }
       | { state: 'error'; errType: 'no-video' | 'user-activation' }
@@ -52,5 +54,7 @@ declare module 'webext-bridge' {
     [WebextEvent.afterStartPIP]: { width: number }
 
     [WebextEvent.reloadPage]: null
+    [WebextEvent.setExtActive]: { active: boolean }
+    [WebextEvent.extCommand]: { command: Command }
   }
 }

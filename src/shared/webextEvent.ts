@@ -7,11 +7,13 @@ enum WebextEvent {
   stopGetDanmaku = 'stopGetDanmaku',
   needClickWebToOpenPIP = 'needClickWebToOpenPIP',
   startTabCapture = 'startTabCapture',
-  /**让bg起来 */
-  getup = 'getup',
   getTabCapturePermission = 'getTabCapturePermission',
-  requestVideoPIP = 'requestVideoPIP',
+  /** click from browser tab extension icon to popup */
+  requestInitPlayerFromExtPopup = 'requestInitPlayerFromExtPopup',
   openSetting = 'openSetting',
+
+  setExtActive = 'setExtActive',
+  extCommand = 'extCommand',
 
   moveDocPIPPos = 'moveDocPIPPos',
   resizeDocPIP = 'resizeDocPIP',

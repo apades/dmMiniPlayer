@@ -1,15 +1,15 @@
 import browser from 'webextension-polyfill'
 import { onMessage, sendMessage } from 'webext-bridge/background'
-// import { activeTabId } from './messages/pip-active'
+import WebextEvent from '@root/shared/webextEvent'
 
-browser.commands.onCommand.addListener(async (command, tab) => {
+let activeTabId: number | null = null
+browser.commands.onCommand.addListener(async (command: any, tab) => {
   console.log('command', command)
   if (activeTabId) {
     sendMessage(
-      'PIP-action',
+      WebextEvent.extCommand,
       {
-        name: 'PIP-action',
-        body: command,
+        command,
       },
       {
         tabId: activeTabId,
@@ -19,8 +19,16 @@ browser.commands.onCommand.addListener(async (command, tab) => {
   }
 })
 
-let activeTabId: number, activeTabIndex: number
-onMessage('PIP-active', (req) => {
-  console.log('active', req)
-  activeTabId = req.sender.tabId
+onMessage(WebextEvent.setExtActive, (req) => {
+  const tabId = req.sender.tabId
+  // Avoid the following situation
+  // -> active: true  id: 1
+  // -> active: true  id: 2
+  // -> active: false id: 1
+  if (!req.data.active) {
+    if (activeTabId === tabId) activeTabId = null
+    return
+  }
+  activeTabId = tabId
+  console.log('active', tabId)
 })

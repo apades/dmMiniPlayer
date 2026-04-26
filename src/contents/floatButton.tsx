@@ -11,7 +11,7 @@ import { getBrowserSyncStorage } from '@root/utils/storage'
 import { DRAG_POS } from '@root/shared/storeKey'
 
 const INIT_ATTR = 'rc-f-init'
-async function initVideoFloatBtn(
+export async function initVideoFloatBtn(
   container: HTMLElement,
   vel: HTMLVideoElement,
   fixedPos?: boolean,

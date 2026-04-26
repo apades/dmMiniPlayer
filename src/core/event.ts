@@ -1,3 +1,13 @@
+/**
+ * this event system is different from
+ * 1. @/shared/postMessageEvent.ts
+ * 2. @/shared/webextEvent.ts
+ *
+ * this event system is only use for same iframe/top window communication,
+ * and only have **one instance**
+ *
+ * TODO: When a new replace mode player starts, close the old one.
+ */
 import { onceCall } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import mitt from 'mitt'
@@ -88,4 +98,9 @@ export class EventBus extends Events2<PlayerEvents> {
   override mitt = getMitt() as any
 }
 
+/**
+ * **Do not use on/addEventListener in this independent instance**
+ *
+ * only can use emit
+ */
 export const eventBus = new EventBus()

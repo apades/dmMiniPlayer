@@ -6,5 +6,6 @@ export const NEED_PAGE_RELOAD = [
   'inject-all-frames-top',
   'entry-init-ext-config',
   'entry-inject-all-frames-top',
+  'entry-inject-top',
 ]
 export const WS_PORT = 4966

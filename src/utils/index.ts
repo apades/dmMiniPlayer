@@ -655,3 +655,7 @@ export function configStringArrValid(tar: string, configs: string[] = []) {
 export function normalizePath(path: string) {
   return path.replace(/\\/g, '/')
 }
+
+export const stopStreamCapture = (stream: MediaStream) => {
+  stream.getTracks().forEach((track) => track.stop())
+}

@@ -131,7 +131,7 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     this.unloadCallbacks.forEach((cb) => cb())
     this.initd = false
     this.resetState()
-    this.offAll()
+    this.offAllEvent()
   }
 
   // 监听container大小变化

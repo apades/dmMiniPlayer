@@ -1,8 +1,6 @@
-import { FC, useEffect, useMemo, useRef } from 'react'
-import { createPortal } from 'react-dom'
+import { FC, useEffect, useRef } from 'react'
 import {
   createElement,
-  dq1,
   getVideoElInitFloatButtonData,
   isIframe,
   tryCatch,
@@ -11,11 +9,9 @@ import { createRoot } from 'react-dom/client'
 import { useSize, useUpdate } from 'ahooks'
 import { useOnce } from '@root/hook'
 import AppRoot from '@root/components/AppRoot'
-import { dqParents, getDomAbsolutePosition } from '@root/utils/dom'
-import { sendMessage } from '@root/inject/contentSender'
+import { getDomAbsolutePosition } from '@root/utils/dom'
 import { onPostMessage } from '@root/utils/windowMessages'
 import PostMessageEvent from '@root/shared/postMessageEvent'
-import playerConfig from '@root/store/playerConfig'
 import { PlayerEvent } from '../event'
 import { HtmlVideoPlayer } from '../VideoPlayer/HtmlVideoPlayer'
 import { WebProvider } from '.'
@@ -26,10 +22,10 @@ export default class ReplacerWebProvider extends WebProvider {
 
   override async onOpenPlayer() {
     const paused = this.webVideo.paused
-    await this.miniPlayer.init()
+    await this.miniPlayer.init(this.config)
 
     const videoEl = this.webVideo
-    const { topContainerEl: topParentWithPosition, isFixedPos } = playerConfig
+    const { topContainerEl: topParentWithPosition, isFixedPos } = this.config
 
     const replacerParent = isFixedPos
       ? this.webVideo.parentElement

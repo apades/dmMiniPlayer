@@ -1,4 +1,5 @@
 export enum DocPIPRenderType {
+  auto = 'auto',
   /**
    * 使用video.captureStream()获取stream，然后附加到canvas上绘制，
    * 最后从canvas.captureStream()获取stream附加到video上播放

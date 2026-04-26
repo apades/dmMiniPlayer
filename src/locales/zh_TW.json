@@ -115,7 +115,7 @@
     "movePIPInOpen_offsetX": "位置偏移x",
     "movePIPInOpen_offsetY": "位置偏移y",
     "injectPIPFn": "注入網站畫中畫功能",
-    "injectPIPFnDesc": "重新加載頁面進行生效設置",
+    "injectPIPFnDesc": "涉及網站的開啟畫中畫、媒體中心的畫中畫開啟",
     "quickHide_pos": "快速隱藏位置",
     "showReplacerBtn": "顯示替換影片按鈕",
     "showReplacerBtnDesc": "將網頁中的影片播放器替換為擴展影片播放器",
@@ -216,7 +216,7 @@
     "double": "雙行",
     "none": "無操作"
   },
-  "hidden": "隐藏",
-  "hover": "鼠标悬停",
+  "hidden": "隱藏",
+  "hover": "滑鼠懸停",
   "click": "點擊"
 }

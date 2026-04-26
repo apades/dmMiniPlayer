@@ -85,3 +85,21 @@ export function onPostMessage<T extends PostMessageEvent>(
     })
   })
 }
+
+/** Post a same-shaped message to a frame (e.g. top → iframe). */
+export function replyPostMessageToSource<T extends PostMessageEvent>(
+  source: MessageEventSource,
+  type: T,
+  data: PostMessageProtocolMap[T],
+): void {
+  if (source == null) return
+  if (typeof (source as Window).postMessage !== 'function') return
+  ;(source as Window).postMessage(
+    {
+      ID,
+      type,
+      data,
+    },
+    '*',
+  )
+}

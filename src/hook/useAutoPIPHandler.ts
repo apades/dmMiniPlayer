@@ -1,4 +1,6 @@
-import PostMessageEvent from '@root/shared/postMessageEvent'
+import PostMessageEvent, {
+  RequestPlayerInitFrom,
+} from '@root/shared/postMessageEvent'
 import configStore from '@root/store/config'
 import {
   addEventListener,
@@ -7,9 +9,9 @@ import {
   getVideoElInitFloatButtonData,
 } from '@root/utils'
 import { getDomAbsolutePosition } from '@root/utils/dom'
-import { postStartPIPDataMsg } from '@root/utils/pip'
 import { postMessageToTop } from '@root/utils/windowMessages'
 import { useState } from 'react'
+import { requestInitPlayer } from '@root/core/requestPlayerInit'
 import useTargetEventListener from './useTargetEventListener'
 import { useOnce } from '.'
 
@@ -27,7 +29,10 @@ if (canRun && !hasInit) {
     if (window.provider?.active) return
     if (videoEl.muted || videoEl.paused) return
     if (scrollInInvisible) {
-      startPIP(configStore.docPIP_renderType, videoEl, 'scrollOut')
+      startPIP({
+        videoEl,
+        from: RequestPlayerInitFrom['autoPIP.scrollOut'],
+      })
     }
   })
 
@@ -44,15 +49,13 @@ const observeVideo = (videoEl: HTMLVideoElement) => {
   activeVideoEl = videoEl
 }
 
-const startPIP = async (
-  ...args: [...Parameters<typeof postStartPIPDataMsg>, type: 'scrollOut']
-) => {
-  postStartPIPDataMsg(args[0], args[1])
-
+const startPIP = async (props: Parameters<typeof requestInitPlayer>[0]) => {
   // 返回原位置时触发关闭docPIP
   if (configStore.autoPIP_closeInReturnToOriginPos) {
-    const type = args[2]
-    const [container, vel, isFixed] = getVideoElInitFloatButtonData(args[1])
+    const type = props.from
+    const [container, vel, isFixed] = getVideoElInitFloatButtonData(
+      props.videoEl!,
+    )
     const velTop = getDomAbsolutePosition(vel).top
     const { left, top } = vel.getBoundingClientRect()
 
@@ -77,7 +80,7 @@ const startPIP = async (
     container.appendChild(vBottomEl)
 
     switch (type) {
-      case 'scrollOut': {
+      case RequestPlayerInitFrom['autoPIP.scrollOut']: {
         const now = new Date().getTime()
 
         const inters = new Map([
@@ -94,11 +97,11 @@ const startPIP = async (
 
               // 由于b站有下滚自动小窗，跟此功能冲突，用scroll来触发
               if (new Date().getTime() - now < 1000) {
-                if (type === 'scrollOut') {
+                if (type === RequestPlayerInitFrom['autoPIP.scrollOut']) {
                   const unListenScroll = addEventListener(window, (window) => {
                     window.addEventListener('scroll', () => {
                       if (window.scrollY <= velTop) {
-                        postMessageToTop(PostMessageEvent.closeDocPIP, {
+                        postMessageToTop(PostMessageEvent.closePlayer, {
                           type: 'autoPIP_closeInReturnToOriginPos',
                         })
                         unListenScroll()
@@ -109,7 +112,7 @@ const startPIP = async (
                 return
               }
 
-              postMessageToTop(PostMessageEvent.closeDocPIP, {
+              postMessageToTop(PostMessageEvent.closePlayer, {
                 type: 'autoPIP_closeInReturnToOriginPos',
               })
             }
