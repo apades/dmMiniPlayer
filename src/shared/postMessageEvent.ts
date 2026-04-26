@@ -13,6 +13,7 @@
  * This event system is also use for top and top window communication (VideoEl in top window)
  */
 import { DocPIPRenderType } from '@root/types/config'
+import type { LoggerPersistEntry } from '@pkgs/logger/types'
 
 enum PostMessageEvent {
   requestPlayerInit = 'requestPlayerInit',
@@ -135,7 +136,7 @@ export interface PostMessageProtocolMap {
     data: any
     key: string
   }
-  [PostMessageEvent.loggerPersist]: { lines: string[] }
+  [PostMessageEvent.loggerPersist]: { lines: LoggerPersistEntry[] }
   [PostMessageEvent.loggerExtCsUuid_req]: void
   [PostMessageEvent.loggerExtCsUuid_resp]: { uuid: string }
 }

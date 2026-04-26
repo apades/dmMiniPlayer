@@ -1,4 +1,4 @@
-/** Storage bucket for persisted log sessions (see promote.md key format). */
+/** Storage bucket for persisted log sessions (see prompt.md key format). */
 export type LoggerStorageEnv = 'inject' | 'ext_cs' | 'ext_bg'
 
 export type LoggerLevel =

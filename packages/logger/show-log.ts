@@ -23,6 +23,10 @@ function getTopDocument(): Document | null {
   }
 }
 
+function isExtensionDocument(doc: Document | null): boolean {
+  return doc?.location.protocol === 'chrome-extension:'
+}
+
 function setStorageShowLog(value: unknown): void {
   storageShowLogEnabled = value === true
 }
@@ -53,7 +57,8 @@ export function isLoggerEnabledForCurrentDocument(): boolean {
 
 export function isLoggerEnabledForExtension(isBackground: boolean): boolean {
   if (isDev) return true
-  if (!isBackground) return hasShowLogAttr(getCurrentDocument())
+  const doc = getCurrentDocument()
+  if (!isBackground && !isExtensionDocument(doc)) return hasShowLogAttr(doc)
 
   initStorageShowLog()
   return storageShowLogEnabled

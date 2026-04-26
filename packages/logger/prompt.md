@@ -4,7 +4,7 @@ Important: after you're done with a feature, and have enough holistic vision, ma
 
 Important: do NOT monkey-patch. If you found yourself solving the symptom instead of the root cause, reconsider and do a proper fix, then YELL **I SOLVED THE ROOT CAUSE NOT THE SYMPTOM** with a brief summary.
 
-Important: After making changes, update the `packages/logger/promote.md` documentation as appropriate according to the feature(s) added or modified. If there are no significant changes, try to avoid editing this document unnecessarily.
+Important: After making changes, update the `packages/logger/prompt.md` documentation as appropriate according to the feature(s) added or modified. If there are no significant changes, try to avoid editing this document unnecessarily.
 
 ### Path conventions
 
@@ -37,7 +37,7 @@ Types: **`ExtensionLogger`** (`ext.ts`), **`InjectLogger`** (`inject.ts`).
 ### Console and persistence rules
 
 - API mirrors **`console`** for the listed methods; **`userAction`** is an extra channel for user-intent events.
-- In development, logger output, memory mirroring, and persistence are enabled by default. In production, the `ext` / `inject` singletons emit only when logging is explicitly enabled. Extension content scripts read the current frame document's **`dm-show-log`** attribute; extension background reads the **`SHOW_LOG`** sync-storage value; injected scripts read the current document and also check `window.top.document` for document Picture-in-Picture windows.
+- In development, logger output, memory mirroring, and persistence are enabled by default. In production, the `ext` / `inject` singletons emit only when logging is explicitly enabled. Extension content scripts read the current frame document's **`dm-show-log`** attribute; extension pages and background read the **`SHOW_LOG`** sync-storage value; injected scripts read the current document and also check `window.top.document` for document Picture-in-Picture windows.
 - Namespaced console lines use a **`[namespace]`** prefix styled with **`%c`**; color is deterministic from the namespace string and **cached** after first use.
 - Each log is mirrored in **local memory** as raw `LogPayload` (see `getLoggerMemorySnapshot` in `index.ts` / `core.ts`); the **persist** path writes `LoggerPersistEntry` objects with `level`, `timestamp`, optional `namespace`, and `parts`. Only `parts` is serialized via **`/packages/serialize`**; metadata fields are kept as plain values.
 - **Storage keys** differ by origin:
