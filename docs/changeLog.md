@@ -1,3 +1,8 @@
+## v0.6.61
+Fixes:
+1. Fixed an issue where videos could pause after enabling automatic picture-in-picture on Bilibili
+2. Adjusted behavior so closing picture-in-picture won't pause the video when the page that opened PIP is visible
+
 ## v0.6.60
 Temporary fix for an issue where minimizing the browser could pause video for some users on Bilibili
 
