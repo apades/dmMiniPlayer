@@ -163,7 +163,11 @@ export default abstract class WebProvider
 
     this.miniPlayer.on(PlayerEvent.close, () => {
       this.unload()
-      if (configStore.pauseInClose_video && !this.doNotUsePauseInCloseConfig) {
+      if (
+        configStore.pauseInClose_video &&
+        !this.doNotUsePauseInCloseConfig &&
+        document.visibilityState === 'hidden'
+      ) {
         const video = this.webVideo
         if (!this.isLive) {
           video.pause()
