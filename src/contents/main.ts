@@ -163,6 +163,7 @@ function main() {
   onBgMessage(WebextEvent.openSetting, () => {
     window.openSettingPanel()
   })
+  onBgMessage(WebextEvent.hello, () => 'hi')
 
   onBgMessage(WebextEvent.reloadPage, () => {
     location.reload()

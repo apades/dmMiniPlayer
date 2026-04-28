@@ -11,6 +11,7 @@ enum WebextEvent {
   getup = 'getup',
   getTabCapturePermission = 'getTabCapturePermission',
   requestVideoPIP = 'requestVideoPIP',
+  hello = 'hello',
   openSetting = 'openSetting',
 
   moveDocPIPPos = 'moveDocPIPPos',

@@ -181,7 +181,8 @@
     "tips": "Debes hacer clic en la página siguiente para activar la reproducción de imagen en imagen",
     "noVideo": "No hay ningún vídeo en esta página",
     "defaultTips": "Si no aparece PIP, intente recargar la página",
-    "noSupport": "La extensión no es compatible en esta página"
+    "noSupport": "La extensión no es compatible en esta página",
+    "helloFailed": "La extensión no pudo comunicarse con la página. También puede ocurrir si acabas de instalar la extensión y volviste a una pestaña antigua; por favor, recarga la página."
   },
   "menu": {
     "showFloatBtn": "Mostrar botón flotante",

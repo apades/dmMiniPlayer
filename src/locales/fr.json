@@ -181,7 +181,8 @@
     "tips": "Vous devez cliquer sur la page suivante pour déclencher la lecture image dans l'image",
     "noVideo": "Il n'y a aucune vidéo sur cette page",
     "defaultTips": "S'il n'apparaît pas Pip, essayez de recharger la page",
-    "noSupport": "L'extension ne prend pas en charge dans cette page"
+    "noSupport": "L'extension ne prend pas en charge dans cette page",
+    "helloFailed": "Échec de la communication entre l’extension et la page. Cela peut aussi arriver si vous venez d’installer l’extension puis êtes revenu sur un ancien onglet ; veuillez recharger la page."
   },
   "menu": {
     "showFloatBtn": "Afficher le bouton flottant",

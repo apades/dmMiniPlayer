@@ -5,6 +5,7 @@ import { DanmakuInitData } from './core/danmaku/DanmakuEngine'
 
 declare module 'webext-bridge' {
   export interface ProtocolMap {
+    [WebextEvent.hello]: ProtocolWithReturn<null, string>
     [WebextEvent.bgFetch]: ProtocolWithReturn<
       {
         url: string

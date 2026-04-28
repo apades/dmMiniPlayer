@@ -11,6 +11,7 @@ const errorTypeMap: Record<string, string> = {
   'user-activation': t('popup.tips'),
   'no-video': t('popup.noVideo'),
   'no-support': t('popup.noSupport'),
+  helloFailed: t('popup.helloFailed'),
 }
 
 const Page_popup: FC = () => {
@@ -27,6 +28,18 @@ const Page_popup: FC = () => {
     )
       return setErrorType('no-support')
 
+    const res = await Promise.race([
+      sendMessage(WebextEvent.hello, null, {
+        tabId: tarTab.id!,
+        context: 'content-script',
+      }),
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(null)
+        }, 3000)
+      }),
+    ])
+    if (!res) return setErrorType('helloFailed')
     await sendMessage(WebextEvent.requestVideoPIP, null, {
       tabId: tarTab.id!,
       context: 'content-script',
