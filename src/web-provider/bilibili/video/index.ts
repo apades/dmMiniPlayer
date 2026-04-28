@@ -39,10 +39,43 @@ export default class BilibiliVideoProvider extends WebProvider {
     this.sideSwitcher = new SideSwitcher()
     this.videoPreviewManager = new BiliBiliPreviewManager()
 
-    sendMessage('event-hacker:disable', {
-      qs: 'document',
-      event: 'visibilitychange',
-    })
+    // sendMessage('event-hacker:disable', {
+    //   qs: 'document',
+    //   event: 'visibilitychange',
+    // })
+
+    function fn() {
+      function getDeeperGetter(obj: any, key: string) {
+        if (!obj) return undefined
+        const val = Object.getOwnPropertyDescriptor(obj, key)
+        if (val && val.get) return val.get
+        return getDeeperGetter(Object.getPrototypeOf(obj), key)
+      }
+
+      try {
+        // 还原document的getter
+        const originGetter = getDeeperGetter(document, 'visibilityState')
+        window.__restoreDocumentVisibilityStateGetter = () => {
+          Object.defineProperty(document, 'visibilityState', {
+            get: originGetter,
+          })
+        }
+      } catch (error) {
+        console.error('没法设置还原document.visibilityState的getter', error)
+      }
+
+      try {
+        Object.defineProperty(document, 'visibilityState', {
+          configurable: true,
+          get() {
+            return 'visible'
+          },
+        })
+      } catch (error) {
+        console.error('没法注入document.visibilityState的getter', error)
+      }
+    }
+    sendMessage('run-code', { function: fn.toString() })
   }
 
   private lastAid = ''
@@ -56,14 +89,28 @@ export default class BilibiliVideoProvider extends WebProvider {
         this.update()
       }),
     )
+
+    function fn() {
+      document.dispatchEvent(new Event('visibilitychange'))
+    }
+    sendMessage('run-code', { function: fn.toString() })
   }
 
   override onUnload(): void {
     super.onUnload()
-    sendMessage('event-hacker:enable', {
-      qs: 'document',
-      event: 'visibilitychange',
-    })
+    // sendMessage('event-hacker:enable', {
+    //   qs: 'document',
+    //   event: 'visibilitychange',
+    // })
+
+    function fn() {
+      if (window.__restoreDocumentVisibilityStateGetter) {
+        window.__restoreDocumentVisibilityStateGetter()
+      } else {
+        console.error('没有找到window.__restoreDocumentVisibilityStateGetter')
+      }
+    }
+    sendMessage('run-code', { function: fn.toString() })
   }
 
   update() {
