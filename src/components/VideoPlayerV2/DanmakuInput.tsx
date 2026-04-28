@@ -7,6 +7,7 @@ import { ownerWindow, wait } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import Iconfont from '../Iconfont'
 import vpContext from './context'
+import { videoPlayerLogger } from './logger'
 
 const eventBus = new Events2<{
   visible: void
@@ -78,10 +79,11 @@ const DanmakuInputInner: FC<Props> = (props) => {
     })
     try {
       props.danmakuSender.init()
+      videoPlayerLogger.info('danmaku sender initialized')
       eventBus.emit('initd')
       setInitd(true)
     } catch (error) {
-      console.error(error)
+      videoPlayerLogger.error('danmaku sender init failed', error)
     }
 
     return () => {

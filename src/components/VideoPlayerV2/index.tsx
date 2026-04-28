@@ -62,6 +62,7 @@ import {
   useWebVideoEventsInit,
 } from './hooks'
 import KeyboardTipsModal from './KeyboardTipsModal'
+import { logVideoPlayerAction, videoPlayerLogger } from './logger'
 import LoadingIcon from './LoadingIcon'
 import ScreenshotTips from './ScreenshotTips'
 import SpeedIcon from './SpeedIcon'
@@ -154,7 +155,10 @@ const VideoPlayerV2Inner = observer(
       const parent = videoInsertRef.current?.parentElement
       const lastVideo = videoRef.current
       if (!parent) return
-      console.log('替换video node')
+      videoPlayerLogger.info('replace web video node', {
+        isFullInWeb,
+        parentTagName: parent.tagName,
+      })
       parent.insertBefore(videoRef.current, videoInsertRef.current)
       setTimeout(() => {
         videoRef.current && updateVideoRef(videoRef.current)
@@ -185,6 +189,7 @@ const VideoPlayerV2Inner = observer(
     const toggleFullInWeb = useMemoizedFn(() => {
       setFullInWeb((v) => {
         const toFullInWeb = !v
+        logVideoPlayerAction('toggle full-in-web', { enabled: toFullInWeb })
         if (isIframe()) {
           postMessageToTop(
             toFullInWeb
@@ -197,9 +202,11 @@ const VideoPlayerV2Inner = observer(
     })
     const toggleFullscreen = useMemoizedFn(() => {
       if (screenfull.isFullscreen) {
+        logVideoPlayerAction('exit fullscreen')
         screenfull.exit()
         setFullscreen(false)
       } else {
+        logVideoPlayerAction('enter fullscreen')
         screenfull.isEnabled && screenfull.request(videoPlayerRef.current)
         setFullscreen(true)
       }
@@ -251,6 +258,11 @@ const VideoPlayerV2Inner = observer(
     const updateVideoRef = useMemoizedFn((video: HTMLVideoElement) => {
       // console.trace('updateVideoRef', video)
       videoRef.current = video
+      videoPlayerLogger.info('update video ref', {
+        useWebVideo: props.useWebVideo,
+        hasVideoStream: Boolean(props.videoStream),
+        duration: video.duration,
+      })
       if (!subtitleManager.initd) {
         subtitleManager.init(video)
       }
@@ -326,6 +338,9 @@ const VideoPlayerV2Inner = observer(
     })
     const updateVideoStream = useMemoizedFn((stream: MediaStream) => {
       if (!inVpVideoRef.current) return
+      videoPlayerLogger.info('update video stream', {
+        trackCount: stream.getTracks().length,
+      })
       inVpVideoRef.current.srcObject = stream
     })
     const updateVideo = useMemoizedFn((video: HTMLVideoElement) => {
@@ -333,6 +348,7 @@ const VideoPlayerV2Inner = observer(
         const videoInVp = hasParent(videoRef.current, videoPlayerRef.current)
         // 避免检测到替换了video，但旧video还存在vp中
         if (videoInVp) {
+          videoPlayerLogger.info('remove previous web video from player')
           videoRef.current.parentElement!.removeChild(videoRef.current)
         }
       }
@@ -546,6 +562,7 @@ const VideoPlayerV2Inner = observer(
               'rounded-full wh-[40px] cursor-pointer text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all',
             )}
             onClick={() => {
+              logVideoPlayerAction('close replacer player')
               props.videoPlayer.emit(PlayerEvent.close)
             }}
           >

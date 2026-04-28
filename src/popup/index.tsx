@@ -4,8 +4,12 @@ import Browser from 'webextension-polyfill'
 import { createRoot } from 'react-dom/client'
 import WebextEvent from '@root/shared/webextEvent'
 import { LoadingOutlined } from '@ant-design/icons'
+import logger from '@pkgs/logger/ext'
 import { t } from '../utils/i18n'
 import { useAction, useOnce } from '../hook'
+
+const popupLogger = logger.namespace('popup')
+const UNSUPPORTED_TAB_URL_RE = /^(?:chrome|about|edge):/
 
 const errorTypeMap: Record<string, string> = {
   'user-activation': t('popup.tips'),
@@ -16,23 +20,44 @@ const errorTypeMap: Record<string, string> = {
 const Page_popup: FC = () => {
   const [errorType, setErrorType] = useState('')
   const [isLoading, startPIP] = useAction(async () => {
-    const tabs = await Browser.tabs.query({ active: true, currentWindow: true })
-    if (!tabs.length) return
-    const tarTab = tabs[0]
-    if (!tarTab.url) return setErrorType('no-support')
-    if (
-      tarTab.url.startsWith('chrome://') ||
-      tarTab.url.startsWith('about:') ||
-      tarTab.url.startsWith('edge:')
-    )
-      return setErrorType('no-support')
+    logger.userAction('popup request picture-in-picture')
 
+    const tabs = await Browser.tabs.query({ active: true, currentWindow: true })
+    popupLogger.info('active tabs queried', { count: tabs.length })
+    if (!tabs.length) {
+      popupLogger.warn('no active tab found')
+      return
+    }
+
+    const tarTab = tabs[0]
+    if (!tarTab.url) {
+      popupLogger.warn('active tab has no url', { tabId: tarTab })
+      return setErrorType('no-support')
+    }
+    if (UNSUPPORTED_TAB_URL_RE.test(tarTab.url)) {
+      popupLogger.warn('unsupported tab url', {
+        tabId: tarTab.id,
+        url: tarTab.url,
+      })
+      return setErrorType('no-support')
+    }
+
+    popupLogger.info('request init player from popup', {
+      tabId: tarTab.id,
+      url: tarTab.url,
+    })
     await sendMessage(WebextEvent.requestInitPlayerFromExtPopup, null, {
       tabId: tarTab.id!,
       context: 'content-script',
     }).then((res) => {
-      if (res.state === 'ok') return window.close()
+      if (res.state === 'ok') {
+        popupLogger.info('request init player success')
+        return window.close()
+      }
       if (res.state === 'error' && res.errType) {
+        popupLogger.warn('request init player failed', {
+          errType: res.errType,
+        })
         setErrorType(res.errType)
       }
     })

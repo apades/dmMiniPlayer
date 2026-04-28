@@ -7,6 +7,7 @@ import { Key, keyCodeToCode, keyToKeyCodeMap } from '@root/types/key'
 import { isFunction, isString } from 'lodash-es'
 import { useMemoizedFn } from 'ahooks'
 import vpContext from './context'
+import { videoPlayerLogger } from './logger'
 
 export const useTogglePlayState = () => {
   const { webVideo, isLive } = useContext(vpContext)
@@ -31,7 +32,7 @@ export const useTogglePlayState = () => {
           if (type === 'pause') webVideo.pause()
         })
         .catch((err) => {
-          console.error('播放出错', err)
+          videoPlayerLogger.error('play failed', err)
           throw err
         })
     }

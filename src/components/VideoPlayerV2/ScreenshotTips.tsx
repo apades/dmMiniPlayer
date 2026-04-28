@@ -6,6 +6,7 @@ import { t } from '@root/utils/i18n'
 import { downloadImage, screenshotVideo } from '@root/utils/screenshot'
 import { FC, useContext, useState } from 'react'
 import vpContext from './context'
+import { videoPlayerLogger } from './logger'
 
 const ScreenshotTips: FC = () => {
   const [isVisible, setVisible] = useState(false)
@@ -21,12 +22,13 @@ const ScreenshotTips: FC = () => {
         return screenshotVideo(webVideo)
       })
       if (imagUrl) {
+        videoPlayerLogger.info('screenshot captured')
         downloadImage(
           imagUrl,
           `${document.title} ${new Date().toLocaleString()}`,
         )
       } else {
-        console.error(err)
+        videoPlayerLogger.error('screenshot failed', err)
         setErrorText(t('shortcut.notSupport'))
         run(() => setVisible(true))
       }
