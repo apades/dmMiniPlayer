@@ -3,6 +3,9 @@ import { createElement, minmax } from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import { autorun, makeObservable, runInAction } from 'mobx'
 import AsyncLock from '@root/utils/AsyncLock'
+import { PlayerComponent } from '@root/core/player-component'
+import { OrPromise } from '@root/utils/typeUtils'
+import BarrageClient from '../BarrageClient'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
@@ -29,7 +32,11 @@ export type DanmakuEngineInitProps = {
   media: HTMLMediaElement
 }
 
-export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents> {
+export default abstract class DanmakuEngine
+  extends Events2<DanmakuEngineEvents>
+  implements PlayerComponent<DanmakuEngine>
+{
+  declare readonly __playerComponentKey__: 'attach'
   // implements DanmakuConfig, PlayerComponent
   /**弹幕在实例化时会new这个 */
   Danmaku = DanmakuBase
@@ -167,6 +174,10 @@ export default abstract class DanmakuEngine extends Events2<DanmakuEngineEvents>
     this.resizeObserver.observe(this.container)
     this.initd = true
     this.initLock.ok()
+  }
+
+  attach(): OrPromise<DanmakuInitData[] | BarrageClient> {
+    return []
   }
 
   runningDanmakus = new Set<DanmakuBase>()

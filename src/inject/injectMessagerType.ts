@@ -25,10 +25,7 @@ export type TProtocolMap = {
 
   'fetch-hacker:add': RegExp
   'fetch-hacker:remove': RegExp
-  'fetch-hacker:onTrigger': ProtocolWithReturn<
-    null | { url: string; args: any[]; res: any },
-    { url: string; args: any[]; res: any }
-  >
+  'fetch-hacker:onTrigger': { url: string; args: any[]; res: any }
 
   'run-code': ProtocolWithReturn<{ function: string; args?: any[] }, any>
   'get-data': ProtocolWithReturn<{ keys: string[] }, any>

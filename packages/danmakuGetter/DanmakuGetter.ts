@@ -1,5 +1,4 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
-import { PlayerComponent } from '@root/core/types'
 import Events2 from '@root/utils/Events2'
 
 type DanmakuEvents = {
@@ -17,10 +16,7 @@ export type Props = {
   cookie?: string
 }
 
-export default abstract class DanmakuGetter
-  extends Events2<DanmakuEvents>
-  implements PlayerComponent
-{
+export default abstract class DanmakuGetter extends Events2<DanmakuEvents> {
   url: URL
   cookie = ''
   constructor(props: Props) {

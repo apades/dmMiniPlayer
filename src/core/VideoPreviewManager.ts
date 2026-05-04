@@ -1,5 +1,6 @@
 import Events2 from '@root/utils/Events2'
 import { OrPromise } from '@root/utils/typeUtils'
+import { PlayerComponent } from './player-component'
 
 export type VideoPreviewNode = {
   image: string
@@ -14,9 +15,13 @@ export type VideoPreviewData = {
   image: string
 }
 
-export default abstract class VideoPreviewManager extends Events2<{
-  unload: void
-}> {
+export default abstract class VideoPreviewManager
+  extends Events2<{
+    unload: void
+  }>
+  implements PlayerComponent<VideoPreviewManager>
+{
+  declare readonly __playerComponentKey__: 'getPreviewImage'
   webVideo: HTMLVideoElement | null = null
   images: string[] = []
 

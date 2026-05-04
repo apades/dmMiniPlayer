@@ -1,9 +1,8 @@
 import { createElement, waitLoopCallback } from '@root/utils'
 import type WebProvider from '@root/core/WebProvider/WebProvider'
-import { PlayerComponent } from '../types'
 
 // 好像不能从iframe里把videoEl扣出来，youtube抠出来也会play error，不止b站的问题...
-export default class VideoChanger implements PlayerComponent {
+export default class VideoChanger {
   onInit() {}
   onUnload() {}
   init() {}

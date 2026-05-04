@@ -1,0 +1,14 @@
+---
+description: Reuse adapter user script workflow prompt
+globs: packages/adapter/**/*
+alwaysApply: false
+---
+
+# Adapter Workflow
+
+When working in `packages/adapter`, read `packages/adapter/prompt.md` first and follow it as the task checklist.
+
+- Keep each site adapter in a standalone `official/*.ts` file.
+- Each site adapter must export `regexSite`.
+- Keep permissions declarations aligned with runtime setup calls.
+- Regenerate `official/generated-registry.ts` after script changes.

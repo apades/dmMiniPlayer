@@ -1,6 +1,6 @@
 import DraggerContainer from '@root/components/DraggerContainer'
 import Draggable from 'react-draggable'
-import '@root/contents/floatButton.tsx'
+import '@root/contents/main/run-on-all-iframe/floatButton'
 
 export default function App() {
   return (

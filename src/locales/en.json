@@ -181,7 +181,8 @@
     "tips": "Click on the web page to trigger picture-in-picture",
     "noVideo": "No video in this page",
     "defaultTips": "If it doesn't pop up PIP, please try to reload page",
-    "noSupport": "Extension doesn't support in this page"
+    "noSupport": "Extension doesn't support in this page",
+    "helloFailed": "Extension failed to communicate with the page, please try reloading the page"
   },
   "menu": {
     "showFloatBtn": "Show float button",

@@ -4,7 +4,7 @@ import { getRealRid, getStrMiddle, getTransColor } from './utils'
 import { STT } from './STT'
 
 export default class DouyuLiveBarrageClient extends BarrageClient {
-  ws: Ex_WebSocket_UnLogin
+  ws: Ex_WebSocket_UnLogin | undefined
   stt = new STT()
   constructor(public id: string | number) {
     super()
@@ -18,7 +18,7 @@ export default class DouyuLiveBarrageClient extends BarrageClient {
       this.handleMsg.bind(this),
       () => {
         if (this.isClose) return
-        this.ws.close()
+        this.ws?.close()
         this.initWs()
       },
     )
@@ -61,6 +61,6 @@ export default class DouyuLiveBarrageClient extends BarrageClient {
 
   close(): void {
     this.isClose = true
-    this.ws.close()
+    this.ws?.close()
   }
 }

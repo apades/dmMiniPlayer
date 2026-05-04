@@ -1,5 +1,7 @@
 import { addEventListener, wait } from '@root/utils'
 import { isUndefined } from 'lodash-es'
+import { Omit } from '@root/utils/typeUtils'
+import { PlayerComponent } from '../player-component'
 
 function getDom<T extends HTMLElement>(el: T | string) {
   return typeof el == 'string' ? (document.querySelector(el) as T) : el
@@ -13,7 +15,9 @@ export type Props = {
 /**
  * 先setData(props)把所有属性填满，再用init()开始运行，最后unload卸载
  */
-export default class DanmakuSender {
+export default class DanmakuSender implements PlayerComponent<DanmakuSender> {
+  declare readonly __playerComponentKey__: 'attach'
+
   get textInput() {
     return getDom(this.props.textInput)
   }
@@ -29,6 +33,10 @@ export default class DanmakuSender {
 
   setData(props: Partial<Props>) {
     Object.assign(this.props, props)
+  }
+
+  attach(): Omit<Props, 'textInput'> {
+    return {} as any
   }
 
   init() {

@@ -7,6 +7,7 @@ import { observer } from 'mobx-react'
 import { useContext, useEffect, useRef, useState, type FC } from 'react'
 import { LeftOutlined } from '@ant-design/icons'
 import configStore, { SideTriggerType } from '@root/store/config'
+import { t } from '@root/utils/i18n'
 import vpContext from '../VideoPlayerV2/context'
 
 export type VideoItem = {
@@ -25,14 +26,13 @@ export type VideoItem = {
   id?: string
 }
 export type VideoList = {
-  category: string
   /**
    * @deprecated 暂时不要用iframe打开
    * 默认为true
    *  */
   isSpa?: boolean
   items: VideoItem[]
-  mainList?: boolean
+  type: 'playList' | 'recommendedList'
 }
 export type Props = {
   // videoList: VideoList[]
@@ -87,6 +87,17 @@ const VideoPlayerSideInner: FC<Props> = observer((props) => {
     })
   }, [activeEl])
 
+  const getCategoryName = (type: VideoList['type']) => {
+    switch (type) {
+      case 'playList':
+        return t('vp.playList')
+      case 'recommendedList':
+        return t('vp.recommendedList')
+      default:
+        return ''
+    }
+  }
+
   return (
     <div className="side-outer-container h-full">
       <div
@@ -97,7 +108,7 @@ const VideoPlayerSideInner: FC<Props> = observer((props) => {
           if (!list.items?.length) return null
           return (
             <div key={vi}>
-              <h3 className="text-sm mb-1">{list.category}</h3>
+              <h3 className="text-sm mb-1">{getCategoryName(list.type)}</h3>
               <ul className="select-list flex flex-col gap-1 m-0 pl-0 list-none">
                 {list.items.map((item, ii) => {
                   const isCoverItem = !!item.cover

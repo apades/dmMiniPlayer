@@ -45,7 +45,8 @@
     "./src/**/*",
     "./scripts/**/*",
     "./packages/**/*",
-    "./e2e/**/*"
+    "./e2e/**/*",
+    "src/core/video-player/player-components/**/*"
   ],
   "exclude": [
     "node_modules"

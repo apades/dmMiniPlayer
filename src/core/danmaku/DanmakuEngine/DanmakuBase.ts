@@ -1,4 +1,3 @@
-import { PlayerComponent } from '@root/core/types'
 import { v1 as uuid } from 'uuid'
 import { DanmakuInitData, DanmakuEngine, DanmakuMoveType } from '.'
 

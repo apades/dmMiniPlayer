@@ -1,0 +1,14 @@
+{
+  "name": "@dmMiniPlayer/adapter",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build:registry": "node ./scripts/generate-registry.mjs",
+    "build": "pnpm run build:registry && tsup ./index.ts --format esm --dts --clean --out-dir dist"
+  }
+}
