@@ -1,9 +1,9 @@
-import BarrageClient from '@root/core/danmaku/BarrageClient'
+import LiveDanmakuClient from '@root/core/danmaku/LiveDanmakuClient'
 import { Ex_WebSocket_UnLogin } from './websokect'
 import { getRealRid, getStrMiddle, getTransColor } from './utils'
 import { STT } from './STT'
 
-export default class DouyuLiveBarrageClient extends BarrageClient {
+export default class DouyuLiveBarrageClient extends LiveDanmakuClient {
   ws: Ex_WebSocket_UnLogin | undefined
   stt = new STT()
   constructor(public id: string | number) {

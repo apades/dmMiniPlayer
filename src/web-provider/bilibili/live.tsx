@@ -29,7 +29,7 @@ export default class BilibiliLiveProvider extends WebProvider {
       throw Error(`不存在的id号 ${id}`)
     }
 
-    this.danmakuWs = new BilibiliLiveBarrageClient(id)
+    this.danmakuWs = new BilibiliLiveBarrageClient(id, window.__danmuInfo)
 
     this.addOnUnloadFn(
       this.danmakuWs.on2('danmu', (danmaku) => {

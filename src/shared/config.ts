@@ -17,3 +17,6 @@ export const VIDEO_ID_ATTR = 'data-dm-vid'
 export const ATTR_DISABLE_INJECT_PIP = 'dm-disable-inject-pip'
 export const ATTR_LOADED = 'dm-loaded'
 export const ATTR_SHOW_LOG = 'dm-show-log'
+
+export const ATTR_INJECT_PERMISSIONS = 'dm-inject-permissions'
+export const ADAPTER_CONFIG_GLOBAL_NAME = '__$ADAPTER_CONFIG__'

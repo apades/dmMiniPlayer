@@ -36,7 +36,7 @@ if (isDev) {
     setInterval(() => {
       if (ws.readyState !== ws.CONNECTING) return
       ws.send('ping')
-    }, 5000)
+    }, 1000)
   })
   ws.addEventListener('message', (e) => {
     console.log('ws message', e.data)

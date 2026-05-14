@@ -1,8 +1,16 @@
 import isTop from '@root/shared/isTop'
 import './floatButton'
 import logger from '@pkgs/logger/ext'
-import runOnAllIframeMain from './main/run-on-all-iframe'
+import {
+  ADAPTER_CONFIG_GLOBAL_NAME,
+  ATTR_INJECT_PERMISSIONS,
+} from '@root/shared/config'
+import { createInjectionClient } from '@pkgs/injection/entry/client'
+import isDev from '@root/shared/isDev'
+import { sendMessage } from 'webext-bridge/content-script'
+import WebextEvent from '@root/shared/webextEvent'
 import runOnTopMain from './main/run-on-top'
+import runOnAllIframeMain from './main/run-on-all-iframe'
 
 window.isCsEnv = true
 // iframe里就不用运行了
@@ -12,6 +20,28 @@ if (isTop) {
   // const logger2 = logger.namespace('test')
   // logger2.log('run in top window namespace')
   runOnTopMain()
+
+  // dev to keep alive
+  if (isDev) {
+    setInterval(() => {
+      if (document.visibilityState === 'hidden') return
+      sendMessage(WebextEvent.keepAlive, null)
+    }, 1000)
+  }
 } else {
+  const client = createInjectionClient({
+    enabledModules:
+      (document.documentElement
+        .getAttribute(ATTR_INJECT_PERMISSIONS)
+        ?.split(',') as any) ?? [],
+  })
+  window.__$injectionClient = client
+
   runOnAllIframeMain()
+
+  if (window[ADAPTER_CONFIG_GLOBAL_NAME]) {
+    window[ADAPTER_CONFIG_GLOBAL_NAME].setup?.({
+      injection: client,
+    })
+  }
 }

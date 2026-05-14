@@ -1,6 +1,6 @@
 import cookie from '@pkgs/js-cookie'
 import API_bilibili from '@root/api/bilibili'
-import BarrageClient from '@root/core/danmaku/BarrageClient'
+import LiveDanmakuClient from '@root/core/danmaku/LiveDanmakuClient'
 import {
   sendMessage,
   onMessage,
@@ -27,8 +27,8 @@ const getRoomid = async (short: number) => {
   return room_id
 }
 
-export const getConf = async (roomid: number) => {
-  const raw = await runCodeInTopWindow(() => window.__danmuInfo)
+export const getConf = async (roomid: number, __danmuInfo: any) => {
+  const raw = __danmuInfo
   const {
     data: {
       token: key,
@@ -39,18 +39,21 @@ export const getConf = async (roomid: number) => {
   return { key, host, port, address, raw }
 }
 
-export default class BilibiliLiveBarrageClient extends BarrageClient {
+export default class BilibiliLiveBarrageClient extends LiveDanmakuClient {
   ws?: LiveWS
-  constructor(public id: number) {
+  constructor(
+    public id: number,
+    public __danmuInfo: any,
+  ) {
     super()
-    tryCatch(() => this.init(id)).then(([err]) => {
+    tryCatch(() => this.init(id, __danmuInfo)).then(([err]) => {
       if (err) toast.error(t('error.danmakuLoad'))
     })
   }
 
-  async init(id: number) {
+  async init(id: number, __danmuInfo: any) {
     const realRoomId = await getRoomid(id)
-    const conf = await getConf(realRoomId)
+    const conf = await getConf(realRoomId, __danmuInfo)
     const address = `wss://${conf.host}:${conf.port}/sub`
     const uid = await API_bilibili.getSelfMid()
     const buvid = cookie.get('buvid3')
@@ -122,7 +125,7 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
       }
 
       console.log('danmu', text, info)
-      this.emit('danmu', { color, text, imageMap })
+      this.emit('danmaku-add', { color, text, imageMap })
     })
   }
   close(): void {

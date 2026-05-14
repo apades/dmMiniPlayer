@@ -1,5 +1,5 @@
 import { spawn as _spawn } from 'child_process'
-import path from 'path'
+import path, { dirname } from 'path'
 import * as url from 'url'
 import fs from 'fs-extra'
 import { getDefinesObject } from '@apad/env-tools/lib/bundler.js'
@@ -62,4 +62,11 @@ export function getDefinesConfig(
   extend = {},
 ) {
   return omit(getDefinesObject(type, extend), ['process.env'])
+}
+
+export function getPackageRoot(packageName) {
+  const packageRoot = dirname(
+    url.fileURLToPath(import.meta.resolve(packageName)),
+  )
+  return packageRoot
 }

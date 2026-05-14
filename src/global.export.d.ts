@@ -1,6 +1,8 @@
 import type { openSettingPanel } from '@root/store/config'
+import { AdapterScriptDefinition } from '@pkgs/adapter/core'
 import { WebProvider } from './core/WebProvider'
 import { Language } from './utils/i18n'
+import { ADAPTER_CONFIG_GLOBAL_NAME } from './shared/config'
 
 declare module 'react' {
   interface CSSProperties {
@@ -33,6 +35,7 @@ declare global {
     __LOCALE: Language
     provider?: WebProvider
     isCsEnv: boolean
+    [ADAPTER_CONFIG_GLOBAL_NAME]: AdapterScriptDefinition<any>
 
     // RestrictionTarget: {
     //   fromElement: (el: HTMLElement) => RestrictionTarget

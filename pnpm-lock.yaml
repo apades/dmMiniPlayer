@@ -4,6 +4,15 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    tsup:
+      specifier: ^8.5.0
+      version: 8.5.0
+    tsx:
+      specifier: ^4.20.6
+      version: 4.20.6
+
 patchedDependencies:
   '@rc-component/util':
     hash: 5ba6e2819c03de015326b9c085a843a30f54875918110eaf7b08ea551e6c2953
@@ -25,6 +34,9 @@ importers:
       '@apades/logger':
         specifier: link:packages/logger
         version: link:packages/logger
+      '@dmMiniPlayer/adapter':
+        specifier: link:packages/adapter
+        version: link:packages/adapter
       '@rc-component/trigger':
         specifier: ^3.6.15
         version: 3.6.15(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -222,10 +234,10 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1(tsx@4.20.6)(yaml@2.8.0)
       tsup:
-        specifier: ^8.5.0
+        specifier: 'catalog:'
         version: 8.5.0(jiti@1.21.7)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.0)
       tsx:
-        specifier: ^4.20.6
+        specifier: 'catalog:'
         version: 4.20.6
       type-fest:
         specifier: ^5.2.0
@@ -239,6 +251,19 @@ importers:
       vite:
         specifier: ^7.2.2
         version: 7.2.2(@types/node@24.10.2)(jiti@1.21.7)(less@4.4.2)(tsx@4.20.6)(yaml@2.8.0)
+
+  packages/adapter:
+    dependencies:
+      commander:
+        specifier: ^14.0.3
+        version: 14.0.3
+    devDependencies:
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.0(jiti@1.21.7)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.0)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.20.6
 
 packages:
 
@@ -1335,6 +1360,10 @@ packages:
     resolution: {integrity: sha512-e2hz5BzbUPcYlIRHo8ieAhYgoajrJr+hWoceg6E345TPsATMUKqDgzt8fSXZJJbxfpiPzkWyphz8yn8At7q3fA==}
     engines: {node: '>=18'}
 
+  commander@14.0.3:
+    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
+    engines: {node: '>=20'}
+
   commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
@@ -1796,6 +1825,7 @@ packages:
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   globals@14.0.0:
@@ -4278,6 +4308,8 @@ snapshots:
     dependencies:
       color-convert: 3.1.2
       color-string: 2.1.2
+
+  commander@14.0.3: {}
 
   commander@4.1.1: {}
 

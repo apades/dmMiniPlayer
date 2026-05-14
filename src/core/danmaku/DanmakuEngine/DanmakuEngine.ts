@@ -5,7 +5,8 @@ import { autorun, makeObservable, runInAction } from 'mobx'
 import AsyncLock from '@root/utils/AsyncLock'
 import { PlayerComponent } from '@root/core/player-component'
 import { OrPromise } from '@root/utils/typeUtils'
-import BarrageClient from '../BarrageClient'
+import LiveDanmakuClient from '../LiveDanmakuClient'
+import HtmlDanmakuClient from '../HtmlDanmakuClient'
 import {
   DanmakuBase,
   DanmakuEngineEvents,
@@ -176,7 +177,9 @@ export default abstract class DanmakuEngine
     this.initLock.ok()
   }
 
-  attach(): OrPromise<DanmakuInitData[] | BarrageClient> {
+  attach(): OrPromise<
+    DanmakuInitData[] | LiveDanmakuClient | HtmlDanmakuClient
+  > {
     return []
   }
 

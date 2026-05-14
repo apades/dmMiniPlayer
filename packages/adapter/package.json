@@ -1,14 +1,17 @@
 {
   "name": "@dmMiniPlayer/adapter",
+  "version": "0.0.1",
   "description": "",
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build:registry": "node ./scripts/generate-registry.mjs",
-    "build": "pnpm run build:registry && tsup ./index.ts --format esm --dts --clean --out-dir dist"
+    "clean": "rm -rf dist",
+    "build:dev": "pnpm run clean && sh scripts/build.sh dev"
+  },
+  "dependencies": {
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "tsx": "catalog:",
+    "tsup": "catalog:"
   }
 }

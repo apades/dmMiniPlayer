@@ -1,3 +1,3 @@
 export function run() {
-  import('../inject')
+  // import('../inject')
 }

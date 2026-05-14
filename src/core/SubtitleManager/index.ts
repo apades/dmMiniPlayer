@@ -5,6 +5,8 @@ import { ERROR_MSG } from '@root/shared/errorMsg'
 import toast from 'react-hot-toast'
 import { getNowLang, t } from '@root/utils/i18n'
 import { googleTranslate } from '@root/utils/translate'
+import { OrPromise } from '@root/utils/typeUtils'
+import { PlayerComponent } from '../player-component'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
@@ -14,7 +16,11 @@ export const translateMode = {
   single: t('subtitleTranslate.single'),
   none: t('subtitleTranslate.none'),
 } as const
-class SubtitleManager extends Events2<SubtitleManagerEvents> {
+class SubtitleManager
+  extends Events2<SubtitleManagerEvents>
+  implements PlayerComponent<SubtitleManager>
+{
+  declare readonly __playerComponentKey__: 'attach' | 'loadSubtitle'
   initd = false
   subtitleItems: SubtitleItem[] = []
 
@@ -80,6 +86,10 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
     this.offAllEvent()
   }
   onUnload() {}
+
+  attach(): OrPromise<SubtitleItem[]> {
+    return []
+  }
 
   // addSubtitle(label: string, rows: SubtitleRow[]) {
   //   this.subtitleItems.push({ label, value: label })

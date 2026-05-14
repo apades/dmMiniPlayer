@@ -4,3 +4,10 @@ onlyBuiltDependencies:
 
 patchedDependencies:
   '@rc-component/util': patches/@rc-component__util.patch
+
+catalog:
+  "tsx": "^4.20.6"
+  "tsup": "^8.5.0"
+
+packages:
+  - "packages/adapter"

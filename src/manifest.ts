@@ -59,7 +59,7 @@ export const manifest: chrome.runtime.ManifestV3 = {
     },
     {
       js: ['entry-all-frames.js'],
-      run_at: 'document_end',
+      run_at: 'document_start',
       matches: ['<all_urls>'],
       all_frames: true,
     },

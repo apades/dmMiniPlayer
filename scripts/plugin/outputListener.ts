@@ -11,9 +11,13 @@ const ws = new WebSocketServer({
 
 const eventBus = new Events2<{ extReload: void; pageReload: void }>()
 
+let hasInit = false
 ws.on('connection', function (ws) {
   console.log(`[outputListener] ${chalk.green('Extension ws connected')}`)
-  // ws.send('pageReload')
+  if (!hasInit) {
+    hasInit = true
+    ws.send('extReload')
+  }
 
   eventBus.on('extReload', () => {
     ws.send('extReload')

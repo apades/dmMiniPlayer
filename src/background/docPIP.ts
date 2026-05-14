@@ -76,5 +76,5 @@ onMessage(WebextEvent.closePIP, () => {
 })
 
 onMessage(WebextEvent.keepAlive, () => {
-  console.log('keepAlive')
+  // console.log('keepAlive')
 })

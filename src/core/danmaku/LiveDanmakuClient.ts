@@ -1,7 +1,8 @@
 import Events2 from '@root/utils/Events2'
+import { type DanmakuInitData } from './DanmakuEngine'
 
 export type LiveEvent = {
-  danmu: {
+  'danmaku-add': {
     color: string
     text: string
     imageMap?: Record<
@@ -15,9 +16,12 @@ export type LiveEvent = {
   }
 }
 
-export default abstract class BarrageClient extends Events2<LiveEvent> {
+export default abstract class LiveDanmakuClient<
+  Data = any,
+> extends Events2<LiveEvent> {
   constructor() {
     super()
   }
+  abstract onGettingLiveDanmakuData(data: Data): DanmakuInitData[]
   abstract close(): void
 }

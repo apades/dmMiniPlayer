@@ -192,11 +192,15 @@ export function splitArray<T>(arr: T[], count: number): T[][] {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export function isPromiseFunction(fn: Function): boolean {
+export function isAsyncFunction(fn: Function): boolean {
   return (
     (fn as any).__proto__.constructor ==
     'function AsyncFunction() { [native code] }'
   )
+}
+
+export function isPromise(rs: any): rs is Promise<any> {
+  return rs?.constructor === Promise
 }
 
 export async function wait(time = 0) {
@@ -206,7 +210,7 @@ export async function wait(time = 0) {
 export type noop = (this: any, ...args: any[]) => any
 
 export function onceCall<T extends noop>(fn: T): T {
-  if (isPromiseFunction(fn)) return oncePromise(fn)
+  if (isAsyncFunction(fn)) return oncePromise(fn)
   let rs: any
   let lastArgs: any
   let hasCall = false
@@ -658,4 +662,64 @@ export function normalizePath(path: string) {
 
 export const stopStreamCapture = (stream: MediaStream) => {
   stream.getTracks().forEach((track) => track.stop())
+}
+
+type MethodKeys<T> = {
+  [P in keyof T]: T[P] extends (...args: any[]) => any ? P : never
+}[keyof T]
+
+export function fnWrapping<T, K extends MethodKeys<T>>(
+  target: T,
+  key: K,
+  descriptor: (
+    arg: ReturnType<Extract<T[K], (...args: any[]) => any>>,
+  ) => ReturnType<Extract<T[K], (...args: any[]) => any>> | void,
+): () => void {
+  type Fn = Extract<T[K], (...args: any[]) => any>
+  const original = target[key] as Fn
+  if (typeof original !== 'function') throw new Error('Must be function key')
+
+  const wrapped = function (
+    this: ThisParameterType<Fn>,
+    ...args: Parameters<Fn>
+  ) {
+    const result = original.apply(this, args)
+    if (isPromise(result))
+      return new Promise((res, rej) => {
+        result
+          .then(async (d) => {
+            const next = await descriptor(d)
+            res(isUndefined(next) ? d : next)
+          })
+          .catch((err) => {
+            rej(err)
+          })
+      })
+
+    const next = descriptor(result)
+    return isUndefined(next) ? result : next
+  } as unknown as T[K]
+
+  target[key] = wrapped
+
+  return () => {
+    target[key] = original as unknown as T[K]
+  }
+}
+
+export function monkeyPatch<T, K extends MethodKeys<T>>(
+  target: T,
+  key: K,
+  descriptor: T[K],
+): () => void {
+  const original = target[key]
+  if (typeof original !== 'function') throw new Error('Must be function key')
+  target[key] = descriptor
+  return () => {
+    target[key] = original
+  }
+}
+
+export function arrayInsert<T>(arr: T[], index: number, item: T[]) {
+  return [...arr.slice(0, index), ...item, ...arr.slice(index)]
 }
