@@ -26,10 +26,10 @@ type Config = {
 }
 export function createInjectionInject(config: Config) {
   if (!client) {
-    const enabledModules = config.enabledModules
-      .map((module) => modules[module])
-      .filter(Boolean) as NonNullable<(typeof modules)[keyof typeof modules]>[]
-    client = enabledModules.reduce((acc, module) => {
+    client = config.enabledModules.reduce((acc, moduleKey) => {
+      const module = modules[moduleKey]
+      if (!module) return acc
+
       const getName = (name: string) => `${module.name}-${name}`
       const [error, rs] = tryCatch(() =>
         module.setup({
@@ -38,7 +38,7 @@ export function createInjectionInject(config: Config) {
           send: (n, ...args) => sendMessage(getName(n), ...args),
         }),
       )
-      if (rs) acc[module.name as keyof typeof modules] = rs
+      if (rs) acc[moduleKey] = rs
       return acc
     }, {} as Inject) as Inject
   }

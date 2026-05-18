@@ -12,34 +12,30 @@ export const runCodeClient = defineClient({
         return res
       },
       /**
-       * @example example
+       * @example
        *
-       * ```js
        * // top window
        * window.eventTar = new EventTarget()
-       * ```
        *
-       * ```js
        * // adapter code
        * ctx.injection.runWithCallback(
-       *  (callback, arg1) => {
-       *    console.log(arg1) // print 111 in the top window
-       *    window.eventTar.addEventListener('customEvent', callback)
-       *    // must return a function to clear the callback
-       *    return () => {
-       *      window.eventTar.removeEventListener('customEvent', callback)
-       *    }
-       *  },
-       *  // provide callback args
-       *  [
-       *    function callback(data) {
-       *      // handle data in the adapter code window, with data originating from the top window
-       *      console.log(data)
-       *    },
-       *    111
-       *  ]
+       *   (callback, arg1) => {
+       *     console.log(arg1) // print 111 in the top window
+       *     window.eventTar.addEventListener('customEvent', callback)
+       *     // must return a function to clear the callback
+       *     return () => {
+       *       window.eventTar.removeEventListener('customEvent', callback)
+       *     }
+       *   },
+       *   // provide callback args
+       *   [
+       *     function callback(data) {
+       *       // handle data in the adapter code window, with data originating from the top window
+       *       console.log(data)
+       *     },
+       *     111,
+       *   ],
        * )
-       * ```
        */
       runWithCallback(
         fn: (...args: any[]) => () => void,

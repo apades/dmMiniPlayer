@@ -39,10 +39,9 @@ export const fetchInject = defineInject({
         )
         throw new Error('fetch hacker没法触发回调，该地址返回数据的非text')
       }
-      globalThis.fetch = _fetch
-
       return res
     }
+    globalThis.fetch = _fetch
 
     // MARK: 重写XMLHttpRequest
     const oXMLHttpRequest = globalThis.XMLHttpRequest

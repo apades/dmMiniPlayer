@@ -15,10 +15,9 @@ export const modules = {
   fetch: fetchClient,
 } as const
 
-type Client = Record<
-  keyof typeof modules,
-  ReturnType<(typeof modules)[keyof typeof modules]['setup']>
->
+type Client = {
+  [K in keyof typeof modules]: ReturnType<(typeof modules)[K]['setup']>
+}
 let client: Client | null = null
 
 type Config = {
@@ -26,11 +25,11 @@ type Config = {
 }
 export function createInjectionClient(config: Config) {
   if (!client) {
-    const enabledModules = config.enabledModules
-      .map((module) => modules[module])
-      .filter(Boolean) as NonNullable<(typeof modules)[keyof typeof modules]>[]
-    client = enabledModules.reduce(
-      (acc, module) => {
+    client = config.enabledModules.reduce(
+      (acc, moduleKey) => {
+        const module = modules[moduleKey]
+        if (!module) return acc
+
         const getName = (name: string) => `${module.name}-${name}`
         const [error, rs] = tryCatch(() =>
           module.setup({
@@ -39,7 +38,7 @@ export function createInjectionClient(config: Config) {
             send: (n, ...args) => sendMessage(getName(n), ...args),
           }),
         )
-        if (rs) acc[module.name as keyof typeof modules] = rs
+        if (rs) (acc as any)[moduleKey] = rs
         return acc
       },
       Object.create(null) as Client,
