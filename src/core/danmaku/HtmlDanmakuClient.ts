@@ -17,7 +17,7 @@ export default abstract class HtmlDanmakuClient extends LiveDanmakuClient {
 
   htmlDanmakuObserver?: MutationObserver
 
-  protected startObserveHtmlDanmaku(props: StartObserveHtmlDanmakuProps) {
+  startObserveHtmlDanmaku(props: StartObserveHtmlDanmakuProps) {
     if (!props.container) return
     this.htmlDanmakuObserver = new MutationObserver((list) => {
       const nodes = list.map((l) => [...l.addedNodes]).flat()

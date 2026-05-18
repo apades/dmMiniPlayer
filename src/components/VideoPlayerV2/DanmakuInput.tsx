@@ -15,10 +15,7 @@ const eventBus = new Events2<{
   initd: void
 }>()
 
-type Props = {
-  danmakuSender?: DanmakuSender
-}
-const DanmakuInputIconInner: FC<Props> = (props) => {
+const DanmakuInputIconInner: FC = (props) => {
   const [isInitd, setInitd] = useState(false)
 
   useOnce(() => {
@@ -43,12 +40,14 @@ const DanmakuInputIconInner: FC<Props> = (props) => {
   )
 }
 
-export const DanmakuInputIcon: FC<Props> = (props) => {
-  if (!props.danmakuSender) return null
-  return <DanmakuInputIconInner {...props} />
+export const DanmakuInputIcon: FC = (props) => {
+  return <DanmakuInputIconInner />
 }
 
-const DanmakuInputInner: FC<Props> = (props) => {
+const DanmakuInputInner: FC = (props) => {
+  const {
+    playerComponents: { DanmakuSender: danmakuSender },
+  } = useContext(vpContext)
   const { keydownWindow } = useContext(vpContext)
   const [isVisible, setVisible] = useState(false)
   const [isInitd, setInitd] = useState(false)
@@ -73,12 +72,12 @@ const DanmakuInputInner: FC<Props> = (props) => {
   )
 
   useOnce(() => {
-    if (!danmakuInputRef.current || !props.danmakuSender) return
-    props.danmakuSender.setData({
+    if (!danmakuInputRef.current || !danmakuSender) return
+    danmakuSender.setData({
       textInput: danmakuInputRef.current,
     })
     try {
-      props.danmakuSender.init()
+      danmakuSender.init()
       videoPlayerLogger.info('danmaku sender initialized')
       eventBus.emit('initd')
       setInitd(true)
@@ -87,9 +86,9 @@ const DanmakuInputInner: FC<Props> = (props) => {
     }
 
     return () => {
-      if (!props.danmakuSender) return
-      props.danmakuSender.unload()
-      props.danmakuSender.setData({
+      if (!danmakuSender) return
+      danmakuSender.unload()
+      danmakuSender.setData({
         textInput: undefined,
       })
     }
@@ -125,7 +124,7 @@ const DanmakuInputInner: FC<Props> = (props) => {
           if (e.key === 'Enter') {
             e.stopPropagation()
             e.preventDefault()
-            props.danmakuSender?.send()
+            danmakuSender?.send()
           }
         }}
         className="text-black h-6 focus-visible:outline-none rounded-md px-2 w-full"
@@ -134,7 +133,6 @@ const DanmakuInputInner: FC<Props> = (props) => {
   )
 }
 
-export const DanmakuInput: FC<Props> = (props) => {
-  if (!props.danmakuSender) return null
-  return <DanmakuInputInner {...props} />
+export const DanmakuInput: FC = (props) => {
+  return <DanmakuInputInner />
 }

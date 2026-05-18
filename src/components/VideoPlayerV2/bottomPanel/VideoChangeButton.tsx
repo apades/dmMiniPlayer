@@ -14,10 +14,12 @@ type Props = {
   index: number
 }
 export const ChangePreVideoButton: FC = observer((props) => {
-  const { sideSwitcher } = useContext(vpContext)
+  const {
+    playerComponents: { SideSwitcher: sideSwitcher },
+  } = useContext(vpContext)
 
   if (!sideSwitcher?.videoList.length) return
-  const mainList = sideSwitcher.videoList.find((v) => v.mainList)
+  const mainList = sideSwitcher.videoList.find((v) => v.type === 'playList')
   if (!mainList) return
 
   const index = mainList.items.findIndex((v) => v.isActive)
@@ -46,10 +48,12 @@ const Pre: FC<Props> = (props) => {
 }
 
 export const ChangeNextVideoButton: FC = observer((props) => {
-  const { sideSwitcher } = useContext(vpContext)
+  const {
+    playerComponents: { SideSwitcher: sideSwitcher },
+  } = useContext(vpContext)
 
   if (!sideSwitcher?.videoList.length) return
-  const mainList = sideSwitcher.videoList.find((v) => v.mainList)
+  const mainList = sideSwitcher.videoList.find((v) => v.type === 'playList')
   if (!mainList) return
 
   const index = mainList.items.findIndex((v) => v.isActive)

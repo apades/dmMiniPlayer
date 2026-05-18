@@ -1,6 +1,6 @@
-import { FC, memo, useContext, useRef, useState } from 'react'
 import { useOnce } from '@root/hook'
 import { createElement } from '@root/utils'
+import { FC, useContext, useRef } from 'react'
 import vpContext from './context'
 
 const _danmakuContainer = createElement('div', {
@@ -16,7 +16,10 @@ const _danmakuContainer = createElement('div', {
 })
 
 const DanmakuContainer: FC = (props) => {
-  const { webVideo, isLive, danmakuEngine, videoPlayer } = useContext(vpContext)
+  const {
+    webVideo,
+    playerComponents: { DanmakuEngine: danmakuEngine },
+  } = useContext(vpContext)
   const danmakuContainer = useRef<HTMLDivElement>(null)
   useOnce(() => {
     if (!danmakuEngine || !danmakuContainer.current || !webVideo) return

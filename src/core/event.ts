@@ -14,6 +14,7 @@ import mitt from 'mitt'
 import { Merge, ValueOf } from 'type-fest'
 import { toast } from 'react-hot-toast'
 import config_shortcut from '@root/store/config/shortcut'
+import { PlayerComponents } from './player-component'
 
 export const PlayerCommand = Object.fromEntries(
   Object.keys(config_shortcut)
@@ -42,6 +43,13 @@ export const PlayerEvent = {
   changeCurrentTimeByKeyboard_fine: 'currentTimeJump_fine',
   /**web video dom replaced with another video dom */
   webVideoChanged: 'webVideoChanged',
+  /** Video url changed without changing video element */
+  videoSrcChanged: 'videoSrcChanged',
+  /** Both 'webVideoChanged' and 'videoSrcChanged' */
+  mediaUpdated: 'mediaUpdated',
+  playerComponentsAttachError: 'playerComponentsAttachError',
+  playerComponentsAttachSuccess: 'playerComponentsAttachSuccess',
+  playerComponentsReattach: 'playerComponentsReattach',
 
   ...PlayerCommand,
 
@@ -62,8 +70,6 @@ export const PlayerEvent = {
   videoPlayerUnloaded: 'videoPlayerUnloaded',
 
   toast: 'toast',
-  /** Video url changed without changing video element */
-  videoSrcChanged: 'videoSrcChanged',
 
   volumeChanged: 'volumeChanged',
 } as const
@@ -73,6 +79,16 @@ type ToastArgs = Parameters<typeof toast>
 type OverrideArgsEvent = {
   /**web的video dom被替换成别的video dom时 */
   webVideoChanged: HTMLVideoElement
+  playerComponentsAttachError: {
+    name: keyof PlayerComponents
+    error: Error
+  }
+  playerComponentsReattach: {
+    name: keyof PlayerComponents
+  }
+  playerComponentsAttachSuccess: {
+    name: keyof PlayerComponents
+  }
   toast:
     | string
     | (ToastArgs[1] & {

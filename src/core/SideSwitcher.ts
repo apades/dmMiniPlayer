@@ -7,7 +7,7 @@ import { PlayerComponent } from './player-component'
  * 视频侧边栏切换别的视频的
  */
 class SideSwitcher implements PlayerComponent<SideSwitcher> {
-  readonly __playerComponentKey__ = 'attach'
+  readonly __playerComponentKey__ = ['attach'] as const
   videoList: VideoList[] = []
 
   constructor() {

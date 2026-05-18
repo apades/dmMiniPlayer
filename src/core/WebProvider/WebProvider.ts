@@ -1,20 +1,40 @@
+import {
+  getAdapterConfig,
+  getContentScriptsInjectionClient,
+} from '@root/shared/config-helpers'
 import { PostMessageProtocolMap } from '@root/shared/postMessageEvent'
 import WebextEvent from '@root/shared/webextEvent'
 import configStore from '@root/store/config'
 import { SettingDanmakuEngine } from '@root/store/config/danmaku'
 import { DocPIPRenderType, Position } from '@root/types/config'
-import { createElement, dq, dq1Adv, getDeepPrototype, wait } from '@root/utils'
+import {
+  createElement,
+  dq,
+  dq1Adv,
+  getDeepPrototype,
+  monkeyPatch,
+  tryCatch,
+  wait,
+} from '@root/utils'
 import EventSwitcher from '@root/utils/EventSwitcher'
 import { checkIsLive } from '@root/utils/video'
+import { isFunction } from 'lodash-es'
+import { runInAction } from 'mobx'
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import {
   CanvasDanmakuEngine,
-  DanmakuEngine,
   HtmlDanmakuEngine,
 } from '../danmaku/DanmakuEngine'
 import IronKinokoEngine from '../danmaku/DanmakuEngine/IronKinoko/IronKinokoEngine'
 import DanmakuSender from '../danmaku/DanmakuSender'
+import HtmlDanmakuClient from '../danmaku/HtmlDanmakuClient'
+import LiveDanmakuClient from '../danmaku/LiveDanmakuClient'
 import { EventBus, PlayerEvent } from '../event'
+import {
+  PlayerComponent,
+  PlayerComponentMethodResult,
+  PlayerComponents,
+} from '../player-component'
 import { SideSwitcher } from '../SideSwitcher'
 import SubtitleManager from '../SubtitleManager'
 import VideoPlayerBase, {
@@ -30,16 +50,10 @@ import { CanvasPIPWebProvider, DocPIPWebProvider, ReplacerWebProvider } from '.'
 //   ReplacerWebProvider,
 // ]
 
-export default abstract class WebProvider
-  extends EventBus
-  implements ExtendComponent
-{
+export default class WebProvider extends EventBus implements ExtendComponent {
   // videoChanger: VideoChanger
-  subtitleManager!: SubtitleManager
-  danmakuEngine?: DanmakuEngine
-  danmakuSender?: DanmakuSender
-  sideSwitcher?: SideSwitcher
-  videoPreviewManager?: VideoPreviewManager
+  playerComponents = {} as PlayerComponents
+  playerComponentsAttachErrorMap = new Map<keyof PlayerComponents, Error>()
   isLive?: boolean
   active = false
   isQuickHiding = false
@@ -88,17 +102,166 @@ export default abstract class WebProvider
     return this
   }
 
+  // MARK: init
   private init() {
-    this.danmakuEngine = (() => {
-      if (configStore.useHtmlDanmaku && configStore.useDocPIP) {
-        if (configStore.htmlDanmakuEngine === SettingDanmakuEngine.IronKinoko)
-          return new IronKinokoEngine()
-        return new HtmlDanmakuEngine()
-      }
-      return new CanvasDanmakuEngine()
-    })()
+    this.on(PlayerEvent.playerComponentsAttachError, (data) => {
+      this.playerComponentsAttachErrorMap.set(data.name, data.error)
+    })
+    this.on(PlayerEvent.playerComponentsAttachSuccess, (data) => {
+      this.playerComponentsAttachErrorMap.delete(data.name)
+    })
 
-    this.subtitleManager = new SubtitleManager()
+    const adapterConfig = getAdapterConfig()
+    const comps =
+      (isFunction(adapterConfig.components)
+        ? adapterConfig.components({
+            injection: getContentScriptsInjectionClient(),
+          })
+        : adapterConfig.components) ?? {}
+    // const compsKeys = new Set(Object.keys(comps))
+
+    const _t = this
+
+    function invokeAdapterComponentMethod<
+      Comp extends PlayerComponent<Comp>,
+      MethodName extends keyof Comp,
+    >(
+      component: Comp,
+      name: keyof PlayerComponents,
+      methodName: MethodName,
+      callback?: (
+        methodResult: PlayerComponentMethodResult<Comp, MethodName>,
+      ) => void,
+    ) {
+      const adapterMethod = (comps[name] as any)[methodName]
+
+      if (!callback) return () => adapterMethod.apply(component)
+
+      const run = async () => {
+        const [err, result] = await tryCatch(() =>
+          adapterMethod.apply(component),
+        )
+        if (err) {
+          _t.emit(PlayerEvent.playerComponentsAttachError, {
+            name,
+            error: err,
+          })
+        } else {
+          callback(result)
+        }
+      }
+
+      run()
+      return run
+    }
+
+    // MARK: DanmakuEngine
+    const initDanmakuEngine = () => {
+      this.playerComponents.DanmakuEngine = (() => {
+        if (configStore.useHtmlDanmaku && configStore.useDocPIP) {
+          if (configStore.htmlDanmakuEngine === SettingDanmakuEngine.IronKinoko)
+            return new IronKinokoEngine()
+          return new HtmlDanmakuEngine()
+        }
+        return new CanvasDanmakuEngine()
+      })()
+    }
+    initDanmakuEngine()
+    const rerunDanmakuEngine = invokeAdapterComponentMethod(
+      this.playerComponents.DanmakuEngine,
+      'DanmakuEngine',
+      'attach',
+      (result) => {
+        if (result instanceof LiveDanmakuClient) {
+          monkeyPatch(result, 'onGettingLiveDanmakuData', (result) => {
+            this.playerComponents.DanmakuEngine.addDanmakus(result)
+            return result
+          })
+        }
+
+        if (result instanceof HtmlDanmakuClient) {
+          result.startObserveHtmlDanmaku(result.getObserveHtmlDanmakuConfig())
+        } else if (result instanceof LiveDanmakuClient) {
+          result.on('danmaku-add', (data) => {
+            result.onGettingLiveDanmakuData(data)
+          })
+        } else {
+          this.playerComponents.DanmakuEngine.addDanmakus(result)
+        }
+      },
+    )
+
+    // MARK: DanmakuSender
+    this.playerComponents.DanmakuSender = new DanmakuSender()
+    const rerunDanmakuSender = invokeAdapterComponentMethod(
+      this.playerComponents.DanmakuSender,
+      'DanmakuSender',
+      'attach',
+      (result) => {
+        const unattachedKeys = Object.keys(result).filter(
+          (v) => !(result as any)[v],
+        )
+        if (unattachedKeys.length)
+          throw Error(`未完全初始化setData: ${unattachedKeys.join(', ')}`)
+        this.playerComponents.DanmakuSender.setData(result)
+      },
+    )
+
+    // MARK: SideSwitcher
+    this.playerComponents.SideSwitcher = new SideSwitcher()
+    const rerunSideSwitcher = invokeAdapterComponentMethod(
+      this.playerComponents.SideSwitcher,
+      'SideSwitcher',
+      'attach',
+      (result) => {
+        runInAction(() => {
+          this.playerComponents.SideSwitcher.videoList = result
+        })
+      },
+    )
+
+    // MARK: VideoPreviewManager
+    this.playerComponents.VideoPreviewManager = new VideoPreviewManager()
+    this.playerComponents.VideoPreviewManager.init(this.webVideo)
+
+    // MARK: SubtitleManager
+    this.playerComponents.SubtitleManager = new SubtitleManager()
+    const rerunSubtitleManager = invokeAdapterComponentMethod(
+      this.playerComponents.SubtitleManager,
+      'SubtitleManager',
+      'attach',
+      (result) => {
+        runInAction(() => {
+          this.playerComponents.SubtitleManager.subtitleItems = result
+        })
+      },
+    )
+
+    this.on(PlayerEvent.mediaUpdated, () => {
+      this.playerComponents.DanmakuEngine.unload()
+      initDanmakuEngine()
+      rerunDanmakuEngine()
+
+      this.playerComponents.DanmakuSender.unload()
+      this.playerComponents.DanmakuSender = new DanmakuSender()
+      rerunDanmakuSender()
+
+      this.playerComponents.SideSwitcher.unload()
+      this.playerComponents.SideSwitcher = new SideSwitcher()
+      rerunSideSwitcher()
+
+      this.playerComponents.VideoPreviewManager.unload()
+      this.playerComponents.VideoPreviewManager = new VideoPreviewManager()
+      this.playerComponents.VideoPreviewManager.init(this.webVideo)
+
+      this.playerComponents.SubtitleManager.unload()
+      this.playerComponents.SubtitleManager = new SubtitleManager()
+      rerunSubtitleManager()
+
+      getAdapterConfig().onMediaUpdated?.({
+        injection: getContentScriptsInjectionClient(),
+      })
+    })
 
     this.onInit()
     this.active = true
@@ -141,8 +304,8 @@ export default abstract class WebProvider
    */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
     if (!navigator.userActivation.isActive) return
-    this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
+    this.init()
     this.injectVideoEventsListener(this.webVideo)
     this.initExtCommandEventHandler()
     this.isLive ??= checkIsLive(this.webVideo)
@@ -150,27 +313,22 @@ export default abstract class WebProvider
     const MiniPlayer = (Object.getPrototypeOf(this) as WebProvider).MiniPlayer
     this.miniPlayer = new MiniPlayer({
       webVideoEl: this.webVideo,
-      danmakuEngine: this.danmakuEngine,
-      subtitleManager: this.subtitleManager,
-      danmakuSender: this.danmakuSender,
-      sideSwitcher: this.sideSwitcher,
-      videoPreviewManager: this.videoPreviewManager,
       isLive: !!this.isLive,
+      playerComponents: this.playerComponents,
     })
 
-    const unListenVideoChanged = this.on2(
-      PlayerEvent.webVideoChanged,
-      (newVideoEl) => {
-        this.webVideo = newVideoEl
-      },
-    )
-
     await this.onOpenPlayer()
+    getAdapterConfig().onBeforePlayerMounted?.({
+      injection: getContentScriptsInjectionClient(),
+    })
     await this.onPlayerInitd()
+    getAdapterConfig().onPlayerMounted?.({
+      injection: getContentScriptsInjectionClient(),
+    })
 
     this.setExtActive()
 
-    this.miniPlayer.on(PlayerEvent.close, () => {
+    this.on(PlayerEvent.close, () => {
       this.unload()
       if (
         configStore.pauseInClose_video &&
@@ -185,7 +343,24 @@ export default abstract class WebProvider
 
       this.offAllEvent()
 
-      unListenVideoChanged()
+      setTimeout(() => {
+        getAdapterConfig().onPlayerDestroyed?.({
+          injection: getContentScriptsInjectionClient(),
+        })
+      }, 0)
+    })
+
+    this.on(PlayerEvent.videoSrcChanged, () => {
+      getAdapterConfig().onMediaUpdated?.({
+        injection: getContentScriptsInjectionClient(),
+      })
+    })
+
+    this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {
+      this.webVideo = newVideoEl
+
+      this.playerComponents.DanmakuEngine.updateVideo(newVideoEl)
+      this.playerComponents.SubtitleManager.updateVideo(newVideoEl)
     })
   }
 

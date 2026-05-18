@@ -10,7 +10,7 @@ type Props = {
 }
 // implements PlayerComponent<DanmakuSender, 'DanmakuSender'>
 class DanmakuSender implements PlayerComponent<DanmakuSender> {
-  declare readonly __playerComponentKey__: 'setData'
+  declare readonly __playerComponentKey__: readonly ['setData']
 
   setData(props: Props) {}
 
@@ -18,7 +18,7 @@ class DanmakuSender implements PlayerComponent<DanmakuSender> {
 }
 
 class DanmakuManager implements PlayerComponent<DanmakuManager> {
-  declare readonly __playerComponentKey__: 'onInit' | 'init'
+  declare readonly __playerComponentKey__: readonly ['onInit', 'init']
 
   init() {}
   onInit() {}

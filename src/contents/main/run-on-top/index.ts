@@ -20,9 +20,9 @@ import {
 import { appendLoggerLinesToChromeStorage } from '@apades/logger/ext'
 import { DocPIPRenderType } from '@root/types/config'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
-import getWebProvider from '@root/web-provider/getWebProvider'
 import { PlayerEvent } from '@root/core/event'
 import { VIDEO_ID_ATTR } from '@root/shared/config'
+import { createPlayer } from '@root/core/create-player'
 import { getSimulateVideoEl, requestInitPlayerFromMainCs } from './utils'
 
 export default function runOnTopMain() {
@@ -42,9 +42,6 @@ export default function runOnTopMain() {
 
     const fn = () => {
       const id = data.videoState.id
-
-      const provider = getWebProvider({ renderType: data.renderType })
-      window.provider = provider
 
       const isWebRTCMode =
         data.renderType === DocPIPRenderType.capture_captureStreamWithWebRTC
@@ -80,11 +77,12 @@ export default function runOnTopMain() {
             const { mediaStream, unMount: unMountMediaStream } =
               getMediaStreamInGetter({ target: source })
 
-            provider.initPlayer({
+            const provider = createPlayer({
               ...data,
               videoEl,
               mediaStream,
             })
+            window.provider = provider
             provider.on(PlayerEvent.close, () => {
               unMountMediaStream()
               unMount()
@@ -95,10 +93,11 @@ export default function runOnTopMain() {
               )
             })
           } else {
-            provider.initPlayer({
+            const provider = createPlayer({
               ...data,
               videoEl,
             })
+            window.provider = provider
             provider?.on(PlayerEvent.close, () => {
               unMount()
             })
@@ -110,10 +109,12 @@ export default function runOnTopMain() {
             `video[${VIDEO_ID_ATTR}="${id}"]`,
           )
           if (!videoEl) throw Error('videoEl not found')
-          return provider.initPlayer({
+          const provider = createPlayer({
             ...data,
             videoEl,
           })
+          window.provider = provider
+          return provider
         }
       }
     }

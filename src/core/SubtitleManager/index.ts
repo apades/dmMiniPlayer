@@ -20,7 +20,7 @@ class SubtitleManager
   extends Events2<SubtitleManagerEvents>
   implements PlayerComponent<SubtitleManager>
 {
-  declare readonly __playerComponentKey__: 'attach' | 'loadSubtitle'
+  readonly __playerComponentKey__ = ['attach', 'loadSubtitle'] as const
   initd = false
   subtitleItems: SubtitleItem[] = []
 

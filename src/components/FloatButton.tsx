@@ -1,4 +1,5 @@
 import { SettingOutlined } from '@ant-design/icons'
+import { createPlayer } from '@root/core/create-player'
 import { requestInitPlayer } from '@root/core/requestPlayerInit'
 import { useOnce } from '@root/hook'
 import useAutoPIPHandler from '@root/hook/useAutoPIPHandler'
@@ -28,7 +29,6 @@ import { observer } from 'mobx-react'
 import { FC, SVGProps, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
-import getWebProvider from '@root/web-provider/getWebProvider'
 import icon from '../../assets/icon.png'
 import AppRoot from './AppRoot'
 
@@ -341,13 +341,8 @@ const FloatButton: FC<Props> = (props) => {
 
                     if (!videoEl) throw Error('不正常的videoEl')
                     videoRef.current = videoEl
-                    const provider = getWebProvider({
-                      renderType: DocPIPRenderType.replaceWebVideoDom,
-                    })
-                    window.provider = provider
-
                     const rect = videoEl.getBoundingClientRect()
-                    provider.initPlayer({
+                    const provider = createPlayer({
                       posData: {
                         x: rect.x,
                         y: rect.y,
@@ -368,6 +363,8 @@ const FloatButton: FC<Props> = (props) => {
                       topContainerEl: props.container,
                       isFixedPos: !!fixedPos,
                     })
+
+                    window.provider = provider
                   }}
                 >
                   <ReplaceIcon width={16} height={16} className="w-[16px]" />

@@ -94,7 +94,7 @@ const ACTION_AREA_ACTIVE = 'active'
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
-    const { isLive, keyBinding, keydownWindow, videoPreviewManger, eventBus } =
+    const { isLive, keyBinding, keydownWindow, eventBus } =
       useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
@@ -110,14 +110,6 @@ const VideoPlayerV2Inner = observer(
       if (!keydownWindow) return
       keyBinding.updateKeydownWindow(keydownWindow)
     }, [keydownWindow])
-
-    const subtitleManager = useMemo(() => {
-      if (props.subtitleManager) return props.subtitleManager
-      else return new CommonSubtitleManager()
-    }, [props.subtitleManager])
-    useUnmount(() => {
-      subtitleManager.unload()
-    })
 
     const [keyboardTipsModal, keyboardTipsModalContext] =
       useOpenIsolationModal(KeyboardTipsModal)
@@ -176,15 +168,6 @@ const VideoPlayerV2Inner = observer(
       //   }
       // }
     }, [videoRef.current, isFullInWeb])
-
-    useEffect(() => {
-      if (!videoPreviewManger || !videoRef.current) return
-      videoPreviewManger.init(videoRef.current)
-
-      return () => {
-        videoPreviewManger.unload()
-      }
-    }, [videoPreviewManger, videoRef.current])
 
     const toggleFullInWeb = useMemoizedFn(() => {
       setFullInWeb((v) => {
@@ -263,11 +246,6 @@ const VideoPlayerV2Inner = observer(
         hasVideoStream: Boolean(props.videoStream),
         duration: video.duration,
       })
-      if (!subtitleManager.initd) {
-        subtitleManager.init(video)
-      }
-      subtitleManager.video = video
-
       const isLive = props.isLive || video.duration === Infinity
 
       setTimeout(() => {
@@ -469,7 +447,7 @@ const VideoPlayerV2Inner = observer(
           </div>
 
           <div className="absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
-            <SubtitleText subtitleManager={subtitleManager} />
+            <SubtitleText />
           </div>
 
           {!isLive && <PlayerProgressBar />}
@@ -492,15 +470,11 @@ const VideoPlayerV2Inner = observer(
               <PlayedTime />
 
               <div className="f-i-center gap-1">
-                {configStore.bp_subtitle && (
-                  <SubtitleSelection subtitleManager={subtitleManager} />
-                )}
+                {configStore.bp_subtitle && <SubtitleSelection />}
 
                 {configStore.bp_danmaku && <DanmakuSettingBtn />}
 
-                {configStore.bp_danmakuInput && (
-                  <DanmakuInputIcon danmakuSender={props.danmakuSender} />
-                )}
+                {configStore.bp_danmakuInput && <DanmakuInputIcon />}
 
                 {configStore.bp_playbackRate && <PlaybackRateSelection />}
 
@@ -545,7 +519,7 @@ const VideoPlayerV2Inner = observer(
           </div>
         </div>
 
-        <DanmakuInput danmakuSender={props.danmakuSender} />
+        <DanmakuInput />
         <DanmakuContainer />
         <div className="group-[&.active]:opacity-0 transition-all">
           <CurrentTimeTooltipsWithKeydown />

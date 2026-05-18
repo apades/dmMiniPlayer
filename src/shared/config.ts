@@ -20,3 +20,4 @@ export const ATTR_SHOW_LOG = 'dm-show-log'
 
 export const ATTR_INJECT_PERMISSIONS = 'dm-inject-permissions'
 export const ADAPTER_CONFIG_GLOBAL_NAME = '__$ADAPTER_CONFIG__'
+export const CONTENT_SCRIPTS_INJECTION_CLIENT_NAME = '__$injectionClient'

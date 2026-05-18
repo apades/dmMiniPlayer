@@ -191,14 +191,14 @@ const CoverTitleItem: FC<VideoItem> = (data) => {
 }
 
 const VideoPlayerSide: FC = (props) => {
-  const { sideSwitcher } = useContext(vpContext)
+  const { playerComponents } = useContext(vpContext)
 
   const isClickType = configStore.sideTrigger === SideTriggerType.click,
     isHoverType = configStore.sideTrigger === SideTriggerType.hover
   // const [isVisible, setVisible] = useState(false)
 
   if (configStore.sideTrigger === SideTriggerType.hidden) return
-  if (!sideSwitcher) return
+  if (!playerComponents.SideSwitcher) return
 
   return (
     <div
@@ -215,7 +215,7 @@ const VideoPlayerSide: FC = (props) => {
       //   setVisible(false)
       // }}
     >
-      <VideoPlayerSideInner sideSwitcher={sideSwitcher} />
+      <VideoPlayerSideInner sideSwitcher={playerComponents.SideSwitcher} />
       <div
         className={classNames(
           'side-dragger group-[&.active]:opacity-100 opacity-0 absolute ab-vertical-center w-[15px] h-[30px] bg-[#0007] rounded-tl-[5px] rounded-bl-[5px] transition-all text-white f-center',

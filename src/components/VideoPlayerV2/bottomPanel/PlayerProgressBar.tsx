@@ -146,7 +146,9 @@ type ToolTipsProps = {
 }
 const ToolTips: FC<ToolTipsProps> = (props) => {
   const { containerRef, duration } = props
-  const { videoPreviewManger } = useContext(vpContext)
+  const {
+    playerComponents: { VideoPreviewManager: videoPreviewManger },
+  } = useContext(vpContext)
   const [isVisible, setVisible] = useState(false)
   const [percent, setPercent] = useState(0)
   const [image, setImage] = useState<VideoPreviewData>()

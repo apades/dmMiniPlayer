@@ -4,12 +4,15 @@ import type { SideSwitcher } from './SideSwitcher'
 import type SubtitleManager from './SubtitleManager'
 import type VideoPreviewManager from './VideoPreviewManager'
 
-export type PlayerComponent<Component, Key = keyof Component> = {
+export type PlayerComponent<
+  Component,
+  Key extends readonly (keyof Component)[] = readonly (keyof Component)[],
+> = {
   readonly __playerComponentKey__: Key
 }
 
 type PlayerComponentMethodKey<T extends PlayerComponent<any, any>> =
-  T['__playerComponentKey__']
+  T['__playerComponentKey__'][number]
 
 type FunctionPropertyKey<T> = {
   [Key in keyof T]-?: T[Key] extends (...args: any[]) => any ? Key : never
@@ -21,6 +24,14 @@ type PlayerComponentMethodResolver<
 > = T[Method] extends (...args: infer Args) => infer Return
   ? (this: T, ...args: Args) => Return
   : never
+
+/** Awaited return type of a player component method keyed by `MethodName`. */
+export type PlayerComponentMethodResult<
+  Comp extends PlayerComponent<any, any>,
+  MethodName extends keyof Comp,
+> = Comp[MethodName] extends (...args: any[]) => infer Return
+  ? Awaited<Return>
+  : void
 
 export type PlayerComponentConfigResolver<
   T extends Record<string, PlayerComponent<any, any>>,

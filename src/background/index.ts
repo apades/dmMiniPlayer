@@ -79,6 +79,9 @@ async function reloadPage() {
   tabs.forEach((tab) => {
     if (!tab.id) return
     if (!tab.url) return
+    // chrome.tabs.reload(tab.id)
+    // chrome.tabs.remove(tab.id)
+    // chrome.tabs.create({ url: tab.url, active: true })
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: () => {

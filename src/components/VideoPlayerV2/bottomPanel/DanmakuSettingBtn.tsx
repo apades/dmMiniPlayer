@@ -9,7 +9,7 @@ import { useOnce } from '@root/hook'
 import { useReactBrowserSyncStorage } from '@root/hook/browserStorage'
 import { DANMAKU_VISIBLE } from '@root/shared/storeKey'
 import WebextEvent from '@root/shared/webextEvent'
-import { getAnyObjToString, tryCatch } from '@root/utils'
+import { getAnyObjToString } from '@root/utils'
 import AssParser from '@root/utils/AssParser'
 import { t } from '@root/utils/i18n'
 import { setBrowserSyncStorage } from '@root/utils/storage'
@@ -26,7 +26,11 @@ import vpContext from '../context'
 import ActionButton from './ActionButton'
 
 const Menu: FC = observer((props) => {
-  const { danmakuEngine, isLive, webVideo } = useContext(vpContext)
+  const {
+    playerComponents: { DanmakuEngine: danmakuEngine },
+    isLive,
+    webVideo,
+  } = useContext(vpContext)
   if (!danmakuEngine || !webVideo) return
 
   const urlInputRef = useRef<HTMLInputElement>(null)
@@ -176,7 +180,10 @@ const Menu: FC = observer((props) => {
 })
 
 const DanmakuSettingBtn: FC = (props) => {
-  const { danmakuEngine, eventBus } = useContext(vpContext)
+  const {
+    playerComponents: { DanmakuEngine: danmakuEngine },
+    eventBus,
+  } = useContext(vpContext)
   if (!danmakuEngine) return
 
   const visible = danmakuEngine.visible

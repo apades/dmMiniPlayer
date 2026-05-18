@@ -15,11 +15,10 @@ import { runInAction } from 'mobx'
 import { observer } from 'mobx-react'
 import { type FC, memo, useContext } from 'react'
 
-type Props = {
-  subtitleManager: SubtitleManager
-}
-const SubtitleSelectionInner: FC<Props> = observer((props) => {
-  const { subtitleManager } = props
+const SubtitleSelectionInner: FC = observer((props) => {
+  const {
+    playerComponents: { SubtitleManager: subtitleManager },
+  } = useContext(vpContext)
   const activeLabel = subtitleManager.activeSubtitleLabel
   const { eventBus, videoPlayerRef } = useContext(vpContext)
 
@@ -61,8 +60,10 @@ const SubtitleSelectionInner: FC<Props> = observer((props) => {
   )
 })
 
-const Menu: FC<Props> = observer((props) => {
-  const { subtitleManager } = props
+const Menu: FC = observer((props) => {
+  const {
+    playerComponents: { SubtitleManager: subtitleManager },
+  } = useContext(vpContext)
   const activeLabel = subtitleManager.activeSubtitleLabel
   return (
     <div className="w-[150px] bg-[#000] rounded-[4px] p-[4px] text-[14px] text-white max-h-[calc(100vh-var(--area-height)-10px)] custom-scrollbar overflow-auto">
@@ -133,8 +134,11 @@ const Menu: FC<Props> = observer((props) => {
   )
 })
 
-const SubtitleSelection: FC<Props> = memo((props) => {
-  const { isLive } = useContext(vpContext)
+const SubtitleSelection: FC = memo((props) => {
+  const {
+    playerComponents: { SubtitleManager: subtitleManager },
+    isLive,
+  } = useContext(vpContext)
   if (isLive) return null
   return (
     <FileDropper
@@ -147,7 +151,7 @@ const SubtitleSelection: FC<Props> = memo((props) => {
       }
       handleDrop={async (dataTransfer) => {
         const file = dataTransfer.files[0]
-        props.subtitleManager.addFileSubtitle(file)
+        subtitleManager.addFileSubtitle(file)
       }}
       getPopupContainer={() =>
         window?.documentPictureInPicture?.window?.document?.body ??
@@ -155,7 +159,7 @@ const SubtitleSelection: FC<Props> = memo((props) => {
       }
     >
       <div>
-        <SubtitleSelectionInner {...props} />
+        <SubtitleSelectionInner />
       </div>
     </FileDropper>
   )

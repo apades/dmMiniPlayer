@@ -1,12 +1,7 @@
-import { DanmakuEngine } from '@root/core/danmaku/DanmakuEngine'
-import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { eventBus, EventBus } from '@root/core/event'
 import { KeyBinding } from '@root/core/KeyBinding'
-import { SideSwitcher } from '@root/core/SideSwitcher'
-import SubtitleManager from '@root/core/SubtitleManager'
+import { PlayerComponents } from '@root/core/player-component'
 import VideoPlayerBase from '@root/core/VideoPlayer/VideoPlayerBase'
-import VideoPreviewManager from '@root/core/VideoPreviewManager'
-import { createElement } from '@root/utils'
 import { createContext, Dispatch, SetStateAction } from 'react'
 
 export type ContextData = {
@@ -18,14 +13,11 @@ export type ContextData = {
 
   isLive?: boolean
 
+  playerComponents: PlayerComponents
+
   eventBus: EventBus
   videoPlayer: VideoPlayerBase
-  subtitleManager?: SubtitleManager
-  danmakuEngine?: DanmakuEngine
-  danmakuSender?: DanmakuSender
-  sideSwitcher?: SideSwitcher
   videoStream?: MediaStream
-  videoPreviewManger?: VideoPreviewManager
   keyBinding: KeyBinding
   setContext: Dispatch<SetStateAction<ContextData>>
 }
@@ -37,6 +29,7 @@ export const defaultVpContext: ContextData = {
   keyBinding,
   videoPlayer: null as any,
   videoPlayerRef: { current: null },
+  playerComponents: {} as any,
   setContext: () => {},
 }
 

@@ -1,20 +1,11 @@
-import { observeVideoEl } from '@root/utils/observeVideoEl'
-import { makeObservable, runInAction } from 'mobx'
 import { DocPIPRenderType } from '@root/types/config'
-import { SideSwitcher } from '../SideSwitcher'
-import SubtitleManager from '../SubtitleManager'
-import { DanmakuEngine } from '../danmaku/DanmakuEngine'
-import DanmakuSender from '../danmaku/DanmakuSender'
-import { EventBus, PlayerEvent } from '../event'
-import VideoPreviewManager from '../VideoPreviewManager'
+import { observeVideoEl } from '@root/utils/observeVideoEl'
 import { WebProvider } from '../WebProvider'
+import { EventBus, PlayerEvent } from '../event'
+import { PlayerComponents } from '../player-component'
 
 export type ExtendComponent = {
-  subtitleManager?: SubtitleManager
-  danmakuEngine?: DanmakuEngine
-  danmakuSender?: DanmakuSender
-  sideSwitcher?: SideSwitcher
-  videoPreviewManager?: VideoPreviewManager
+  playerComponents: PlayerComponents
   isLive?: boolean
 }
 export type BaseComponent = {
@@ -35,44 +26,20 @@ export default class VideoPlayerBase
   extends EventBus
   implements BaseComponent, ExtendComponent
 {
+  playerComponents!: PlayerComponents
   webVideoEl: HTMLVideoElement
-  subtitleManager?: SubtitleManager
-  danmakuEngine?: DanmakuEngine
-  danmakuSender?: DanmakuSender
-  sideSwitcher?: SideSwitcher
-  videoPreviewManager?: VideoPreviewManager
   isLive?: boolean
-
-  canSendDanmaku = false
-  canShowDanmaku = false
-  showDanmaku = true
 
   config!: WebProvider['config']
 
   constructor(props: MiniPlayerProps) {
     super()
     this.webVideoEl = props.webVideoEl
-    this.subtitleManager = props.subtitleManager
-    this.danmakuEngine = props.danmakuEngine
-    this.danmakuSender = props.danmakuSender
-    this.sideSwitcher = props.sideSwitcher
-    this.videoPreviewManager = props.videoPreviewManager
     this.isLive = props.isLive
-
-    makeObservable(this, {
-      canSendDanmaku: true,
-      canShowDanmaku: true,
-      showDanmaku: true,
-    })
+    this.playerComponents = props.playerComponents
   }
 
-  reset() {
-    runInAction(() => {
-      this.canSendDanmaku = false
-      this.canShowDanmaku = false
-      this.showDanmaku = true
-    })
-  }
+  reset() {}
 
   private unobserveVideoElChange = () => {}
   private unlistenOnClose = () => {}
@@ -84,7 +51,6 @@ export default class VideoPlayerBase
     this.unlistenOnClose = this.on2(PlayerEvent.close, () => {
       console.log('PlayerEvent.close')
       this.unload()
-      this.danmakuEngine?.unload()
       this.unobserveVideoElChange()
       this.reset()
     })
@@ -100,6 +66,7 @@ export default class VideoPlayerBase
         this.webVideoEl,
         (newVideoEl) => {
           this.emit(PlayerEvent.webVideoChanged, newVideoEl as any)
+          this.emit(PlayerEvent.mediaUpdated)
         },
       )
     }
@@ -110,16 +77,7 @@ export default class VideoPlayerBase
       if (this.src !== this.webVideoEl.src) {
         this.src = this.webVideoEl.src
         this.emit(PlayerEvent.videoSrcChanged)
-      }
-    })
-
-    runInAction(() => {
-      if (this.danmakuSender) {
-        this.canSendDanmaku = true
-      }
-
-      if (this.danmakuEngine) {
-        this.canShowDanmaku = true
+        this.emit(PlayerEvent.mediaUpdated)
       }
     })
 

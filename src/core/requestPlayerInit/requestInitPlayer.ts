@@ -11,8 +11,6 @@ import {
   suggestWebRtcVideoMaxBitrateBpsFromVideoEl,
 } from '@root/utils/webRTC'
 import { onPostMessage, postMessageToTop } from '@root/utils/windowMessages'
-import getWebProvider from '@root/web-provider/getWebProvider'
-import configStore from '@root/store/config'
 
 type Props = (
   | {

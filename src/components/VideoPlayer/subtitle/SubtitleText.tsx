@@ -1,6 +1,5 @@
 import vpContext from '@root/components/VideoPlayerV2/context'
 import { PlayerEvent } from '@root/core/event'
-import SubtitleManager from '@root/core/SubtitleManager'
 import type { SubtitleRow } from '@root/core/SubtitleManager/types'
 import { useOnce } from '@root/hook'
 import configStore from '@root/store/config'
@@ -10,11 +9,10 @@ import { autorun } from 'mobx'
 import { observer } from 'mobx-react'
 import { useContext, useMemo, useRef, useState, type FC } from 'react'
 
-type Props = {
-  subtitleManager: SubtitleManager
-}
-const SubtitleText: FC<Props> = (props) => {
-  const { subtitleManager } = props
+const SubtitleText: FC = (props) => {
+  const {
+    playerComponents: { SubtitleManager: subtitleManager },
+  } = useContext(vpContext)
   const [activeRows, setActiveRows] = useState<Record<string, SubtitleRow>>({})
   const [fontSize, setFontSize] = useState(configStore.subtitle_fontSize)
   const { eventBus } = useContext(vpContext)

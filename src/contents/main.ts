@@ -9,6 +9,7 @@ import { createInjectionClient } from '@pkgs/injection/entry/client'
 import isDev from '@root/shared/isDev'
 import { sendMessage } from 'webext-bridge/content-script'
 import WebextEvent from '@root/shared/webextEvent'
+import { getAdapterConfig } from '@root/shared/config-helpers'
 import runOnTopMain from './main/run-on-top'
 import runOnAllIframeMain from './main/run-on-all-iframe'
 
@@ -22,26 +23,27 @@ if (isTop) {
   runOnTopMain()
 
   // dev to keep alive
-  if (isDev) {
-    setInterval(() => {
-      if (document.visibilityState === 'hidden') return
-      sendMessage(WebextEvent.keepAlive, null)
-    }, 1000)
-  }
+  // if (isDev) {
+  //   setInterval(() => {
+  //     if (document.visibilityState === 'hidden') return
+  //     sendMessage(WebextEvent.keepAlive, null)
+  //   }, 1000)
+  // }
 } else {
-  const client = createInjectionClient({
-    enabledModules:
-      (document.documentElement
-        .getAttribute(ATTR_INJECT_PERMISSIONS)
-        ?.split(',') as any) ?? [],
-  })
-  window.__$injectionClient = client
-
   runOnAllIframeMain()
+}
 
-  if (window[ADAPTER_CONFIG_GLOBAL_NAME]) {
-    window[ADAPTER_CONFIG_GLOBAL_NAME].setup?.({
-      injection: client,
-    })
-  }
+const client = createInjectionClient({
+  enabledModules:
+    (document.documentElement
+      .getAttribute(ATTR_INJECT_PERMISSIONS)
+      ?.split(',') as any) ?? [],
+})
+window.__$injectionClient = client
+
+const adapterConfig = getAdapterConfig()
+if (adapterConfig) {
+  adapterConfig.setup?.({
+    injection: client,
+  })
 }

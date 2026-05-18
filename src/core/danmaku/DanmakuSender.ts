@@ -16,7 +16,7 @@ export type Props = {
  * 先setData(props)把所有属性填满，再用init()开始运行，最后unload卸载
  */
 export default class DanmakuSender implements PlayerComponent<DanmakuSender> {
-  declare readonly __playerComponentKey__: 'attach'
+  readonly __playerComponentKey__ = ['attach'] as const
 
   get textInput() {
     return getDom(this.props.textInput)

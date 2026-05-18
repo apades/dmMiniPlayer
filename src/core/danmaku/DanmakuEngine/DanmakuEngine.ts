@@ -37,7 +37,7 @@ export default abstract class DanmakuEngine
   extends Events2<DanmakuEngineEvents>
   implements PlayerComponent<DanmakuEngine>
 {
-  declare readonly __playerComponentKey__: 'attach'
+  readonly __playerComponentKey__ = ['attach'] as const
   // implements DanmakuConfig, PlayerComponent
   /**弹幕在实例化时会new这个 */
   Danmaku = DanmakuBase

@@ -15,13 +15,13 @@ export type VideoPreviewData = {
   image: string
 }
 
-export default abstract class VideoPreviewManager
+export default class VideoPreviewManager
   extends Events2<{
     unload: void
   }>
   implements PlayerComponent<VideoPreviewManager>
 {
-  declare readonly __playerComponentKey__: 'getPreviewImage'
+  readonly __playerComponentKey__ = ['getPreviewImage'] as const
   webVideo: HTMLVideoElement | null = null
   images: string[] = []
 
@@ -35,7 +35,13 @@ export default abstract class VideoPreviewManager
 
   addPreviewData(props: { image: string }) {}
 
-  abstract getPreviewImage(currentTime: number): Promise<VideoPreviewData>
+  getPreviewImage(currentTime: number): Promise<VideoPreviewData> {
+    return Promise.resolve({
+      image: '',
+      width: 0,
+      height: 0,
+    })
+  }
   unload() {
     this.onUnload()
     this.images = []

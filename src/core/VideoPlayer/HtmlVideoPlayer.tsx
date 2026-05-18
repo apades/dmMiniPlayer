@@ -70,11 +70,7 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
     const reactRoot = createRoot(root)
 
     const commonProps: ComponentProps<typeof VideoPlayerV2> = {
-      subtitleManager: this.subtitleManager,
-      danmakuSender: this.danmakuSender,
-      danmakuEngine: this.danmakuEngine,
-      sideSwitcher: this.sideSwitcher,
-      videoPreviewManger: this.videoPreviewManager,
+      playerComponents: this.playerComponents,
       videoPlayer: this,
       webVideo: this.webVideoEl,
       ref: (ref) => {
@@ -234,13 +230,6 @@ export class HtmlVideoPlayer extends VideoPlayerBase {
           }, 0)
           break
         }
-      }
-
-      if (this.subtitleManager) {
-        this.subtitleManager.updateVideo(newVideoEl)
-      }
-      if (this.danmakuEngine) {
-        this.danmakuEngine.updateVideo(newVideoEl)
       }
     })
 

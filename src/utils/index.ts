@@ -672,7 +672,8 @@ export function fnWrapping<T, K extends MethodKeys<T>>(
   target: T,
   key: K,
   descriptor: (
-    arg: ReturnType<Extract<T[K], (...args: any[]) => any>>,
+    prevResult: ReturnType<Extract<T[K], (...args: any[]) => any>>,
+    ...args: Parameters<Extract<T[K], (...args: any[]) => any>>
   ) => ReturnType<Extract<T[K], (...args: any[]) => any>> | void,
 ): () => void {
   type Fn = Extract<T[K], (...args: any[]) => any>
@@ -688,7 +689,7 @@ export function fnWrapping<T, K extends MethodKeys<T>>(
       return new Promise((res, rej) => {
         result
           .then(async (d) => {
-            const next = await descriptor(d)
+            const next = await descriptor(d, ...(args as Parameters<Fn>))
             res(isUndefined(next) ? d : next)
           })
           .catch((err) => {
@@ -696,7 +697,7 @@ export function fnWrapping<T, K extends MethodKeys<T>>(
           })
       })
 
-    const next = descriptor(result)
+    const next = descriptor(result, ...(args as Parameters<Fn>))
     return isUndefined(next) ? result : next
   } as unknown as T[K]
 
