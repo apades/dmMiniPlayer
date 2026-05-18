@@ -84,10 +84,23 @@ declare namespace chrome.runtime {
   }
 }
 
-// Test types for KeyBinding playground
+// Test types for playground pages
 interface Window {
   testEvents?: string[]
   testKeyBinding?: import('@root/core/KeyBinding').KeyBinding
   testEventBus?: import('@root/core/event').EventBus
+  testFetchEvents?: import('./playground/injection/fetch/index').FetchTestEvent[]
+  runFetchRequest?: (url: string) => Promise<void>
+  runXHRRequest?: (url: string) => Promise<void>
+  testRunCodeEvents?: import('./playground/injection/run-code/index').RunCodeTestEvent[]
+  runCodeRunTest?: () => Promise<{ first: number; second: number }>
+  runCodeCallbackTest?: () => Promise<void>
+  __VISIBILITY_TEST_NATIVE__?: DocumentVisibilityState
+  readVisibilityState?: () => DocumentVisibilityState
+  visibilitySetNativeState?: (state: DocumentVisibilityState) => void
+  visibilityClearNativeState?: () => void
+  visibilityAlwaysVisibleTest?: () => Promise<void>
+  visibilityAlwaysHiddenTest?: () => Promise<void>
+  visibilityRestoreTest?: () => Promise<void>
   testReady?: boolean
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visibility Injection Test</title>
+    <script type="module" src="./index.tsx"></script>
+    <style>
+  html, body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  #state-display {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+    </style>
+</head>
+<body>
+    <h1>Visibility Injection Test</h1>
+    <p>Current <code>document.visibilityState</code>:</p>
+    <div id="state-display"></div>
+</body>
+</html>
