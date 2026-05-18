@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
-    "build:dev": "pnpm run clean && sh scripts/build.sh dev"
+    "dev": "pnpm run clean && sh scripts/build.sh dev",
+    "build": "pnpm run clean && sh scripts/build.sh"
   },
   "dependencies": {
     "commander": "^14.0.3"

@@ -12,7 +12,7 @@
   "scripts": {
     "predev": "pnpm auto-use-node",
     "dev": "cross-env NODE_ENV=development run-p dev:package:adapter dev:main",
-    "dev:package:adapter": "pnpm --filter @dmMiniPlayer/adapter run build:dev",
+    "dev:package:adapter": "pnpm --filter @dmMiniPlayer/adapter run dev",
     "dev:main": "nodemon --exec \"rm -rf dist && run-p dev:main:*\"",
     "dev:main:esm": "tsup --config scripts/dev.tsup.esm.ts",
     "dev:main:hmr": "vite --config scripts/dev.vite.hmr.ts",

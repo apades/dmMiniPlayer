@@ -1,4 +1,5 @@
 {
+    "$schema": "https://json.schemastore.org/nodemon.json",
     "watch": [
         "assets/lib",
         "src/locales-ext",
