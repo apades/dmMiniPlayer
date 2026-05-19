@@ -11,15 +11,6 @@ export const getConfig = (
     esbuildOptions(options) {
       options.alias ??= {}
       options.charset = 'utf8'
-      // IIFE global is `__toCommonJS` shape `{ default, __esModule }`; expose the default export on `window[name]`.
-      const unwrapDefault = `;${ADAPTER_CONFIG_GLOBAL_NAME}=${ADAPTER_CONFIG_GLOBAL_NAME}.default??${ADAPTER_CONFIG_GLOBAL_NAME};`
-      const prev = options.footer as
-        | string
-        | { js?: string; [k: string]: string | undefined }
-        | undefined
-      const prevJs = typeof prev === 'string' ? prev : (prev?.js ?? '')
-      const rest = typeof prev === 'object' && prev ? prev : {}
-      options.footer = { ...rest, js: prevJs + unwrapDefault }
     },
     outExtension({ format }) {
       return {
@@ -31,6 +22,7 @@ export const getConfig = (
     clean: false,
     shims: true,
     target: 'esnext',
+    treeshake: true,
     sourcemap: config.isDev ? 'inline' : false,
     minify: !config.isDev,
     noExternal: [/(.*)/],

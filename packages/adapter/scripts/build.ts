@@ -7,6 +7,8 @@ import tsup, { build, defineConfig } from 'tsup'
 import packageData from '../package.json' with { type: 'json' }
 import { getConfig } from './build.config'
 import {
+  getSiteAdapterDefaultExportCode,
+  getSiteAdapterInjectCode,
   getSiteAdapterPresetSettings,
   getSiteAdapterPresetSettingsCode,
   OFFICIAL_ADAPTER_CONFIG_FILE,
@@ -31,6 +33,7 @@ program
         program.error('pass at least one adapter path')
       }
 
+      const templateFolder = pr('.temp')
       const indexFileList = ['index.ts', 'index.js']
       type BuildTarget = { key: string; filePath: string }
       const targets: BuildTarget[] = []
@@ -61,7 +64,22 @@ program
         if (Object.hasOwn(entryMap, key)) {
           program.error(`duplicate adapter key: ${key}`)
         }
-        entryMap[key] = filePath
+        const presetSettings = await getSiteAdapterPresetSettings(filePath)
+
+        if (presetSettings.hasInject) {
+          fs.outputFileSync(
+            pr(templateFolder, `${key}.inject.ts`),
+            getSiteAdapterInjectCode(filePath, templateFolder),
+          )
+          entryMap[`${key}.inject`] = pr(templateFolder, `${key}.inject.ts`)
+        }
+
+        fs.outputFileSync(
+          pr(templateFolder, `${key}.ts`),
+          getSiteAdapterDefaultExportCode(filePath, templateFolder),
+        )
+        entryMap[key] = pr(templateFolder, `${key}.ts`)
+        // entryMap[key] = filePath
       }
 
       const localConfig = defineConfig({
@@ -92,7 +110,13 @@ program
                 },
               )
 
-              config[key] = presetSettings
+              fs.writeJSONSync(
+                pr(options.outDir, `${key}.json`),
+                presetSettings,
+                {
+                  spaces: 2,
+                },
+              )
 
               console.log(
                 chalk.green('[build success]'),
@@ -106,10 +130,6 @@ program
               console.log(error)
             }
           }
-
-          fs.writeJSONSync(OFFICIAL_ADAPTER_CONFIG_FILE, config, {
-            spaces: 2,
-          })
         },
       }) as tsup.Options
 

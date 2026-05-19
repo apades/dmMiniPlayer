@@ -2,9 +2,10 @@ import path from 'path'
 import { defineConfig } from 'tsup'
 import fs from 'fs-extra'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
+import { arrayInsert, isArray } from '@root/utils'
 import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
-import { getChangeLog, getDefinesConfig, pr } from './utils.mjs'
+import { getChangeLog, getDefinesConfig, getPackageRoot, pr } from './utils.mjs'
 import { inlineImport } from './plugin/inlineImport'
 import { isDev, isTest } from './shared'
 
@@ -72,6 +73,51 @@ export const shareConfig = {
       )
     })
     fs.copySync(pr('../assets'), pr(outDir, './assets'))
+
+    // resolve @dmMiniPlayer/adapter
+    const adapterRoot = getPackageRoot('@dmMiniPlayer/adapter')
+    const toInsertScripts: Required<typeof manifest>['content_scripts'] = []
+    const list = fs.readdirSync(path.resolve(adapterRoot, 'dist'))
+    list
+      .filter((f) => f.endsWith('.json'))
+      .forEach((file) => {
+        const config = fs.readJSONSync(path.resolve(adapterRoot, 'dist', file))
+
+        if (config.hasInject) {
+          const injectFile = file.replace('.json', '.inject.js')
+          fs.copySync(
+            path.resolve(adapterRoot, 'dist', injectFile),
+            pr(outDir, `./adapter/${injectFile}`),
+          )
+          toInsertScripts.push({
+            js: [`adapter/${injectFile}`],
+            matches: isArray(config.match) ? config.match : [config.match],
+            run_at: 'document_start',
+            all_frames: true,
+            world: 'MAIN',
+          })
+        }
+
+        const jsFile = file.replace('.json', '.js')
+        fs.copySync(
+          path.resolve(adapterRoot, 'dist', jsFile),
+          pr(outDir, `./adapter/${jsFile}`),
+        )
+        toInsertScripts.push({
+          js: [`adapter/${jsFile}`],
+          matches: isArray(config.match) ? config.match : [config.match],
+          run_at: 'document_start',
+          all_frames: true,
+        })
+      })
+
+    manifest.content_scripts = arrayInsert(
+      manifest.content_scripts ?? [],
+      manifest.content_scripts?.findIndex(
+        (s) => s.js?.[0] === 'entry-all-frames.js',
+      ) || 0,
+      toInsertScripts,
+    )
 
     manifest.web_accessible_resources = [
       {

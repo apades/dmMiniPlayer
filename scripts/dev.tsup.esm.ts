@@ -17,28 +17,48 @@ export default defineConfig({
     )
     // resolve @dmMiniPlayer/adapter
     const adapterRoot = getPackageRoot('@dmMiniPlayer/adapter')
-    fs.copySync(path.resolve(adapterRoot, 'dist'), pr(outDir, './adapter'))
-    const [err] = tryCatch(() => {
-      const config = fs.readJSONSync(
-        path.resolve(adapterRoot, 'dist/config.json'),
-      )
-      manifest.content_scripts = arrayInsert(
-        manifest.content_scripts ?? [],
-        manifest.content_scripts?.findIndex(
-          (s) => s.js?.[0] === 'entry-all-frames.js',
-        ) || 0,
-        Object.entries(config).map(([key, c]: [string, any]) => ({
-          js: [`adapter/${key}.js`],
-          matches: isArray(c.match) ? c.match : [c.match],
+    const toInsertScripts: Required<typeof manifest>['content_scripts'] = []
+    const list = fs.readdirSync(path.resolve(adapterRoot, 'dist'))
+    list
+      .filter((f) => f.endsWith('.json'))
+      .forEach((file) => {
+        const config = fs.readJSONSync(path.resolve(adapterRoot, 'dist', file))
+
+        if (config.hasInject) {
+          const injectFile = file.replace('.json', '.inject.js')
+          fs.copySync(
+            path.resolve(adapterRoot, 'dist', injectFile),
+            pr(outDir, `./adapter/${injectFile}`),
+          )
+          toInsertScripts.push({
+            js: [`adapter/${injectFile}`],
+            matches: isArray(config.match) ? config.match : [config.match],
+            run_at: 'document_start',
+            all_frames: true,
+            world: 'MAIN',
+          })
+        }
+
+        const jsFile = file.replace('.json', '.js')
+        fs.copySync(
+          path.resolve(adapterRoot, 'dist', jsFile),
+          pr(outDir, `./adapter/${jsFile}`),
+        )
+        toInsertScripts.push({
+          js: [`adapter/${jsFile}`],
+          matches: isArray(config.match) ? config.match : [config.match],
           run_at: 'document_start',
           all_frames: true,
-        })),
-      )
-    })
-    if (err) {
-      console.warn('没有找到 adapter/dist 前置配置json')
-      console.log(err)
-    }
+        })
+      })
+
+    manifest.content_scripts = arrayInsert(
+      manifest.content_scripts ?? [],
+      manifest.content_scripts?.findIndex(
+        (s) => s.js?.[0] === 'entry-all-frames.js',
+      ) || 0,
+      toInsertScripts,
+    )
 
     manifest.web_accessible_resources = [
       {

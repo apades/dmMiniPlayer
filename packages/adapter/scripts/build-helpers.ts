@@ -6,16 +6,18 @@ import { AdapterScriptDefinition } from '../core'
 const ADAPTER_PRESET_SETTINGS = ['name', 'match', 'injectPermissions'] as const
 
 export async function getSiteAdapterPresetSettings(filePath: string) {
+  const moduleUrl = `${url.pathToFileURL(filePath).href}?t=${Date.now()}`
+  const module = await import(moduleUrl)
+
   async function functionWrapper() {
     // Unique query avoids ESM loader cache so preset metadata reloads on rebuild.
     // TODO do not use cache
     // 现在import还是旧的问题
-    const moduleUrl = `${url.pathToFileURL(filePath).href}?t=${Date.now()}`
-    const module = (await import(moduleUrl)).default
+    const defaultExport = module.default
 
     return ADAPTER_PRESET_SETTINGS.reduce(
       (acc, key) => {
-        ;(acc as any)[key] = module[key]
+        ;(acc as any)[key] = defaultExport[key]
         return acc
       },
       {} as Pick<
@@ -24,7 +26,34 @@ export async function getSiteAdapterPresetSettings(filePath: string) {
       >,
     )
   }
-  return functionWrapper()
+  return {
+    ...(await functionWrapper()),
+    hasInject: !!module.inject,
+  }
+}
+
+/** Relative import path for esbuild entry stubs (does not resolve file:// URLs). */
+export function toRelativeImportPath(fromDir: string, targetPath: string) {
+  let relative = path.relative(fromDir, targetPath).replaceAll('\\', '/')
+  if (!relative.startsWith('.')) {
+    relative = `./${relative}`
+  }
+  return relative
+}
+
+export function getSiteAdapterInjectCode(filePath: string, fromDir: string) {
+  const importPath = toRelativeImportPath(fromDir, filePath)
+  return `import { inject } from '${importPath}'
+    inject()`
+}
+
+export function getSiteAdapterDefaultExportCode(
+  filePath: string,
+  fromDir: string,
+) {
+  const importPath = toRelativeImportPath(fromDir, filePath)
+  return `export { default } from '${importPath}'
+  `
 }
 
 export function getSiteAdapterPresetSettingsCode(

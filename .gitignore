@@ -31,6 +31,7 @@ assets/temp.mp4
 .turbo
 .next
 .vercel
+.temp
 
 # misc
 .DS_Store

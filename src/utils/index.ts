@@ -1,5 +1,5 @@
-import isEqual from 'fast-deep-equal'
 import type { CSSProperties } from 'react'
+import isEqual from './feat/fast-deep-equal'
 import type { AsyncFn, Rec, TransStringValToAny, ValueOf } from './typeUtils'
 
 import _throttle from './feat/throttle'
@@ -461,9 +461,6 @@ export async function readTextFromFile(file: File) {
   return text
 }
 
-export const onceLog = onceCall((...e: any) => {
-  console.log(...e)
-})
 export function getDeepPrototype<T = any>(from: any, equal: T): T | null {
   const root = Object.getPrototypeOf(from)
   if (!root) return null
