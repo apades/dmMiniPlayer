@@ -1,5 +1,7 @@
+import { config } from 'process'
 import {
   getAdapterConfig,
+  getAdapterConfigFromAttribute,
   getContentScriptsInjectionClient,
 } from '@root/shared/config-helpers'
 import { PostMessageProtocolMap } from '@root/shared/postMessageEvent'
@@ -21,6 +23,7 @@ import { checkIsLive } from '@root/utils/video'
 import { isFunction } from 'lodash-es'
 import { runInAction } from 'mobx'
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
+import { AdapterSetupContext } from '@pkgs/adapter/core'
 import {
   CanvasDanmakuEngine,
   HtmlDanmakuEngine,
@@ -114,9 +117,7 @@ export default class WebProvider extends EventBus implements ExtendComponent {
     const adapterConfig = getAdapterConfig()
     const comps =
       (isFunction(adapterConfig.components)
-        ? adapterConfig.components({
-            injection: getContentScriptsInjectionClient(),
-          })
+        ? adapterConfig.components(this.getAdapterConfigContext())
         : adapterConfig.components) ?? {}
     // const compsKeys = new Set(Object.keys(comps))
 
@@ -258,9 +259,7 @@ export default class WebProvider extends EventBus implements ExtendComponent {
       this.playerComponents.SubtitleManager = new SubtitleManager()
       rerunSubtitleManager()
 
-      getAdapterConfig().onMediaUpdated?.({
-        injection: getContentScriptsInjectionClient(),
-      })
+      getAdapterConfig().onMediaUpdated?.(this.getAdapterConfigContext())
     })
 
     this.onInit()
@@ -299,6 +298,14 @@ export default class WebProvider extends EventBus implements ExtendComponent {
     this.openPlayer({ videoEl })
   }
 
+  private getAdapterConfigContext(): AdapterSetupContext<any, any> {
+    return {
+      webVideo: this.webVideo,
+      config: getAdapterConfigFromAttribute(),
+      injection: getContentScriptsInjectionClient(),
+    }
+  }
+
   /**
    * @deprecated Use {@link initPlayer} instead
    */
@@ -318,13 +325,9 @@ export default class WebProvider extends EventBus implements ExtendComponent {
     })
 
     await this.onOpenPlayer()
-    getAdapterConfig().onBeforePlayerMounted?.({
-      injection: getContentScriptsInjectionClient(),
-    })
+    getAdapterConfig().onBeforePlayerMounted?.(this.getAdapterConfigContext())
     await this.onPlayerInitd()
-    getAdapterConfig().onPlayerMounted?.({
-      injection: getContentScriptsInjectionClient(),
-    })
+    getAdapterConfig().onPlayerMounted?.(this.getAdapterConfigContext())
 
     this.setExtActive()
 
@@ -344,16 +347,12 @@ export default class WebProvider extends EventBus implements ExtendComponent {
       this.offAllEvent()
 
       setTimeout(() => {
-        getAdapterConfig().onPlayerDestroyed?.({
-          injection: getContentScriptsInjectionClient(),
-        })
+        getAdapterConfig().onPlayerDestroyed?.(this.getAdapterConfigContext())
       }, 0)
     })
 
     this.on(PlayerEvent.videoSrcChanged, () => {
-      getAdapterConfig().onMediaUpdated?.({
-        injection: getContentScriptsInjectionClient(),
-      })
+      getAdapterConfig().onMediaUpdated?.(this.getAdapterConfigContext())
     })
 
     this.on(PlayerEvent.webVideoChanged, (newVideoEl) => {

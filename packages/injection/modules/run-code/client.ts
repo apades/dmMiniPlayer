@@ -1,12 +1,15 @@
 import { noop } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
+import { First } from '@root/utils/typeUtils'
 import { defineClient } from '../../define-client'
 
 export const runCodeClient = defineClient({
   name: 'run-code',
   setup: (ctx) => {
     return {
-      async run<T extends noop>(fn: T, args?: any[]): Promise<ReturnType<T>> {
+      async run<Arg extends any[], T extends (...args: Arg) => void>(
+        ...[fn, args]: First<Arg> extends never ? [T] : [T, Arg]
+      ): Promise<ReturnType<T>> {
         const res = await ctx.send('run', { function: fn.toString(), args })
 
         return res

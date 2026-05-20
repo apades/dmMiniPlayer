@@ -58,3 +58,5 @@ export type PartialIncludes<
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export type Nullable<T = void> = T | null | undefined
+
+export type First<T extends readonly any[]> = T[0]
