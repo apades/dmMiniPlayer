@@ -1,5 +1,26 @@
 import SubtitleDomCaptureManager from '@root/core/SubtitleManager/SubtitleDomCaptureManager'
+import { dq } from '@root/utils'
 import { ExtractPromise } from '@root/utils/typeUtils'
+
+const SUBTITLE_MENU_TEXT_RE =
+  /(字幕|字[幕]\/cc|字幕\/cc|subtitles?|captions?|closed captions?|cc|자막|sous-titres|subtítulos)/i
+
+function getYoutubeSubtitleMenuItem() {
+  const menuItems = dq<HTMLElement>(
+    '.ytp-popup.ytp-settings-menu .ytp-menuitem',
+  )
+
+  return menuItems.find((item) => {
+    const label =
+      item
+        .querySelector<HTMLElement>('.ytp-menuitem-label')
+        ?.textContent?.trim() ||
+      item.textContent?.trim() ||
+      ''
+    if (!label) return false
+    return SUBTITLE_MENU_TEXT_RE.test(label)
+  })
+}
 
 export default class YoutubeSubtitleManager extends SubtitleDomCaptureManager {
   #videoUrl = ''
@@ -22,8 +43,7 @@ export default class YoutubeSubtitleManager extends SubtitleDomCaptureManager {
       {
         type: 'event',
         event: new MouseEvent('click', { bubbles: true }),
-        targetEl:
-          '.ytp-popup.ytp-settings-menu .ytp-menuitem:nth-last-child(4)',
+        targetEl: getYoutubeSubtitleMenuItem,
         wait: 1000,
       },
       {

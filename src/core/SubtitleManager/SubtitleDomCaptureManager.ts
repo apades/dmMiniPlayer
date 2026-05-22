@@ -18,7 +18,7 @@ type DataNode =
   | {
       type: 'event'
       event: Event
-      targetEl: string
+      targetEl: string | (() => Element | undefined)
       wait?: number
     }
   | {
@@ -59,7 +59,10 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
         case 'event':
           let tar: Element | undefined
           for (let i = 0; i < 10; i++) {
-            tar = dq1(node.targetEl)
+            tar =
+              typeof node.targetEl === 'function'
+                ? node.targetEl()
+                : dq1(node.targetEl)
             if (tar) break
             await wait(300)
           }
