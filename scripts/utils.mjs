@@ -61,5 +61,11 @@ export function getDefinesConfig(
   type,
   extend = {},
 ) {
-  return omit(getDefinesObject(type, extend), ['process.env'])
+  const defines = omit(getDefinesObject(type, extend), ['process.env'])
+  Object.entries(defines).forEach(([key, val]) => {
+    if (typeof val !== 'string') return
+    if (!val.startsWith('"') || !val.endsWith('"')) return
+    defines[key] = JSON.stringify(val.slice(1, -1))
+  })
+  return defines
 }

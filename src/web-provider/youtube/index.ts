@@ -28,6 +28,13 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
 
   override async onPlayerInitd() {
     this.initSideSwitcherData()
+    const routeUnlisten = onRouteChange(() => {
+      setTimeout(() => {
+        this.update()
+        this.initSideSwitcherData()
+      }, 0)
+    })
+    this.addOnUnloadFn(routeUnlisten)
 
     const listDom = dq1('ytd-watch-next-secondary-results-renderer')
     if (listDom) {
@@ -43,16 +50,6 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
       this.addOnUnloadFn(() => {
         ob.disconnect()
       })
-    } else {
-      // 保底采用history模式，但会有些问题
-      this.addOnUnloadFn(
-        onRouteChange(() => {
-          setTimeout(() => {
-            this.update()
-            this.initSideSwitcherData()
-          }, 0)
-        }),
-      )
     }
   }
 

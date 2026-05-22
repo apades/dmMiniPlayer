@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import archiver from 'archiver'
 import packageData from '../package.json' with { type: 'json' }
-import { pr, spawn } from './utils.mjs'
+import { pr } from './utils.mjs'
 
 const args = process.argv.slice(2)
 const isSizeTest = args[0] === '--size-test'
@@ -37,7 +37,9 @@ async function main() {
   archive.directory(codeBuildOutDir, false)
   await archive.finalize()
   if (!isSizeTest) {
-    await spawn('rm', [pr(zipOutDir, getSizeTestName('*')), '-f'])
+    fs.readdirSync(zipOutDir)
+      .filter((name) => /^size-test-.*\.zip$/.test(name))
+      .forEach((name) => fs.removeSync(pr(zipOutDir, name)))
   }
 }
 

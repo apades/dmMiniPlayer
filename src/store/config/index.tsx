@@ -39,6 +39,14 @@ import config_danmaku from './danmaku'
 import { docPIPConfig } from './docPIP'
 import config_features from './features'
 
+type SettingsBackupFile = {
+  app?: string
+  schemaVersion?: number
+  exportedAt?: string
+  settings?: unknown
+  [key: string]: unknown
+}
+
 if (isDev) {
   configure({
     enforceActions: 'never',
@@ -255,7 +263,22 @@ export const baseConfigMap = {
         background: '#f5f5f5',
       }
       const handleExport = () => {
-        const data = JSON.stringify(configStore, null, 2)
+        const settings = Object.fromEntries(
+          Object.keys(baseConfigMap).map((key) => [
+            key,
+            configStore[key as keyof typeof configStore],
+          ]),
+        )
+        const data = JSON.stringify(
+          {
+            app: 'dmMiniPlayer',
+            schemaVersion: 1,
+            exportedAt: new Date().toISOString(),
+            settings,
+          },
+          null,
+          2,
+        )
         const blob = new Blob([data], { type: 'application/json' })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
@@ -273,11 +296,23 @@ export const baseConfigMap = {
           if (!file) return
           try {
             const text = await file.text()
-            const data = JSON.parse(text)
-            if (typeof data !== 'object' || data === null) {
+            const data = JSON.parse(text) as SettingsBackupFile
+            const rawSettings =
+              data && 'settings' in data ? data.settings : data
+            if (typeof rawSettings !== 'object' || rawSettings === null) {
               throw new Error('invalid')
             }
-            _updateConfig(data)
+            const importSettings = rawSettings as Record<string, unknown>
+            const settings = Object.fromEntries(
+              Object.keys(baseConfigMap)
+                .filter((key) => key in importSettings)
+                .map((key) => [
+                  key,
+                  importSettings[key],
+                ]),
+            )
+            if (!Object.keys(settings).length) throw new Error('invalid')
+            _updateConfig(settings)
             saveConfig()
             alert(t('settingPanel.importSuccess'))
             location.reload()

@@ -30,6 +30,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
   translateMode: keyof typeof translateMode = 'none'
 
   nowSubtitleItemsLabel: string = ''
+  protected refreshing = false
 
   protected onUnloadFn: (() => void)[] = []
   protected addOnUnloadFn(fn: () => void) {
@@ -59,8 +60,12 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
   }
 
   protected initing = false
+  private pendingInitVideo?: HTMLVideoElement
   async init(video: HTMLVideoElement) {
-    if (this.initing) return
+    if (this.initing) {
+      this.pendingInitVideo = video
+      return
+    }
     // console.trace('init subtitleManager')
     this.reset()
     this.video = video
@@ -72,8 +77,34 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
       toast.error(t('error.subtitleLoad'))
     }
     this.initd = true
+    const pendingInitVideo = this.pendingInitVideo
+    this.pendingInitVideo = undefined
+    if (pendingInitVideo && pendingInitVideo !== video) {
+      await this.init(pendingInitVideo)
+    }
   }
   onInit() {}
+  async refresh(options?: { keepActive?: boolean; useFirstWhenMissing?: boolean }) {
+    if (!this.video || this.refreshing) return
+    const keepActive = options?.keepActive ?? true
+    const useFirstWhenMissing = options?.useFirstWhenMissing ?? true
+    const prevLabel = this.nowSubtitleItemsLabel || this.activeSubtitleLabel
+    const prevShowSubtitle = this.showSubtitle
+
+    this.refreshing = true
+    await this.init(this.video)
+    this.refreshing = false
+
+    if (!keepActive || (!prevShowSubtitle && !useFirstWhenMissing)) return
+
+    const nextLabel =
+      this.subtitleItems.find((item) => item.label === prevLabel)?.label ||
+      (useFirstWhenMissing ? this.subtitleItems[0]?.label : '')
+    if (nextLabel) {
+      this.useSubtitle(nextLabel)
+      this.showSubtitle = prevShowSubtitle
+    }
+  }
   unload() {
     this.reset()
     this.onUnload()
@@ -288,6 +319,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
   reset() {
     this.subtitleItems.length = 0
     this.subtitleCache.clear()
+    this.nowSubtitleItemsLabel = ''
     this.resetSubtitleState()
     this.emit('reset')
   }

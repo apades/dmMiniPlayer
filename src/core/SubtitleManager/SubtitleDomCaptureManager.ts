@@ -10,6 +10,7 @@ type SubtitleDomConfig = {
   targetEls: {
     // type: 'sp' | 'top' | 'bottom'
     el?: string
+    text?: string
     container: string
   }[]
 }
@@ -38,11 +39,15 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
   }
 
   #labelToClickChildElMap = new Map<string, HTMLElement>()
+  #resetListenerInited = false
   override async onInit() {
-    this.on('reset', () => {
-      this.#hasObserveSubtitleDom = false
-      this.#observeSubtitleDomUnlisten()
-    })
+    if (!this.#resetListenerInited) {
+      this.#resetListenerInited = true
+      this.on('reset', () => {
+        this.#hasObserveSubtitleDom = false
+        this.#observeSubtitleDomUnlisten()
+      })
+    }
 
     const config = await this.getConfig()
 
@@ -52,7 +57,12 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
     for (const node of config) {
       switch (node.type) {
         case 'event':
-          const tar = dq1(node.targetEl)
+          let tar: Element | undefined
+          for (let i = 0; i < 10; i++) {
+            tar = dq1(node.targetEl)
+            if (tar) break
+            await wait(300)
+          }
           if (!tar) {
             console.log(`targetEl: ${node.targetEl} not found`)
             continue
@@ -62,15 +72,25 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
           await wait(node.wait ?? 50)
           break
         case 'subtitleElList':
-          await wait(500)
-          const container = dq(node.container).pop()
+          let container: Element | undefined
+          let childs: Element[] = []
+          for (let i = 0; i < 10; i++) {
+            await wait(500)
+            container = dq(node.container).pop()
+            if (!container) continue
+            childs = node.child
+              ? dq(node.child, container)
+              : Array.from(container.children)
+            if (childs.length) break
+          }
           if (!container) {
             console.log(`container: ${node.container} not found`)
             continue
           }
-          const childs = node.child
-            ? dq(node.child, container)
-            : Array.from(container.children)
+          if (!childs.length) {
+            console.log(`container: ${node.container} children not found`)
+            continue
+          }
 
           const filter = node.filter ?? ((list) => list)
           let unknownIndex = 0
@@ -104,6 +124,31 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
 
   protected override listenVideoEvents(): void {}
 
+  #staleReason = ''
+  #refreshTimer: ReturnType<typeof setTimeout> | undefined
+  protected markSubtitleDomStale(reason: string) {
+    this.#staleReason = reason
+  }
+
+  protected clearSubtitleDomStale() {
+    this.#staleReason = ''
+  }
+
+  protected get subtitleDomStale() {
+    return !!this.#staleReason
+  }
+
+  protected refreshSubtitleDomWhenStale(reason: string) {
+    if (!this.subtitleDomStale) return
+    clearTimeout(this.#refreshTimer)
+    this.#refreshTimer = setTimeout(() => {
+      if (!this.subtitleDomStale) return
+      console.log(`refresh subtitle dom: ${this.#staleReason} -> ${reason}`)
+      this.clearSubtitleDomStale()
+      this.refresh({ keepActive: true, useFirstWhenMissing: true })
+    }, 800)
+  }
+
   #hasObserveSubtitleDom = false
   #observeSubtitleDomUnlisten = () => {}
   private startObserveSubtitleDom() {
@@ -117,12 +162,17 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
       if (!container) throw Error('subtitle dom container not found')
       let preRow: SubtitleRow | undefined
       const observer = new MutationObserver((list) => {
-        const tar = list[0].target as HTMLElement
-        const el = node.el ? (dq1(node.el, container) ?? container) : container
+        const el = node.el ? dq1(node.el, container) : container
+        if (!el) return
         // console.log('update', el, el.textContent)
         preRow && this.emit('row-leave', preRow)
 
-        const text = (el.textContent ?? '').trim()
+        const textEls = node.text ? dq(node.text, el) : [el]
+        const text = textEls
+          .map((el) => el.textContent?.trim())
+          .filter(Boolean)
+          .join('\n')
+          .trim()
         if (!text) return
 
         const nowRow: SubtitleRow = {
@@ -148,6 +198,10 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
   override async autoloadSubtitle() {
     const subtitleItemsLabel = this.nowSubtitleItemsLabel
     if (!subtitleItemsLabel) return
+    if (this.subtitleDomStale) {
+      this.refreshSubtitleDomWhenStale('autoload')
+      return
+    }
     this.resetSubtitleState()
     this.activeSubtitleLabel = subtitleItemsLabel
 
@@ -162,6 +216,7 @@ export default abstract class SubtitleDomCaptureManager extends SubtitleManager 
 
   override unload(): void {
     super.unload()
+    clearTimeout(this.#refreshTimer)
     this.#observeSubtitleDomUnlisten()
   }
 }

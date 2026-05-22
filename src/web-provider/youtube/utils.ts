@@ -2,7 +2,13 @@ import type {
   SubtitleItem,
   SubtitleRow,
 } from '@root/core/SubtitleManager/types'
-import { dq, onceCall } from '@root/utils'
+import { dq, wait } from '@root/utils'
+
+const YOUTUBE_PLAYER_CLIENT_VERSION = '2.20250626.01.00'
+
+function getCurrentVideoId(url = location.href) {
+  return new URL(url).searchParams.get('v')
+}
 
 export async function getVideoInfo(url = location.href) {
   const htmlText = await fetch(url).then((res) => res.text())
@@ -21,10 +27,7 @@ export async function getVideoInfo(url = location.href) {
 export async function getSubtitles(
   url = location.href,
 ): Promise<SubtitleItem[]> {
-  const id = new URLSearchParams(location.search).get('v')
-  if (!id) return []
-
-  const subtitles = await getVideoSubtitlesInfo(id)
+  const subtitles = await getVideoCaptionTracks(url)
 
   console.log('subtitles', subtitles)
   return subtitles.map((s: any) => ({
@@ -33,10 +36,22 @@ export async function getSubtitles(
   }))
 }
 
-const getVideoSubtitlesInfo = onceCall(async (id: string | number) => {
-  // 这里1秒内重复请求会出现数据不对的情况，也不知道怎么触发了重复请求，就不管了
+export async function getVideoCaptionTracks(url = location.href) {
+  const id = getCurrentVideoId(url)
+  if (!id) return []
+
+  for (let i = 0; i < 6; i++) {
+    const captionTracks = await getVideoSubtitlesInfo(id)
+    if (captionTracks.length) return captionTracks
+    await wait(500 + i * 250)
+  }
+
+  return []
+}
+
+async function getVideoSubtitlesInfo(id: string | number) {
   const videoInfo = await fetch('/youtubei/v1/player', {
-    method: 'post',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -45,15 +60,17 @@ const getVideoSubtitlesInfo = onceCall(async (id: string | number) => {
       context: {
         client: {
           clientName: 'WEB',
-          clientVersion: '2.20250626.01.00',
+          clientVersion: YOUTUBE_PLAYER_CLIENT_VERSION,
         },
       },
     }),
     credentials: 'include',
   }).then((res) => res.json())
 
-  return videoInfo.captions.playerCaptionsTracklistRenderer.captionTracks
-})
+  return (
+    videoInfo?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? []
+  )
+}
 
 export async function getSubtitle(subtitleUrl: string): Promise<SubtitleRow[]> {
   const xmlText = await fetch(subtitleUrl, {
