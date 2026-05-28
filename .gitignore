@@ -2,6 +2,7 @@
 .DS_store
 node_modules
 userDataDir
+.vscode/chrome-debug-profile
 
 logs
 *.log
