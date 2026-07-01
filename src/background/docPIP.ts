@@ -71,6 +71,14 @@ onMessage(
   },
 )
 
+onMessage(WebextEvent.minimizeDocPIP, async ({ data }) => {
+  const docPIPTab = await mv3GetDocPIPTab(data.docPIPWidth)
+  if (!docPIPTab) throw Error('Not find docPIP tab')
+  // docPIP windows are driven as real Chrome windows, so `minimized` sends it
+  // to the taskbar the same way the move/resize handlers control the window.
+  await mv3UpdateTab(docPIPTab, { state: 'minimized' })
+})
+
 onMessage(WebextEvent.closePIP, () => {
   setDocPIPTabId(null)
 })
