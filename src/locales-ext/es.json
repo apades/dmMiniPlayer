@@ -21,6 +21,6 @@
     "message": "Activa/desactiva la velocidad doble. La velocidad predeterminada es 3x. Ve a la página de configuración para modificarla"
   },
   "quickHideToggle": {
-    "message": "Activar/desactivar la ocultación de PIP con cambio de posición"
+    "message": "Ocultar/mostrar rápidamente imagen en imagen"
   }
 }

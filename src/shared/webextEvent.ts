@@ -17,6 +17,8 @@ enum WebextEvent {
   moveDocPIPPos = 'moveDocPIPPos',
   resizeDocPIP = 'resizeDocPIP',
   updateDocPIPRect = 'updateDocPIPRect',
+  /**minimize the docPIP window to the OS taskbar */
+  minimizeToggleDocPIP = 'minimizeToggleDocPIP',
 
   beforeStartPIP = 'beforeStartPIP',
   afterStartPIP = 'afterStartPIP',
