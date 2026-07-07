@@ -295,57 +295,60 @@ export default abstract class WebProvider
           }
           case 'quickHideToggle': {
             if (!window.documentPictureInPicture?.window) return
+            sendMessage(WebextEvent.minimizeToggleDocPIP, {
+              docPIPWidth: window.documentPictureInPicture.window.innerWidth,
+            })
             // !不能完全隐藏，只能通过其他方式隐藏 Error: Invalid value for bounds. Bounds must be at least 50% within visible screen space.
-            const docWin = window.documentPictureInPicture.window
-            if (this.isQuickHiding) {
-              docWin.document.body.removeChild(coverDom)
-              docWin.resizeTo(lastW, lastH)
-              if (!lastIsPause) {
-                videoEl.play()
-              }
+            // const docWin = window.documentPictureInPicture.window
+            // if (this.isQuickHiding) {
+            //   docWin.document.body.removeChild(coverDom)
+            //   docWin.resizeTo(lastW, lastH)
+            //   if (!lastIsPause) {
+            //     videoEl.play()
+            //   }
 
-              await wait(10)
-              await sendMessage(WebextEvent.moveDocPIPPos, {
-                x: lastX,
-                y: lastY,
-                docPIPWidth: docWin.innerWidth,
-              })
-              this.isQuickHiding = false
-            } else {
-              lastX = docWin.screenLeft
-              lastY = docWin.screenTop
-              lastW = docWin.outerWidth
-              lastH = docWin.outerHeight
-              lastIsPause = videoEl.paused
+            //   await wait(10)
+            //   await sendMessage(WebextEvent.moveDocPIPPos, {
+            //     x: lastX,
+            //     y: lastY,
+            //     docPIPWidth: docWin.innerWidth,
+            //   })
+            //   this.isQuickHiding = false
+            // } else {
+            //   lastX = docWin.screenLeft
+            //   lastY = docWin.screenTop
+            //   lastW = docWin.outerWidth
+            //   lastH = docWin.outerHeight
+            //   lastIsPause = videoEl.paused
 
-              this.webVideo.pause()
-              docWin.document.body.appendChild(coverDom)
-              const screen = docWin.screen
+            //   this.webVideo.pause()
+            //   docWin.document.body.appendChild(coverDom)
+            //   const screen = docWin.screen
 
-              const minWidth = 240,
-                minHeight = 52
-              const [left, top] = (() => {
-                switch (configStore.quickHide_pos) {
-                  case Position.topLeft:
-                    return [0, 0]
-                  case Position.topRight:
-                    return [screen.width - minWidth, 0]
-                  case Position.bottomLeft:
-                    return [0, screen.height - minHeight]
-                  case Position.bottomRight:
-                    return [screen.width - minWidth, screen.height - minHeight]
-                }
-              })()
+            //   const minWidth = 240,
+            //     minHeight = 52
+            //   const [left, top] = (() => {
+            //     switch (configStore.quickHide_pos) {
+            //       case Position.topLeft:
+            //         return [0, 0]
+            //       case Position.topRight:
+            //         return [screen.width - minWidth, 0]
+            //       case Position.bottomLeft:
+            //         return [0, screen.height - minHeight]
+            //       case Position.bottomRight:
+            //         return [screen.width - minWidth, screen.height - minHeight]
+            //     }
+            //   })()
 
-              await sendMessage(WebextEvent.updateDocPIPRect, {
-                left,
-                top,
-                width: minWidth,
-                height: minHeight,
-                docPIPWidth: docWin.innerWidth,
-              })
-              this.isQuickHiding = true
-            }
+            //   await sendMessage(WebextEvent.updateDocPIPRect, {
+            //     left,
+            //     top,
+            //     width: minWidth,
+            //     height: minHeight,
+            //     docPIPWidth: docWin.innerWidth,
+            //   })
+            //   this.isQuickHiding = true
+            // }
             break
           }
         }

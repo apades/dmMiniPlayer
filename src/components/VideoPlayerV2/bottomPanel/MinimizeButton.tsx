@@ -22,7 +22,7 @@ const MinimizeButton: FC = () => {
     if (!pipWindow) return
     // pause the source video on minimize
     webVideo?.pause()
-    sendMessage(WebextEvent.minimizeDocPIP, {
+    sendMessage(WebextEvent.minimizeToggleDocPIP, {
       docPIPWidth: pipWindow.innerWidth,
     })
   })

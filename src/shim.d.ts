@@ -49,7 +49,7 @@ declare module 'webext-bridge' {
     [WebextEvent.updateDocPIPRect]: {
       docPIPWidth: number
     } & Partial<{ left: number; top: number; width: number; height: number }>
-    [WebextEvent.minimizeDocPIP]: { docPIPWidth: number }
+    [WebextEvent.minimizeToggleDocPIP]: { docPIPWidth: number }
 
     [WebextEvent.afterStartPIP]: { width: number }
 
