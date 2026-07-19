@@ -1,5 +1,5 @@
 import type { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
-import parser from 'node-html-parser'
+import { parse as parser } from 'node-html-parser'
 import { getAnyObjToString, onceCallWithMap } from '@root/utils'
 import { DanmakuGetter } from '../..'
 

@@ -1,4 +1,4 @@
-import domParser from 'node-html-parser'
+import { parse as domParser } from 'node-html-parser'
 import type { SubtitleRow } from '../types'
 
 // TODO 一些复杂的pos之类的？
