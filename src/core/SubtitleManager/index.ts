@@ -1,20 +1,27 @@
-import { addEventListener, readTextFromFile, tryCatch } from '@root/utils'
+import {
+  addEventListener,
+  enumArray,
+  readTextFromFile,
+  tryCatch,
+} from '@root/utils'
 import Events2 from '@root/utils/Events2'
 import { autorun, makeObservable, observable, runInAction } from 'mobx'
 import { ERROR_MSG } from '@root/shared/errorMsg'
 import toast from 'react-hot-toast'
 import { getNowLang, t } from '@root/utils/i18n'
-import { googleTranslate } from '@root/utils/translate'
+import { bingTranslate, googleTranslate } from '@root/utils/translate'
 import { PlayerComponent } from '../types'
 import assParser from './subtitleParser/ass'
 import srtParser from './subtitleParser/srt'
 import type { SubtitleItem, SubtitleManagerEvents, SubtitleRow } from './types'
 
-export const translateMode = {
-  double: t('subtitleTranslate.double'),
-  single: t('subtitleTranslate.single'),
-  none: t('subtitleTranslate.none'),
-} as const
+export const TranslateMode = enumArray(['none', 'single', 'double'] as const)
+export const TranslateService = enumArray([
+  'Google',
+  'Bing',
+  /*  'AI' */
+] as const)
+
 class SubtitleManager extends Events2<SubtitleManagerEvents> {
   initd = false
   subtitleItems: SubtitleItem[] = []
@@ -27,7 +34,8 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
   activeRows = new Set<SubtitleRow>()
   activeSubtitleLabel: string = ''
   showSubtitle = false
-  translateMode: keyof typeof translateMode = 'none'
+  translateMode: keyof typeof TranslateMode = TranslateMode.none
+  translateService: keyof typeof TranslateService = TranslateService.Google
 
   nowSubtitleItemsLabel: string = ''
 
@@ -49,6 +57,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
       showSubtitle: true,
       translateMode: true,
       nowSubtitleItemsLabel: true,
+      translateService: true,
     })
 
     this.addOnUnloadFn(
@@ -202,6 +211,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
 
   protected async autoloadSubtitle() {
     const subtitleItemsLabel = this.nowSubtitleItemsLabel
+    const translateService = this.translateService
     const translateMode = this.translateMode
     if (!subtitleItemsLabel) return
     this.resetSubtitleState()
@@ -227,13 +237,30 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
           return
         }
 
-        if (this.translateMode !== 'none') {
-          const [err, translatedTexts] = await tryCatch(() =>
-            googleTranslate(
-              subtitleRows.map((row) => row.text),
-              getNowLang(),
-            ),
-          )
+        if (this.translateMode !== TranslateMode.none) {
+          const loadingId = toast.loading('翻译中...')
+          const [err, translatedTexts] = await tryCatch(() => {
+            switch (translateService) {
+              case TranslateService.Google:
+                return googleTranslate(
+                  subtitleRows.map((row) => row.text),
+                  getNowLang(),
+                )
+              case TranslateService.Bing:
+                return bingTranslate(
+                  subtitleRows.map((row) => row.text),
+                  getNowLang(),
+                )
+              // case TranslateService.AI: {
+              //   // TODO
+              //   return []
+              // }
+              default: {
+                return []
+              }
+            }
+          })
+          toast.dismiss(loadingId)
           if (!err) {
             switch (this.translateMode) {
               case 'single':
@@ -261,6 +288,10 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
             }
           } else {
             toast.error(t('error.translateFail'))
+            this.emit('error', {
+              type: 'translate',
+              text: '',
+            })
           }
         }
 

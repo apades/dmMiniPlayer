@@ -21,4 +21,8 @@ export type SubtitleManagerEvents = {
   'row-enter': SubtitleRow
   'row-leave': SubtitleRow
   reset: void
+  error: {
+    type: 'translate' | 'parse' | 'other'
+    text: string
+  }
 }

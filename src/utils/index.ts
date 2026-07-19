@@ -655,3 +655,15 @@ export function configStringArrValid(tar: string, configs: string[] = []) {
 export function normalizePath(path: string) {
   return path.replace(/\\/g, '/')
 }
+
+export function enumArray<T extends readonly string[]>(keys: T) {
+  return keys.reduce(
+    (acc, key) => {
+      ;(acc as any)[key] = key
+      return acc
+    },
+    {} as {
+      [K in T[number]]: K
+    },
+  )
+}

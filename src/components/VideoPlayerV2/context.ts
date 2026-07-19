@@ -20,7 +20,7 @@ export type ContextData = {
 
   eventBus: EventBus
   videoPlayer: VideoPlayerBase
-  subtitleManager?: SubtitleManager
+  subtitleManager: SubtitleManager
   danmakuEngine?: DanmakuEngine
   danmakuSender?: DanmakuSender
   sideSwitcher?: SideSwitcher
@@ -36,6 +36,7 @@ export const defaultVpContext: ContextData = {
   eventBus,
   keyBinding,
   videoPlayer: null as any,
+  subtitleManager: new SubtitleManager(),
   videoPlayerRef: { current: null },
   setContext: () => {},
 }
