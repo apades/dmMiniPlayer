@@ -215,7 +215,11 @@
   "subtitleTranslate": {
     "single": "Soltero",
     "double": "Doble",
-    "none": "Ninguno"
+    "none": "Ninguno",
+    "enable": "Traducir subtítulos",
+    "bilingual": "Subtítulos bilingües",
+    "service": "Servicio de traducción",
+    "translating": "Traduciendo..."
   },
   "hidden": "Oculto",
   "hover": "Flotar",

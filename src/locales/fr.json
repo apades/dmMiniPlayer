@@ -215,7 +215,11 @@
   "subtitleTranslate": {
     "single": "Célibataire",
     "double": "Double",
-    "none": "Aucun"
+    "none": "Aucun",
+    "enable": "Traduire les sous-titres",
+    "bilingual": "Sous-titres bilingues",
+    "service": "Service de traduction",
+    "translating": "Traduction en cours..."
   },
   "hidden": "Caché",
   "hover": "Flotter",

@@ -238,7 +238,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
         }
 
         if (this.translateMode !== TranslateMode.none) {
-          const loadingId = toast.loading('翻译中...')
+          const loadingId = toast.loading(t('subtitleTranslate.translating'))
           const [err, translatedTexts] = await tryCatch(() => {
             switch (translateService) {
               case TranslateService.Google:

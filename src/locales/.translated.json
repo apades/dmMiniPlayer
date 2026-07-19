@@ -206,7 +206,11 @@
   "subtitleTranslate": {
     "single": "Single",
     "double": "Double",
-    "none": "None"
+    "none": "None",
+    "enable": "Translate subtitle",
+    "bilingual": "Bilingual subtitle",
+    "service": "Translate service",
+    "translating": "Translating..."
   },
   "hidden": "Hidden",
   "hover": "Hover",

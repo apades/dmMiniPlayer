@@ -215,7 +215,11 @@
   "subtitleTranslate": {
     "single": "單行",
     "double": "雙行",
-    "none": "無操作"
+    "none": "無操作",
+    "enable": "翻譯字幕",
+    "bilingual": "雙語字幕",
+    "service": "翻譯服務",
+    "translating": "翻譯中..."
   },
   "hidden": "隐藏",
   "hover": "鼠标悬停",

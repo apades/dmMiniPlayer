@@ -181,7 +181,7 @@ const TranslatePanel: FC = observer((props) => {
   return (
     <div className="flex-col px-2 py-1 gap-2 text-xs [&_.label]:mb-1 [&_.label-switch]:f-i-center [&_.label-switch]:justify-between [&_.label-switch]:gap-4">
       <div className="label-switch">
-        翻译字幕{' '}
+        {t('subtitleTranslate.enable')}{' '}
         <input
           type="checkbox"
           checked={isOpen}
@@ -195,14 +195,14 @@ const TranslatePanel: FC = observer((props) => {
         )}
       >
         <div className="label-switch">
-          双语字幕
+          {t('subtitleTranslate.bilingual')}
           <input
             type="checkbox"
             checked={isShowOriginalLang}
             onChange={(e) => setShowOriginalLang(e.target.checked)}
           />
         </div>
-        <div className="label">翻译服务</div>
+        <div className="label">{t('subtitleTranslate.service')}</div>
         <select
           className="w-full bg-transparent border-[1px] border-gray-300 rounded-[4px]"
           name="translateService"

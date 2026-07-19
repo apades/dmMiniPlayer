@@ -215,7 +215,11 @@
   "subtitleTranslate": {
     "single": "シングル",
     "double": "ダブル",
-    "none": "なし"
+    "none": "なし",
+    "enable": "字幕を翻訳",
+    "bilingual": "バイリンガル字幕",
+    "service": "翻訳サービス",
+    "translating": "翻訳中..."
   },
   "hidden": "隠れた",
   "hover": "ホバー",

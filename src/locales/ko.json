@@ -215,7 +215,11 @@
   "subtitleTranslate": {
     "single": "하나의",
     "double": "더블",
-    "none": "없음"
+    "none": "없음",
+    "enable": "자막 번역",
+    "bilingual": "이중 언어 자막",
+    "service": "번역 서비스",
+    "translating": "번역 중..."
   },
   "hidden": "숨겨진",
   "hover": "호버",
