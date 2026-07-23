@@ -1,3 +1,8 @@
+## v0.6.62
+1. Fixed an error when loading custom danmaku
+2. Improved the extension global shortcut hide/show behavior so the picture-in-picture window can be fully hidden
+3. Improved bilingual subtitle support
+
 ## v0.6.61
 Fixes:
 1. Fixed an issue where videos could pause after enabling automatic picture-in-picture on Bilibili
