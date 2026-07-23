@@ -268,8 +268,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
                   rows: subtitleRows.map((d, i) => {
                     return {
                       ...d,
-                      text: translatedTexts[i],
-                      htmlText: translatedTexts[i],
+                      translatedText: translatedTexts[i],
                     }
                   }),
                 }
@@ -279,8 +278,7 @@ class SubtitleManager extends Events2<SubtitleManagerEvents> {
                   rows: subtitleRows.map((d, i) => {
                     return {
                       ...d,
-                      text: `${d.text}\n${translatedTexts[i]}`,
-                      htmlText: `${d.text}\n${translatedTexts[i]}`,
+                      translatedText: translatedTexts[i],
                     }
                   }),
                 }

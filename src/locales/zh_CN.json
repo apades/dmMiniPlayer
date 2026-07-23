@@ -92,6 +92,7 @@
     "subtitleFontWeight": "字体宽度",
     "subtitleFontOpacity": "字体透明度",
     "subtitleFontFamily": "字体",
+    "subtitleOriginTextFontSizeScaleInDoubleMode": "原始字体大小（双语字幕）",
     "subtitleAutoSizeDesc": "与弹幕的[动态字体大小]相同",
     "floatButton": "浮动按钮",
     "floatButtonPos": "位置",

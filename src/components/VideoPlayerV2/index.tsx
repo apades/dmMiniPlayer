@@ -447,7 +447,7 @@ const VideoPlayerV2Inner = observer(
             <Toast />
           </div>
 
-          <div className="absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
+          <div className="vp-subtitle-container absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
             <SubtitleText subtitleManager={subtitleManager} />
           </div>
 

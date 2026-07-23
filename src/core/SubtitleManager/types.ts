@@ -9,6 +9,8 @@ export type SubtitleRow = {
   startTime: number
   endTime: number
 
+  translatedText?: string
+
   text: string
   /**给Html用的 */
   htmlText: string
