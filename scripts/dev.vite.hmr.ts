@@ -12,11 +12,7 @@ const version = packageJson.version
 
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        // plugins: ['babel-plugin-react-compiler'],
-      },
-    }),
+    react(),
     {
       name: 'onSuccess',
       configResolved(config) {

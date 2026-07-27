@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import packageData from '../package.json' with { type: 'json' }
 import { pr, spawn } from './utils.mjs'
 
@@ -30,7 +30,7 @@ const getName = () => {
 }
 
 async function main() {
-  const archive = archiver('zip', {
+  const archive = new ZipArchive({
     zlib: { level: 9 },
   })
   archive.pipe(fs.createWriteStream(pr(zipOutDir, getName())))
