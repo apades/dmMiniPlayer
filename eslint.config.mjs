@@ -1,19 +1,22 @@
-import globals from 'globals'
-import tsEslint from 'typescript-eslint'
+// @ts-check
+import { defineConfig, globalIgnores } from 'eslint/config'
 import prettierConfig from 'eslint-config-prettier'
+import { flatConfigs as importFlatConfigs } from 'eslint-plugin-import-x'
 import prettierRecommendConfig from 'eslint-plugin-prettier/recommended'
-import importPlugin from 'eslint-plugin-import'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
-/**@type {import('eslint').Linter.Config} */
-export default tsEslint.config(
-  tsEslint.configs.recommended,
-  importPlugin.flatConfigs.recommended,
+export default defineConfig(
+  globalIgnores(['**/dist/*', '**/lib/*', '**/build/*']),
   {
-    ignores: ['**/dist/*', '**/lib/*', '**/build/*'],
-  },
-  {
+    files: ['**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}'],
+    extends: [
+      tseslint.configs.recommended,
+      importFlatConfigs.recommended,
+      prettierConfig,
+      prettierRecommendConfig,
+    ],
     languageOptions: {
-      // parser,
       globals: {
         ...globals.node,
         ...globals.browser,
@@ -21,40 +24,38 @@ export default tsEslint.config(
         ...globals.es2025,
       },
     },
-    // plugins: {
-    //   tsEslintPlugin,
-    // },
     rules: {
       'no-console': 'off',
       'prettier/prettier': 'error',
-      'import/extensions': 'off',
-      'import/no-unresolved': 'off',
+      'import-x/extensions': 'off',
+      'import-x/no-unresolved': 'off',
+      'import-x/named': 'off',
+      'import-x/default': 'off',
+      'import-x/no-named-as-default': 'off',
+      'import-x/no-named-as-default-member': 'off',
       'no-plusplus': 'off',
       'require-await': 'off',
       'no-unused-vars': 'off',
       'no-useless-escape': 'off',
       'no-proto': 'off',
-      // 链式判断
+      // Short-circuit / optional chaining expressions
       'no-unused-expressions': 'off',
-      'vue/no-v-html': 'off',
-      camelcase: 0,
-      '@typescript-eslint/no-var-requires': 0,
-      '@typescript-eslint/no-unused-vars': 0,
-      'prefer-const': 0,
-      // 临时的
-      '@typescript-eslint/no-explicit-any': 0,
-      'react-hooks/exhaustive-deps': 0,
-      '@typescript-eslint/no-extra-semi': 0,
-      '@typescript-eslint/no-empty-function': 0,
-      'no-var': 0,
-      '@typescript-eslint/ban-types': 0,
-      '@typescript-eslint/no-non-null-assertion': 0,
-      '@typescript-eslint/no-empty-object-type': 0,
-      '@typescript-eslint/no-unused-expressions': 0,
-      '@typescript-eslint/no-require-imports': 0,
-      '@typescript-eslint/no-this-alias': 0,
-      'import/named': 0,
-      'import/order': [
+      camelcase: 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'prefer-const': 'off',
+      // Temporary
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-extra-semi': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      'no-var': 'off',
+      '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-this-alias': 'off',
+      'import-x/order': [
         'error',
         {
           groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
@@ -74,6 +75,4 @@ export default tsEslint.config(
       ],
     },
   },
-  prettierConfig,
-  prettierRecommendConfig,
 )

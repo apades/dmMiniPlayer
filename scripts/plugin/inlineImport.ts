@@ -4,7 +4,6 @@
 import path from 'path'
 import fs from 'fs/promises'
 import less from 'less'
-// eslint-disable-next-line import/default
 import loadConfig, { type Result } from 'postcss-load-config'
 import postcss from 'postcss'
 import { transform } from 'esbuild'
