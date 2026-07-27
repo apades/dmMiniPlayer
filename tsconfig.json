@@ -28,7 +28,9 @@
     "./src/**/*",
     "./scripts/**/*",
     "./packages/**/*",
-    "./e2e/**/*"
+    "./e2e/**/*",
+    "./playwright.config.ts",
+    "./tailwind.config.ts"
   ],
   "exclude": ["node_modules"]
 }
