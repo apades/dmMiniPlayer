@@ -104,6 +104,7 @@ type DqTarType =
   | Document
   | ValueOf<HTMLElementTagNameMap>
   | Element
+  | ShadowRoot
   | undefined
   | null
 export const dq: {

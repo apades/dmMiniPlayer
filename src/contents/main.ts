@@ -34,6 +34,7 @@ if (isTop) {
   console.log('run content')
   main()
 } else {
+  // only top
   // 处理top发来的请求检测video标签
   onPostMessage(PostMessageEvent.detectVideo_req, () => {
     postMessageToTop(
@@ -50,6 +51,34 @@ if (isTop) {
     )
   })
 }
+// all frames and top
+// Set crossOrigin on all video elements to enable captureStream()
+function setCrossOriginOnVideo(video: HTMLVideoElement) {
+  if (video.src.startsWith('blob:')) return
+  if (video.crossOrigin) return
+  video.crossOrigin = 'anonymous'
+}
+dq('*').forEach((node) => {
+  if (!node.shadowRoot) return
+  dq('video', node.shadowRoot).forEach((v) => {
+    setCrossOriginOnVideo(v)
+  })
+})
+new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.addedNodes.forEach((node) => {
+      if (node.nodeType !== Node.ELEMENT_NODE) return
+      if ((node as HTMLElement).tagName === 'VIDEO') {
+        setCrossOriginOnVideo(node as HTMLVideoElement)
+        return
+      }
+      const video = dq('video', node as HTMLElement)
+      video.forEach((v) => {
+        setCrossOriginOnVideo(v)
+      })
+    })
+  })
+}).observe(document.body, { childList: true, subtree: true })
 
 function main() {
   let provider: WebProvider | undefined
