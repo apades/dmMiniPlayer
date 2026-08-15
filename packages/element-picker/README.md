@@ -40,6 +40,9 @@ const single = new ElementPicker({ type: 'single' })
 single.on('select', (els) => {
   console.log(els[0], single.cssSelector)
 })
+single.on('confirm', ({ elements, cssSelector }) => {
+  console.log(elements, cssSelector)
+})
 single.start()
 
 // 点击选取一组相似 DOM；右键点多余项，清除导致多选的多余特征
@@ -57,7 +60,8 @@ list.stop()
 list.destroy()
 ```
 
-- `start()` 开始鼠标选取，`Esc` 结束选取
+- `start()` 开始鼠标选取；面板会显示当前 `type`、生成的 selector，以及 Confirm / Close；`list` 模式额外显示选中数量
+- Confirm 触发 `confirm` 并收起 UI；Close 或 `Esc` 触发 `close` 并销毁
 - `list` 模式：左键提取当前 DOM 特征并选中同类节点；右键点中已多选出的多余 DOM，去掉其特征后重新匹配
 - `elements` / `features` / `cssSelector` 可随时读取当前结果
 

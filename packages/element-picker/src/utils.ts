@@ -31,11 +31,21 @@ const IGNORED_ATTRS = new Set([
   'aria-hidden',
 ])
 
+export function isPickerUi(el: Element): boolean {
+  if (el.closest('[data-element-picker]')) return true
+  const root = el.getRootNode()
+  return (
+    root instanceof ShadowRoot &&
+    root.host instanceof HTMLElement &&
+    root.host.dataset.elementPicker != null
+  )
+}
+
 export function isPickable(el: EventTarget | null): el is HTMLElement {
   return (
     el instanceof HTMLElement &&
     !IGNORED_TAGS.has(el.tagName) &&
-    el.dataset.elementPicker == null
+    !isPickerUi(el)
   )
 }
 

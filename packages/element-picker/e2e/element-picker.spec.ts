@@ -102,6 +102,51 @@ test.describe('ElementPicker', () => {
     await expect.poll(async () => (await getState(page)).count).toBe(5)
   })
 
+  test('panel shows mode and selector, confirm keeps the result', async ({
+    page,
+  }) => {
+    await createPicker(page, { selector: ['.card'] })
+    const panel = page.locator('[data-element-picker="panel"]')
+    await expect(panel.locator('[data-role="mode"]')).toHaveText('list')
+    await expect(panel.locator('[data-role="count"]')).toHaveText('4')
+    await expect(panel.locator('[data-role="query"]')).toHaveText('.card')
+
+    await page.evaluate(() => {
+      const target = window as Window & {
+        __confirmResult?: { count: number; selector: string }
+      }
+      target.__confirmResult = undefined
+      window.__elementPickerPlayground.getPicker()!.on('confirm', (payload) => {
+        target.__confirmResult = {
+          count: payload.elements.length,
+          selector: payload.cssSelector,
+        }
+      })
+    })
+    await panel.getByRole('button', { name: 'Confirm' }).click()
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            (window as Window & { __confirmResult?: { count: number } })
+              .__confirmResult,
+        ),
+      )
+      .toEqual({ count: 4, selector: '.card' })
+    await expect(panel).toHaveCount(0)
+  })
+
+  test('panel close destroys the picker', async ({ page }) => {
+    await createPicker(page, { type: 'single' })
+    const panel = page.locator('[data-element-picker="panel"]')
+    await expect(panel).toBeVisible()
+    await panel.getByRole('button', { name: 'Close' }).click()
+    const state = await getState(page)
+    expect(state.count).toBe(0)
+    expect(state.overlay).toBe(false)
+    await expect(panel).toHaveCount(0)
+  })
+
   test('destroy removes overlay and selection', async ({ page }) => {
     await createPicker(page, { selector: ['.card'] })
     await page.evaluate(() => window.__elementPickerPlayground.destroyPicker())

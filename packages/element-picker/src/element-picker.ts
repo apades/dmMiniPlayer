@@ -8,6 +8,7 @@ import {
   refineFeatures,
 } from './features'
 import { HighlightOverlay } from './overlay'
+import { PickerPanel } from './panel'
 import type {
   ElementFeature,
   ElementPickerEvents,
@@ -48,6 +49,7 @@ export class ElementPicker {
 
   private doc: Document
   private overlay: HighlightOverlay
+  private panel: PickerPanel
   private picking = false
   private observer: MutationObserver | null = null
   private providedSelector = ''
@@ -73,7 +75,7 @@ export class ElementPicker {
   }
 
   private onClick = (event: MouseEvent) => {
-    if (event.button !== 0) return
+    if (event.button !== 0 || this.isPickerEvent(event)) return
     const el = deepElementFromPoint(this.doc, event.clientX, event.clientY)
     if (!el) return
     event.preventDefault()
@@ -82,7 +84,7 @@ export class ElementPicker {
   }
 
   private onContextMenu = (event: MouseEvent) => {
-    if (this.type !== 'list') return
+    if (this.type !== 'list' || this.isPickerEvent(event)) return
     const el = deepElementFromPoint(this.doc, event.clientX, event.clientY)
     if (!el) return
     event.preventDefault()
@@ -93,7 +95,7 @@ export class ElementPicker {
   private onKeyDown = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return
     event.preventDefault()
-    this.stop()
+    this.close()
   }
 
   private onDomChange = debounce(() => {
@@ -105,11 +107,13 @@ export class ElementPicker {
     this.doc = document
     this.scope = document
     this.overlay = new HighlightOverlay(this.doc)
+    this.panel = this.createPanel()
 
     if (options.selector != null) {
       this.applySelector(options.selector)
-      this.ensureOverlay()
+      this.ensureUi()
       this.overlay.setSelected(this.currentElements)
+      this.syncPanel()
       if (this.shouldObserve()) this.watchDom()
     }
   }
@@ -130,8 +134,9 @@ export class ElementPicker {
   start(): this {
     if (this.picking) return this
     this.picking = true
-    this.ensureOverlay()
+    this.ensureUi()
     this.overlay.setSelected(this.currentElements)
+    this.syncPanel()
 
     this.savedCursor = this.doc.documentElement.style.cursor
     this.doc.documentElement.style.cursor = 'crosshair'
@@ -161,10 +166,29 @@ export class ElementPicker {
     return this
   }
 
+  confirm(): this {
+    this.emit('confirm', {
+      elements: this.elements,
+      cssSelector: this.cssSelector,
+    })
+    this.stop()
+    this.unwatchDom()
+    this.overlay.unmount()
+    this.panel.unmount()
+    return this
+  }
+
+  close(): this {
+    this.emit('close', undefined)
+    this.destroy()
+    return this
+  }
+
   destroy(): void {
     this.stop()
     this.unwatchDom()
     this.overlay.unmount()
+    this.panel.unmount()
     this.positives = []
     this.negatives = []
     this.currentElements = []
@@ -331,6 +355,7 @@ export class ElementPicker {
     const prev = this.currentElements
     this.currentElements = elements
     this.overlay.setSelected(elements)
+    this.syncPanel()
 
     const changed =
       prev.length !== elements.length ||
@@ -366,16 +391,44 @@ export class ElementPicker {
     if (this.doc === doc && this.overlay) return
     const selected = this.currentElements
     this.overlay?.unmount()
+    this.panel?.unmount()
     this.doc = doc
     this.overlay = new HighlightOverlay(doc)
+    this.panel = this.createPanel()
     if (selected.length) {
-      this.overlay.mount(doc.documentElement)
+      this.ensureUi()
       this.overlay.setSelected(selected)
+      this.syncPanel()
     }
   }
 
-  private ensureOverlay(): void {
+  private createPanel(): PickerPanel {
+    return new PickerPanel(this.doc, {
+      onConfirm: () => this.confirm(),
+      onClose: () => this.close(),
+    })
+  }
+
+  private ensureUi(): void {
     this.overlay.mount(this.doc.documentElement)
+    this.panel.mount(this.doc.documentElement)
+  }
+
+  private syncPanel(): void {
+    this.panel.update({
+      type: this.type,
+      cssSelector: this.cssSelector,
+      count: this.currentElements.length,
+    })
+  }
+
+  private isPickerEvent(event: Event): boolean {
+    return event
+      .composedPath()
+      .some(
+        (node) =>
+          node instanceof HTMLElement && node.dataset.elementPicker != null,
+      )
   }
 }
 

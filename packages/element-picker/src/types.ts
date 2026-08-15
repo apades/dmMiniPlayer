@@ -23,10 +23,17 @@ export type ElementFeature =
   | { kind: 'class'; value: string }
   | { kind: 'attr'; name: string; value: string }
 
+export type ElementPickerConfirmPayload = {
+  elements: HTMLElement[]
+  cssSelector: string
+}
+
 export type ElementPickerEvents = {
   hover: HTMLElement | null
   select: HTMLElement[]
   change: HTMLElement[]
   exclude: HTMLElement
+  confirm: ElementPickerConfirmPayload
+  close: undefined
   stop: undefined
 }
