@@ -111,6 +111,7 @@ export class HighlightOverlay {
       }
       syncBox(box, el)
     }
+    this.scheduleRefresh()
   }
 
   refresh(): void {

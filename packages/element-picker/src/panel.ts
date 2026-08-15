@@ -50,6 +50,7 @@ const PANEL_CSS = `
     display: flex;
     gap: 8px;
     flex-shrink: 0;
+    margin-left: auto;
   }
   button {
     border: 1px solid #2a3542;

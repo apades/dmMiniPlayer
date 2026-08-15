@@ -19,7 +19,8 @@
     "playground": "vite --config playground/vite.config.ts",
     "playground:build": "vite build --config playground/vite.config.ts",
     "test": "playwright test",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "release": "pnpm build && pnpm publish --access public"
   },
   "publishConfig": {
     "access": "public",
