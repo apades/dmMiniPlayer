@@ -34,8 +34,15 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - run: pnpm --filter @apad/element-picker playground:build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/element-picker/
+      - name: Nest playground under /element-picker
+        run: |
+          mkdir -p pages/element-picker
+          cp -a packages/element-picker/playground/dist/. pages/element-picker/
+          printf '%s\n' '<!doctype html><meta http-equiv="refresh" content="0;url=./element-picker/">' > pages/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/element-picker/playground/dist
+          path: pages
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -1,6 +1,6 @@
 {
   "name": "@apad/element-picker",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Pick DOM elements from a page by clicking, with single and list modes",
   "type": "module",
   "main": "./src/index.ts",

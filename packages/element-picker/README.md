@@ -1,5 +1,7 @@
 # @apad/element-picker
 
+[live demo](https://apades.github.io/dmMiniPlayer/element-picker)
+
 ## Options
 
 ```ts
@@ -67,6 +69,6 @@ list.destroy()
 
 ```bash
 pnpm playground        # http://localhost:5174
-pnpm playground:build  # GitHub Pages 静态资源
+pnpm playground:build  # GitHub Pages 静态资源，部署在 /element-picker
 pnpm test
 ```
