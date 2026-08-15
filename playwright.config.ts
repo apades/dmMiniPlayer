@@ -4,7 +4,12 @@
 import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: '.',
+  testMatch: [
+    'e2e/**/*.spec.ts',
+    'e2e/**/*.test.ts',
+    'packages/element-picker/e2e/**/*.spec.ts',
+  ],
   retries: 2,
   // webServer: {
   //   command: 'npm run dev',

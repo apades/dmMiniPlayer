@@ -1,9 +1,13 @@
 import { expect, test, type Page } from '@playwright/test'
 import type { ElementPickerOptions } from '../src'
 
+const PLAYGROUND_URL = process.env.PLAYGROUND_URL || 'http://localhost:5174'
+
 async function createPicker(page: Page, options: ElementPickerOptions) {
   return page.evaluate((opts) => {
-    return window.__elementPickerPlayground.createPicker(opts).type
+    return window.__elementPickerPlayground.createPicker(
+      opts as ElementPickerOptions,
+    ).type
   }, options)
 }
 
@@ -26,7 +30,7 @@ async function getState(page: Page) {
 
 test.describe('ElementPicker', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
+    await page.goto(PLAYGROUND_URL)
     await page.waitForFunction(() => !!window.__elementPickerPlayground)
   })
 
