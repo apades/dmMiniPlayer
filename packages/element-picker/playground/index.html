@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@apad/element-picker</title>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero" data-testid="hero">
+        <p class="eyebrow">@apad/element-picker</p>
+        <h1>Click to pick DOM elements</h1>
+        <p class="lead">
+          Single mode selects one node. List mode extracts features and matches
+          siblings. Right-click a surplus match to drop its extra features.
+        </p>
+      </header>
+
+      <section class="panel">
+        <div class="actions">
+          <button type="button" data-action="single">Pick single</button>
+          <button type="button" data-action="list">Pick list</button>
+          <button type="button" data-action="highlight-hero">
+            Highlight .hero
+          </button>
+          <button type="button" data-action="highlight-cards">
+            Highlight .card
+          </button>
+          <button type="button" data-action="stop">Stop</button>
+          <button type="button" data-action="destroy">Destroy</button>
+        </div>
+        <dl class="status" data-testid="status">
+          <div>
+            <dt>type</dt>
+            <dd data-status="type">-</dd>
+          </div>
+          <div>
+            <dt>count</dt>
+            <dd data-status="count">0</dd>
+          </div>
+          <div>
+            <dt>selector</dt>
+            <dd data-status="selector">-</dd>
+          </div>
+          <div>
+            <dt>features</dt>
+            <dd data-status="features">-</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Cards</h2>
+        <div class="cards" data-testid="cards">
+          <article class="card" data-testid="card">Alpha</article>
+          <article class="card" data-testid="card">Beta</article>
+          <article class="card" data-testid="card">Gamma</article>
+          <article class="card" data-testid="card">Delta</article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Comments</h2>
+        <ul class="comments" data-testid="comments">
+          <li class="comment-item" data-testid="comment">First comment</li>
+          <li class="comment-item" data-testid="comment">Second comment</li>
+          <li class="comment-item" data-testid="comment">Third comment</li>
+          <li class="comment-item promo" data-testid="comment-promo">
+            Promoted extra item
+          </li>
+        </ul>
+      </section>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

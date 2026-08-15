@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["DOM", "ESNext", "DOM.Iterable"],
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "isolatedModules": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@apad/element-picker": ["./src/index.ts"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "playground/**/*.ts",
+    "playground/**/*.d.ts",
+    "e2e/**/*.ts"
+  ],
+  "exclude": ["dist", "playground/dist", "node_modules"]
+}

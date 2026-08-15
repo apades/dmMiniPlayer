@@ -4,3 +4,6 @@ onlyBuiltDependencies:
 
 patchedDependencies:
   '@rc-component/util': patches/@rc-component__util.patch
+
+packages:
+  - 'packages/element-picker'
