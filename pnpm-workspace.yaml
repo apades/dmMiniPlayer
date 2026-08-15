@@ -3,6 +3,7 @@ onlyBuiltDependencies:
   - protobufjs
 
 patchedDependencies:
+  '@apad/setting-panel': patches/@apad__setting-panel.patch
   '@rc-component/util': patches/@rc-component__util.patch
 
 packages:

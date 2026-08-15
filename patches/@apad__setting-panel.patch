@@ -1,0 +1,13 @@
+diff --git a/lib/index.d.ts b/lib/index.d.ts
+index 56d13fad79c5288d8ca6bf3f3b5f12068e01ab8a..551ced11511ab9e5f9a7e0234f527e73929193dc 100644
+--- a/lib/index.d.ts
++++ b/lib/index.d.ts	
+@@ -38,7 +38,7 @@ interface ConfigGroupField<T> {
+     desc?: string;
+     label?: string;
+ }
+-type ConfigField<T> = ConfigFieldBase<T> | T | (ConfigFieldBase<T> & {
++export type ConfigField<T> = ConfigFieldBase<T> | T | (ConfigFieldBase<T> & {
+     type: 'group';
+     group: (T | ConfigGroupField<T>)[];
+ }) | (ConfigFieldBase<T> & {
