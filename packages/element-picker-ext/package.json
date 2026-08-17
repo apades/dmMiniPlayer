@@ -1,0 +1,21 @@
+{
+  "name": "element-picker-ext",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "extension dev --browser chrome --no-browser --no-reload"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.25.0",
+  "devDependencies": {
+    "extension": "^4.0.32",
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
+  },
+  "dependencies": {
+    "@apad/element-picker": "link:../element-picker"
+  }
+}

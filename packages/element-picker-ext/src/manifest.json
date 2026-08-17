@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json.schemastore.org/chrome-manifest.json",
+    "manifest_version": 3,
+    "version": "1.0.0",
+    "name": "Element Picker Extension",
+    "description": "A extension that allows you to pick elements on a web page.",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content/scripts.ts"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "action/index.html"
+    }
+}

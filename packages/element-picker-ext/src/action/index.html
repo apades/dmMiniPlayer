@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Element Picker</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./index.ts"></script>
+  </head>
+  <body>
+    <form id="picker-form" autocomplete="off">
+      <h1>Element Picker</h1>
+
+      <fieldset>
+        <legend>type</legend>
+        <label>
+          <input type="radio" name="type" value="single" checked />
+          single
+        </label>
+        <label>
+          <input type="radio" name="type" value="list" />
+          list
+        </label>
+      </fieldset>
+
+      <label class="field">
+        <span>selector</span>
+        <textarea
+          name="selector"
+          rows="2"
+          placeholder="optional CSS selector"
+          spellcheck="false"
+        ></textarea>
+        <small>
+          Leave empty to pick with the mouse. One selector per line becomes an
+          array.
+        </small>
+      </label>
+
+      <label class="check" id="observer-field">
+        <input type="checkbox" name="observerAllDomChange" />
+        <span>observerAllDomChange</span>
+      </label>
+
+      <div class="actions">
+        <button type="submit">Start</button>
+        <button type="button" id="stop" class="ghost">Stop</button>
+        <button type="button" id="destroy" class="ghost">Destroy</button>
+      </div>
+
+      <p id="status" role="status"></p>
+    </form>
+  </body>
+</html>

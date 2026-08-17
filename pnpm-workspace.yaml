@@ -1,10 +1,13 @@
+packages:
+  - packages/element-picker
+
 onlyBuiltDependencies:
   - esbuild
   - protobufjs
 
+overrides:
+  '@apad/element-picker': link:packages/element-picker
+
 patchedDependencies:
   '@apad/setting-panel': patches/@apad__setting-panel.patch
   '@rc-component/util': patches/@rc-component__util.patch
-
-packages:
-  - 'packages/element-picker'
