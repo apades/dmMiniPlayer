@@ -91,7 +91,15 @@ export class ElementPicker {
   }
 
   private onClick = (event: MouseEvent) => {
-    if (event.button !== 0 || this.isPickerEvent(event)) return
+    if (event.button !== 0) return
+    const pathEl = this.overlay.pathElementFromEvent(event)
+    if (pathEl) {
+      event.preventDefault()
+      event.stopPropagation()
+      this.replacePick(pathEl)
+      return
+    }
+    if (this.isPickerEvent(event)) return
     const el = deepElementFromPoint(this.doc, event.clientX, event.clientY)
     if (!el) return
     event.preventDefault()
@@ -337,9 +345,26 @@ export class ElementPicker {
     this.resync(true)
   }
 
+  private replacePick(el: HTMLElement): void {
+    this.providedSelector = ''
+    this.positives = []
+    this.negatives = []
+    this.currentElements = []
+    this.currentFeatures = []
+    this.notFeatures = []
+    this.generatedSelector = ''
+    this.panel.clearHint()
+    this.pick(el)
+  }
+
   private exclude(el: HTMLElement): void {
     const host = hostInList(el, this.currentElements)
     if (!host) return
+
+    if (hostInList(host, this.positives)) {
+      this.cancelPick(host)
+      return
+    }
 
     const leftover = this.currentElements.filter(
       (item) => item !== host && item.isConnected,
@@ -363,6 +388,26 @@ export class ElementPicker {
 
     if (!this.positives.length) {
       this.positives = leftover.slice(0, 1)
+    }
+
+    this.refreshListSelector()
+    this.emit('exclude', host)
+    this.resync(true)
+  }
+
+  private cancelPick(host: HTMLElement): void {
+    this.panel.clearHint()
+    this.providedSelector = ''
+    this.positives = this.positives.filter((item) => item !== host)
+    this.negatives = this.negatives.filter((item) => item !== host)
+
+    if (!this.positives.length) {
+      this.currentFeatures = []
+      this.notFeatures = []
+      this.generatedSelector = ''
+      this.emit('exclude', host)
+      this.setElements([], true)
+      return
     }
 
     this.refreshListSelector()

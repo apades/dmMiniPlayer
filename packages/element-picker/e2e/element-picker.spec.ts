@@ -180,6 +180,22 @@ test.describe('ElementPicker', () => {
     ).toBe(true)
   })
 
+  test('clicking a path chip replaces the current selection', async ({
+    page,
+  }) => {
+    await createPicker(page, { type: 'list' })
+    await page.getByTestId('card').first().click()
+    await page
+      .locator('[data-element-picker="path-node"]')
+      .filter({ hasText: 'div.cards' })
+      .click()
+    const after = await getState(page)
+    expect(after.count).toBe(1)
+    expect(after.ids).toEqual(['cards'])
+    expect(after.pathChips.at(-1)).toContain('div.cards')
+    await assertSelectorMatchesSelection(page)
+  })
+
   test('list mode extracts features and selects sibling cards', async ({
     page,
   }) => {
@@ -280,6 +296,17 @@ test.describe('ElementPicker', () => {
     expect(after.pickedBoxes).toBe(1)
     expect(after.matchedBoxes).toBe(3)
     await assertSelectorMatchesSelection(page)
+  })
+
+  test('right-click cancels a manually picked list seed', async ({ page }) => {
+    await createPicker(page, { type: 'list' })
+    await page.getByTestId('comment').first().click()
+    expect((await getState(page)).count).toBeGreaterThan(1)
+    await page.getByTestId('comment').first().click({ button: 'right' })
+    const after = await getState(page)
+    expect(after.count).toBe(0)
+    expect(after.selectedBoxes).toBe(0)
+    expect(after.selector).toBe('')
   })
 
   test('right-click blocks indistinguishable matches and shows a hint', async ({
