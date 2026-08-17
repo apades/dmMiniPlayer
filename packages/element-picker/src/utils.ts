@@ -62,6 +62,13 @@ export function uniqueElements(elements: HTMLElement[]): HTMLElement[] {
   return [...new Set(elements)]
 }
 
+export function hostInList(
+  el: HTMLElement,
+  elements: HTMLElement[],
+): HTMLElement | undefined {
+  return elements.find((item) => item === el || item.contains(el))
+}
+
 export function escapeAttrValue(value: string): string {
   return value.replace(BACKSLASH_RE, '\\\\').replace(DQUOTE_RE, '\\"')
 }

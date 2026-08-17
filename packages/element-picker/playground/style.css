@@ -114,3 +114,21 @@ button:hover {
 .promo {
   border-color: #f59e0b;
 }
+
+.defs,
+.other-defs {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.defs > div,
+.other-defs {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}

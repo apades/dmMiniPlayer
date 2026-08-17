@@ -1,5 +1,8 @@
+import { PathBar } from './path'
+
 const HOVER_COLOR = '59, 130, 246'
-const SELECTED_COLOR = '34, 197, 94'
+const PICKED_COLOR = '249, 115, 22'
+const MATCHED_COLOR = '34, 197, 94'
 
 function applyBoxStyle(
   box: HTMLDivElement,
@@ -32,9 +35,15 @@ function syncBox(box: HTMLDivElement, target: HTMLElement): void {
 
 export class HighlightOverlay {
   readonly root: HTMLDivElement
-  private hoverBox: HTMLDivElement
-  private hoverTarget: HTMLElement | null = null
-  private selected = new Map<HTMLElement, HTMLDivElement>()
+  private hoverTargets: HTMLElement[] = []
+  private hoverBoxes: HTMLDivElement[] = []
+  private hoverPath: PathBar
+  private selected = new Map<
+    HTMLElement,
+    { box: HTMLDivElement; kind: 'picked' | 'matched' }
+  >()
+  private selectedPaths = new Map<HTMLElement, PathBar>()
+  private focusedPath: PathBar | null = null
   private raf = 0
   private layoutBound = false
 
@@ -53,12 +62,9 @@ export class HighlightOverlay {
       pointerEvents: 'none',
       zIndex: '2147483647',
     })
-
-    this.hoverBox = doc.createElement('div')
-    this.hoverBox.dataset.elementPicker = 'hover'
-    applyBoxStyle(this.hoverBox, HOVER_COLOR, '1')
-    this.hoverBox.style.display = 'none'
-    this.root.appendChild(this.hoverBox)
+    this.hoverPath = new PathBar(this.doc)
+    this.bindPathBar(this.hoverPath)
+    this.root.appendChild(this.hoverPath.host)
   }
 
   get mounted(): boolean {
@@ -83,46 +89,102 @@ export class HighlightOverlay {
     this.root.remove()
   }
 
-  setHover(el: HTMLElement | null): void {
-    this.hoverTarget = el
-    if (!el) {
-      this.hoverBox.style.display = 'none'
-      return
-    }
-    this.hoverBox.style.display = 'block'
-    syncBox(this.hoverBox, el)
+  setHover(elements: HTMLElement | HTMLElement[] | null): void {
+    this.hoverTargets = !elements
+      ? []
+      : Array.isArray(elements)
+        ? elements
+        : [elements]
+    this.syncHoverBoxes()
   }
 
-  setSelected(elements: HTMLElement[]): void {
+  setHoverPath(anchor: HTMLElement | null): void {
+    if (anchor && this.selectedPaths.has(anchor)) {
+      this.hoverPath.setAnchor(null)
+      return
+    }
+    this.hoverPath.setAnchor(anchor)
+    this.scheduleRefresh()
+  }
+
+  pathElementFromEvent(event: Event): HTMLElement | null {
+    return (
+      this.hoverPath.elementFromEvent(event) ??
+      [...this.selectedPaths.values()]
+        .map((bar) => bar.elementFromEvent(event))
+        .find((el): el is HTMLElement => !!el) ??
+      null
+    )
+  }
+
+  isPathEvent(event: Event): boolean {
+    return (
+      this.hoverPath.containsEvent(event) ||
+      [...this.selectedPaths.values()].some((bar) => bar.containsEvent(event))
+    )
+  }
+
+  private pathBars(): PathBar[] {
+    return [this.hoverPath, ...this.selectedPaths.values()]
+  }
+
+  private bindPathBar(bar: PathBar): void {
+    bar.host.addEventListener('mouseenter', () => this.focusPathBar(bar))
+    bar.host.addEventListener('mouseleave', () => this.focusPathBar(null))
+  }
+
+  private focusPathBar(active: PathBar | null): void {
+    this.focusedPath = active
+    for (const bar of this.pathBars()) {
+      bar.setSuppressed(active != null && bar !== active)
+    }
+  }
+
+  setPathActive(el: HTMLElement | null): void {
+    this.hoverPath.setActive(el)
+    for (const bar of this.selectedPaths.values()) bar.setActive(el)
+  }
+
+  setSelected(elements: HTMLElement[], picked: HTMLElement[] = elements): void {
     const next = new Set(elements)
-    for (const [el, box] of this.selected) {
+    const pickedSet = new Set(picked)
+    for (const [el, item] of this.selected) {
       if (next.has(el)) continue
-      box.remove()
+      item.box.remove()
       this.selected.delete(el)
     }
     for (const el of elements) {
-      let box = this.selected.get(el)
-      if (!box) {
-        box = this.doc.createElement('div')
-        box.dataset.elementPicker = 'selected'
-        applyBoxStyle(box, SELECTED_COLOR, '0')
+      const kind = pickedSet.has(el) ? 'picked' : 'matched'
+      const color = kind === 'picked' ? PICKED_COLOR : MATCHED_COLOR
+      let item = this.selected.get(el)
+      if (!item) {
+        const box = this.doc.createElement('div')
+        applyBoxStyle(box, color, '0')
         this.root.appendChild(box)
-        this.selected.set(el, box)
+        item = { box, kind }
+        this.selected.set(el, item)
+      } else if (item.kind !== kind) {
+        applyBoxStyle(item.box, color, '0')
+        item.kind = kind
       }
-      syncBox(box, el)
+      item.box.dataset.elementPicker = kind
+      syncBox(item.box, el)
     }
+    this.syncSelectedPaths(picked.filter((el) => next.has(el)))
     this.scheduleRefresh()
   }
 
   refresh(): void {
-    if (this.hoverTarget) syncBox(this.hoverBox, this.hoverTarget)
-    for (const [el, box] of this.selected) {
+    this.syncHoverBoxes()
+    this.hoverPath.sync()
+    for (const bar of this.selectedPaths.values()) bar.sync()
+    for (const [el, item] of this.selected) {
       if (!el.isConnected) {
-        box.remove()
+        item.box.remove()
         this.selected.delete(el)
         continue
       }
-      syncBox(box, el)
+      syncBox(item.box, el)
     }
   }
 
@@ -134,8 +196,50 @@ export class HighlightOverlay {
     })
   }
 
+  private syncHoverBoxes(): void {
+    const connected = this.hoverTargets.filter((el) => el.isConnected)
+    this.hoverTargets = connected
+    while (this.hoverBoxes.length > connected.length) {
+      this.hoverBoxes.pop()?.remove()
+    }
+    while (this.hoverBoxes.length < connected.length) {
+      const box = this.doc.createElement('div')
+      box.dataset.elementPicker = 'hover'
+      applyBoxStyle(box, HOVER_COLOR, '1')
+      this.root.appendChild(box)
+      this.hoverBoxes.push(box)
+    }
+    connected.forEach((el, index) => {
+      syncBox(this.hoverBoxes[index], el)
+    })
+  }
+
+  private syncSelectedPaths(picked: HTMLElement[]): void {
+    const next = new Set(picked)
+    for (const [el, bar] of this.selectedPaths) {
+      if (next.has(el)) continue
+      bar.remove()
+      this.selectedPaths.delete(el)
+    }
+    for (const el of picked) {
+      let bar = this.selectedPaths.get(el)
+      if (!bar) {
+        bar = new PathBar(this.doc)
+        this.bindPathBar(bar)
+        this.root.appendChild(bar.host)
+        this.selectedPaths.set(el, bar)
+      }
+      bar.setAnchor(el)
+    }
+    if (this.hoverPath) this.hoverPath.setAnchor(null)
+    if (this.focusedPath && !this.pathBars().includes(this.focusedPath)) {
+      this.focusPathBar(null)
+    }
+  }
+
   clear(): void {
     this.setHover(null)
+    this.setHoverPath(null)
     this.setSelected([])
     if (this.raf) {
       cancelAnimationFrame(this.raf)

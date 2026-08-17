@@ -11,8 +11,10 @@
         <p class="eyebrow">@apad/element-picker</p>
         <h1>Click to pick DOM elements</h1>
         <p class="lead">
-          Single mode selects one node. List mode extracts features and matches
-          siblings. Right-click a surplus match to drop its extra features.
+          Single mode selects one node. List mode previews similar nodes on
+          hover, then extracts shared class features on click. Orange is a
+          manual pick, green is an auto-match. Right-click a surplus match to
+          drop its extra features.
         </p>
       </header>
 
@@ -69,6 +71,24 @@
             Promoted extra item
           </li>
         </ul>
+      </section>
+
+      <section>
+        <h2>Definitions</h2>
+        <dl class="defs" data-testid="defs">
+          <div>
+            <dt>Name</dt>
+            <dd>Alice</dd>
+          </div>
+          <div>
+            <dt>Role</dt>
+            <dd>Admin</dd>
+          </div>
+        </dl>
+        <dl class="other-defs" data-testid="other-defs">
+          <dt>Unrelated</dt>
+          <dd>Other list</dd>
+        </dl>
       </section>
     </div>
     <script type="module" src="./main.ts"></script>

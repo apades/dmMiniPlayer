@@ -33,6 +33,7 @@ export type ElementPickerEvents = {
   select: HTMLElement[]
   change: HTMLElement[]
   exclude: HTMLElement
+  excludeBlocked: HTMLElement
   confirm: ElementPickerConfirmPayload
   close: undefined
   stop: undefined

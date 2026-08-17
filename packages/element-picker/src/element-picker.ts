@@ -1,14 +1,13 @@
-import {
-  buildCssSelector,
-  extractFeatures,
-  inferListFeatures,
-  matchesFeatures,
-  matchesNotFeatures,
-  queryByFeatures,
-  refineFeatures,
-} from './features'
+import { extractFeatures, matchesNotFeatures, refineFeatures } from './features'
 import { HighlightOverlay } from './overlay'
 import { PickerPanel } from './panel'
+import {
+  inferListSelection,
+  listBaseSelector,
+  listSelectorExcluding,
+  queryHtml,
+  uniqueCssSelector,
+} from './selector'
 import type {
   ElementFeature,
   ElementPickerEvents,
@@ -16,9 +15,17 @@ import type {
   ElementPickerType,
   Selector,
 } from './types'
-import { debounce, deepElementFromPoint, uniqueElements } from './utils'
+import {
+  debounce,
+  deepElementFromPoint,
+  hostInList,
+  uniqueElements,
+} from './utils'
 
 type EventHandler<T> = (payload: T) => void
+
+const EXCLUDE_BLOCKED_HINT =
+  'Cannot exclude this node; it has no extra features to drop'
 
 function inferType(options: ElementPickerOptions): ElementPickerType {
   if (options.type) return options.type
@@ -53,6 +60,7 @@ export class ElementPicker {
   private picking = false
   private observer: MutationObserver | null = null
   private providedSelector = ''
+  private generatedSelector = ''
   private scope: ParentNode
   private positives: HTMLElement[] = []
   private negatives: HTMLElement[] = []
@@ -60,6 +68,7 @@ export class ElementPicker {
   private currentFeatures: ElementFeature[] = []
   private notFeatures: ElementFeature[] = []
   private hoverEl: HTMLElement | null = null
+  private hoverCount: number | null = null
   private savedCursor = ''
   private listeners = new Map<
     keyof ElementPickerEvents,
@@ -67,11 +76,18 @@ export class ElementPicker {
   >()
 
   private onMouseMove = (event: MouseEvent) => {
+    const pathEl = this.overlay.pathElementFromEvent(event)
+    if (pathEl) {
+      if (this.hoverEl === pathEl) return
+      this.hoverEl = pathEl
+      this.applyHover(pathEl, false)
+      return
+    }
+    if (this.overlay.isPathEvent(event)) return
     const el = deepElementFromPoint(this.doc, event.clientX, event.clientY)
     if (el === this.hoverEl) return
     this.hoverEl = el
-    this.overlay.setHover(el)
-    this.emit('hover', el)
+    this.applyHover(el, true)
   }
 
   private onClick = (event: MouseEvent) => {
@@ -112,7 +128,7 @@ export class ElementPicker {
     if (options.selector != null) {
       this.applySelector(options.selector)
       this.ensureUi()
-      this.overlay.setSelected(this.currentElements)
+      this.overlay.setSelected(this.currentElements, this.positives)
       this.syncPanel()
       if (this.shouldObserve()) this.watchDom()
     }
@@ -128,14 +144,14 @@ export class ElementPicker {
 
   get cssSelector(): string {
     if (this.providedSelector) return this.providedSelector
-    return buildCssSelector(this.currentFeatures, this.notFeatures, this.scope)
+    return this.generatedSelector
   }
 
   start(): this {
     if (this.picking) return this
     this.picking = true
     this.ensureUi()
-    this.overlay.setSelected(this.currentElements)
+    this.overlay.setSelected(this.currentElements, this.positives)
     this.syncPanel()
 
     this.savedCursor = this.doc.documentElement.style.cursor
@@ -154,7 +170,10 @@ export class ElementPicker {
     if (!this.picking) return this
     this.picking = false
     this.hoverEl = null
+    this.hoverCount = null
     this.overlay.setHover(null)
+    this.overlay.setHoverPath(null)
+    this.overlay.setPathActive(null)
     this.doc.documentElement.style.cursor = this.savedCursor
 
     this.doc.removeEventListener('mousemove', this.onMouseMove, true)
@@ -194,6 +213,7 @@ export class ElementPicker {
     this.currentElements = []
     this.currentFeatures = []
     this.notFeatures = []
+    this.generatedSelector = ''
     this.listeners.clear()
   }
 
@@ -261,6 +281,12 @@ export class ElementPicker {
         this.type === 'list'
           ? refineFeatures(this.currentElements, []).features
           : extractFeatures(this.currentElements[0])
+      if (!this.providedSelector) {
+        this.generatedSelector =
+          this.type === 'list'
+            ? listSelectorExcluding(this.currentElements, [], this.doc)
+            : uniqueCssSelector(this.currentElements[0])
+      }
     }
   }
 
@@ -271,46 +297,76 @@ export class ElementPicker {
       this.negatives = []
       this.currentFeatures = extractFeatures(el)
       this.notFeatures = []
+      this.generatedSelector = uniqueCssSelector(el)
       this.scope = this.doc
       this.setElements([el], true)
       return
     }
 
+    if (hostInList(el, this.currentElements)) return
+
     this.providedSelector = ''
-    this.negatives = this.negatives.filter((item) => item !== el)
+    this.panel.clearHint()
+
+    const excludedHost = hostInList(el, this.negatives)
+    if (excludedHost) {
+      this.negatives = this.negatives.filter((item) => item !== excludedHost)
+      this.refreshListSelector()
+      this.resync(true)
+      return
+    }
 
     if (!this.positives.length) {
-      this.positives = [el]
-      const inferred = inferListFeatures(el)
-      this.currentFeatures = inferred.features
+      const inferred = inferListSelection(el)
+      const picked =
+        hostInList(el, inferred.elements) ?? inferred.elements[0] ?? el
+      this.positives = [picked]
+      this.currentFeatures = extractFeatures(picked)
       this.notFeatures = []
-      this.scope = inferred.scope
-    } else if (!this.positives.includes(el)) {
+      this.generatedSelector = inferred.selector
+      this.scope = picked.parentElement ?? this.doc
+      this.setElements(inferred.elements, true)
+      return
+    }
+
+    if (!this.positives.includes(el)) {
       this.positives.push(el)
-      const refined = refineFeatures(this.positives, this.negatives)
-      this.currentFeatures = refined.features
-      this.notFeatures = refined.notFeatures
+      this.refreshListSelector()
     }
 
     this.resync(true)
   }
 
   private exclude(el: HTMLElement): void {
-    if (!this.currentElements.includes(el)) return
+    const host = hostInList(el, this.currentElements)
+    if (!host) return
 
+    const leftover = this.currentElements.filter(
+      (item) => item !== host && item.isConnected,
+    )
+    if (this.cssSelector && leftover.length) {
+      const negatives = this.negatives.includes(host)
+        ? this.negatives
+        : [...this.negatives, host]
+      const nextSelector = listSelectorExcluding(leftover, negatives, this.doc)
+      if (!nextSelector) {
+        this.panel.showHint(EXCLUDE_BLOCKED_HINT)
+        this.emit('excludeBlocked', host)
+        return
+      }
+    }
+
+    this.panel.clearHint()
     this.providedSelector = ''
-    this.positives = this.positives.filter((item) => item !== el)
-    if (!this.negatives.includes(el)) this.negatives.push(el)
+    this.positives = this.positives.filter((item) => item !== host)
+    if (!this.negatives.includes(host)) this.negatives.push(host)
 
     if (!this.positives.length) {
-      const leftover = this.currentElements.filter((item) => item !== el)
       this.positives = leftover.slice(0, 1)
     }
 
-    const refined = refineFeatures(this.positives, this.negatives)
-    this.currentFeatures = refined.features
-    this.notFeatures = refined.notFeatures
-    this.emit('exclude', el)
+    this.refreshListSelector()
+    this.emit('exclude', host)
     this.resync(true)
   }
 
@@ -328,33 +384,28 @@ export class ElementPicker {
       return resolveSelectorItem(this.providedSelector, 'list', this.doc)
     }
 
-    if (!this.currentFeatures.length) {
-      return this.positives.filter((el) => el.isConnected)
+    if (this.generatedSelector) {
+      return uniqueElements([
+        ...this.positives.filter(
+          (el) => el.isConnected && !this.negatives.includes(el),
+        ),
+        ...queryHtml(this.doc, this.generatedSelector).filter(
+          (el) =>
+            !this.negatives.includes(el) &&
+            !matchesNotFeatures(el, this.notFeatures),
+        ),
+      ])
     }
 
-    const scope =
-      this.scope instanceof Node && this.scope.isConnected
-        ? this.scope
-        : this.doc
-    const queried = queryByFeatures(this.currentFeatures, scope).filter(
-      (el) =>
-        !this.negatives.includes(el) &&
-        !matchesNotFeatures(el, this.notFeatures) &&
-        matchesFeatures(el, this.currentFeatures),
+    return this.positives.filter(
+      (el) => el.isConnected && !this.negatives.includes(el),
     )
-
-    return uniqueElements([
-      ...this.positives.filter(
-        (el) => el.isConnected && !this.negatives.includes(el),
-      ),
-      ...queried,
-    ])
   }
 
   private setElements(elements: HTMLElement[], fromUser: boolean): void {
     const prev = this.currentElements
     this.currentElements = elements
-    this.overlay.setSelected(elements)
+    this.overlay.setSelected(elements, this.positives)
     this.syncPanel()
 
     const changed =
@@ -364,6 +415,32 @@ export class ElementPicker {
 
     if (fromUser) this.emit('select', this.elements)
     this.emit('change', this.elements)
+  }
+
+  private refreshListSelector(): void {
+    const refined = refineFeatures(this.positives, this.negatives)
+    this.currentFeatures = refined.features
+    this.notFeatures = refined.notFeatures
+    this.generatedSelector = this.listSelectorFromPositives()
+  }
+
+  private listSelectorFromPositives(): string {
+    const seeds = this.positives.filter(
+      (el) => el.isConnected && !this.negatives.includes(el),
+    )
+    if (!seeds.length) return ''
+    const base =
+      seeds.length === 1
+        ? inferListSelection(seeds[0]).selector
+        : listBaseSelector(seeds)
+    if (!base) return ''
+    const kept = uniqueElements([
+      ...seeds,
+      ...queryHtml(this.doc, base).filter(
+        (el) => el.isConnected && !this.negatives.includes(el),
+      ),
+    ])
+    return listSelectorExcluding(kept, this.negatives, this.doc)
   }
 
   private shouldObserve(): boolean {
@@ -397,7 +474,7 @@ export class ElementPicker {
     this.panel = this.createPanel()
     if (selected.length) {
       this.ensureUi()
-      this.overlay.setSelected(selected)
+      this.overlay.setSelected(selected, this.positives)
       this.syncPanel()
     }
   }
@@ -414,11 +491,26 @@ export class ElementPicker {
     this.panel.mount(this.doc.documentElement)
   }
 
+  private applyHover(el: HTMLElement | null, updatePath: boolean): void {
+    if (this.type === 'list' && el) {
+      const inferred = inferListSelection(el)
+      this.overlay.setHover(inferred.elements)
+      this.hoverCount = inferred.elements.length
+    } else {
+      this.overlay.setHover(el)
+      this.hoverCount = null
+    }
+    if (updatePath) this.overlay.setHoverPath(el)
+    this.overlay.setPathActive(el)
+    this.syncPanel()
+    this.emit('hover', el)
+  }
+
   private syncPanel(): void {
     this.panel.update({
       type: this.type,
       cssSelector: this.cssSelector,
-      count: this.currentElements.length,
+      count: this.hoverCount ?? this.currentElements.length,
     })
   }
 

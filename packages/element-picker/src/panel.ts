@@ -4,6 +4,8 @@ export type PanelState = {
   count: number
 }
 
+const HINT_MS = 2800
+
 const PANEL_CSS = `
   :host {
     position: fixed;
@@ -13,6 +15,10 @@ const PANEL_CSS = `
     z-index: 2147483647;
     pointer-events: auto;
     font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .wrap {
+    display: grid;
+    gap: 6px;
   }
   .panel {
     display: flex;
@@ -46,6 +52,15 @@ const PANEL_CSS = `
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     color: #22c55e;
   }
+  .hint {
+    padding: 8px 12px;
+    border: 1px solid #92400e;
+    border-radius: 10px;
+    background: #2a2010;
+    color: #fbbf24;
+    font-size: 12px;
+    line-height: 1.4;
+  }
   .actions {
     display: flex;
     gap: 8px;
@@ -65,6 +80,10 @@ const PANEL_CSS = `
     background: #166534;
     border-color: #22c55e;
   }
+  .meta[hidden],
+  .hint[hidden] {
+    display: none !important;
+  }
 `
 
 export class PickerPanel {
@@ -73,6 +92,9 @@ export class PickerPanel {
   private countMeta: HTMLElement
   private countEl: HTMLElement
   private queryEl: HTMLElement
+  private hintEl: HTMLElement
+  private hintTimer = 0
+  private hintView: Window | null = null
 
   constructor(
     private doc: Document,
@@ -86,24 +108,27 @@ export class PickerPanel {
     style.textContent = PANEL_CSS
 
     const root = doc.createElement('div')
-    root.className = 'panel'
+    root.className = 'wrap'
     root.innerHTML = `
-      <div class="meta">
-        <div class="label">Mode</div>
-        <div class="value" data-role="mode">-</div>
+      <div class="panel">
+        <div class="meta">
+          <div class="label">Mode</div>
+          <div class="value" data-role="mode">-</div>
+        </div>
+        <div class="meta" data-role="count-meta" hidden>
+          <div class="label">Count</div>
+          <div class="value" data-role="count">0</div>
+        </div>
+        <div class="meta">
+          <div class="label">Selector</div>
+          <div class="value query" data-role="query">-</div>
+        </div>
+        <div class="actions">
+          <button type="button" class="confirm" data-role="confirm">Confirm</button>
+          <button type="button" data-role="close">Close</button>
+        </div>
       </div>
-      <div class="meta" data-role="count-meta" hidden>
-        <div class="label">Count</div>
-        <div class="value" data-role="count">0</div>
-      </div>
-      <div class="meta">
-        <div class="label">Selector</div>
-        <div class="value query" data-role="query">-</div>
-      </div>
-      <div class="actions">
-        <button type="button" class="confirm" data-role="confirm">Confirm</button>
-        <button type="button" data-role="close">Close</button>
-      </div>
+      <div class="hint" data-role="hint" hidden></div>
     `
 
     shadow.append(style, root)
@@ -111,6 +136,7 @@ export class PickerPanel {
     this.countMeta = shadow.querySelector('[data-role="count-meta"]')!
     this.countEl = shadow.querySelector('[data-role="count"]')!
     this.queryEl = shadow.querySelector('[data-role="query"]')!
+    this.hintEl = shadow.querySelector('[data-role="hint"]')!
 
     shadow
       .querySelector('[data-role="confirm"]')!
@@ -137,6 +163,7 @@ export class PickerPanel {
   }
 
   unmount(): void {
+    this.clearHint()
     this.host.remove()
   }
 
@@ -146,5 +173,27 @@ export class PickerPanel {
     const showCount = state.type === 'list'
     this.countMeta.hidden = !showCount
     if (showCount) this.countEl.textContent = String(state.count)
+  }
+
+  showHint(message: string): void {
+    this.clearHint()
+    this.hintEl.textContent = message
+    this.hintEl.hidden = false
+    const view = this.doc.defaultView
+    if (!view) return
+    this.hintView = view
+    this.hintTimer = view.setTimeout(() => {
+      this.clearHint()
+    }, HINT_MS)
+  }
+
+  clearHint(): void {
+    if (this.hintTimer) {
+      this.hintView?.clearTimeout(this.hintTimer)
+      this.hintTimer = 0
+      this.hintView = null
+    }
+    this.hintEl.hidden = true
+    this.hintEl.textContent = ''
   }
 }

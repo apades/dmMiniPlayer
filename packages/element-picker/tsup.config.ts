@@ -10,6 +10,7 @@ export default defineConfig({
   },
   clean: true,
   sourcemap: true,
+  minify: true,
   target: 'esnext',
   platform: 'browser',
   treeshake: true,

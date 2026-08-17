@@ -40,6 +40,20 @@ function destroyPicker(): void {
   renderStatus()
 }
 
+async function copySelector(text: string) {
+  if (!text) return
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    const input = document.createElement('textarea')
+    input.value = text
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    input.remove()
+  }
+}
+
 function createPicker(options: ElementPickerOptions): ElementPicker {
   destroyPicker()
   picker = new ElementPicker(options)
@@ -47,6 +61,14 @@ function createPicker(options: ElementPickerOptions): ElementPicker {
   picker.on('select', renderStatus)
   picker.on('exclude', renderStatus)
   picker.on('stop', renderStatus)
+  picker.on('confirm', ({ cssSelector }) => {
+    void copySelector(cssSelector)
+    renderStatus()
+  })
+  picker.on('close', () => {
+    picker = null
+    renderStatus()
+  })
   if (options.selector == null) picker.start()
   renderStatus()
   return picker
