@@ -8,9 +8,7 @@ import {
 } from '@root/inject/contentSender'
 import { tryCatch } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
-import { t } from '@root/utils/i18n'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
-import toast from 'react-hot-toast'
 
 export const proto = {
   nested: {
@@ -27,16 +25,35 @@ const getRoomid = async (short: number) => {
   return room_id
 }
 
+/** 从 getDanmuInfo 响应中解析弹幕服务器配置（兼容 host_list / host_server_list） */
+const parseDanmuConf = (raw: any) => {
+  const data = raw?.data
+  if (!data || !data.token) return
+  const list = data.host_list?.length
+    ? data.host_list
+    : (data.host_server_list ?? [])
+  const item = list.find((a: any) => a?.host) ?? list[0]
+  if (!item?.host) return
+  const host = item.host
+  const port = item.wss_port ?? item.ws_port ?? 443
+  return { key: data.token as string, host, port, address: `wss://${host}/sub` }
+}
+
 export const getConf = async (roomid: number) => {
   const raw = await runCodeInTopWindow(() => window.__danmuInfo)
-  const {
-    data: {
-      token: key,
-      host_list: [{ host, wss_port: port }],
-    },
-  } = raw
-  const address = `wss://${host}/sub`
-  return { key, host, port, address, raw }
+  const conf = parseDanmuConf(raw)
+  if (conf) return { ...conf, raw }
+
+  // 页面未提供 __danmuInfo（或数据无效），回退到官方接口（需带 cookie，可能命中 -352 风控）
+  const res = await fetch(
+    `https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=${roomid}&type=0`,
+    { credentials: 'include' },
+  )
+    .then((r) => r.json())
+    .catch(() => {})
+  const conf2 = parseDanmuConf(res)
+  if (conf2) return { ...conf2, raw: res }
+  return
 }
 
 export default class BilibiliLiveBarrageClient extends BarrageClient {
@@ -44,13 +61,20 @@ export default class BilibiliLiveBarrageClient extends BarrageClient {
   constructor(public id: number) {
     super()
     tryCatch(() => this.init(id)).then(([err]) => {
-      if (err) toast.error(t('error.danmakuLoad'))
+      if (err) {
+        console.warn('[dmMiniPlayer] 直播弹幕 ws 初始化失败，准备降级', err)
+        this.emit('failed', undefined)
+      }
     })
   }
 
   async init(id: number) {
     const realRoomId = await getRoomid(id)
     const conf = await getConf(realRoomId)
+    if (!conf)
+      throw Error(
+        '拿不到弹幕服务器配置：页面未提供 __danmuInfo，官方接口也未返回有效数据(常见为 -352 风控)',
+      )
     const address = `wss://${conf.host}:${conf.port}/sub`
     const uid = await API_bilibili.getSelfMid()
     const buvid = cookie.get('buvid3')

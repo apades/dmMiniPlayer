@@ -134,6 +134,7 @@ export default abstract class WebProvider
     if (!navigator.userActivation.isActive) return
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
+    this.guardCrossDocumentVideo(this.webVideo)
     this.injectVideoEventsListener(this.webVideo)
     this.bindCommandsEvent()
     this.isLive ??= checkIsLive(this.webVideo)
@@ -204,32 +205,70 @@ export default abstract class WebProvider
     )
   }
 
+  /**递归收集 document 及其同源 iframe 内的 video（限制深度并做环检测） */
+  collectVideos(
+    document: Document,
+    depth = 0,
+    visited = new Set<Window>(),
+  ): HTMLVideoElement[] {
+    if (depth > 4) return []
+    const win = document.defaultView
+    if (win) {
+      if (visited.has(win)) return []
+      visited.add(win)
+    }
+    let videos = [...dq('video', document)]
+    for (const iframe of dq('iframe', document)) {
+      let doc: Document | undefined
+      try {
+        doc = iframe.contentWindow?.document ?? undefined
+      } catch {
+        continue
+      }
+      if (doc) videos.push(...this.collectVideos(doc, depth + 1, visited))
+    }
+    return videos
+  }
+
   /**获取视频 */
   getVideoEl(document = window.document): HTMLVideoElement {
-    const videos = [
-      ...dq('video', document),
-      ...dq('iframe', document)
-        .map((iframe) => {
-          try {
-            return Array.from(
-              iframe.contentWindow?.document.querySelectorAll('video') ?? [],
-            )
-          } catch (error) {
-            return null
-          }
-        })
-        .filter((v) => !!v)
-        .flat(),
-    ]
+    const videos = this.collectVideos(document)
 
     if (!videos.length)
       throw Error('页面中不存在video，或者video在不支持的非同源iframe中')
-    const targetVideo = videos.reduce((tar, now) => {
-      if (tar.clientHeight < now.clientHeight) return now
-      return tar
-    }, videos[0])
+    return videos.reduce(
+      (tar, now) => (tar.clientHeight < now.clientHeight ? now : tar),
+      videos[0],
+    )
+  }
 
-    return targetVideo
+  /**
+   * 目标 video 位于 iframe（跨 document）时的保护：
+   * - [替换网页video] 模式会把节点搬到画中画窗口，直接损坏直播流 → 阻止并提示
+   * - [网页video] 模式 → 临时切换为画布采集模式，卸载时恢复原设置
+   */
+  guardCrossDocumentVideo(video: HTMLVideoElement) {
+    if (video.ownerDocument === window.document) return
+    const type =
+      playerConfig.forceDocPIPRenderType || configStore.docPIP_renderType
+    if (
+      type !== DocPIPRenderType.replaceVideoEl &&
+      type !== DocPIPRenderType.replaceWebVideoDom
+    )
+      return
+    if (type === DocPIPRenderType.replaceWebVideoDom)
+      throw Error(
+        '目标视频位于iframe内，[替换网页video] 模式会损坏直播流，请在设置中改用其他渲染模式',
+      )
+    const origin = playerConfig.forceDocPIPRenderType
+    playerConfig.forceDocPIPRenderType =
+      DocPIPRenderType.capture_captureStreamWithCanvas
+    this.addOnUnloadFn(() => {
+      playerConfig.forceDocPIPRenderType = origin
+    })
+    console.warn(
+      '[dmMiniPlayer] 目标视频在iframe内，已自动切换到画布采集模式以避免损坏直播流',
+    )
   }
 
   onOpenPlayer(): Promise<void> | void {}

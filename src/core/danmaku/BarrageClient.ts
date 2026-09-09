@@ -13,6 +13,8 @@ export type LiveEvent = {
       }
     >
   }
+  /** ws 弹幕初始化失败，可据此降级到其他弹幕来源 */
+  failed: undefined
 }
 
 export default abstract class BarrageClient extends Events2<LiveEvent> {
