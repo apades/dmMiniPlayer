@@ -8,6 +8,16 @@ import { isUndefined } from 'lodash-es'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import { eventHackerEnableSites } from './eventHacker.config'
 
+/**
+ * Chrome 正在逐步淘汰 unload 事件（ Permissions Policy: unload 会被拦截 ）。
+ * 站点自身代码经由本包装器注册 unload 监听时，实际挂到原生 addEventListener 的
+ * 事件名会被记在本插件头上，导致扩展管理页出现 "Permissions policy violation" 报错。
+ * 这里透明地将 unload 转换为 pagehide（Chrome 官方推荐的替代事件，行为等价且必定触发）。
+ * eventMap 中仍以原始事件名记录，保证 enable/disable 逻辑对称。
+ */
+const toAllowedEvent = (event: string) =>
+  event === 'unload' ? 'pagehide' : event
+
 function main() {
   console.log('💀 event hacker running')
   let disableMap: Record<string, string[]> = {}
@@ -74,7 +84,7 @@ function main() {
         if (disableMatch && disableMatch[1].includes(event)) {
           console.log('匹配到禁用query', disableMap, tar)
         } else {
-          var rs = originalAdd.call(this, key, fn, state)
+          var rs = originalAdd.call(this, toAllowedEvent(key), fn, state)
         }
         const addEvent = {
           fn,
@@ -105,7 +115,7 @@ function main() {
 
       try {
         const eventList = getEventMap()?.[key] ?? []
-        var rs = originalRemove.call(this, key, fn, state)
+        var rs = originalRemove.call(this, toAllowedEvent(key), fn, state)
         const index = eventList.findIndex(
           (ev: any) => ev.fn === fn && ev.state === state,
         )
@@ -135,9 +145,11 @@ function main() {
 
     function rmEv(tar: any, fn: noop) {
       let eventList = (tar as any).eventMap?.[event] ?? []
+      const allowedEvent = toAllowedEvent(event)
       eventList.forEach((ev: any) => {
-        if (!isUndefined(ev.state)) fn.call(tar, event, ev.fn, ev.state)
-        else fn.call(tar, event, ev.fn)
+        if (!isUndefined(ev.state))
+          fn.call(tar, allowedEvent, ev.fn, ev.state)
+        else fn.call(tar, allowedEvent, ev.fn)
       })
     }
     switch (qs) {
@@ -168,9 +180,10 @@ function main() {
 
     function addEv(tar: any, fn: noop) {
       let eventList = (tar as any).eventMap?.[event] ?? []
+      const allowedEvent = toAllowedEvent(event)
       eventList.forEach((ev: any) => {
-        if (ev.state) fn.call(tar, event, ev.fn, ev.state)
-        else fn.call(tar, event, ev.fn)
+        if (ev.state) fn.call(tar, allowedEvent, ev.fn, ev.state)
+        else fn.call(tar, allowedEvent, ev.fn)
       })
     }
 

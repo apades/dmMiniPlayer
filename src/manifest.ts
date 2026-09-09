@@ -31,8 +31,10 @@ export const manifest: chrome.runtime.ManifestV3 = {
     'storage',
     'contextMenus',
     'activeTab',
-    // 'tabCapture',
+    'scripting',
+    'notifications',
   ],
+  optional_permissions: ['tabCapture'],
   background: {
     service_worker: 'background.js',
     type: 'module',
