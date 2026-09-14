@@ -29,7 +29,16 @@ export async function getBiliBiliVideoDanmu(
 ): Promise<DanmakuInitData[]> {
   const xmlText = await fetch(
     `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`,
-  ).then((res) => res.text())
+    { credentials: 'include' },
+  ).then(async (res) => {
+    const text = await res.text()
+    if (!res.ok) {
+      throw new Error(
+        `Bilibili danmaku request failed (${res.status}): ${text.slice(0, 200)}`,
+      )
+    }
+    return text
+  })
 
   const parser = new DOMParser()
 
