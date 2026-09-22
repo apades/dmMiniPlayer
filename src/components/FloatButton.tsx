@@ -304,7 +304,7 @@ const FloatButton: FC<Props> = (props) => {
         )}
 
       {createPortal(
-        <AppRoot isShadowRoot>
+        <AppRoot isShadowRoot isFloatBtn>
           {/* TODO 拖拽功能在小网站还可以用，但是油管、bilibili这些复杂网站会出问题 */}
           {/* <DraggerContainer
             bounds={{
