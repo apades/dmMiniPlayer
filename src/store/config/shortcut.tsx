@@ -24,6 +24,9 @@ const config: typeof _config = (props) => ({
     return (
       <>
         <input
+          type="text"
+          autoComplete="off"
+          spellCheck={false}
           value={value}
           onKeyDown={(e) => {
             e.preventDefault()
@@ -74,6 +77,9 @@ const config: typeof _config = (props) => ({
 
 export const disableRender = (val: Key[]) => (
   <input
+    type="text"
+    autoComplete="off"
+    spellCheck={false}
     value={val.join(' + ')}
     disabled
     style={{ cursor: 'not-allowed' }}
