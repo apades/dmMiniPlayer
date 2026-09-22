@@ -1,7 +1,7 @@
 diff --git a/es/Dom/findDOMNode.js b/es/Dom/findDOMNode.js
 index 93d27d197bcf493f6944bfbf4f9c421b6b9c6ce2..f37b7b569c9e3911eef39d312bd22daeb891067c 100644
 --- a/es/Dom/findDOMNode.js
-+++ b/es/Dom/findDOMNode.js
++++ b/es/Dom/findDOMNode.js	
 @@ -1,7 +1,9 @@
  export function isDOM(node) {
 +  const win = (node?.ownerDocument?.defaultView || window)
@@ -13,10 +13,24 @@ index 93d27d197bcf493f6944bfbf4f9c421b6b9c6ce2..f37b7b569c9e3911eef39d312bd22dae
  }
  
  /**
+diff --git a/es/Dom/isVisible.js b/es/Dom/isVisible.js
+index c9194028197c271eece00cfb79b326186ad6e7a9..dff1f2056a141e22f947406ca2359eec92cb211d 100644
+--- a/es/Dom/isVisible.js
++++ b/es/Dom/isVisible.js	
+@@ -2,7 +2,8 @@ export default (element => {
+   if (!element) {
+     return false;
+   }
+-  if (element instanceof Element) {
++  const win = (element?.ownerDocument?.defaultView || window)
++  if (element instanceof win.Element) {
+     if (element.offsetParent) {
+       return true;
+     }
 diff --git a/lib/Dom/findDOMNode.js b/lib/Dom/findDOMNode.js
 index 108bcca04eb2e7aea2d302bf43149e7599c46e23..0f86c5df9f08331c4347f9c88ea7eb72c708d13c 100644
 --- a/lib/Dom/findDOMNode.js
-+++ b/lib/Dom/findDOMNode.js
++++ b/lib/Dom/findDOMNode.js	
 @@ -7,9 +7,10 @@ exports.default = findDOMNode;
  exports.getDOM = getDOM;
  exports.isDOM = isDOM;
@@ -29,3 +43,17 @@ index 108bcca04eb2e7aea2d302bf43149e7599c46e23..0f86c5df9f08331c4347f9c88ea7eb72
  }
  
  /**
+diff --git a/lib/Dom/isVisible.js b/lib/Dom/isVisible.js
+index b3539ce313110ca5b284d02c84e1cacb646e3017..8eb8fa1509a2d131f58e26c54f2e4b5dcb07b53e 100644
+--- a/lib/Dom/isVisible.js
++++ b/lib/Dom/isVisible.js	
+@@ -8,7 +8,8 @@ var _default = element => {
+   if (!element) {
+     return false;
+   }
+-  if (element instanceof Element) {
++  const win = (element?.ownerDocument?.defaultView || window)
++  if (element instanceof win.Element) {
+     if (element.offsetParent) {
+       return true;
+     }
