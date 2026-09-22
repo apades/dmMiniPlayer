@@ -178,7 +178,11 @@ export const getVideoInfoFromUrl = onceCallWithMap(async (_url: string) => {
   } else if (aid) {
     videoInfo.searchParams.set('aid', aid)
   }
-  const res = (await cacheFetch(videoInfo.toString())).data
+  const res = (
+    await cacheFetch(videoInfo.toString(), {
+      credentials: 'include',
+    })
+  ).data
   const { pages } = res
   aid = res.aid
   cid = res.cid
