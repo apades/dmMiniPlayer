@@ -16,20 +16,12 @@ type Props = PropsWithChildren<{
   Omit<TriggerProps, 'popup'>
 const Dropdown: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isVisible, setVisible] = useState(false)
   const rootRef = useAppRootElRef()
 
   return (
     <Trigger
       popup={props.menuRender}
       action={['hover']}
-      popupClassName={classNames(
-        'transition-[opacity,scale]',
-        'opacity-0 scale-y-0',
-        isVisible && 'opacity-100 scale-y-100',
-      )}
-      popupVisible={isVisible}
-      onOpenChange={setVisible}
       // popupPlacement="bottomLeft"
       popupAlign={{
         points: ['bl', 'tl'],
