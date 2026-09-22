@@ -30,7 +30,16 @@ const IGNORE_TYPES = new Set<string>([
 async function getBiliBiliVideoDanmu(cid: string): Promise<DanmakuInitData[]> {
   const xmlText = await fetch(
     `https://api.bilibili.com/x/v1/dm/list.so?oid=${cid}`,
-  ).then((res) => res.text())
+    { credentials: 'include' },
+  ).then(async (res) => {
+    const text = await res.text()
+    if (!res.ok) {
+      throw new Error(
+        `Bilibili danmaku request failed (${res.status}): ${text.slice(0, 200)}`,
+      )
+    }
+    return text
+  })
 
   return parserBilibiliDanmuFromXML(xmlText)
 }
@@ -76,15 +85,28 @@ export function parserBilibiliDanmuFromXML(xmlText: string): DanmakuInitData[] {
 }
 
 const videoInfoReqCache = new Map<string, any>()
-const cacheFetch: (
-  input: RequestInfo | URL,
-  init?: RequestInit,
-) => Promise<any> = async (...args) => {
-  const url = args[0].toString()
+const cacheFetch = async (input: RequestInfo | URL, init: RequestInit = {}) => {
+  const url = input.toString()
   if (videoInfoReqCache.has(url)) {
     return videoInfoReqCache.get(url)
   }
-  const res = fetch(...args).then((res) => res.json())
+  const res = fetch(input, { ...init, credentials: 'include' }).then(
+    async (response) => {
+      const text = await response.text()
+      if (!response.ok) {
+        throw new Error(
+          `Bilibili video info request failed (${response.status}): ${text.slice(0, 200)}`,
+        )
+      }
+      try {
+        return JSON.parse(text)
+      } catch {
+        throw new Error(
+          `Bilibili video info response was not JSON: ${text.slice(0, 200)}`,
+        )
+      }
+    },
+  )
   videoInfoReqCache.set(url, res)
   return res
 }
