@@ -1,6 +1,6 @@
 import enquirer from 'enquirer'
 import fs from 'fs-extra'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import chalk from 'chalk'
 import packageData from '../package.json' with { type: 'json' }
 import { spawn, pr } from './utils.mjs'
@@ -58,7 +58,7 @@ let toVersion =
   await spawn('npm', ['run', 'build'])
 
   // 打包zip
-  const archive = archiver('zip', {
+  const archive = new ZipArchive('zip', {
     zlib: { level: 9 },
   })
   archive.pipe(fs.createWriteStream(pr(zipOutDir, getBuildName(version))))
