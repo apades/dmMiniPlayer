@@ -603,8 +603,7 @@ export const isDocPIP = (
   /**当前的window对象或者挂在当前窗口里的dom */
   tar?: Window | HTMLElement | null,
 ) => {
-  const tarWin =
-    (tar instanceof HTMLElement ? tar.ownerDocument.defaultView : tar) ?? window
+  const tarWin = tar?.ownerDocument.defaultView ?? window
   return !!tryCatch(
     () =>
       window.top !== tarWin &&
