@@ -6,7 +6,7 @@ import {
 } from '@root/types/config'
 import { t } from '@root/utils/i18n'
 
-const category = t('settingPanel.pip')
+const category = 'PIP'
 const config: typeof _config = (props) => ({ ...props, category })
 
 export const docPIPConfig = {
@@ -90,7 +90,7 @@ export const docPIPConfig = {
     // notRecommended: true,
     label: t('settingPanel.docPIP_renderType'),
     defaultValue: DocPIPRenderType.replaceVideoEl,
-    desc: t('settingPanel.forceModeToDebugger'),
+    desc: 'Force mode to debugger',
     type: 'group',
     group: [
       {
@@ -105,7 +105,7 @@ export const docPIPConfig = {
       },
       {
         value: DocPIPRenderType.capture_captureStream,
-        label: t('settingPanel.onlyCaptureStream'),
+        label: 'Only captureStream',
       },
       {
         value: DocPIPRenderType.capture_displayMediaWithCropTarget,
@@ -134,7 +134,7 @@ export const docPIPConfig = {
       },
       {
         value: DocPIPRenderType.capture_captureStream,
-        label: t('settingPanel.onlyCaptureStream'),
+        label: 'Only captureStream',
       },
     ],
   }),
@@ -167,23 +167,23 @@ export const docPIPConfig = {
     ],
   }),
   capture_tabCapture_FPS: config({
-    label: t('settingPanel.recordFPS'),
+    label: 'Record FPS',
     defaultValue: 30,
-    desc: t('settingPanel.recordFPSDesc'),
+    desc: 'Warning: The higher the FPS, the higher the CPU usage, and browser may crash',
     // relateBy: 'notSameOriginIframeCaptureModePriority',
     // relateByValue: DocPIPRenderType.capture_tabCapture,
     notRecommended: true,
   }),
   capture_tabCapture_clip: config({
-    label: t('settingPanel.recordClip'),
+    label: 'Record clip',
     defaultValue: false,
-    desc: t('settingPanel.recordClipDesc'),
+    desc: 'Warning: Consuming performance very much',
     // relateBy: 'notSameOriginIframeCaptureModePriority',
     // relateByValue: DocPIPRenderType.capture_tabCapture,
     notRecommended: true,
   }),
   capture_captureStream_autoSetCrossOrigin: config({
-    label: t('settingPanel.autoSetVideoCrossOrigin'),
+    label: 'Auto set video crossOrigin',
     defaultValue: true,
     notRecommended: true,
   }),

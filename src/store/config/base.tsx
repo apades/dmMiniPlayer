@@ -22,8 +22,8 @@ export enum SideTriggerType {
 
 const baseConfigMap = {
   language: config<Language>({
-    label: t('settingPanel.language'),
-    desc: t('settingPanel.languageDesc'),
+    label: 'Language',
+    desc: 'Will reload page when language has changed',
     defaultValue: getNowLang(),
     type: 'group',
     group: Object.values(Language).map((v) => ({
@@ -118,8 +118,8 @@ const baseConfigMap = {
   // debug
   useIframeToDetectIsLiveOnYoutube: config({
     defaultValue: false,
-    label: t('settingPanel.useIframeDetectionOnYT'),
-    desc: t('settingPanel.useIframeDetectionOnYTDesc'),
+    label: 'useIframeDetectionOnYT',
+    desc: 'use chat iframe to decect isLive on Youtube, else use HTML element',
     notRecommended: true,
   }),
   performanceInfo: config({
@@ -136,12 +136,10 @@ const baseConfigMap = {
     notRecommended: true,
   }),
   vpActionAreaLock: config({
-    label: t('settingPanel.vpActionAreaLock'),
     notRecommended: true,
     defaultValue: false,
   }),
   vpBufferTest: config({
-    label: t('settingPanel.vpBufferTest'),
     notRecommended: true,
     defaultValue: false,
   }),
@@ -157,26 +155,14 @@ const baseConfigMap = {
     desc: t('settingPanel.saveWidthOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
   }),
-  dragArea_show: config({
-    label: t('settingPanel.dragArea_show'),
-    defaultValue: false,
-    notRecommended: true,
-  }),
+  dragArea_show: config({ defaultValue: false, notRecommended: true }),
   /**
    * 在4个角范围内，保存位置是绝对值
    *
    * 如果不在4个角范围内，保存的位置会是相对值。例如在top区，top为绝对值，left为以中线为准，计算出绝对值
    *  */
-  dragArea_cornerPercentW: config({
-    label: t('settingPanel.dragArea_cornerPercentW'),
-    defaultValue: 30,
-    notRecommended: true,
-  }),
-  dragArea_cornerPercentH: config({
-    label: t('settingPanel.dragArea_cornerPercentH'),
-    defaultValue: 30,
-    notRecommended: true,
-  }),
+  dragArea_cornerPercentW: config({ defaultValue: 30, notRecommended: true }),
+  dragArea_cornerPercentH: config({ defaultValue: 30, notRecommended: true }),
   disable_sites: config({
     defaultValue: [] as string[],
     label: t('settingPanel.disableSites'),

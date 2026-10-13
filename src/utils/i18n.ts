@@ -65,21 +65,12 @@ export type I18nKeys = DeepLeafKeys<typeof zhCN>
 const formatLang = (lang: string) => lang.replace('-', '_') as any
 const langKeys = Object.values(Language)
 
-const matchLanguage = (lang: string): Language | undefined => {
-  const formatted = formatLang(lang)
-  if (langKeys.includes(formatted)) return formatted
-  const short = formatted.split('_')[0]
-  if (langKeys.includes(short)) return short as Language
-  return undefined
-}
-
-const getLangFromNavigator = onceCall((): Language => {
-  for (const lang of navigator.languages) {
-    const matched = matchLanguage(lang)
-    if (matched) return matched
-  }
-  return Language.English
-})
+const getLangFromNavigator = onceCall((): Language =>
+  formatLang(
+    navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
+      Language.English,
+  ),
+)
 
 export const getNowLang = (): Language =>
   (globalThis as any).__LOCALE || getLangFromNavigator()

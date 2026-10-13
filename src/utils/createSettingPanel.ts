@@ -1,14 +1,13 @@
 import { ConfigField, initSetting } from '@apad/setting-panel'
-import settingPanelEn from '@apad/setting-panel/i18n/en.json'
-import settingPanelZh from '@apad/setting-panel/i18n/zh_cn.json'
-import settingPanelRu from '../locales/setting-panel-ru.json'
+import en from '@apad/setting-panel/i18n/en.json'
+import zh from '@apad/setting-panel/i18n/zh_cn.json'
 import isPluginEnv from '@root/shared/isPluginEnv'
 import { KeyType } from '@root/shared/storeKey'
 import { makeAutoObservable, observe as mobxObserve } from 'mobx'
 import { observer } from 'mobx-react'
 import Browser from 'webextension-polyfill'
 import isDev from '@root/shared/isDev'
-import { getNowLang, Language } from './i18n'
+import { getIsZh } from './i18n'
 import {
   getBrowserLocalStorage,
   getBrowserSyncStorage,
@@ -17,18 +16,6 @@ import {
   useBrowserLocalStorage,
   useBrowserSyncStorage,
 } from './storage'
-
-function getSettingPanelI18n() {
-  switch (getNowLang()) {
-    case Language['Chinese(Simplified)']:
-    case Language['Chinese(Traditional)']:
-      return settingPanelZh
-    case Language.Russian:
-      return settingPanelRu
-    default:
-      return settingPanelEn
-  }
-}
 
 export function createSettingPanel<Config extends Record<string, any>>(props: {
   settings: {
@@ -68,7 +55,7 @@ export function createSettingPanel<Config extends Record<string, any>>(props: {
     settings,
     saveInLocal: !isPluginEnv,
     mobx: { makeAutoObservable, observer, observe: mobxObserve },
-    i18n: getSettingPanelI18n(),
+    i18n: getIsZh() ? zh : en,
     useShadowDom: isPluginEnv,
     ...(isPluginEnv && isDev
       ? { styleHref: Browser.runtime.getURL('/setting-panel.css') }
