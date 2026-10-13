@@ -3,6 +3,7 @@ import zhCN from '../locales/zh_CN.json'
 import zhTW from '../locales/zh_TW.json'
 import es from '../locales/es.json'
 import fr from '../locales/fr.json'
+import ru from '../locales/ru.json'
 import ja from '../locales/ja.json'
 import ko from '../locales/ko.json'
 import { get, onceCall } from '.'
@@ -30,6 +31,7 @@ export enum Language {
   // 按知名度排序
   Spanish = 'es',
   French = 'fr',
+  Russian = 'ru',
   Japanese = 'ja',
   Korean = 'ko',
 }
@@ -40,6 +42,7 @@ export const LanguageNativeNames: Record<Language, string> = {
   zh_TW: '中文(繁體)',
   es: 'Español',
   fr: 'Français',
+  ru: 'Русский',
   ja: '日本語',
   ko: '한국어',
 }
@@ -48,6 +51,7 @@ const i18nMap: Record<Language, any> = {
   en: en,
   es: es,
   fr: fr,
+  ru: ru,
   ja: ja,
   ko: ko,
   zh_CN: zhCN,
@@ -61,12 +65,11 @@ export type I18nKeys = DeepLeafKeys<typeof zhCN>
 const formatLang = (lang: string) => lang.replace('-', '_') as any
 const langKeys = Object.values(Language)
 
-const getLangFromNavigator = onceCall(
-  (): Language =>
-    formatLang(
-      navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
-        Language.English,
-    ),
+const getLangFromNavigator = onceCall((): Language =>
+  formatLang(
+    navigator.languages.find((lang) => langKeys.includes(formatLang(lang))) ||
+      Language.English,
+  ),
 )
 
 export const getNowLang = (): Language =>
