@@ -1,0 +1,26 @@
+diff --git a/lib/index.d.mts b/lib/index.d.mts
+index 61529b4ef24dc3e542af63c2d214973d01090cd6..8adcf71956eec579a46c5b4622023077b84ebc2b 100644
+--- a/lib/index.d.mts
++++ b/lib/index.d.mts	
+@@ -38,7 +38,7 @@ interface ConfigGroupField<T> {
+     desc?: string;
+     label?: string;
+ }
+-type ConfigField<T> = ConfigFieldBase<T> | T | (ConfigFieldBase<T> & {
++export type ConfigField<T> = ConfigFieldBase<T> | T | (ConfigFieldBase<T> & {
+     type: 'group';
+     group: (T | ConfigGroupField<T>)[];
+ }) | (ConfigFieldBase<T> & {
+diff --git a/lib/index.d.ts b/lib/index.d.ts
+index 61529b4ef24dc3e542af63c2d214973d01090cd6..8adcf71956eec579a46c5b4622023077b84ebc2b 100644
+--- a/lib/index.d.ts
++++ b/lib/index.d.ts	
+@@ -38,7 +38,7 @@ interface ConfigGroupField<T> {
+     desc?: string;
+     label?: string;
+ }
+-type ConfigField<T> = ConfigFieldBase<T> | T | (ConfigFieldBase<T> & {
++export type ConfigField<T> = ConfigFieldBase<T> | T | (ConfigFieldBase<T> & {
+     type: 'group';
+     group: (T | ConfigGroupField<T>)[];
+ }) | (ConfigFieldBase<T> & {

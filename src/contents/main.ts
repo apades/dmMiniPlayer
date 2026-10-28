@@ -51,37 +51,39 @@ if (isTop) {
     )
   })
 
-  // only all frames
-  // Set crossOrigin on all video elements to enable captureStream()
+  let videoObserver: MutationObserver
   function setCrossOriginOnVideo(video: HTMLVideoElement) {
     if (video.src.startsWith('blob:')) return
     if (video.crossOrigin) return
     video.crossOrigin = 'anonymous'
   }
-  dq('video').forEach((v) => {
-    setCrossOriginOnVideo(v)
-  })
-  dq('*').forEach((node) => {
-    if (!node.shadowRoot) return
-    dq('video', node.shadowRoot).forEach((v) => {
-      setCrossOriginOnVideo(v)
-    })
-  })
-  new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType !== Node.ELEMENT_NODE) return
-        if ((node as HTMLElement).tagName === 'VIDEO') {
-          setCrossOriginOnVideo(node as HTMLVideoElement)
-          return
-        }
-        const video = dq('video', node as HTMLElement)
-        video.forEach((v) => {
-          setCrossOriginOnVideo(v)
+
+  autorun(() => {
+    videoObserver?.disconnect?.()
+    videoObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType !== Node.ELEMENT_NODE) return
+          if ((node as HTMLElement).tagName === 'VIDEO') {
+            setCrossOriginOnVideo(node as HTMLVideoElement)
+          }
         })
       })
     })
-  }).observe(document.body, { childList: true, subtree: true })
+    if (!configStore.setCrossOriginOnAllIframeVideo) return
+    // only all frames
+    // Set crossOrigin on all video elements to enable captureStream()
+    dq('video').forEach((v) => {
+      setCrossOriginOnVideo(v)
+    })
+    dq('*').forEach((node) => {
+      if (!node.shadowRoot) return
+      dq('video', node.shadowRoot).forEach((v) => {
+        setCrossOriginOnVideo(v)
+      })
+    })
+    videoObserver.observe(document.body, { childList: true, subtree: true })
+  })
 }
 
 function main() {

@@ -155,6 +155,11 @@ const baseConfigMap = {
     desc: t('settingPanel.saveWidthOnDocPIPCloseOffsetDesc'),
     notRecommended: true,
   }),
+  setCrossOriginOnAllIframeVideo: config({
+    notRecommended: true,
+    defaultValue: false,
+    desc: 'Careful: It may make some video cors error',
+  }),
   dragArea_show: config({ defaultValue: false, notRecommended: true }),
   /**
    * 在4个角范围内，保存位置是绝对值
