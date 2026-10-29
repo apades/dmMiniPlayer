@@ -14,15 +14,12 @@ import {
 import { createPortal } from 'react-dom'
 import Browser from 'webextension-polyfill'
 
-let _id = 0
 type Props = {
   isShadowRoot?: boolean
   isFloatBtn?: boolean
 } & PropsWithChildren
-const AppRoot: FC<Props> = (props) => {
-  const [id] = useState(() => _id++)
-  useUnmount(() => _id--)
 
+const AppRoot: FC<Props> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const root = useMemo(() => {
     const root = (() => {
@@ -70,7 +67,6 @@ const AppRoot: FC<Props> = (props) => {
   return (
     <appRootContext.Provider value={{ rootRef: containerRef }}>
       <div
-        id={`app-root-${id}`}
         ref={containerRef}
         style={{
           all: 'initial',
@@ -81,19 +77,6 @@ const AppRoot: FC<Props> = (props) => {
           ? createPortal(props.children, root)
           : props.children}
       </div>
-      {props.isFloatBtn && (
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-        #app-root-${id} {
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-        }
-      `,
-          }}
-        ></style>
-      )}
     </appRootContext.Provider>
   )
 }
