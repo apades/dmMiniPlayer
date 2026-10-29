@@ -14,6 +14,7 @@ import { DocPIPRenderType } from '@root/types/config'
 import {
   createElement,
   dq,
+  dq1,
   dq1Adv,
   getIframeElFromSource,
   tryCatch,
@@ -123,8 +124,16 @@ function main() {
   }
 
   const requestVideoPIP = async () => {
-    let hasVideo = !!dq1Adv('video')
+    let hasVideo = !!dq1('video')
     let isIframeMode = false
+
+    if (!hasVideo) {
+      hasVideo = !!dq1Adv('video')
+      if (hasVideo) {
+        playerConfig.forceDocPIPRenderType =
+          configStore.sameOriginIframeCaptureModePriority
+      }
+    }
 
     // 没找到再启用非同源iframe查找
     if (!hasVideo) {
