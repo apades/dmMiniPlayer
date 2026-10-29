@@ -8,6 +8,9 @@ overrides:
   '@apad/element-picker': link:packages/element-picker
 
 patchedDependencies:
+  '@apad/setting-panel':
+    hash: 6cfe48760b210793660d729cf9db24ebffd4fa9938e997415e970fcf0f9b6941
+    path: patches/@apad__setting-panel.patch
   '@rc-component/util':
     hash: 8be48b6b995d9807e46a16aa0dd69c815ca1a88f9ddffc0709d0d87cb6bc7727
     path: patches/@rc-component__util.patch
@@ -27,7 +30,7 @@ importers:
         version: 10.5.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@apad/setting-panel':
         specifier: ^0.6.7
-        version: 0.6.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.6.7(patch_hash=6cfe48760b210793660d729cf9db24ebffd4fa9938e997415e970fcf0f9b6941)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@rc-component/trigger':
         specifier: ^3.10.1
         version: 3.10.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4069,7 +4072,7 @@ snapshots:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@apad/setting-panel@0.6.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@apad/setting-panel@0.6.7(patch_hash=6cfe48760b210793660d729cf9db24ebffd4fa9938e997415e970fcf0f9b6941)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
