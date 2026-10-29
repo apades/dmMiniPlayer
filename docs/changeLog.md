@@ -1,3 +1,9 @@
+## v0.6.64
+1. Fixed an issue where clicking the extension button failed to start picture-in-picture when the video was inside an iframe
+2. Fixed an issue where some videos failed to load
+3. Reverted the #183 fix; floating button position settings now work correctly
+4. Added Russian translation
+
 ## v0.6.63
 1. Upgraded underlying dependencies
 2. Fixed player menu disappearing and related issues after Chrome 153
