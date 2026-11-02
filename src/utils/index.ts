@@ -161,6 +161,26 @@ export const dq1Adv: typeof dq1 = (
       //
     }
   }
+  // 斗鱼回放等播放器把 video 放在 open shadow DOM 里
+  return dqShadowAll(selector, tar)[0] as any
+}
+
+/**递归查找所有 open shadow root 内匹配的元素（不含 light DOM 本身） */
+export const dqShadowAll = (
+  selector: string,
+  tar = window.document as DqTarType,
+): HTMLElement[] => {
+  const result: HTMLElement[] = []
+  const walk = (root: DqTarType) => {
+    for (const el of Array.from(root?.querySelectorAll('*') ?? [])) {
+      const sr = (el as HTMLElement).shadowRoot
+      if (!sr) continue
+      result.push(...(Array.from(sr.querySelectorAll(selector)) as any))
+      walk(sr as any)
+    }
+  }
+  walk(tar)
+  return result
 }
 
 export const onWindowLoad = () => {
