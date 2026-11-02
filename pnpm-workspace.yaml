@@ -1,5 +1,6 @@
 packages:
   - packages/element-picker
+  - packages/longplay-bridge
 
 onlyBuiltDependencies:
   - esbuild
