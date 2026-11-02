@@ -64,6 +64,47 @@ pnpm run dev
 ```
 Drag `dist` folder and drop to `chrome://extensions/` page in Chrome (Open development mode before)
 
+### 可选：Longplay 商业分支桥模块
+
+针对 [#167](https://github.com/apades/dmMiniPlayer/issues/167) 的「请求 → 桥 → 触发」设计，`packages/longplay-bridge` 提供可选的 VIP access 权益检查。现有播放器入口没有导入这个包，免费版不会因此发起 Longplay 请求、改变功能或增加运行时代码。
+
+商业分支可以在扩展页或后台上下文中接入：
+
+```ts
+import { createLongplayBridge } from '@pkgs/longplay-bridge'
+
+const bridge = createLongplayBridge({
+  baseUrl: 'https://api.dev.longplayai.com',
+  scope: { projectId: '<App UUID>', environment: 'sandbox' },
+  onPurchaseRequired: async (featureId) => {
+    // 由商业分支打开自己的 HTTPS 会员页，在网页里展示 Paywall / 完成结算。
+    // featureId 只选择功能，不携带用户凭据，也不代表付款成功。
+    await openMembershipPage(featureId)
+  },
+})
+
+// 复用产品自身登录态：由可信后端验证用户并签发完整 Customer Session。
+bridge.identify(await loadVerifiedCustomerSession())
+const result = await bridge.request('<VIP access Feature UUID>', async () => {
+  return runVipFeature()
+})
+// result.allowed 为 false 时不执行功能；购买后由用户重试同一请求。
+// 退出登录调用 bridge.reset()；切换账号重新 identify；销毁时调用 destroy()。
+```
+
+`openMembershipPage`、`loadVerifiedCustomerSession` 和 `runVipFeature` 是商业分支提供的接入点，不是公开版已有的接口。App / Feature、产品用户登录与会员页也由商业分支配置；Longplay 控制台登录不能代替产品用户认证。服务端接入见 [Longplay 文档](https://longplayai.com/docs/server-auth)。Server Key 仅留在可信后端。
+
+本桥仅处理 `access` 类型的 VIP 功能，不做按量扣费，也不把客户端检查当作受保护后端服务的授权。后端仍需独立检查权益；网络或认证失败会抛错，不会放行功能。购买页打开或返回后不会自动放行，下一次请求必须重新得到服务端授权。Session 只交给扩展可信上下文，不放进网页全局变量或消息广播。
+
+Paywall / 结算放在普通网页中，扩展只使用打包的 SDK 数据层，不加载远程执行代码。若商业版增加账号、计费或数据采集，应同步更新该版本的隐私声明。当前公开版的 `privacy.txt` 不变。
+
+针对桥模块的离线检查：
+
+```bash
+pnpm --filter @dm-mini-player/longplay-bridge test
+pnpm --filter @dm-mini-player/longplay-bridge typecheck
+```
+
 ## 📚 主要实现方法
 ### 旧版本PIP
 用一个单独canvas画video + 弹幕，再把canvas的stream附加到一个单独的video上，最后开启画中画功能
