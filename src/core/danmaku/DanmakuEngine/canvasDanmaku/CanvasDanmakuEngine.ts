@@ -146,7 +146,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
     // 这里只计算type:right的弹幕位置
     const rightDanOccupyWidthMap: Record<number, number> = {}
     for (const danmaku of rightDans) {
-      const startX = this.container.clientWidth - danmaku.moveX,
+      const startX = this.containerWidth - danmaku.moveX,
         occupyRight = startX + danmaku.width
       let toTunnel = 0
       while (true) {
@@ -166,7 +166,7 @@ export default class CanvasDanmakuEngine extends DanmakuEngine {
         continue
       }
       // 这里是渲染时就在屏幕外，就站一个tunnel通道
-      if (occupyRight >= this.container.clientWidth) {
+      if (occupyRight >= this.containerWidth) {
         this.tunnelManager.tunnelsMap.right[toTunnel] = danmaku
       }
       danmaku.tunnel = toTunnel
