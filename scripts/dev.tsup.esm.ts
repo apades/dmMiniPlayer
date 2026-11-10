@@ -14,19 +14,7 @@ export default defineConfig({
       pr('../node_modules/@apad/setting-panel/lib/index.css'),
       pr(outDir, './setting-panel.css'),
     )
-    manifest.web_accessible_resources = [
-      {
-        resources: fs.readdirSync(pr(outDir)),
-        matches: ['<all_urls>'],
-      },
-      {
-        resources: ['assets/icon.png'],
-        matches: ['<all_urls>'],
-      },
-    ]
-
-    manifest.permissions?.push('scripting')
-    fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
+    await shareConfig.onSuccess?.()
   },
   entry: {
     ...omit(shareConfig.entry, ['entry-all-frames']),

@@ -82,6 +82,7 @@ export const shareConfig = {
         resources: ['assets/icon.png'],
         matches: ['<all_urls>'],
       },
+      ...(manifest.web_accessible_resources ?? []),
     ]
 
     if (isDev) {
