@@ -3,6 +3,7 @@ import configStore from '@root/store/config'
 import {
   createElement,
   dq,
+  dqShadowAll,
   getDeepPrototype,
   tryCatch,
   wait,
@@ -207,6 +208,7 @@ export default abstract class WebProvider
   getVideoEl(document = window.document): HTMLVideoElement {
     const videos = [
       ...dq('video', document),
+      ...(dqShadowAll('video', document) as HTMLVideoElement[]),
       ...dq('iframe', document)
         .map((iframe) => {
           try {

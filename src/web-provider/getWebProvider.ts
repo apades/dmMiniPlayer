@@ -7,6 +7,7 @@ import DdrkProvider from './ddrk'
 import DouyinProvider from './douyin'
 import DonghuafengProvider from './donghuafeng'
 import DouyuLiveProvider from './douyu'
+import DouyuVideoProvider from './douyuVideo'
 import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
 import HuyaProvider from './huya'
@@ -22,6 +23,8 @@ export default function getWebProvider(): WebProvider {
       return new BilibiliVideoProvider()
     case 'douyu':
       return new DouyuLiveProvider()
+    case 'douyu-video':
+      return new DouyuVideoProvider()
     case 'ddrk':
       return new DdrkProvider()
     case 'douyin':
