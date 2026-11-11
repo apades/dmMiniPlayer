@@ -131,7 +131,6 @@ export default abstract class WebProvider
 
   /**打开播放器 */
   async openPlayer(props?: { videoEl?: HTMLVideoElement }) {
-    if (!navigator.userActivation.isActive) return
     this.init()
     this.webVideo = props?.videoEl ?? this.getVideoEl()
     this.injectVideoEventsListener(this.webVideo)

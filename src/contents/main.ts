@@ -123,7 +123,7 @@ function main() {
     isWaiting = false
   }
 
-  const requestVideoPIP = async () => {
+  const requestVideoPIP = async (strict = false) => {
     let hasVideo = !!dq1('video')
     let isIframeMode = false
 
@@ -190,7 +190,18 @@ function main() {
       return { state: 'error', errType: 'no-video' }
     }
 
-    if (!navigator.userActivation.isActive) {
+    // ! 自从chrome 156.0.8078.80 版本附近，出现了
+    // ! navigator.mediaSession.setActionHandler 注册 'enterpictureinpicture' 这个事件后，
+    // ! 隐藏网页 navigator.userActivation.isActive 还是false，但是hasBeenActive是true
+    // !!! 最主要的是这个特性，popup的不是同一逻辑，需要单独处理
+    const isMustUserActivation = strict
+      ? !navigator.userActivation.isActive
+      : !(
+          navigator.userActivation.hasBeenActive &&
+          !navigator.userActivation.isActive
+        )
+
+    if (isMustUserActivation) {
       waitingPageActive().then(() => {
         openPlayer()
       })
@@ -202,7 +213,7 @@ function main() {
   }
 
   // 从popup点击的请求PIP，这种是粗略查找最大视频
-  onBgMessage(WebextEvent.requestVideoPIP, requestVideoPIP)
+  onBgMessage(WebextEvent.requestVideoPIP, () => requestVideoPIP(false))
   // 从popup点击的弹出设置
   onBgMessage(WebextEvent.openSetting, () => {
     window.openSettingPanel()
