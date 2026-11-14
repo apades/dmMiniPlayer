@@ -195,8 +195,8 @@ export default class KickProvider extends HtmlDanmakuProvider {
 
   override onInit() {
     super.onInit()
-    this.danmakuSender = new KickDanmakuSender()
-    this.danmakuSender.setData(this.getDanmakuSenderConfig())
+    this.danmakuSender = undefined
+    this.syncSender()
     this.bindChat()
     this.addOnUnloadFn(
       onRouteChange(() => {
@@ -209,6 +209,22 @@ export default class KickProvider extends HtmlDanmakuProvider {
     })
   }
 
+  private isLoggedIn() {
+    const chat = dq1('#channel-chatroom')
+    if (!chat) return false
+    return !dq1('[data-testid="login"]', chat)
+  }
+
+  private syncSender() {
+    if (!this.isLoggedIn()) {
+      this.danmakuSender = undefined
+      return
+    }
+    if (this.danmakuSender instanceof KickDanmakuSender) return
+    this.danmakuSender = new KickDanmakuSender()
+    this.danmakuSender.setData(this.getDanmakuSenderConfig())
+  }
+
   private bindChat() {
     const config = this.getObserveHtmlDanmakuConfig()
     if (config.container) {
@@ -216,6 +232,7 @@ export default class KickProvider extends HtmlDanmakuProvider {
       this.waitChat = undefined
       this.stopObserveHtmlDanmaku()
       this.startObserveHtmlDanmaku(config)
+      this.syncSender()
       return
     }
     if (this.waitChat) return
