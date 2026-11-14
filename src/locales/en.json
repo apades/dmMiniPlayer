@@ -61,6 +61,12 @@
     "biliVideoPakkuFilter": "Bilibili danmaku filter by pakku.js",
     "biliVideoPakkuFilterDesc": "Available in bilibili-evaolved open. Only filter & lower danmakus, no special feats",
     "specialWebsites": "Special websites",
+    "biliVideoDanmakuMode": "Bilibili video danmaku source",
+    "biliVideoDanmakuModeDesc": "API by default. The danmaku error toast can switch to HTML observe, which reads danmaku currently shown on the page",
+    "biliLiveDanmakuMode": "Bilibili live danmaku source",
+    "biliLiveDanmakuModeDesc": "API by default. The danmaku error toast can switch to HTML observe, which reads the live chat",
+    "biliDanmakuMode_api": "API",
+    "biliDanmakuMode_html": "HTML observe",
     "biliVideoDansFromBiliEvaolved": "Bilibili get danmakus by bilibili-evaolved",
     "biliVideoDansFromBiliEvaolvedDesc": "This pattern has a problem and cannot download the complete danmakus.",
     "youtube_mergeSubtitleAtSimilarTimes": "Merge youtube subtitles at similar times",
@@ -209,6 +215,7 @@
   },
   "error": {
     "danmakuLoad": "Danmaku load error, please try reopen player or login website",
+    "switchHtmlDanmaku": "Switch to HTML observe",
     "subtitleLoad": "Subtitle load error, please try reopen player or login website",
     "translateFail": "Translate fail"
   },

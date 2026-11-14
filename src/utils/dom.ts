@@ -11,23 +11,27 @@ export const dq1Parent: {
   <K extends keyof HTMLElementTagNameMap>(
     el: HTMLElement,
     selectors: K,
+    deep?: HTMLElement,
   ): HTMLElementTagNameMap[K] | null
   <K extends keyof SVGElementTagNameMap>(
     el: HTMLElement,
     selectors: K,
+    deep?: HTMLElement,
   ): SVGElementTagNameMap[K] | null
   <E extends Element = HTMLDivElement>(
     el: HTMLElement,
     selectors: string,
+    deep?: HTMLElement,
   ): E | null
-} = (el: HTMLElement, selectors: string) => {
+} = (el: HTMLElement, selectors: string, deep?: HTMLElement) => {
   if (!el) return null
   let p = el
   while (true) {
     const v = p.matches(selectors)
     if (v) break
     else {
-      if (p.parentElement) p = p.parentElement
+      if (p.parentElement && (!deep || p.parentElement !== deep))
+        p = p.parentElement
       else {
         p = null!
         break
@@ -155,4 +159,9 @@ export function getDomAbsolutePosition(el: HTMLElement) {
     left: rect.left + window.scrollX,
     top: rect.top - document.body.getBoundingClientRect().top,
   }
+}
+
+export function isInstanceofHtmlElement(node: any): node is HTMLElement {
+  const tarWin = node?.ownerDocument?.defaultView ?? window
+  return node instanceof tarWin.HTMLElement
 }

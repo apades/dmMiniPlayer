@@ -1,5 +1,6 @@
 import { injectFunction } from '@root/utils/injectFunction'
 import { get } from '@root/utils'
+import { HISTORY_INJECT_SITE } from '@root/shared/config'
 import { onMessage_inject, sendMessage_inject } from './injectListener'
 import './eventHacker'
 import './createElementHacker'
@@ -34,14 +35,6 @@ onMessage_inject('inject-api:run', (data) => {
 })
 
 try {
-  const HISTORY_INJECT_SITE = [
-    'https://www.youtube.com',
-    'https://www.bilibili.com',
-    'https://ddys.art',
-    'https://ddys.pro',
-    // 'https://www.netflix.com',
-  ]
-
   // youtube的history.pushState是提前存好地址了的，这后面再改就没用了，所以需要提前修改
   if (HISTORY_INJECT_SITE.includes(window.location.origin)) {
     try {

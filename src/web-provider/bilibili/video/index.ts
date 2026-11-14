@@ -1,4 +1,4 @@
-import { WebProvider } from '@root/core/WebProvider'
+import { HtmlDanmakuProvider } from '@root/core/WebProvider'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'
 import DanmakuSender from '@root/core/danmaku/DanmakuSender'
 import { dq, dq1, switchLatest, tryCatch } from '@root/utils'
@@ -7,9 +7,13 @@ import { VideoItem } from '@root/components/VideoPlayer/Side'
 import API_bilibili from '@root/api/bilibili'
 import { t } from '@root/utils/i18n'
 import { getVideoInfoFromUrl } from '@pkgs/danmakuGetter/apiDanmaku/bilibili/BilibiliVideo'
-import toast from 'react-hot-toast'
 import { sendMessage } from '@root/inject/contentSender'
+import configStore, { saveConfig, updateConfig } from '@root/store/config'
+import { BiliDanmakuMode } from '@root/store/config/specialWebsites'
+import { autorun } from 'mobx'
+import { PlayerEvent } from '@root/core/event'
 import { getDanmakus } from '../utils'
+import { toastBiliDanmakuLoadError } from '../danmakuLoadToast'
 import BiliBiliPreviewManager from './PreviewManager'
 import BilibiliSubtitleManager from './SubtitleManager'
 
@@ -26,19 +30,17 @@ type RecommendVideo = {
   danmaku: number
 }
 
-export default class BilibiliVideoProvider extends WebProvider {
+export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
   override onInit(): void {
     this.subtitleManager = new BilibiliSubtitleManager()
     // danmakuSender
     this.danmakuSender = new DanmakuSender()
-    this.danmakuSender.setData({
-      webTextInput: dq1<HTMLInputElement>('.bpx-player-dm-input'),
-      webSendButton: dq1<HTMLElement>('.bpx-player-dm-btn-send'),
-    })
+    this.danmakuSender.setData(this.getDanmakuSenderConfig())
     // sideSwitcher
     this.sideSwitcher = new SideSwitcher()
     this.videoPreviewManager = new BiliBiliPreviewManager()
 
+    this.on2(PlayerEvent.seeking, this.onSeeked)
     // sendMessage('event-hacker:disable', {
     //   qs: 'document',
     //   event: 'visibilitychange',
@@ -78,6 +80,11 @@ export default class BilibiliVideoProvider extends WebProvider {
     sendMessage('run-code', { function: fn.toString() })
   }
 
+  private onSeeked = () => {
+    if (configStore.biliVideoDanmakuMode !== BiliDanmakuMode.html) return
+    this.danmakuEngine?.resetState?.()
+  }
+
   private lastAid = ''
   private lastCid = ''
 
@@ -97,7 +104,9 @@ export default class BilibiliVideoProvider extends WebProvider {
   }
 
   override onUnload(): void {
-    super.onUnload()
+    this.clearUpdateAutorun()
+    this.stopObserveHtmlDanmaku()
+    this.isQuickHiding = false
     // sendMessage('event-hacker:enable', {
     //   qs: 'document',
     //   event: 'visibilitychange',
@@ -113,8 +122,13 @@ export default class BilibiliVideoProvider extends WebProvider {
     sendMessage('run-code', { function: fn.toString() })
   }
 
+  private clearUpdateAutorun = () => {}
   update() {
-    this.initDanmakus()
+    this.clearUpdateAutorun()
+    this.clearUpdateAutorun = autorun(() => {
+      this.initDanmakus()
+    })
+
     this.subtitleManager.init(this.webVideo)
     this.initSideSwitcherData()
     this.videoPreviewManager?.init(this.webVideo)
@@ -127,12 +141,117 @@ export default class BilibiliVideoProvider extends WebProvider {
     return danmakus
   })
   async initDanmakus() {
-    const [err, danmakus] = await tryCatch(() => this.getDanmakus())
+    this.danmakuEngine?.resetState()
+    this.stopObserveHtmlDanmaku()
 
-    if (err) {
-      toast.error(t('error.danmakuLoad'))
-    } else {
-      this.danmakuEngine?.setDanmakus(danmakus)
+    switch (configStore.biliVideoDanmakuMode) {
+      case BiliDanmakuMode.html:
+        this.startObserveHtmlDanmaku(this.getObserveHtmlDanmakuConfig())
+        break
+      case BiliDanmakuMode.api:
+        const [err, danmakus] = await tryCatch(() => this.getDanmakus())
+        if (err) {
+          toastBiliDanmakuLoadError(() => this.switchToHtmlDanmaku())
+        } else {
+          this.danmakuEngine?.setDanmakus(danmakus)
+        }
+        break
+    }
+  }
+
+  private switchToHtmlDanmaku() {
+    updateConfig({ biliVideoDanmakuMode: BiliDanmakuMode.html })
+    saveConfig()
+  }
+
+  /**
+   * Bilibili video reuses danmaku nodes: it toggles the show class and
+   * replaces the text instead of appending a new element.
+   */
+  override startObserveHtmlDanmaku(
+    props: Parameters<HtmlDanmakuProvider['startObserveHtmlDanmaku']>[0],
+  ) {
+    if (!props.container) return
+    this.stopObserveHtmlDanmaku()
+    const lastText = new WeakMap<HTMLElement, string>()
+
+    const emitNode = (node: HTMLElement) => {
+      if (!(props.isDanmu?.(node) ?? true)) {
+        lastText.delete(node)
+        return
+      }
+      const text =
+        typeof props.text === 'function'
+          ? props.text(node)?.textContent
+          : dq1(props.text, node)?.textContent
+      if (!text || lastText.get(node) === text) return
+      lastText.set(node, text)
+      this.danmakuEngine?.addDanmakus([
+        {
+          text,
+          type: 'right',
+          color: node.style.getPropertyValue('--color') || '#fff',
+        },
+      ])
+    }
+    const resolveDanmakuEl = (target: Node) => {
+      const el = target instanceof HTMLElement ? target : target.parentElement
+      if (!el) return
+      if (el.matches(props.child)) return el
+      return el.closest(props.child) as HTMLElement | null
+    }
+
+    const observer = new MutationObserver((list) => {
+      const nodes = new Set<HTMLElement>()
+      list.forEach((record) => {
+        if (record.type === 'childList') {
+          record.addedNodes.forEach((added) => {
+            if (!(added instanceof HTMLElement)) return
+            if (added.matches(props.child)) nodes.add(added)
+            else {
+              added.querySelectorAll(props.child).forEach((el) => {
+                nodes.add(el as HTMLElement)
+              })
+            }
+          })
+          return
+        }
+        const danmakuEl = resolveDanmakuEl(record.target)
+        if (danmakuEl) nodes.add(danmakuEl)
+      })
+      nodes.forEach((node) => emitNode(node))
+    })
+    props.container.querySelectorAll(props.child).forEach((el) => {
+      emitNode(el as HTMLElement)
+    })
+    observer.observe(props.container, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+      characterData: true,
+    })
+    this.htmlDanmakuObserver = observer
+  }
+
+  override getObserveHtmlDanmakuConfig(): Parameters<
+    (typeof this)['startObserveHtmlDanmaku']
+  >[0] {
+    const container =
+      dq1<HTMLElement>('.bpx-player-row-dm-wrap') ||
+      dq1<HTMLElement>('.bilibili-player-video-danmaku')
+    return {
+      container: container!,
+      child: '.bili-danmaku-x-dm',
+      text: (child) => dq1('.bili-danmaku-x-high-text', child) || child,
+      isDanmu: (node) => node.classList.contains('bili-danmaku-x-show'),
+    }
+  }
+
+  getDanmakuSenderConfig() {
+    return {
+      webTextInput: dq1<HTMLInputElement>('.bpx-player-dm-input'),
+      webSendButton: dq1<HTMLElement>('.bpx-player-dm-btn-send'),
     }
   }
 

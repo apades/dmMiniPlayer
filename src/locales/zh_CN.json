@@ -61,6 +61,12 @@
     "biliVideoPakkuFilter": "b站视频弹幕使用pakku.js过滤",
     "biliVideoPakkuFilterDesc": "只有bilibili-evaolved模式开了才能用。目前只有过滤+减少弹幕，原始json文件一屏弹幕量会非常多，没有特殊功能",
     "specialWebsites": "特殊网站",
+    "biliVideoDanmakuMode": "b站视频弹幕来源",
+    "biliVideoDanmakuModeDesc": "默认接口。失败时可在错误提示里切到 HTML 监听，改为读取页面当前显示的弹幕",
+    "biliLiveDanmakuMode": "b站直播弹幕来源",
+    "biliLiveDanmakuModeDesc": "默认接口。失败时可在错误提示里切到 HTML 监听，改为读取直播间聊天区",
+    "biliDanmakuMode_api": "接口",
+    "biliDanmakuMode_html": "HTML监听",
     "biliVideoDansFromBiliEvaolved": "使用bilibili-evaolved获取b站视频弹幕",
     "biliVideoDansFromBiliEvaolvedDesc": "该模式有问题没法下载完全的弹幕",
     "youtube_mergeSubtitleAtSimilarTimes": "合并Youtube的相近时间字幕",
@@ -210,6 +216,7 @@
   },
   "error": {
     "danmakuLoad": "弹幕加载错误，请尝试重新打开播放器或登录网站",
+    "switchHtmlDanmaku": "切换html监听",
     "subtitleLoad": "字幕加载错误，请尝试重新打开播放器或登录网站",
     "translateFail": "翻译失败"
   },

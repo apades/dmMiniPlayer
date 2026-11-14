@@ -1,5 +1,6 @@
 import { sendMessage } from '@root/inject/contentSender'
 import { dq1 } from '@root/utils'
+import { dq1Parent, isInstanceofHtmlElement } from '@root/utils/dom'
 import DanmakuSender, {
   Props as DanmakuSenderProps,
 } from '../danmaku/DanmakuSender'
@@ -109,43 +110,48 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
   startObserveHtmlDanmaku(props: {
     container: HTMLElement
     child: string
-    text: string
+    text: string | ((child: HTMLElement) => HTMLElement)
     isDanmu?: (child: HTMLElement) => boolean
   }) {
-    console.log('startObserveHtmlDanmaku')
     if (!props.container) return
-    this.htmlDanmakuObserver = new MutationObserver((list) => {
-      const nodes = list.map((l) => [...l.addedNodes]).flat()
-      // console.log('nodes', list.length, nodes)
-      if (!nodes)
-        return console.warn('发生了未知的错误，找不到list[0].addedNodes', list)
+    console.log('startObserveHtmlDanmaku')
 
-      nodes.forEach((_node) => {
-        const node = _node as HTMLElement
+    const resolveNode = (node: Node) => {
+      if (!isInstanceofHtmlElement(node)) return
+      if (!node.matches(props.child)) return
+      if (!(props?.isDanmu?.(node) ?? true)) return
+      const text =
+        typeof props.text === 'function'
+          ? props.text(node)?.textContent
+          : dq1(props.text, node)?.textContent
+      if (!text) return
 
-        const isDanmuChild = node.matches(props.child)
-        if (!isDanmuChild) return
-        const isDanmu = props?.isDanmu?.(node) ?? true
-        if (!isDanmu) return
-        const text = dq1(props.text, node)?.textContent
-        // console.log('text', text)
-        if (!text) return
+      this.danmakuEngine?.addDanmakus([
+        {
+          text,
+          type: 'right',
+          color: '#fff',
+        },
+      ])
+    }
 
-        this.danmakuEngine?.addDanmakus([
-          {
-            text,
-            type: 'right',
-            color: '#fff',
-          },
-        ])
+    const observer = new MutationObserver((list) => {
+      list.forEach((record) => {
+        if (record.type === 'childList') {
+          record.addedNodes.forEach((added) => {
+            resolveNode(added)
+          })
+        }
       })
     })
-    this.htmlDanmakuObserver.observe(props.container, {
+    observer.observe(props.container, {
       childList: true,
     })
+    this.htmlDanmakuObserver = observer
   }
 
   stopObserveHtmlDanmaku() {
     this.htmlDanmakuObserver?.disconnect?.()
+    this.htmlDanmakuObserver = undefined
   }
 }

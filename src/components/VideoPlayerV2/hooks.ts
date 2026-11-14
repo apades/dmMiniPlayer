@@ -191,4 +191,9 @@ export const useWebVideoEventsInit = () => {
     () => eventBus.emit(PlayerEvent.pause),
     webVideo,
   )
+  useTargetEventListener(
+    'seeking',
+    () => eventBus.emit(PlayerEvent.seeking),
+    webVideo,
+  )
 }

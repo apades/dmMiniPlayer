@@ -24,6 +24,7 @@ export const PlayerCommand = Object.fromEntries(
 export const PlayerEvent = {
   play: 'play',
   pause: 'pause',
+  seeking: 'seeking',
   close: 'close',
   open: 'open',
   resize: 'resize',

@@ -10,6 +10,14 @@ export const DEFAULT_FETCH_INJECT_SITE = [
   '/https:\\/\\/live\\.bilibili\\.com\\/.*/',
 ]
 
+export const HISTORY_INJECT_SITE = [
+  'https://www.youtube.com',
+  'https://www.bilibili.com',
+  'https://ddys.art',
+  'https://ddys.pro',
+  // 'https://www.netflix.com',
+]
+
 export const ATTR_DISABLE = 'dm-disable'
 export const ATTR_EVENT_INJECT_SITES = 'dm-event-inject-sites'
 export const ATTR_URL = 'dm-url'

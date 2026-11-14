@@ -8,9 +8,7 @@ import {
 } from '@root/inject/contentSender'
 import { tryCatch } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
-import { t } from '@root/utils/i18n'
 import { LiveWS, LiveTCP, KeepLiveWS, KeepLiveTCP } from 'bilibili-live-ws'
-import toast from 'react-hot-toast'
 
 export const proto = {
   nested: {
@@ -41,11 +39,10 @@ export const getConf = async (roomid: number) => {
 
 export default class BilibiliLiveBarrageClient extends BarrageClient {
   ws?: LiveWS
+  readonly ready: Promise<[undefined, void] | [Error, undefined]>
   constructor(public id: number) {
     super()
-    tryCatch(() => this.init(id)).then(([err]) => {
-      if (err) toast.error(t('error.danmakuLoad'))
-    })
+    this.ready = tryCatch(() => this.init(id))
   }
 
   async init(id: number) {
