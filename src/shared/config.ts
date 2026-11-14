@@ -18,6 +18,7 @@ export const HISTORY_INJECT_SITE = [
   'https://www.bilibili.com',
   'https://ddys.art',
   'https://ddys.pro',
+  'https://v.douyu.com',
   // 'https://www.netflix.com',
 ]
 
