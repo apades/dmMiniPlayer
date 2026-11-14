@@ -209,7 +209,7 @@ export default abstract class WebProvider
   getVideoEl(document = window.document): HTMLVideoElement {
     const videos = [
       ...dq('video', document),
-      ...(dqShadowAll('video', document) as HTMLVideoElement[]),
+      ...dqShadowAll('video', document),
       ...dq('iframe', document)
         .map((iframe) => {
           try {

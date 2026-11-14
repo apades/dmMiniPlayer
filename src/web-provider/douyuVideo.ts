@@ -2,6 +2,8 @@ import { WebProvider } from '@root/core/WebProvider'
 import { DanmakuInitData } from '@root/core/danmaku/DanmakuEngine/types'
 import { getTransColor } from '@root/danmaku/douyu/utils'
 import onRouteChange from '@root/inject/csUtils/onRouteChange'
+import playerConfig from '@root/store/playerConfig'
+import { DocPIPRenderType } from '@root/types/config'
 import { switchLatest, tryCatch } from '@root/utils'
 import { t } from '@root/utils/i18n'
 import toast from 'react-hot-toast'
@@ -75,6 +77,15 @@ async function fetchAllBarrage(vid: string): Promise<DanmakuInitData[]> {
 export default class DouyuVideoProvider extends WebProvider {
   private lastVid = ''
 
+  override onInit(): void {
+    // 用replace会导致切换视频时出问题
+    if (
+      playerConfig.forceDocPIPRenderType === DocPIPRenderType.replaceVideoEl
+    ) {
+      playerConfig.forceDocPIPRenderType =
+        DocPIPRenderType.capture_captureStream
+    }
+  }
   override async onPlayerInitd() {
     this.initDanmakus()
     this.addOnUnloadFn(onRouteChange(() => this.initDanmakus()))

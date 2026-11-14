@@ -17,6 +17,7 @@ import {
   dq1,
   dq1Adv,
   getIframeElFromSource,
+  getWindowFromObj,
   tryCatch,
 } from '@root/utils'
 import { getMediaStreamInGetter } from '@root/utils/webRTC'
@@ -128,8 +129,9 @@ function main() {
     let isIframeMode = false
 
     if (!hasVideo) {
-      hasVideo = !!dq1Adv('video')
-      if (hasVideo) {
+      const deepVideo = dq1Adv('video')
+      hasVideo = !!deepVideo
+      if (hasVideo && getWindowFromObj(deepVideo) !== window) {
         playerConfig.forceDocPIPRenderType =
           configStore.sameOriginIframeCaptureModePriority
       }

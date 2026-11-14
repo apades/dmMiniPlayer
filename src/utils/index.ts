@@ -166,10 +166,10 @@ export const dq1Adv: typeof dq1 = (
 }
 
 /**递归查找所有 open shadow root 内匹配的元素（不含 light DOM 本身） */
-export const dqShadowAll = (
+export const dqShadowAll: typeof dq = (
   selector: string,
   tar = window.document as DqTarType,
-): HTMLElement[] => {
+) => {
   const result: HTMLElement[] = []
   const walk = (root: DqTarType) => {
     for (const el of Array.from(root?.querySelectorAll('*') ?? [])) {
@@ -687,4 +687,10 @@ export function enumArray<T extends readonly string[]>(keys: T) {
       [K in T[number]]: K
     },
   )
+}
+
+export function getWindowFromObj(obj: any): null | undefined | Window {
+  if (obj instanceof Window) return obj
+  if (obj instanceof Document) return obj?.defaultView
+  return obj?.ownerDocument?.defaultView
 }
