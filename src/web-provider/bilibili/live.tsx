@@ -6,13 +6,18 @@ import configStore, { saveConfig, updateConfig } from '@root/store/config'
 import { BiliDanmakuMode } from '@root/store/config/specialWebsites'
 import { dq1, dq1Adv } from '@root/utils'
 import { autorun } from 'mobx'
-import { toastBiliDanmakuLoadError } from './danmakuLoadToast'
+import {
+  toastBiliDanmakuLoadError,
+  toastBiliDanmakuMode,
+} from './danmakuLoadToast'
 
 export default class BilibiliLiveProvider extends HtmlDanmakuProvider {
   override isLive = true
   private htmlModeInited = false
+  private originDanmakuMode = BiliDanmakuMode.api
 
   override onInit(): void {
+    this.originDanmakuMode = configStore.biliLiveDanmakuMode
     this.danmakuSender = new DanmakuSender()
     this.danmakuSender.setData(this.getDanmakuSenderConfig())
   }
@@ -33,6 +38,11 @@ export default class BilibiliLiveProvider extends HtmlDanmakuProvider {
     this.onUnload()
 
     this.clearUpdateAutorun = autorun(() => {
+      const mode = configStore.biliLiveDanmakuMode
+      if (mode !== this.originDanmakuMode) {
+        this.originDanmakuMode = mode
+        toastBiliDanmakuMode(mode)
+      }
       this.initDanmakus()
     })
   }

@@ -211,7 +211,9 @@
     "getDanmakuFromUrl": "From url",
     "danmakuTimeOffsetTips": "Currently only support in [HTML render danmakus]",
     "danmakuTimeOffset": "Time offset",
-    "pressToUncappedVolume": "Press again to uncapped volume cap"
+    "pressToUncappedVolume": "Press again to uncapped volume cap",
+    "danmakuModeApi": "Switched to API mode",
+    "danmakuModeHtml": "Switched to HTML observe"
   },
   "error": {
     "danmakuLoad": "Danmaku load error, please try reopen player or login website",

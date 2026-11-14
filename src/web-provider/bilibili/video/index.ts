@@ -13,7 +13,10 @@ import { BiliDanmakuMode } from '@root/store/config/specialWebsites'
 import { autorun } from 'mobx'
 import { PlayerEvent } from '@root/core/event'
 import { getDanmakus } from '../utils'
-import { toastBiliDanmakuLoadError } from '../danmakuLoadToast'
+import {
+  toastBiliDanmakuLoadError,
+  toastBiliDanmakuMode,
+} from '../danmakuLoadToast'
 import BiliBiliPreviewManager from './PreviewManager'
 import BilibiliSubtitleManager from './SubtitleManager'
 
@@ -31,7 +34,10 @@ type RecommendVideo = {
 }
 
 export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
+  private originDanmakuMode = BiliDanmakuMode.api
+
   override onInit(): void {
+    this.originDanmakuMode = configStore.biliVideoDanmakuMode
     this.subtitleManager = new BilibiliSubtitleManager()
     // danmakuSender
     this.danmakuSender = new DanmakuSender()
@@ -126,6 +132,11 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
   update() {
     this.clearUpdateAutorun()
     this.clearUpdateAutorun = autorun(() => {
+      const mode = configStore.biliVideoDanmakuMode
+      if (mode !== this.originDanmakuMode) {
+        this.originDanmakuMode = mode
+        toastBiliDanmakuMode(mode)
+      }
       this.initDanmakus()
     })
 

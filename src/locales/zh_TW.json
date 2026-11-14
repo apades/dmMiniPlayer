@@ -211,7 +211,9 @@
     "getDanmakuFromUrl": "從url載入",
     "danmakuTimeOffsetTips": "目前只有HTML渲染彈幕支援此功能",
     "danmakuTimeOffset": "時間差",
-    "pressToUncappedVolume": "再次按下即可取消音量上限"
+    "pressToUncappedVolume": "再次按下即可取消音量上限",
+    "danmakuModeApi": "已切換到API模式",
+    "danmakuModeHtml": "已切換到HTML監聽"
   },
   "error": {
     "danmakuLoad": "彈幕負載錯誤，請嘗試重新打開播放器或登錄網站",
