@@ -56,7 +56,10 @@ async function initVideoFloatBtn(
 }
 
 const handleMousemove = throttle((e: MouseEvent) => {
-  const _target = e.target as HTMLElement
+  // 斗鱼回放等播放器把 video 放在 shadow DOM 里，e.target 会被重定向到宿主元素，
+  // 用 composedPath()[0] 拿到 shadow 内部真实的目标元素
+  const _target = ((e.composedPath?.()[0] as HTMLElement) ??
+    e.target) as HTMLElement
   // twitch有一个很奇怪的coverEl，mousemove时target是coverEl，导致永远query不到videoEl
   // document
   //    └─同大小的top container
