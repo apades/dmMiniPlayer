@@ -106,14 +106,23 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
   }
 
   htmlDanmakuObserver?: MutationObserver
+  /** One observer per ancestor. Removal of any ancestor detaches the container. */
+  private containerAliveObservers: MutationObserver[] = []
   /**监听web的弹幕，这个是下策方法 */
   startObserveHtmlDanmaku(props: {
     container: HTMLElement
     child: string
     text: string | ((child: HTMLElement) => HTMLElement)
     isDanmu?: (child: HTMLElement) => boolean
+    /**
+     * Re-query the container when any ancestor is removed.
+     * childList on the direct parent does not fire if a higher node
+     * (p1 in p1 -> p2 -> p3 -> container) is the one passed to removeChild.
+     */
+    deepWatchContainer?: boolean
   }) {
     if (!props.container) return
+    this.stopObserveHtmlDanmaku()
     console.log('startObserveHtmlDanmaku')
 
     const resolveNode = (node: Node) => {
@@ -148,10 +157,33 @@ export default abstract class HtmlDanmakuProvider extends WebProvider {
       childList: true,
     })
     this.htmlDanmakuObserver = observer
+    if (props.deepWatchContainer) this.watchContainerAlive(props.container)
+  }
+
+  private watchContainerAlive(container: HTMLElement) {
+    let rebound = false
+    const onMaybeDetached = () => {
+      if (rebound || container.isConnected) return
+      const next = this.getObserveHtmlDanmakuConfig()
+      if (!next?.container) return
+      rebound = true
+      this.stopObserveHtmlDanmaku()
+      this.startObserveHtmlDanmaku(next)
+    }
+
+    let node = container.parentElement
+    while (node) {
+      const observer = new MutationObserver(onMaybeDetached)
+      observer.observe(node, { childList: true })
+      this.containerAliveObservers.push(observer)
+      node = node.parentElement
+    }
   }
 
   stopObserveHtmlDanmaku() {
     this.htmlDanmakuObserver?.disconnect?.()
     this.htmlDanmakuObserver = undefined
+    this.containerAliveObservers.forEach((observer) => observer.disconnect())
+    this.containerAliveObservers = []
   }
 }

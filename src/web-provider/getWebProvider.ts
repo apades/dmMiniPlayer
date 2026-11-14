@@ -10,6 +10,7 @@ import DouyuLiveProvider from './douyu'
 import TwitchProvider from './twitch'
 import YoutubeProvider from './youtube'
 import HuyaProvider from './huya'
+import KickProvider from './kick'
 import NetflixProvider from './netflix'
 
 export default function getWebProvider(): WebProvider {
@@ -30,6 +31,8 @@ export default function getWebProvider(): WebProvider {
       return new DonghuafengProvider()
     case 'twitch':
       return new TwitchProvider()
+    case 'kick':
+      return new KickProvider()
     case 'youtube':
       return new YoutubeProvider()
     case 'huya':

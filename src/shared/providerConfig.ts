@@ -10,6 +10,7 @@ const providerConfig = {
   douyin: [/https:\/\/live\.douyin\.com\/.*/],
   donghuafeng: [/https:\/\/ani\.gamer\.com\.tw\/.*/],
   twitch: [/https:\/\/www\.twitch\.tv\/.*/],
+  kick: [/https:\/\/(?:www\.)?kick\.com\/.*/],
   youtube: [/https:\/\/www\.youtube\.com\/.*/],
   huya: [/https:\/\/www\.huya\.com\/.*/],
   netflix: [/https:\/\/www\.netflix\.com\/watch\/.*/],

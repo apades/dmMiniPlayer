@@ -1,6 +1,7 @@
 export const DEFAULT_EVENT_INJECT_SITE = [
   '/https:\\/\\/live\\.douyin\\.com\\/.*/',
   '/https:\\/\\/www\\.twitch\\.com\\/.*/',
+  '/https:\\/\\/(?:www\\.)?kick\\.com\\/.*/',
   '/https:\\/\\/www\\.youtube\\.com\\/.*/',
   '/https:\\/\\/www\\.douyu\\.com\\/.*/',
   '/https:\\/\\/www\\.bilibili\\.com\\/.*/',
@@ -12,6 +13,8 @@ export const DEFAULT_FETCH_INJECT_SITE = [
 
 export const HISTORY_INJECT_SITE = [
   'https://www.youtube.com',
+  'https://kick.com',
+  'https://www.kick.com',
   'https://www.bilibili.com',
   'https://ddys.art',
   'https://ddys.pro',
