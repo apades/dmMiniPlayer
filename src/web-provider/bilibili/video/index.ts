@@ -197,13 +197,19 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
           : dq1(props.text, node)?.textContent
       if (!text || lastText.get(node) === text) return
       lastText.set(node, text)
-      this.danmakuEngine?.addDanmakus([
-        {
-          text,
-          type: 'right',
-          color: node.style.getPropertyValue('--color') || '#fff',
-        },
-      ])
+      const engine = this.danmakuEngine
+      void engine
+        ?.addDanmakus([
+          {
+            text,
+            time: this.getDanmakuAppearTime(node, props.container),
+            type: 'right',
+            color: node.style.getPropertyValue('--color') || '#fff',
+          },
+        ])
+        .then(() => {
+          if (this.danmakuEngine) this.danmakuEngine.hasSeek = true
+        })
     }
     const resolveDanmakuEl = (target: Node) => {
       const el = target instanceof HTMLElement ? target : target.parentElement
@@ -243,6 +249,17 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
       characterData: true,
     })
     this.htmlDanmakuObserver = observer
+  }
+
+  /** Invert the engine's `left = width - (now - time) * speed`. */
+  private getDanmakuAppearTime(node: HTMLElement, container: HTMLElement) {
+    const currentTime = this.webVideo.currentTime
+    const containerRect = container.getBoundingClientRect()
+    const left = node.getBoundingClientRect().left - containerRect.left
+    const speed = this.danmakuEngine?.speed
+    if (!speed || !containerRect.width) return currentTime
+    const time = currentTime - (containerRect.width - left) / speed
+    return Number.isFinite(time) ? time : currentTime
   }
 
   override getObserveHtmlDanmakuConfig(): Parameters<
