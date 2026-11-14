@@ -192,4 +192,8 @@ export const docPIPConfig = {
     // desc: t('settingPanel.injectPIPFnDesc'),
     defaultValue: true,
   }),
+  mediaSession_useraction: config({
+    label: t('settingPanel.mediaSessionUserAction'),
+    defaultValue: true,
+  }),
 } as const

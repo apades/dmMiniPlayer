@@ -479,6 +479,13 @@ function main() {
       const action = e.enterPictureInPictureReason
       switch (action) {
         case 'useraction': {
+          if (!configStore.mediaSession_useraction) {
+            const video = dq1Adv('video')
+            if (video) {
+              return video.requestPictureInPicture()
+            }
+            return
+          }
           return requestVideoPIP()
         }
         case 'contentoccluded': {

@@ -116,6 +116,7 @@
     "movePIPInOpen_offsetY": "位置オフセットy",
     "injectPIPFn": "WebサイトPIP機能を注入します",
     "injectPIPFnDesc": "ページをリロードして、設定を有効にします",
+    "mediaSessionUserAction": "メディアセンターのPIP機能を注入します",
     "quickHide_pos": "クイック非表示位置",
     "showReplacerBtn": "「ビデオを置換」ボタンを表示",
     "showReplacerBtnDesc": "Web ページのビデオ プレーヤーを拡張ビデオ プレーヤーに置き換えます。",

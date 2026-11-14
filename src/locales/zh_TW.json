@@ -122,6 +122,7 @@
     "movePIPInOpen_offsetY": "位置偏移y",
     "injectPIPFn": "注入網站畫中畫功能",
     "injectPIPFnDesc": "重新加載頁面進行生效設置",
+    "mediaSessionUserAction": "注入媒體中心畫中畫功能",
     "quickHide_pos": "快速隱藏位置",
     "showReplacerBtn": "顯示替換影片按鈕",
     "showReplacerBtnDesc": "將網頁中的影片播放器替換為擴展影片播放器",
