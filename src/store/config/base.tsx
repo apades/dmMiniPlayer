@@ -1,5 +1,6 @@
 import { config } from '@apad/setting-panel'
 import { getNowLang, Language, LanguageNativeNames, t } from '@root/utils/i18n'
+import { WheelAction } from './wheelAction'
 import configStore, { saveConfig, updateConfig } from '.'
 
 export enum videoBorderType {
@@ -104,9 +105,24 @@ const baseConfigMap = {
     defaultValue: true,
     label: t('settingPanel.pauseInClose_video'),
   }),
-  disable_scrollToChangeVolume: config({
-    defaultValue: false,
-    label: t('settingPanel.disable_scrollToChangeVolume'),
+  wheelAction: config<WheelAction>({
+    type: 'group',
+    label: t('settingPanel.wheelAction'),
+    defaultValue: WheelAction.volume,
+    group: [
+      {
+        value: WheelAction.volume,
+        label: t('settingPanel.wheelAction_volume'),
+      },
+      {
+        value: WheelAction.seek,
+        label: t('settingPanel.wheelAction_seek'),
+      },
+      {
+        value: WheelAction.none,
+        label: t('settingPanel.wheelAction_none'),
+      },
+    ],
   }),
   // pauseInClose_live: config({
   //   defaultValue: false,

@@ -3,6 +3,7 @@ import { useOnce } from '@root/hook'
 import useDebounceTimeoutCallback from '@root/hook/useDebounceTimeoutCallback'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import configStore from '@root/store/config'
+import { WheelAction } from '@root/store/config/wheelAction'
 import { dq1, minmax, onceCallWithMap } from '@root/utils'
 import { useMemoizedFn, useUnmount } from 'ahooks'
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -123,16 +124,29 @@ const VolumeIcon: FC = (props) => {
     () => dq1('.video-container', videoPlayerRef.current),
     [videoPlayerRef],
   )
+  const seekAccumRef = useRef(0)
   useTargetEventListener(
     'wheel',
     (e) => {
-      if (configStore.disable_scrollToChangeVolume) return
-      const isUp = e.deltaY < 0
       const video = webVideo
-      if (!video) return
+      if (!video || !e.deltaY) return
+      if (configStore.wheelAction === WheelAction.none) return
+      const isUp = e.deltaY < 0
+
       e.stopPropagation()
       e.preventDefault()
-      updateVolume(isUp ? 0.01 : -0.01)
+
+      switch (configStore.wheelAction) {
+        case WheelAction.seek:
+          if (e.ctrlKey || e.metaKey) return
+          eventBus.emit(
+            isUp ? PlayerEvent.command_rewind : PlayerEvent.command_forward,
+          )
+          break
+        case WheelAction.volume:
+          updateVolume(isUp ? 0.01 : -0.01)
+          break
+      }
     },
     wheelTarget,
   )
