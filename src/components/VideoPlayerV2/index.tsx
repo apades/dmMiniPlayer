@@ -90,6 +90,7 @@ type VpInnerProps = Props & {
 } & Pick<ContextData, 'eventBus'>
 
 const ACTION_AREA_ACTIVE = 'active'
+const ACTION_AREA_LOCKED_ACTIVE = 'active-locked'
 
 /** Same look as the replacer close button. Hidden until the action area is active. */
 const CORNER_ACTION_BTN_CLASS = classNames(
@@ -106,8 +107,6 @@ const VideoPlayerV2Inner = observer(
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
     const [isLocked, setIsLocked] = useState(false)
-    /** Lock button follows the cursor while the player itself ignores pointer events. */
-    const [lockBtnVisible, setLockBtnVisible] = useState(false)
 
     useOnce(() => {
       keyBinding.init()
@@ -134,6 +133,7 @@ const VideoPlayerV2Inner = observer(
 
     const { run, clear } = useDebounceTimeoutCallback(() => {
       videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
+      videoPlayerRef.current?.classList.remove(ACTION_AREA_LOCKED_ACTIVE)
     }, 1000)
 
     const videoPlayerRef = useRef<HTMLDivElement>(null)
@@ -290,16 +290,20 @@ const VideoPlayerV2Inner = observer(
       (visible = true, lock = false) => {
         if (configStore.vpActionAreaLock) return
 
+        const activeClass = isLocked
+          ? ACTION_AREA_LOCKED_ACTIVE
+          : ACTION_AREA_ACTIVE
+
         if (visible) {
           run(() => {
-            videoPlayerRef.current?.classList.add(ACTION_AREA_ACTIVE)
+            videoPlayerRef.current?.classList.add(activeClass)
           })
           if (lock) {
             clear()
           }
         } else {
           clear()
-          videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
+          videoPlayerRef.current?.classList.remove(activeClass)
         }
       },
     )
@@ -310,38 +314,13 @@ const VideoPlayerV2Inner = observer(
         setIsLocked(locked)
         if (locked) {
           videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
+          videoPlayerRef.current?.classList.add(ACTION_AREA_LOCKED_ACTIVE)
         } else {
-          setLockBtnVisible(false)
+          videoPlayerRef.current?.classList.remove(ACTION_AREA_LOCKED_ACTIVE)
+          videoPlayerRef.current?.classList.add(ACTION_AREA_ACTIVE)
         }
       })
     })
-
-    useEffect(() => {
-      if (!isLocked) return
-      const root = videoPlayerRef.current
-      if (!root) return
-      const win = ownerWindow(root)
-
-      const syncLockButton = (e: MouseEvent) => {
-        const rect = root.getBoundingClientRect()
-        const inside =
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom
-        setLockBtnVisible(inside)
-      }
-      const hideWhenLeavingWindow = (e: MouseEvent) => {
-        if (!e.relatedTarget) setLockBtnVisible(false)
-      }
-
-      win.addEventListener('mousemove', syncLockButton)
-      win.addEventListener('mouseout', hideWhenLeavingWindow)
-      return () => {
-        win.removeEventListener('mousemove', syncLockButton)
-        win.removeEventListener('mouseout', hideWhenLeavingWindow)
-      }
-    }, [isLocked])
 
     const togglePlayState = useTogglePlayState()
 
@@ -401,7 +380,6 @@ const VideoPlayerV2Inner = observer(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,
           configStore.vpActionAreaLock && ACTION_AREA_ACTIVE,
-          isLocked && 'pointer-events-none',
         )}
         style={{
           '--color-main': '#0669ff',
@@ -415,24 +393,31 @@ const VideoPlayerV2Inner = observer(
         onMouseLeave={() => {
           handleChangeActionArea(false)
         }}
+        onMouseMove={() => {
+          if (!isLocked) return
+          handleChangeActionArea(true)
+        }}
       >
-        {keyboardTipsModalContext}
         <div
-          className={classNames(
-            'video-container relative h-full bg-black',
-            !isLive && 'cursor-pointer',
-          )}
-          onClick={() => {
-            !isLive && togglePlayState()
-          }}
-          onMouseMove={() => {
-            handleChangeActionArea(true)
-          }}
-          // onWheel={handleWheelInVideo}
+          className={classNames('h-full', isLocked && 'pointer-events-none')}
         >
-          <div ref={videoInsertRef}></div>
-          <style>
-            {`.video-player-v2 video {
+          {keyboardTipsModalContext}
+          <div
+            className={classNames(
+              'video-container relative h-full bg-black',
+              !isLive && 'cursor-pointer',
+            )}
+            onClick={() => {
+              !isLive && togglePlayState()
+            }}
+            onMouseMove={() => {
+              handleChangeActionArea(true)
+            }}
+            // onWheel={handleWheelInVideo}
+          >
+            <div ref={videoInsertRef}></div>
+            <style>
+              {`.video-player-v2 video {
     position: absolute !important;
     top: initial !important;
     right: initial !important;
@@ -447,174 +432,178 @@ const VideoPlayerV2Inner = observer(
     transform: initial !important;
     z-index: initial !important;
   }`}
-          </style>
-          {!props.useWebVideo && (
-            <video
-              ref={(ref) => {
-                if (!ref) return
-                if (!props.webVideo) {
-                  updateVideoRef(ref)
-                }
+            </style>
+            {!props.useWebVideo && (
+              <video
+                ref={(ref) => {
+                  if (!ref) return
+                  if (!props.webVideo) {
+                    updateVideoRef(ref)
+                  }
 
-                inVpVideoRef.current = ref
-              }}
-              autoPlay
-              muted
-            />
-          )}
+                  inVpVideoRef.current = ref
+                }}
+                autoPlay
+                muted
+              />
+            )}
 
-          {/* 状态icon */}
-          <LoadingIcon />
-          <VolumeIcon />
-          <SpeedIcon />
-          <ScreenshotTips />
-          <EventCenter />
-        </div>
-
-        {/* 底部操作栏 */}
-        <div
-          className={classNames(
-            'video-action-area w-full transition-all duration-500',
-            // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
-            `absolute bottom-[calc(-1*(var(--area-height)+5px))] group-[&.active]:bottom-0`,
-          )}
-          onMouseEnter={(e) => handleChangeActionArea(true, true)}
-          onMouseLeave={() => {
-            handleChangeActionArea(false)
-          }}
-        >
-          <div className="absolute -top-8 w-full pointer-events-none">
-            <Toast />
+            {/* 状态icon */}
+            <LoadingIcon />
+            <VolumeIcon />
+            <SpeedIcon />
+            <ScreenshotTips />
+            <EventCenter />
           </div>
 
-          <div className="vp-subtitle-container absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
-            <SubtitleText subtitleManager={subtitleManager} />
-          </div>
+          {/* 底部操作栏 */}
+          <div
+            className={classNames(
+              'video-action-area w-full transition-all duration-500',
+              // tailwind 检测不到ACTION_AREA_ACTIVE这种动态参数
+              `absolute bottom-[calc(-1*(var(--area-height)+5px))] group-[&.active]:bottom-0`,
+            )}
+            onMouseEnter={(e) => handleChangeActionArea(true, true)}
+            onMouseLeave={() => {
+              handleChangeActionArea(false)
+            }}
+          >
+            <div className="absolute -top-8 w-full pointer-events-none">
+              <Toast />
+            </div>
 
-          {!isLive && <PlayerProgressBar />}
+            <div className="vp-subtitle-container absolute bottom-[calc(100%+12px)] w-full pointer-events-none">
+              <SubtitleText subtitleManager={subtitleManager} />
+            </div>
 
-          <div className="group-[&.active]:!opacity-100 opacity-0 transition-all duration-500">
-            <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
-            <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
-              {configStore.bp_preVideo && (
-                <div className="-mr-2">
-                  <ChangePreVideoButton />
+            {!isLive && <PlayerProgressBar />}
+
+            <div className="group-[&.active]:!opacity-100 opacity-0 transition-all duration-500">
+              <div className="mask w-full h-[calc(var(--area-height)+10px)] absolute bottom-0 bg-gradient-to-t from-[#000] opacity-70 z-[1]"></div>
+              <div className="actions text-white px-5 py-2 f-i-center relative z-[6] gap-3 h-area-height">
+                {configStore.bp_preVideo && (
+                  <div className="-mr-2">
+                    <ChangePreVideoButton />
+                  </div>
+                )}
+                {configStore.bp_playToggle && <TogglePlayActionButton />}
+                {configStore.bp_nextVideo && (
+                  <div className="-ml-2">
+                    <ChangeNextVideoButton />
+                  </div>
+                )}
+
+                <PlayedTime />
+
+                <div className="f-i-center gap-1">
+                  {configStore.bp_subtitle && (
+                    <SubtitleSelection subtitleManager={subtitleManager} />
+                  )}
+
+                  {configStore.bp_danmaku && <DanmakuSettingBtn />}
+
+                  {configStore.bp_danmakuInput && (
+                    <DanmakuInputIcon danmakuSender={props.danmakuSender} />
+                  )}
+
+                  {configStore.bp_playbackRate && <PlaybackRateSelection />}
+
+                  {configStore.bp_sharpening && <SharpeningButton />}
+
+                  <ActionButton
+                    onClick={handleOpenSetting}
+                    className="mb:hidden"
+                  >
+                    <SettingOutlined className="block" />
+                  </ActionButton>
                 </div>
-              )}
-              {configStore.bp_playToggle && <TogglePlayActionButton />}
-              {configStore.bp_nextVideo && (
-                <div className="-ml-2">
-                  <ChangeNextVideoButton />
-                </div>
-              )}
 
-              <PlayedTime />
-
-              <div className="f-i-center gap-1">
-                {configStore.bp_subtitle && (
-                  <SubtitleSelection subtitleManager={subtitleManager} />
-                )}
-
-                {configStore.bp_danmaku && <DanmakuSettingBtn />}
-
-                {configStore.bp_danmakuInput && (
-                  <DanmakuInputIcon danmakuSender={props.danmakuSender} />
-                )}
-
-                {configStore.bp_playbackRate && <PlaybackRateSelection />}
-
-                {configStore.bp_sharpening && <SharpeningButton />}
-
-                <ActionButton onClick={handleOpenSetting} className="mb:hidden">
-                  <SettingOutlined className="block" />
-                </ActionButton>
-              </div>
-
-              <div className="right ml-auto f-i-center gap-1">
-                {configStore.bp_resize && <ResizeButton />}
-                {configStore.keyboardTips_show && (
-                  <QuestionCircleFilled
-                    className={classNames(
-                      'text-white cursor-pointer hover:text-[#fffa] transition-all',
-                      'text-[16px] px-2',
-                    )}
-                    onClick={keyboardTipsModal.openModal}
-                  />
-                )}
-                {configStore.bp_volume && <VolumeBar />}
-                {props.isReplacerMode && (
-                  <>
-                    <ActionButton
-                      onClick={toggleFullInWeb}
-                      className="ml-[6px]"
-                    >
-                      {isFullInWeb ? <ShrinkOutlined /> : <ArrowsAltOutlined />}
-                    </ActionButton>
-                    <ActionButton onClick={toggleFullscreen}>
-                      {isFullscreen ? (
-                        <FullscreenExitOutlined />
-                      ) : (
-                        <FullscreenOutlined />
+                <div className="right ml-auto f-i-center gap-1">
+                  {configStore.bp_resize && <ResizeButton />}
+                  {configStore.keyboardTips_show && (
+                    <QuestionCircleFilled
+                      className={classNames(
+                        'text-white cursor-pointer hover:text-[#fffa] transition-all',
+                        'text-[16px] px-2',
                       )}
-                    </ActionButton>
-                  </>
-                )}
+                      onClick={keyboardTipsModal.openModal}
+                    />
+                  )}
+                  {configStore.bp_volume && <VolumeBar />}
+                  {props.isReplacerMode && (
+                    <>
+                      <ActionButton
+                        onClick={toggleFullInWeb}
+                        className="ml-[6px]"
+                      >
+                        {isFullInWeb ? (
+                          <ShrinkOutlined />
+                        ) : (
+                          <ArrowsAltOutlined />
+                        )}
+                      </ActionButton>
+                      <ActionButton onClick={toggleFullscreen}>
+                        {isFullscreen ? (
+                          <FullscreenExitOutlined />
+                        ) : (
+                          <FullscreenOutlined />
+                        )}
+                      </ActionButton>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <DanmakuInput danmakuSender={props.danmakuSender} />
-        <DanmakuContainer />
-        <div className="group-[&.active]:opacity-0 transition-all">
-          <CurrentTimeTooltipsWithKeydown />
-        </div>
+          <DanmakuInput danmakuSender={props.danmakuSender} />
+          <DanmakuContainer />
+          <div className="group-[&.active]:opacity-0 transition-all">
+            <CurrentTimeTooltipsWithKeydown />
+          </div>
 
-        {/* 侧边操作栏 */}
-        <VideoPlayerSide />
+          {/* 侧边操作栏 */}
+          <VideoPlayerSide />
 
-        {/* Lock sits left of the replacer close button so the two never overlap. */}
-        <div
-          className={classNames(
-            'absolute right-[20px] top-0 z-20 flex pointer-events-none transition-all',
-            isLocked ? 'gap-0' : 'gap-2 group-[&.active]:top-[20px]',
-            isLocked && lockBtnVisible && '!top-[20px]',
-          )}
-        >
+          {/* Lock sits left of the replacer close button so the two never overlap. */}
           <div
             className={classNames(
-              CORNER_ACTION_BTN_CLASS,
-              isLocked &&
-                (lockBtnVisible
-                  ? '!opacity-100 !pointer-events-auto'
-                  : '!opacity-0 !pointer-events-none'),
+              'absolute right-[20px] top-0 z-20 flex pointer-events-none transition-all',
+              isLocked ? 'gap-0' : 'gap-2 group-[&.active]:top-[20px]',
+              isLocked && 'group-[&.active-locked]:top-[20px]',
             )}
-            title={isLocked ? t('vp.unlock') : t('vp.lock')}
-            onClick={(e) => {
-              e.stopPropagation()
-              e.preventDefault()
-              const willLock = !keyBinding.isLockedMode
-              keyBinding.toggleLockedMode()
-              if (willLock) setLockBtnVisible(true)
-            }}
           >
-            {isLocked ? <LockOutlined /> : <UnlockOutlined />}
-          </div>
-          {props.isReplacerMode && (
             <div
               className={classNames(
                 CORNER_ACTION_BTN_CLASS,
-                // Collapse while locked so the lock button can sit in the corner.
                 isLocked &&
-                  '!w-0 !opacity-0 !pointer-events-none overflow-hidden',
+                  'group-[&.active-locked]:!opacity-100 group-[&.active-locked]:!pointer-events-auto',
               )}
-              onClick={() => {
-                props.videoPlayer.emit(PlayerEvent.close)
+              title={isLocked ? t('vp.unlock') : t('vp.lock')}
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                keyBinding.toggleLockedMode()
               }}
             >
-              <CloseOutlined />
+              {isLocked ? <LockOutlined /> : <UnlockOutlined />}
             </div>
-          )}
+            {props.isReplacerMode && (
+              <div
+                className={classNames(
+                  CORNER_ACTION_BTN_CLASS,
+                  // Collapse while locked so the lock button can sit in the corner.
+                  isLocked &&
+                    '!w-0 !opacity-0 !pointer-events-none overflow-hidden',
+                )}
+                onClick={() => {
+                  props.videoPlayer.emit(PlayerEvent.close)
+                }}
+              >
+                <CloseOutlined />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     )
