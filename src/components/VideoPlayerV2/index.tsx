@@ -3,9 +3,11 @@ import {
   CloseOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
+  LockOutlined,
   QuestionCircleFilled,
   SettingOutlined,
   ShrinkOutlined,
+  UnlockOutlined,
 } from '@ant-design/icons'
 import { PlayerEvent } from '@root/core/event'
 import { CommonSubtitleManager } from '@root/core/SubtitleManager'
@@ -15,6 +17,7 @@ import useOpenIsolationModal from '@root/hook/useOpenIsolationModal'
 import useTargetEventListener from '@root/hook/useTargetEventListener'
 import PostMessageEvent from '@root/shared/postMessageEvent'
 import configStore, { ReplacerDbClickAction } from '@root/store/config'
+import { t } from '@root/utils/i18n'
 import { isDocPIP, isIframe, ownerWindow, wait } from '@root/utils'
 import { hasParent } from '@root/utils/dom'
 import screenfull from '@root/utils/screenfull'
@@ -88,6 +91,13 @@ type VpInnerProps = Props & {
 
 const ACTION_AREA_ACTIVE = 'active'
 
+/** Same look as the replacer close button. Hidden until the action area is active. */
+const CORNER_ACTION_BTN_CLASS = classNames(
+  'rounded-full wh-[40px] shrink-0 cursor-pointer text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all',
+  'opacity-0 pointer-events-none',
+  'group-[&.active]:opacity-100 group-[&.active]:pointer-events-auto',
+)
+
 const VideoPlayerV2Inner = observer(
   forwardRef<VideoPlayerHandle, VpInnerProps>((props, ref) => {
     const forceUpdate = useUpdate()
@@ -95,6 +105,9 @@ const VideoPlayerV2Inner = observer(
       useContext(vpContext)
     const [isFullInWeb, setFullInWeb] = useState(false)
     const [isFullscreen, setFullscreen] = useState(false)
+    const [isLocked, setIsLocked] = useState(false)
+    /** Lock button follows the cursor while the player itself ignores pointer events. */
+    const [lockBtnVisible, setLockBtnVisible] = useState(false)
 
     useOnce(() => {
       keyBinding.init()
@@ -293,16 +306,42 @@ const VideoPlayerV2Inner = observer(
 
     useOnce(() => {
       return eventBus.on2(PlayerEvent.command_lockedModeToggle, () => {
-        const dom = videoPlayerRef.current
-        if (!dom) return
-        const disable = 'pointer-events-none'
-        if (dom.classList.contains(disable)) {
-          dom.classList.remove(disable)
+        const locked = keyBinding.isLockedMode
+        setIsLocked(locked)
+        if (locked) {
+          videoPlayerRef.current?.classList.remove(ACTION_AREA_ACTIVE)
         } else {
-          dom.classList.add(disable)
+          setLockBtnVisible(false)
         }
       })
     })
+
+    useEffect(() => {
+      if (!isLocked) return
+      const root = videoPlayerRef.current
+      if (!root) return
+      const win = ownerWindow(root)
+
+      const syncLockButton = (e: MouseEvent) => {
+        const rect = root.getBoundingClientRect()
+        const inside =
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        setLockBtnVisible(inside)
+      }
+      const hideWhenLeavingWindow = (e: MouseEvent) => {
+        if (!e.relatedTarget) setLockBtnVisible(false)
+      }
+
+      win.addEventListener('mousemove', syncLockButton)
+      win.addEventListener('mouseout', hideWhenLeavingWindow)
+      return () => {
+        win.removeEventListener('mousemove', syncLockButton)
+        win.removeEventListener('mouseout', hideWhenLeavingWindow)
+      }
+    }, [isLocked])
 
     const togglePlayState = useTogglePlayState()
 
@@ -362,6 +401,7 @@ const VideoPlayerV2Inner = observer(
           'video-player-v2 relative overflow-hidden select-none wh-[100%] group',
           props.className,
           configStore.vpActionAreaLock && ACTION_AREA_ACTIVE,
+          isLocked && 'pointer-events-none',
         )}
         style={{
           '--color-main': '#0669ff',
@@ -533,20 +573,49 @@ const VideoPlayerV2Inner = observer(
         {/* 侧边操作栏 */}
         <VideoPlayerSide />
 
-        {props.isReplacerMode && (
+        {/* Lock sits left of the replacer close button so the two never overlap. */}
+        <div
+          className={classNames(
+            'absolute right-[20px] top-0 z-20 flex pointer-events-none transition-all',
+            isLocked ? 'gap-0' : 'gap-2 group-[&.active]:top-[20px]',
+            isLocked && lockBtnVisible && '!top-[20px]',
+          )}
+        >
           <div
             className={classNames(
-              'absolute right-[20px] top-0 z-20 group-[&.active]:top-[20px]',
-              'opacity-0 group-[&.active]:opacity-100',
-              'rounded-full wh-[40px] cursor-pointer text-white bg-bg hover:bg-bg-hover text-[22px] f-center transition-all',
+              CORNER_ACTION_BTN_CLASS,
+              isLocked &&
+                (lockBtnVisible
+                  ? '!opacity-100 !pointer-events-auto'
+                  : '!opacity-0 !pointer-events-none'),
             )}
-            onClick={() => {
-              props.videoPlayer.emit(PlayerEvent.close)
+            title={isLocked ? t('vp.unlock') : t('vp.lock')}
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              const willLock = !keyBinding.isLockedMode
+              keyBinding.toggleLockedMode()
+              if (willLock) setLockBtnVisible(true)
             }}
           >
-            <CloseOutlined />
+            {isLocked ? <LockOutlined /> : <UnlockOutlined />}
           </div>
-        )}
+          {props.isReplacerMode && (
+            <div
+              className={classNames(
+                CORNER_ACTION_BTN_CLASS,
+                // Collapse while locked so the lock button can sit in the corner.
+                isLocked &&
+                  '!w-0 !opacity-0 !pointer-events-none overflow-hidden',
+              )}
+              onClick={() => {
+                props.videoPlayer.emit(PlayerEvent.close)
+              }}
+            >
+              <CloseOutlined />
+            </div>
+          )}
+        </div>
       </div>
     )
 

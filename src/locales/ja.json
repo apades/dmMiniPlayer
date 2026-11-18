@@ -211,7 +211,9 @@
     "getDanmakuFromUrl": "URL から読み込み",
     "danmakuTimeOffsetTips": "現在,HTML レンダリングの弾幕のみがこの機能をサポートしています",
     "danmakuTimeOffset": "時差",
-    "pressToUncappedVolume": "もう一度押すとボリュームキャップが解除されます"
+    "pressToUncappedVolume": "もう一度押すとボリュームキャップが解除されます",
+    "lock": "ロック",
+    "unlock": "ロック解除"
   },
   "error": {
     "danmakuLoad": "danmakuロードエラー、再びプレーヤーまたはログインWebサイトを試してみてください",

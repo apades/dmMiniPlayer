@@ -219,7 +219,9 @@
     "danmakuTimeOffset": "Time offset",
     "pressToUncappedVolume": "Press again to uncapped volume cap",
     "danmakuModeApi": "Switched to API mode",
-    "danmakuModeHtml": "Switched to HTML observe"
+    "danmakuModeHtml": "Switched to HTML observe",
+    "lock": "Lock",
+    "unlock": "Unlock"
   },
   "error": {
     "danmakuLoad": "Danmaku load error, please try reopen player or login website",

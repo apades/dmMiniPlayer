@@ -220,7 +220,9 @@
     "danmakuTimeOffset": "时间差",
     "pressToUncappedVolume": "再次按下即可取消音量上限",
     "danmakuModeApi": "已切换到接口模式",
-    "danmakuModeHtml": "已切换到HTML监听"
+    "danmakuModeHtml": "已切换到HTML监听",
+    "lock": "锁定",
+    "unlock": "解锁"
   },
   "error": {
     "danmakuLoad": "弹幕加载错误，请尝试重新打开播放器或登录网站",

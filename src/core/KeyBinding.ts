@@ -65,6 +65,11 @@ export class KeyBinding {
   isLockedMode = false
   lockedKey = ''
 
+  toggleLockedMode() {
+    this.isLockedMode = !this.isLockedMode
+    eventBus.emit(PlayerEvent.command_lockedModeToggle)
+  }
+
   init() {
     this.reset()
     this.unListens.push(
@@ -96,8 +101,7 @@ export class KeyBinding {
           if (command === PlayerEvent.command_lockedModeToggle) {
             this.lockedKey = key
             this.configKeyMap[key] = () => {
-              this.isLockedMode = !this.isLockedMode
-              eventBus.emit(command)
+              this.toggleLockedMode()
             }
           } else {
             this.configKeyMap[key] = () => {
