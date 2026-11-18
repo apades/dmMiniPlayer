@@ -49,6 +49,10 @@ const config_features = {
     label: t('settingPanel.bpSharpening'),
     defaultValue: true,
   }),
+  lockButton_show: config({
+    label: t('settingPanel.showLockButton'),
+    defaultValue: true,
+  }),
 }
 
 export default config_features

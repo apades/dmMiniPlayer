@@ -134,7 +134,8 @@
     "importSettings": "設定をインポート",
     "importSuccess": "設定のインポートに成功しました。ページが更新されます",
     "importError": "インポート失敗、ファイル形式が無効です",
-    "bpSharpening": "ビデオのシャープ化"
+    "bpSharpening": "ビデオのシャープ化",
+    "showLockButton": "ロックボタンを表示"
   },
   "pos": {
     "topLeft": "左上",

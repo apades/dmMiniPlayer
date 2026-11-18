@@ -134,7 +134,8 @@
     "importSettings": "Importar configuración",
     "importSuccess": "Configuración importada con éxito, la página se recargará",
     "importError": "Error al importar, formato de archivo no válido",
-    "bpSharpening": "Nitidez de vídeo"
+    "bpSharpening": "Nitidez de vídeo",
+    "showLockButton": "Mostrar botón de bloqueo"
   },
   "pos": {
     "topLeft": "Arriba a la izquierda",

@@ -141,7 +141,8 @@
     "importSettings": "导入设置",
     "importSuccess": "设置导入成功，页面将刷新",
     "importError": "导入失败，文件格式不正确",
-    "bpSharpening": "视频锐化"
+    "bpSharpening": "视频锐化",
+    "showLockButton": "显示锁定按钮"
   },
   "pos": {
     "topLeft": "左上",

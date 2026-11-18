@@ -140,7 +140,8 @@
     "importSettings": "Import Settings",
     "importSuccess": "Settings imported successfully, page will reload",
     "importError": "Import failed, invalid file format",
-    "bpSharpening": "Video Sharpening"
+    "bpSharpening": "Video Sharpening",
+    "showLockButton": "Show lock button"
   },
   "pos": {
     "topLeft": "Top left",

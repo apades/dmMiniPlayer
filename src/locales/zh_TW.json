@@ -140,7 +140,8 @@
     "importSettings": "匯入設定",
     "importSuccess": "設定匯入成功，頁面將刷新",
     "importError": "匯入失敗，檔案格式不正確",
-    "bpSharpening": "影片銳利化"
+    "bpSharpening": "影片銳利化",
+    "showLockButton": "顯示鎖定按鈕"
   },
   "pos": {
     "topLeft": "左上",

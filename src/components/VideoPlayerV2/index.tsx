@@ -573,21 +573,23 @@ const VideoPlayerV2Inner = observer(
               isLocked && 'group-[&.active-locked]:top-[20px]',
             )}
           >
-            <div
-              className={classNames(
-                CORNER_ACTION_BTN_CLASS,
-                isLocked &&
-                  'group-[&.active-locked]:!opacity-100 group-[&.active-locked]:!pointer-events-auto',
-              )}
-              title={isLocked ? t('vp.unlock') : t('vp.lock')}
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                keyBinding.toggleLockedMode()
-              }}
-            >
-              {isLocked ? <LockOutlined /> : <UnlockOutlined />}
-            </div>
+            {configStore.lockButton_show && (
+              <div
+                className={classNames(
+                  CORNER_ACTION_BTN_CLASS,
+                  isLocked &&
+                    'group-[&.active-locked]:!opacity-100 group-[&.active-locked]:!pointer-events-auto',
+                )}
+                title={isLocked ? t('vp.unlock') : t('vp.lock')}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  keyBinding.toggleLockedMode()
+                }}
+              >
+                {isLocked ? <LockOutlined /> : <UnlockOutlined />}
+              </div>
+            )}
             {props.isReplacerMode && (
               <div
                 className={classNames(
