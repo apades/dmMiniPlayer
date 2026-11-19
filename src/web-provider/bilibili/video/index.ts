@@ -46,7 +46,7 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
     this.sideSwitcher = new SideSwitcher()
     this.videoPreviewManager = new BiliBiliPreviewManager()
 
-    this.on2(PlayerEvent.seeking, this.onSeeked)
+    this.on2(PlayerEvent.seeking, this.onSeeking)
     // sendMessage('event-hacker:disable', {
     //   qs: 'document',
     //   event: 'visibilitychange',
@@ -86,9 +86,11 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
     sendMessage('run-code', { function: fn.toString() })
   }
 
-  private onSeeked = () => {
+  private seeking = false
+  private onSeeking = () => {
     if (configStore.biliVideoDanmakuMode !== BiliDanmakuMode.html) return
     this.danmakuEngine?.resetState?.()
+    this.seeking = true
   }
 
   private lastAid = ''
@@ -200,20 +202,16 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
       const engine = this.danmakuEngine
       const isCenter = node.classList.contains('bili-danmaku-x-center')
 
-      void engine
-        ?.addDanmakus([
-          {
-            text,
-            time: isCenter
-              ? undefined
-              : this.getDanmakuAppearTime(node, props.container),
-            type: isCenter ? 'top' : 'right',
-            color: node.style.getPropertyValue('--color') || '#fff',
-          },
-        ])
-        .then(() => {
-          if (this.danmakuEngine) this.danmakuEngine.hasSeek = true
-        })
+      engine?.addDanmakus([
+        {
+          text,
+          time: isCenter
+            ? undefined
+            : this.getDanmakuAppearTime(node, props.container),
+          type: isCenter ? 'top' : 'right',
+          color: node.style.getPropertyValue('--color') || '#fff',
+        },
+      ])
     }
     const resolveDanmakuEl = (target: Node) => {
       const el = target instanceof HTMLElement ? target : target.parentElement
@@ -241,6 +239,7 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
         if (danmakuEl) nodes.add(danmakuEl)
       })
       nodes.forEach((node) => emitNode(node))
+      this.seeking = false
     })
     props.container.querySelectorAll(props.child).forEach((el) => {
       emitNode(el as HTMLElement)
@@ -257,6 +256,7 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
 
   /** Invert the engine's `left = width - (now - time) * speed`. */
   private getDanmakuAppearTime(node: HTMLElement, container: HTMLElement) {
+    if (!this.seeking) return undefined
     const currentTime = this.webVideo.currentTime
     const containerRect = container.getBoundingClientRect()
     const left = node.getBoundingClientRect().left - containerRect.left
