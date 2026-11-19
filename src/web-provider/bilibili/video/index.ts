@@ -198,12 +198,16 @@ export default class BilibiliVideoProvider extends HtmlDanmakuProvider {
       if (!text || lastText.get(node) === text) return
       lastText.set(node, text)
       const engine = this.danmakuEngine
+      const isCenter = node.classList.contains('bili-danmaku-x-center')
+
       void engine
         ?.addDanmakus([
           {
             text,
-            time: this.getDanmakuAppearTime(node, props.container),
-            type: 'right',
+            time: isCenter
+              ? undefined
+              : this.getDanmakuAppearTime(node, props.container),
+            type: isCenter ? 'top' : 'right',
             color: node.style.getPropertyValue('--color') || '#fff',
           },
         ])
