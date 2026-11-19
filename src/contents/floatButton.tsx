@@ -5,19 +5,50 @@ import {
 } from '@root/utils'
 
 import FloatButton from '@root/components/FloatButton'
-import { dqParents, getTopParentsWithSameRect } from '@root/utils/dom'
+import {
+  dqParents,
+  getTopParentsWithSameRect,
+  isInstanceofHtmlElement,
+  isInstanceofShadowRoot,
+} from '@root/utils/dom'
 import { createRoot } from 'react-dom/client'
 import { getBrowserSyncStorage } from '@root/utils/storage'
 import { DRAG_POS } from '@root/shared/storeKey'
 
 const INIT_ATTR = 'rc-f-init'
+
+/** parentElement stops at a shadow root; keep walking through the host. */
+function hasFloatButtonInit(el: HTMLElement) {
+  let node: Node | null = el
+  while (node) {
+    if (
+      isInstanceofHtmlElement(node) &&
+      node.getAttribute(INIT_ATTR) === 'true'
+    ) {
+      return true
+    }
+
+    if (node.parentElement) {
+      node = node.parentElement
+      continue
+    }
+
+    const root = node.getRootNode()
+    node = isInstanceofShadowRoot(root) ? root.host : null
+  }
+  return false
+}
+
 async function initVideoFloatBtn(
   container: HTMLElement,
   vel: HTMLVideoElement,
   fixedPos?: boolean,
 ) {
   if (container == vel) container = container.parentElement!
-  if (container.getAttribute(INIT_ATTR) === 'true') return
+  // Replace mode moves the page video into the player shadow root.
+  // composedPath() can see that video, but the original container mark
+  // stays outside the shadow root.
+  if (hasFloatButtonInit(container) || hasFloatButtonInit(vel)) return
   // 这里有时候docPIP莫名其妙的会被附加floatBtn，然而docPIP并不会加载这个脚本，很奇怪
   if (container.ownerDocument != document) return
 

@@ -165,3 +165,8 @@ export function isInstanceofHtmlElement(node: any): node is HTMLElement {
   const tarWin = node?.ownerDocument?.defaultView ?? window
   return node instanceof tarWin.HTMLElement
 }
+
+export function isInstanceofShadowRoot(node: any): node is ShadowRoot {
+  const tarWin = node?.ownerDocument?.defaultView ?? window
+  return node instanceof tarWin.ShadowRoot
+}
