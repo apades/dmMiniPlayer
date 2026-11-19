@@ -1,7 +1,7 @@
 import { PIP_WINDOW_CONFIG } from '@root/shared/storeKey'
 import WebextEvent from '@root/shared/webextEvent'
 import configStore, { videoBorderType } from '@root/store/config'
-import { calculateNewDimensions, createElement } from '@root/utils'
+import { calculateNewDimensions, createElement, wait } from '@root/utils'
 import { getDocPIPBorderSize } from '@root/utils/docPIP'
 import {
   getBrowserSyncStorage,
@@ -67,7 +67,8 @@ export default class DocPIPWebProvider extends WebProvider {
     // 这里await会莫名其妙使webVideo被暂停
     sendMessage(WebextEvent.afterStartPIP, {
       width: pipWindow.innerWidth,
-    }).then(() => {
+    }).then(async () => {
+      await wait(50)
       switch (configStore.movePIPInOpen) {
         case MovePIPAfterOpenType.lastPos: {
           const [borX, borY] = getDocPIPBorderSize(pipWindow)
@@ -85,13 +86,15 @@ export default class DocPIPWebProvider extends WebProvider {
           }
 
           // ! 已经确定是chrome的bug，网页里第二次打开不会按照width和height来设置窗口大小，需要自己调整
-          sendMessage(WebextEvent.updateDocPIPRect, {
+          const positionData = {
             width: realWidth,
             height: realHeight,
             docPIPWidth: pipWindow.innerWidth,
             left: pipWindowConfig?.left,
             top: pipWindowConfig?.top,
-          })
+          }
+          console.log('[docPIP_WH] updateDocPIPRect positionData', positionData)
+          sendMessage(WebextEvent.updateDocPIPRect, positionData)
           break
         }
         case MovePIPAfterOpenType.custom: {
@@ -207,15 +210,16 @@ export default class DocPIPWebProvider extends WebProvider {
           pipWindow.innerWidth + configStore.saveWidthOnDocPIPCloseOffset,
           pipWindow.innerHeight + configStore.saveHeightOnDocPIPCloseOffset,
         ]
-        console.log('[docPIP_WH] save width and height', { width, height })
-        setBrowserSyncStorage(PIP_WINDOW_CONFIG, {
+        const positionData = {
           height,
           width,
           left: pipWindow.screenLeft,
           top: pipWindow.screenTop,
           mainDPR: window.devicePixelRatio,
           pipDPR: pipWindow.devicePixelRatio,
-        })
+        }
+        console.log('[docPIP_WH] save position data', positionData)
+        setBrowserSyncStorage(PIP_WINDOW_CONFIG, positionData)
       }
       this.emit(PlayerEvent.close)
       pipWindow.removeEventListener('wheel', handleWheel, { capture: true })
