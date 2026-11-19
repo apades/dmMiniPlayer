@@ -1,0 +1,13 @@
+{
+  "name": "@dm-mini-player/longplay-bridge",
+  "private": true,
+  "type": "module",
+  "exports": "./index.ts",
+  "scripts": {
+    "test": "tsx --test index.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@tinkerlandai/longplay-sdk": "0.10.11"
+  }
+}
