@@ -50,6 +50,12 @@ export function getChangeLog(ver, lang) {
   return fs.readFileSync(targetFile, 'utf-8').match(regex)?.[1].trim?.()
 }
 
+// Inner text of a JS string literal. Callers that wrap the result in quotes
+// (getDefinesObject) need this so quotes and newlines stay valid.
+export function escapeDefineString(text = '') {
+  return JSON.stringify(text).slice(1, -1)
+}
+
 function omit(obj, key) {
   let rs = { ...obj }
   key.forEach((k) => delete rs[k])

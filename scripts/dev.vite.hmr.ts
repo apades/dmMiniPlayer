@@ -73,11 +73,8 @@ export default defineConfig({
     'process.env.NODE_ENV': process.env.NODE_ENV
       ? `"${process.env.NODE_ENV}"`
       : '"development"',
-    'process.env.upgrade_en': `"${getChangeLog(version)?.replaceAll('\n', '\\n')}"`,
-    'process.env.upgrade_zh': `"${getChangeLog(version, 'zh')?.replaceAll(
-      '\n',
-      '\\n',
-    )}"`,
+    'process.env.upgrade_en': JSON.stringify(getChangeLog(version) ?? ''),
+    'process.env.upgrade_zh': JSON.stringify(getChangeLog(version, 'zh') ?? ''),
     'process.env.version': `"${version}"`,
   },
   server: {

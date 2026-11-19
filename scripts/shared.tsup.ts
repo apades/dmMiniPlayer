@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import esbuildMetaUrl from '@chialab/esbuild-plugin-meta-url'
 import { manifest } from '../src/manifest'
 import packageJson from '../package.json'
-import { getChangeLog, getDefinesConfig, pr } from './utils.mjs'
+import { escapeDefineString, getChangeLog, getDefinesConfig, pr } from './utils.mjs'
 import { inlineImport } from './plugin/inlineImport'
 import { isDev, isTest } from './shared'
 
@@ -104,8 +104,8 @@ export const shareConfig = {
       ? `"${process.env.NODE_ENV}"`
       : '"development"',
     ...getDefinesConfig(envFileName, {
-      upgrade_en: getChangeLog(version)?.replaceAll('\n', '\\n'),
-      upgrade_zh: getChangeLog(version, 'zh')?.replaceAll('\n', '\\n'),
+      upgrade_en: escapeDefineString(getChangeLog(version) ?? ''),
+      upgrade_zh: escapeDefineString(getChangeLog(version, 'zh') ?? ''),
       version,
     }),
   },
