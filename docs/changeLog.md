@@ -1,3 +1,16 @@
+## v0.6.65
+Features:
+1. Added Kick live danmaku support, including sending danmaku after login
+2. Added danmaku support for Douyu video replays (v.douyu.com) @sticccck
+3. Added a Bilibili HTML danmaku observation mode, which can be switched to when the API fails
+4. Added a player lock button, with a setting to show or hide it. While locked, it only appears when the cursor is over the player
+5. Mouse wheel can now be set to adjust volume, seek by 5 seconds, or do nothing
+
+Fixes:
+1. With "Inject Media Center PIP function" turned off, opening picture-in-picture from media controls now uses the browser's native picture-in-picture
+2. Fixed an issue where "Auto picture-in-picture when the page is hidden" sometimes failed to start
+3. Fixed a floating button being created again on a same-sized container nested inside one that already has a floating button
+
 ## v0.6.64
 1. Fixed an issue where clicking the extension button failed to start picture-in-picture when the video was inside an iframe
 2. Fixed an issue where some videos failed to load
