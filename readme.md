@@ -72,7 +72,8 @@ Drag `dist` folder and drop to `chrome://extensions/` page in Chrome (Open devel
 使用了[documentPictureInPicture](https://developer.chrome.com/docs/web-platform/document-picture-in-picture/)该API，关于[技术细节在这](https://github.com/apades/dmMiniPlayer/wiki/tech%E2%80%90zh)
 
 > [!NOTE]
-> 该API是[非w3c草案功能](https://wicg.github.io/document-picture-in-picture/)，从chrome 116开始已经强推到stable上了，[非chromium](https://caniuse.com/?search=document-picture-in-picture)目前还没看到能用的，所以其他内核浏览器不打算支持
+> 该API是[非w3c草案功能](https://wicg.github.io/document-picture-in-picture/)，从chrome 116开始已经强推到stable上了，[firefox的支持正在适配中](https://github.com/apades/dmMiniPlayer/discussions/205)
+> [目前只有safari不支持](https://caniuse.com/?search=document-picture-in-picture)
 > 
 > 如果你是360 qq浏览器这种套壳Chromium的且没有该API，地址栏到`chrome://flags/#document-picture-in-picture-api`查看是否支持开启
 
