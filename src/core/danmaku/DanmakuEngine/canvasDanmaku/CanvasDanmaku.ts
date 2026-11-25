@@ -134,7 +134,7 @@ export default class CanvasDanmaku extends DanmakuBase {
     switch (this.type) {
       case 'right': {
         this.moveX += this.speed
-        this.x = this.container.clientWidth - this.moveX
+        this.x = this.danmakuEngine.containerWidth - this.moveX
 
         // 如果弹幕全部进入canvas，释放占位tunnel
         if (this.moveX >= this.width && !this.tunnelOuted) {
