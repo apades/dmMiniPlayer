@@ -2,7 +2,7 @@ import API_bilibili from '@root/api/bilibili'
 import VideoPreviewManager from '@root/core/VideoPreviewManager'
 import { createElement, onceCallWithMap, switchLatest } from '@root/utils'
 import AsyncLock from '@root/utils/AsyncLock'
-import { getVideoInfo } from './utils'
+import { getPlayingVideoId, getVideoInfo } from './utils'
 
 //i.ytimg.com/sb/_LaVvGlkBDs/storyboard3_L$L/$N.jpg?sqp=-oaymwENSDfyq4qpAwVwAcABBqLzl_8DBgizoYbVBQ==|48#27#100#10#10#0#default#rs$AOn4CLAA38Ph1_ymbKlaeU80kIYB4yK1iw|80#45#122#10#10#5000#M$M#rs$AOn4CLAN3OpH57qro3fcfTWavdhucIBTNg|160#90#122#5#5#5000#M$M#rs$AOn4CLAL_qzDlf70Qjr3scobD-5INjMzZQ
 
@@ -15,9 +15,10 @@ export default class YoutubePreviewManager extends VideoPreviewManager {
     if (!this.webVideo) return
     this.asyncLock.reWaiting()
 
-    const videoInfo = await getVideoInfo()
+    const videoInfo = await getVideoInfo(this.webVideo)
     const url: string = videoInfo.storyboards.playerStoryboardSpecRenderer.spec
-    const vid = new URLSearchParams(location.search).get('v') || ''
+    const vid =
+      videoInfo.videoDetails?.videoId || getPlayingVideoId(this.webVideo)
     const sqp = (new URL(url).searchParams.get('sqp') || '').replace(
       /\|.*$/,
       '',

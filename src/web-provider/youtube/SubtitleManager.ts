@@ -9,8 +9,8 @@ export default class YoutubeSubtitleManager extends SubtitleDomCaptureManager {
   > {
     const [error, hasSubtitle] = await tryCatch(
       async () =>
-        !!(await getVideoInfo()).captions.playerCaptionsTracklistRenderer
-          .captionTracks,
+        !!(await getVideoInfo(this.video)).captions
+          .playerCaptionsTracklistRenderer.captionTracks,
     )
 
     if (!hasSubtitle || error) return []

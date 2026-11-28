@@ -4,7 +4,24 @@ import type {
 } from '@root/core/SubtitleManager/types'
 import { dq, onceCall } from '@root/utils'
 
-export async function getVideoInfo(url = location.href) {
+type YtPlayer = HTMLElement & {
+  getVideoData?: () => { video_id?: string }
+}
+
+/** location.href is still the previous watch page when videoSrcChanged fires. */
+export function getPlayingVideoId(video?: HTMLVideoElement | null) {
+  const player = (video?.closest('#movie_player') ??
+    document.querySelector('#movie_player')) as YtPlayer | null
+  return (
+    player?.getVideoData?.()?.video_id ||
+    new URLSearchParams(location.search).get('v') ||
+    ''
+  )
+}
+
+export async function getVideoInfo(video?: HTMLVideoElement | null) {
+  const id = getPlayingVideoId(video)
+  const url = id ? `${location.origin}/watch?v=${id}` : location.href
   const htmlText = await fetch(url).then((res) => res.text())
 
   try {
@@ -19,9 +36,9 @@ export async function getVideoInfo(url = location.href) {
 }
 
 export async function getSubtitles(
-  url = location.href,
+  video?: HTMLVideoElement | null,
 ): Promise<SubtitleItem[]> {
-  const id = new URLSearchParams(location.search).get('v')
+  const id = getPlayingVideoId(video)
   if (!id) return []
 
   const subtitles = await getVideoSubtitlesInfo(id)

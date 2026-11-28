@@ -1,6 +1,6 @@
-import { dq, dq1, formatTime, throttle } from '@root/utils'
-import { HtmlDanmakuProvider, WebProvider } from '@root/core/WebProvider'
-import onRouteChange from '@root/inject/csUtils/onRouteChange'
+import { dq, dq1, throttle } from '@root/utils'
+import { HtmlDanmakuProvider } from '@root/core/WebProvider'
+import { PlayerEvent } from '@root/core/event'
 import { SideSwitcher } from '@root/core/SideSwitcher'
 import { t } from '@root/utils/i18n'
 import { VideoItem } from '@root/components/VideoPlayer/Side'
@@ -15,6 +15,9 @@ const isLive = () =>
     ? !!getIframe()
     : !!getLiveClass()
 export default class YoutubeProvider extends HtmlDanmakuProvider {
+  private sideListEl?: Element
+  private sideListObserver?: MutationObserver
+
   override onInit() {
     super.onInit()
     this.isLive = isLive()
@@ -28,32 +31,35 @@ export default class YoutubeProvider extends HtmlDanmakuProvider {
 
   override async onPlayerInitd() {
     this.initSideSwitcherData()
+    this.update()
+    this.watchSideList()
 
-    const listDom = dq1('ytd-watch-next-secondary-results-renderer')
-    if (listDom) {
-      const initSideSwitcherData = throttle(() => {
-        this.initSideSwitcherData()
-      }, 500)
-      const ob = new MutationObserver((e) => {
-        initSideSwitcherData()
+    this.addOnUnloadFn(
+      this.on2(PlayerEvent.videoSrcChanged, () => {
         this.update()
-      })
-      ob.observe(listDom, { attributes: true })
+        this.initSideSwitcherData()
+        this.watchSideList()
+      }),
+    )
+    this.addOnUnloadFn(() => {
+      this.sideListObserver?.disconnect()
+    })
+  }
 
-      this.addOnUnloadFn(() => {
-        ob.disconnect()
-      })
-    } else {
-      // 保底采用history模式，但会有些问题
-      this.addOnUnloadFn(
-        onRouteChange(() => {
-          setTimeout(() => {
-            this.update()
-            this.initSideSwitcherData()
-          }, 0)
-        }),
-      )
-    }
+  /** Side list DOM can show up after the video src changes. Not a history listener. */
+  private watchSideList() {
+    const listDom = dq1('ytd-watch-next-secondary-results-renderer')
+    if (!listDom || listDom === this.sideListEl) return
+    this.sideListObserver?.disconnect()
+    this.sideListEl = listDom
+    const initSideSwitcherData = throttle(() => {
+      this.initSideSwitcherData()
+    }, 500)
+    const ob = new MutationObserver(() => {
+      initSideSwitcherData()
+    })
+    ob.observe(listDom, { attributes: true })
+    this.sideListObserver = ob
   }
 
   update() {

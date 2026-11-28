@@ -1,6 +1,6 @@
 import { getPrototypeSetter, getPrototypeGetter } from '@root/utils'
 
-const ENABLE_SITES = ['https://www.youtube.com']
+const ENABLE_SITES: string[] = []
 
 function log(...args: any) {
   // console?.log('🐛', ...args)
