@@ -86,7 +86,34 @@ export const shareConfig = {
     ]
 
     if (isDev) {
-      manifest.permissions?.push('scripting')
+      manifest.permissions?.push('scripting', 'declarativeNetRequest')
+      // YouTube's CSP blocks the Vite dev server. Dev builds only.
+      const rulesFile = 'dev-strip-csp.json'
+      fs.writeJSONSync(pr(outDir, rulesFile), [
+        {
+          id: 1,
+          priority: 1,
+          action: {
+            type: 'modifyHeaders',
+            responseHeaders: [
+              { header: 'content-security-policy', operation: 'remove' },
+              {
+                header: 'content-security-policy-report-only',
+                operation: 'remove',
+              },
+            ],
+          },
+          condition: {
+            urlFilter: '*',
+            resourceTypes: ['main_frame', 'sub_frame'],
+          },
+        },
+      ])
+      manifest.declarative_net_request = {
+        rule_resources: [
+          { id: 'dev_strip_csp', enabled: true, path: rulesFile },
+        ],
+      }
     }
     fs.writeJSONSync(pr(outDir, './manifest.json'), manifest, { spaces: 2 })
 
